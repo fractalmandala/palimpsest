@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import {
   AGENT_REGISTRY,
   type AgentId,
@@ -16,7 +17,6 @@ import {
   TERMINAL_CLIS,
   type TerminalCli,
 } from '@palimpsest/core/handoff';
-import { useLingui } from '@lingui/react/macro';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowUpRight, Check, Search, TriangleAlert, WifiOff } from 'lucide-react';
 import { type ReactNode, useEffect, useEffectEvent, useRef, useState } from 'react';
@@ -329,7 +329,7 @@ function RowActionButton({
           asChild
         >
           <a
-            href={`https://github.com/fractalmandala/palimpsest/tree/main/docs/content
+            href={`https://github.com/fractalmandala/palimpsest/docs/integrations/${action.slug}`}
             target="_blank"
             rel="noreferrer"
             aria-label={t`How to set up ${rowLabel}`}

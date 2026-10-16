@@ -1,7 +1,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { PS_DIR } from '@palimpsest/core';
 import type { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { PS_DIR } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import type { BootedServer } from './boot.ts';
 import {

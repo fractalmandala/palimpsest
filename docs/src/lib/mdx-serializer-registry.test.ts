@@ -14,7 +14,8 @@ import { DOWNLOAD_TARGETS } from './download-targets.ts';
 import { serializeMdx } from './mdx-serializer.ts';
 import { DOCS_SERIALIZER_REGISTRY } from './mdx-serializer-registry.ts';
 
-const PAGE_URL = 'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/quickstart.mdx';
+const PAGE_URL =
+  'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/quickstart.mdx';
 
 function serialize(source: string, pageUrl = PAGE_URL): string {
   return serializeMdx(source, { registry: DOCS_SERIALIZER_REGISTRY, pageUrl }).body;
@@ -251,9 +252,14 @@ describe('components whose content lives in their own module', () => {
   });
 
   test('the start paths render as absolute links', () => {
-    const md = serialize('<WhereToStart />', 'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/overview.mdx');
+    const md = serialize(
+      '<WhereToStart />',
+      'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/overview.mdx',
+    );
     for (const path of PATHS) {
-      expect(md).toContain(`[${path.title}](https://github.com/fractalmandala/palimpsest${path.href})`);
+      expect(md).toContain(
+        `[${path.title}](https://github.com/fractalmandala/palimpsest${path.href})`,
+      );
     }
   });
 
@@ -266,7 +272,7 @@ describe('components whose content lives in their own module', () => {
     const md = serialize('<McpInstall editor="Cursor" />');
     expect(md).toContain('two ways to connect Cursor');
     expect(md).toContain(
-      '](https://github.com/fractalmandala/palimpsest/tree/main/docs/content)',
+      '](https://github.com/fractalmandala/palimpsest/docs/get-started/quickstart#ps-install-web-app)',
     );
   });
 
@@ -311,7 +317,7 @@ describe('containers and visual-only demos', () => {
 
   test('a card keeps the inline formatting in its description', () => {
     expect(serialize('<Card title="CLI" href="/docs/reference/cli">Run `ps init`.</Card>')).toBe(
-      '- [CLI](https://github.com/fractalmandala/palimpsest/blob/main/docs/content/reference/cli.mdx): Run `ps init`.',
+      '- [CLI](https://github.com/fractalmandala/palimpsest/docs/reference/cli): Run `ps init`.',
     );
   });
 
@@ -327,8 +333,8 @@ describe('containers and visual-only demos', () => {
       '<Cards>\n  <Card title="CLI" href="/docs/reference/cli">Command line.</Card>\n  <Card title="Config" href="/docs/reference/configuration">Settings.</Card>\n</Cards>',
     );
     expect(md).toBe(
-      '- [CLI](https://github.com/fractalmandala/palimpsest/blob/main/docs/content/reference/cli.mdx): Command line.\n' +
-        '- [Config](https://github.com/fractalmandala/palimpsest/blob/main/docs/content/reference/configuration.mdx): Settings.',
+      '- [CLI](https://github.com/fractalmandala/palimpsest/docs/reference/cli): Command line.\n' +
+        '- [Config](https://github.com/fractalmandala/palimpsest/docs/reference/configuration): Settings.',
     );
   });
 });

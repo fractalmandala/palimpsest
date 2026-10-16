@@ -109,7 +109,7 @@ describe('surgical TOML MCP write', () => {
       command: 'linear-cmd',
       url: 'https://linear.example',
     });
-    expect(parsed.mcp_servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(parsed.mcp_servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 
   it('appends our entry with the rest of the file byte-identical (only-additive)', () => {
@@ -134,7 +134,7 @@ describe('surgical TOML MCP write', () => {
     const after = readFileSync(configPath, 'utf-8');
     expect(after.charCodeAt(0)).toBe(0xfeff);
     expect(after).toContain('# bom config');
-    expect(parseToml(after).mcp_servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(parseToml(after).mcp_servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 
   it('preserves CRLF line endings elsewhere and keeps our chain LF-internal', () => {
@@ -152,8 +152,8 @@ describe('surgical TOML MCP write', () => {
 
     const parsed = parseToml(after);
     expect(parsed.mcp_servers.other).toEqual({ command: 'node' });
-    expect(parsed.mcp_servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
-    const body = parsed.mcp_servers['palimpsest'].args[2] as string;
+    expect(parsed.mcp_servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
+    const body = parsed.mcp_servers.palimpsest.args[2] as string;
     expect(body).toBe(CHAIN_V2);
     expect(body).not.toContain('\r');
   });
@@ -184,7 +184,7 @@ describe('surgical TOML MCP write', () => {
 
     const after = readFileSync(configPath, 'utf-8');
     expect(after).not.toContain('\r');
-    expect(parseToml(after).mcp_servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(parseToml(after).mcp_servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 
   it('preserves a config that lacks a trailing newline', () => {
@@ -196,7 +196,7 @@ describe('surgical TOML MCP write', () => {
     const after = readFileSync(configPath, 'utf-8');
     expect(after.endsWith('\n')).toBe(false);
     expect(after).toContain('# no trailing newline');
-    expect(parseToml(after).mcp_servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(parseToml(after).mcp_servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 
   it('never writes a backup sidecar beside a present, parseable config', () => {
@@ -233,7 +233,7 @@ describe('surgical TOML MCP write', () => {
     expect(after).not.toContain('STALE');
     const parsed = parseToml(after);
     expect(parsed.mcp_servers.other).toEqual({ command: 'other-cmd' });
-    expect(parsed.mcp_servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(parsed.mcp_servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 
   it('is a byte-identical no-op on an unchanged config (idempotent)', () => {
@@ -254,7 +254,7 @@ describe('surgical TOML MCP write', () => {
     expect(result.action).toBe('written');
     const after = readFileSync(configPath, 'utf-8');
     expect(after.endsWith('\n')).toBe(true);
-    expect(parseToml(after).mcp_servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(parseToml(after).mcp_servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
     expect(existsSync(`${configPath}.ps-backup`)).toBe(false);
   });
 });
@@ -327,7 +327,7 @@ describe('surgical TOML MCP write reconciles ownership before it merges', () => 
     expect(after).toContain('[mcp_servers.palimpsest]');
     expect(after).not.toContain('[mcp_servers.palimpsest.env]');
     const servers = parseToml(after).mcp_servers;
-    expect(servers['palimpsest']).toEqual({
+    expect(servers.palimpsest).toEqual({
       ...PUBLISHED_CHAIN_ENTRY,
       cwd: '/srv/notes',
       startup_timeout_ms: 45000,
@@ -354,7 +354,7 @@ describe('surgical TOML MCP write reconciles ownership before it merges', () => 
     const after = readFileSync(configPath, 'utf-8');
     expect(after).toContain('# interior note');
     expect(after).toContain('cwd = "/srv/notes"');
-    expect(parseToml(after).mcp_servers['palimpsest']).toEqual({
+    expect(parseToml(after).mcp_servers.palimpsest).toEqual({
       ...PUBLISHED_CHAIN_ENTRY,
       cwd: '/srv/notes',
     });
@@ -367,7 +367,7 @@ describe('surgical TOML MCP write reconciles ownership before it merges', () => 
     expect(writeCodex(configPath).action).toBe('overwritten');
 
     const servers = parseToml(readFileSync(configPath, 'utf-8')).mcp_servers;
-    expect(servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
     expect(servers.github).toEqual({ command: 'npx' });
   });
 
@@ -378,7 +378,7 @@ describe('surgical TOML MCP write reconciles ownership before it merges', () => 
     expect(writeCodexReplacing(configPath).action).toBe('overwritten');
 
     const servers = parseToml(readFileSync(configPath, 'utf-8')).mcp_servers;
-    expect(servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
     expect(servers.github).toEqual({ command: 'npx' });
   });
 
@@ -418,7 +418,7 @@ describe('surgical TOML MCP write reconciles ownership before it merges', () => 
     const after = readFileSync(configPath, 'utf-8');
     expect(after).toContain('# interior note');
     expect(after).not.toContain('NODE_OPTIONS');
-    expect(parseToml(after).mcp_servers['palimpsest']).toEqual({
+    expect(parseToml(after).mcp_servers.palimpsest).toEqual({
       command: '/bin/sh',
       args: ['-l', '-c', '# ps-mcp-v99\nfuture launcher body'],
       cwd: '/srv/notes',

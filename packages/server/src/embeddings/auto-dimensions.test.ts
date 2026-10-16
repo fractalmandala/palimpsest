@@ -1,10 +1,7 @@
 import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import {
-  createWorkspaceSearchDocument,
-  type WorkspaceSearchDocument,
-} from '@palimpsest/core';
+import { createWorkspaceSearchDocument, type WorkspaceSearchDocument } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { getLogger } from '../logger.ts';
 import { createOpenAiEmbedder } from './embedder.ts';

@@ -43,9 +43,7 @@ describe('computeWrapperFolderName', () => {
   });
 
   test('Windows: forward-slash absolute path returns last segment (UNC, mixed)', () => {
-    expect(computeWrapperFolderName('C:/foo/bar/palimpsest', win32.basename)).toBe(
-      'palimpsest',
-    );
+    expect(computeWrapperFolderName('C:/foo/bar/palimpsest', win32.basename)).toBe('palimpsest');
   });
 
   test('falls back to "palimpsest" when basename is empty', () => {

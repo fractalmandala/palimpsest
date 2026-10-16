@@ -9,7 +9,6 @@ import {
   type MenuSection,
   menuLabelForPlatform,
   NATIVE_MENU_LABELS,
-  PALIMPSEST_DISCORD_URL,
   PALIMPSEST_DOCS_URL,
   PALIMPSEST_GITHUB_URL,
   SHOW_INSTALL_SKILL,
@@ -42,7 +41,6 @@ export interface MenuDeps {
   openSettings?(): void;
   onReportBug?(): void;
   onSendFeedback?(): void;
-  onCheckForUpdates?(): void;
   onUninstall?(): void;
   activeTarget?: EditorActiveTargetSnapshot;
   onOpenInNewWindow?(): void;
@@ -254,10 +252,6 @@ const MENU_BINDINGS: Record<string, MenuCommandBinding> = {
     click: (d) => () => d.onCloseActiveTabOrWindow?.(),
     enabled: (d) => d.onCloseActiveTabOrWindow !== undefined,
   },
-  'check-for-updates': {
-    click: (d) => d.onCheckForUpdates,
-    present: (d) => d.onCheckForUpdates !== undefined,
-  },
   uninstall: { click: (d) => () => d.onUninstall?.(), present: (d) => d.onUninstall !== undefined },
   'new-terminal': {
     click: (d) => () => d.onNewTerminal?.(),
@@ -338,7 +332,6 @@ const MENU_BINDINGS: Record<string, MenuCommandBinding> = {
   },
   'open-github': { click: (d) => () => d.openExternalUrl(PALIMPSEST_GITHUB_URL) },
   'open-docs': { click: (d) => () => d.openExternalUrl(PALIMPSEST_DOCS_URL) },
-  'open-discord': { click: (d) => () => d.openExternalUrl(PALIMPSEST_DISCORD_URL) },
   'report-bug': { click: (d) => () => d.onReportBug?.() },
   'send-feedback': { click: (d) => () => d.onSendFeedback?.() },
   'install-claude-desktop': {

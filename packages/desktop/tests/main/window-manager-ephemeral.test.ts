@@ -233,9 +233,9 @@ describe('createEphemeralWindow', () => {
     expect(env.createWindowOpts[0]?.additionalArguments).toContain(
       '--ok-collab-url=ws://localhost:52001/collab',
     );
-    expect(env.createWindowOpts[0]?.additionalArguments).toContain(`--ok-project-path=${PARENT}`);
+    expect(env.createWindowOpts[0]?.additionalArguments).toContain(`--ps-project-path=${PARENT}`);
     expect(env.createWindowOpts[0]?.additionalArguments).toContain('--ok-single-file=1');
-    expect(env.createWindowOpts[0]?.additionalArguments).toContain('--ok-initial-doc=todo');
+    expect(env.createWindowOpts[0]?.additionalArguments).toContain('--ps-initial-doc=todo');
     expect(env.createWindowOpts[0]?.chrome).toBe('app-header');
 
     expect(ctx.ephemeral).toEqual({

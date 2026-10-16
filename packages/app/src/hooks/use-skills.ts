@@ -1,8 +1,5 @@
-import {
-  type SkillsListEntry,
-  SkillsListSuccessSchema,
-} from '@palimpsest/core/schemas/api';
 import { t } from '@lingui/core/macro';
+import { type SkillsListEntry, SkillsListSuccessSchema } from '@palimpsest/core/schemas/api';
 import { useEffect, useState } from 'react';
 import {
   applyOptimisticSkillMoves,

@@ -12,10 +12,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, relative } from 'node:path';
-import type {
-  ThreadEvent,
-  ThreadServerFrame,
-} from '@palimpsest/core/acp/thread-protocol';
+import type { ThreadEvent, ThreadServerFrame } from '@palimpsest/core/acp/thread-protocol';
 import { THREAD_REOPEN_OP_TIMEOUT_MS } from '@palimpsest/core/acp/thread-protocol';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 

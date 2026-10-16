@@ -1,4 +1,3 @@
-import { DEFAULT_TELEMETRY_ATTRIBUTE_DENYLIST } from '@palimpsest/core/server';
 import type { Attributes, Meter, Span, SpanOptions, Tracer } from '@opentelemetry/api';
 import { context, metrics, propagation, SpanStatusCode, trace } from '@opentelemetry/api';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
@@ -14,10 +13,11 @@ import {
   type SpanProcessor,
 } from '@opentelemetry/sdk-trace-base';
 import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
+import { DEFAULT_TELEMETRY_ATTRIBUTE_DENYLIST } from '@palimpsest/core/server';
 import { getLogger } from './logger.ts';
 import { FileSpanExporter, ScrubbingSpanProcessor } from './telemetry-file-sink.ts';
 
-const TRACER_NAME = 'open-knowledge-server';
+const TRACER_NAME = 'palimpsest-server';
 
 let tracerProvider: BasicTracerProvider | null = null;
 let meterProvider: MeterProvider | null = null;
@@ -54,7 +54,7 @@ export function initTelemetry(opts: InitTelemetryOptions = {}): { tracer: Tracer
 
   try {
     const resource = resourceFromAttributes({
-      [ATTR_SERVICE_NAME]: process.env.OTEL_SERVICE_NAME || 'open-knowledge-server',
+      [ATTR_SERVICE_NAME]: process.env.OTEL_SERVICE_NAME || 'palimpsest-server',
       [ATTR_SERVICE_VERSION]: process.env.OTEL_SERVICE_VERSION || '0.2.0',
     });
 

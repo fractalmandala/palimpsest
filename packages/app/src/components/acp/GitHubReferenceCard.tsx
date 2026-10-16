@@ -1,5 +1,5 @@
-import type { GitHubReferencePreview } from '@palimpsest/core/schemas/api';
 import { useLingui } from '@lingui/react/macro';
+import type { GitHubReferencePreview } from '@palimpsest/core/schemas/api';
 import {
   CircleCheck,
   CircleDot,

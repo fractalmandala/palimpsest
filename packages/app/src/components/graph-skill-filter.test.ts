@@ -24,8 +24,8 @@ function graph(
   return { nodes, links } as GraphData;
 }
 
-const BUILTIN_SKILL = '__skill__/global/open-knowledge-write-skill';
-const BUILTIN_REF = '__skill__/global/open-knowledge-write-skill/references/patterns';
+const BUILTIN_SKILL = '__skill__/global/palimpsest-write-skill';
+const BUILTIN_REF = '__skill__/global/palimpsest-write-skill/references/patterns';
 const USER_SKILL = '__skill__/global/my-notes';
 const PROJECT_SKILL = '.claude/skills/team-conventions/SKILL';
 const PACK_SKILL = '__skill__/global/open-knowledge-pack-worldbuilding';
@@ -164,10 +164,7 @@ describe('filterGraphSkillNodes', () => {
   test('keeps built-ins connected across bundle boundaries visible', () => {
     const result = filterGraphSkillNodes(
       graph(
-        [
-          builtinDoc('b', BUILTIN_SKILL),
-          builtinDoc('d', '__skill__/global/palimpsest-discovery'),
-        ],
+        [builtinDoc('b', BUILTIN_SKILL), builtinDoc('d', '__skill__/global/palimpsest-discovery')],
         [
           { source: 'b', target: 'd' },
           { source: 'd', target: 'b' },

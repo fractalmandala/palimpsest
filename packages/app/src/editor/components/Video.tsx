@@ -1,10 +1,7 @@
 import { toDesktopAssetHref } from '@palimpsest/core/utils/asset-href';
 import { isLoomUrl, parseLoomUrl } from '@palimpsest/core/utils/loom-embed';
 import { isVimeoUrl } from '@palimpsest/core/utils/vimeo-embed';
-import {
-  type ParsedYouTubeUrl,
-  parseYouTubeUrl,
-} from '@palimpsest/core/utils/youtube-embed';
+import { type ParsedYouTubeUrl, parseYouTubeUrl } from '@palimpsest/core/utils/youtube-embed';
 import Vimeo from '@u-wave/react-vimeo';
 import { type CSSProperties, useEffect, useRef } from 'react';
 import LiteYouTubeEmbed from 'react-lite-youtube-embed';

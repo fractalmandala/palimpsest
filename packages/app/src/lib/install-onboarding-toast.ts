@@ -1,5 +1,5 @@
-import { EDITOR_LABELS } from '@palimpsest/core/constants/editors';
 import { plural, t } from '@lingui/core/macro';
+import { EDITOR_LABELS } from '@palimpsest/core/constants/editors';
 import { toast as sonnerToast } from 'sonner';
 import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { relativeToProject } from '@/lib/project-paths';

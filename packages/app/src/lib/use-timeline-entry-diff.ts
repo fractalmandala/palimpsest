@@ -1,8 +1,5 @@
 import { stripFrontmatter } from '@palimpsest/core/extensions/frontmatter';
-import {
-  diffFrontmatter,
-  type FrontmatterDelta,
-} from '@palimpsest/core/frontmatter-diff';
+import { diffFrontmatter, type FrontmatterDelta } from '@palimpsest/core/frontmatter-diff';
 import { createPatch } from 'diff';
 import { useEffect, useRef, useState } from 'react';
 import { useDocumentContext } from '@/editor/DocumentContext';

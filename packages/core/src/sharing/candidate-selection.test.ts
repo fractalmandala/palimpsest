@@ -77,7 +77,7 @@ function makeBridge(opts: StubOptions): CandidateBridgeDeps {
 
 const PAYLOAD: CandidateSelectionPayload = {
   host: 'github.com',
-  owner: 'inkeep',
+  owner: 'fractalmandala',
   repo: 'palimpsest',
   branch: 'feat-bar',
 };

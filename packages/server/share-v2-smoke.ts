@@ -78,7 +78,7 @@ try {
     contentRootDepth: 2,
     source: {
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       branch: 'main',
       kind: 'doc',
@@ -99,7 +99,7 @@ try {
     contentRootDepth: 2,
     source: {
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       branch: 'main',
       kind: 'folder',

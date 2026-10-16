@@ -1,7 +1,7 @@
 import { mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 import { posix, relative, resolve, sep } from 'node:path';
-import { PS_DIR } from '@palimpsest/core';
 import type { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { PS_DIR } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import {
   type DualTransportMcpRig,

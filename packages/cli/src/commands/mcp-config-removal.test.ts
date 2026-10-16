@@ -35,7 +35,7 @@ function tmp(): string {
 const OWN_ENTRY = buildManagedServerEntry({ mode: 'published' });
 
 describe('removeOwnMcpEntry — JSON', () => {
-  test('removes only Palimpsest's entry, preserving a sibling server + its comment', () => {
+  test("removes only Palimpsest's entry, preserving a sibling server + its comment", () => {
     const dir = tmp();
     try {
       const configPath = join(dir, 'config.json');
@@ -199,7 +199,7 @@ describe('removeOwnMcpEntry — JSON', () => {
 });
 
 describe('removeOwnMcpEntry — TOML (Codex)', () => {
-  test('removes Palimpsest's entry, preserving a sibling table + its comment', () => {
+  test("removes Palimpsest's entry, preserving a sibling table + its comment", () => {
     const dir = tmp();
     try {
       const configPath = join(dir, 'config.toml');
@@ -403,7 +403,7 @@ describe('removeOwnMcpEntry — Pi managed extension file', () => {
     }
   });
 
-  test('removes Palimpsest's own bridge file (current version)', () => {
+  test("removes Palimpsest's own bridge file (current version)", () => {
     const dir = tmp();
     try {
       const configPath = piConfigPath(dir);

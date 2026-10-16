@@ -10,7 +10,10 @@ import {
 
 export const DESKTOP_PRODUCT_NAME = 'Palimpsest';
 export const DESKTOP_UPDATER_CACHE_DIR_NAME = '@palimpsestdesktop-updater';
-export const DESKTOP_LEGACY_PRODUCT_NAME = 'Palimpsest';
+export const DESKTOP_LEGACY_PRODUCT_NAMES: readonly [string, ...string[]] = [
+  'OpenKnowledge',
+  'Open Knowledge',
+];
 
 interface DesktopUserDataOptions extends AppSupportOptions {
   productName?: string;

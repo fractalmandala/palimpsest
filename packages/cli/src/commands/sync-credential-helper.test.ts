@@ -38,10 +38,10 @@ import {
 import { runSync } from './sync.ts';
 
 const ORIGIN_URL = `https://${GITHUB_HOST}/alice/demo.git`;
-const PS_TOKEN = 'ps-test-sync-token-in-openknowledges-own-store';
+const PS_TOKEN = 'ps-test-sync-token-in-palimpsests-own-store';
 const GH_TOKEN = 'ps-test-sync-token-the-gh-cli-supplies';
 const STALE_PASSWORD = 'ps-test-sync-stale-password-in-an-ambient-helper';
-const REVOKED_OK_TOKEN = 'ps-test-sync-revoked-token-in-openknowledges-own-store';
+const REVOKED_PS_TOKEN = 'ps-test-sync-revoked-token-in-palimpsests-own-store';
 const REVOKED_GH_TOKEN = 'ps-test-sync-revoked-token-the-gh-cli-supplies';
 const DENIED_OK_TOKEN = 'ps-test-sync-token-github-denies-access-to-the-repository';
 const USER_PASSWORD = 'ps-test-sync-users-own-password-in-an-ambient-helper';
@@ -1178,18 +1178,18 @@ describe("ps sync without a running server authenticates through Palimpsest's ow
   test.each([
     {
       source: "Palimpsest's own stored sign-in",
-      psStoreToken: REVOKED_OK_TOKEN,
+      psStoreToken: REVOKED_PS_TOKEN,
       detectGh: ghUnavailable,
-      rejected: REVOKED_OK_TOKEN,
+      rejected: REVOKED_PS_TOKEN,
       named: `Palimpsest's GitHub sign-in for ${GITHUB_HOST}`,
-      remedy: `ok auth login --host ${GITHUB_HOST}`,
+      remedy: `ps auth login --host ${GITHUB_HOST}`,
     },
     {
       source: "Palimpsest Beta's own stored sign-in",
       channel: 'beta',
-      psStoreToken: REVOKED_OK_TOKEN,
+      psStoreToken: REVOKED_PS_TOKEN,
       detectGh: ghUnavailable,
-      rejected: REVOKED_OK_TOKEN,
+      rejected: REVOKED_PS_TOKEN,
       named: `Palimpsest's GitHub sign-in for ${GITHUB_HOST}`,
       remedy: `ps-beta auth login --host ${GITHUB_HOST}`,
     },

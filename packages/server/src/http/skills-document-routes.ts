@@ -29,11 +29,7 @@ import {
   skillLiveDocName,
 } from '@palimpsest/core';
 import type { SkillHostId } from '@palimpsest/core/skills-catalog';
-import {
-  parseSkillDir,
-  SKILLS_LOCK_REL,
-  type SkillsLock,
-} from '@palimpsest/core/skills-catalog';
+import { parseSkillDir, SKILLS_LOCK_REL, type SkillsLock } from '@palimpsest/core/skills-catalog';
 import type { AgentSessionManager } from '../agent-sessions.ts';
 import { composeAndWriteRawBody } from '../bridge-intake.ts';
 import { isLinkIndexExcludedDoc } from '../cc1-broadcast.ts';

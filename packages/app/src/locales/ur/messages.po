@@ -1079,9 +1079,6 @@ msgstr "تعارف"
 msgid "About {appName}"
 msgstr "{appName} کے بارے میں"
 
-msgid "About & updates"
-msgstr "تعارف اور اپ ڈیٹس"
-
 msgid "Above"
 msgstr "اوپر"
 
@@ -1737,12 +1734,6 @@ msgstr "خودکار"
 msgid "Automatic picks a free port each start. Choose a fixed port to keep the same address across restarts."
 msgstr "خودکار ہر بار شروع ہونے پر ایک خالی پورٹ منتخب کرتا ہے۔ دوبارہ شروع ہونے پر ایک ہی ایڈریس برقرار رکھنے کے لیے ایک مقررہ پورٹ منتخب کریں۔"
 
-msgid "Automatic updates"
-msgstr "خودکار اپ ڈیٹس"
-
-msgid "Automatic updates are not available right now."
-msgstr "خودکار اپ ڈیٹس ابھی دستیاب نہیں ہیں۔"
-
 msgid "Available"
 msgstr "دستیاب"
 
@@ -2037,14 +2028,8 @@ msgstr "چیٹ کی سرگزشت"
 msgid "Chat name"
 msgstr "چیٹ کا نام"
 
-msgid "Check for updates"
-msgstr "اپ ڈیٹس دیکھیں"
-
 msgid "Check for updates every"
 msgstr "اپ ڈیٹس دیکھنے کا وقفہ"
-
-msgid "Check for updates…"
-msgstr "اپ ڈیٹس دیکھیں…"
 
 msgid "Check out remote branch"
 msgstr "ریموٹ برانچ چیک آؤٹ کریں"
@@ -2078,9 +2063,6 @@ msgstr "اپ ڈیٹس دیکھے جا رہے ہیں"
 
 msgid "Checking for updates on GitHub"
 msgstr "GitHub پر اپ ڈیٹس دیکھے جا رہے ہیں"
-
-msgid "Checking for updates…"
-msgstr "اپ ڈیٹس دیکھے جا رہے ہیں…"
 
 msgid "Checking GitHub connection..."
 msgstr "GitHub کنکشن جانچا جا رہا ہے..."
@@ -3202,9 +3184,6 @@ msgstr "کلید محفوظ نہیں ہو سکی — براہِ کرم دوبا�
 msgid "Couldn't save the resolution for {filePath}."
 msgstr "{filePath} کا حل محفوظ نہیں ہو سکا۔"
 
-msgid "Couldn't save this setting. Try again."
-msgstr "یہ ترتیب محفوظ نہیں ہو سکی۔ دوبارہ کوشش کریں۔"
-
 msgid "Couldn't save your theme preference."
 msgstr "آپ کی تھیم ترجیح محفوظ نہیں ہو سکی۔"
 
@@ -3777,9 +3756,6 @@ msgstr "ترمیم کے لیے ڈبل کلک کریں"
 msgid "Download {0}"
 msgstr "{0} ڈاؤن لوڈ کریں"
 
-msgid "Download and install updates automatically"
-msgstr "اپ ڈیٹس خودکار طور پر ڈاؤن لوڈ اور انسٹال کریں"
-
 msgid "Download app"
 msgstr "ایپ ڈاؤن لوڈ کریں"
 
@@ -4026,8 +4002,8 @@ msgstr "ایمبیڈنگز"
 msgid "Embeddings API key"
 msgstr "ایمبیڈنگز API کلید"
 
-msgid "Embeddings are computed only when a search runs and are cached locally under <0>.ok/local</0>."
-msgstr "ایمبیڈنگز صرف اسی وقت شمار ہوتی ہیں جب کوئی تلاش چلے، اور <0>.ok/local</0> کے تحت مقامی طور پر محفوظ ہوتی ہیں۔"
+msgid "Embeddings are computed only when a search runs and are cached locally under <0>.ps/local</0>."
+msgstr ""
 
 msgid "Emoji"
 msgstr "ایموجی"
@@ -4552,6 +4528,9 @@ msgstr "فائل اپ لوڈ نہیں ہو سکی"
 msgid "Fast"
 msgstr "تیز"
 
+msgid "Feedback"
+msgstr ""
+
 msgid "Feedback isn't available right now. Please try again later."
 msgstr "رائے ابھی دستیاب نہیں۔ براہِ کرم بعد میں دوبارہ کوشش کریں۔"
 
@@ -4748,15 +4727,6 @@ msgstr "فولڈرز اور خالی فائلیں منسلک نہیں کی جا 
 msgid "Follow the agent's edits"
 msgstr "ایجنٹ کی ترامیم کی پیروی کریں"
 
-msgid "Follow us on"
-msgstr "ہمیں فالو کریں"
-
-msgid "Follow us on social media"
-msgstr "سوشل میڈیا پر ہمیں فالو کریں"
-
-msgid "Follow us on X"
-msgstr "X پر ہمیں فالو کریں"
-
 msgid "Following the agent's edits"
 msgstr "ایجنٹ کی ترامیم کی پیروی جاری ہے"
 
@@ -4831,9 +4801,6 @@ msgstr "{displayName} حاصل کریں"
 
 msgid "Get Claude Code"
 msgstr "Claude Code حاصل کریں"
-
-msgid "Get product updates in your inbox."
-msgstr "مصنوعات کی اپ ڈیٹس اپنے اِن باکس میں پائیں۔"
 
 msgid "Get set up"
 msgstr "ترتیب دیں"
@@ -5551,8 +5518,8 @@ msgid "Install skill"
 msgstr "مہارت کو انسٹال کریں۔"
 
 #. Checkbox that installs the user-global discovery skill bundle
-msgid "Install the <0>open-knowledge-discovery</0> skill"
-msgstr "<0>open-knowledge-discovery</0> اسکل انسٹال کریں"
+msgid "Install the <0>palimpsest-discovery</0> skill"
+msgstr ""
 
 msgid "Install the gh CLI"
 msgstr "gh CLI نصب کریں"
@@ -5676,9 +5643,6 @@ msgstr "ترچھا"
 
 msgid "Item {0}"
 msgstr "آئٹم {0}"
-
-msgid "Join us on Discord"
-msgstr "Discord پر ہمارے ساتھ شامل ہوں"
 
 msgid "Jump to last tab"
 msgstr "آخری ٹیب پر جائیں"
@@ -5969,11 +5933,11 @@ msgstr "{pageTarget} کے عنوانات لوڈ ہو رہے ہیں"
 msgid "Loading image"
 msgstr "تصویر لوڈ ہو رہی ہے"
 
-msgid "Loading Palimpsest skills"
-msgstr "Palimpsest مہارتیں لوڈ ہو رہی ہیں"
-
 msgid "Loading pages"
 msgstr "صفحات لوڈ ہو رہے ہیں"
+
+msgid "Loading Palimpsest skills"
+msgstr "Palimpsest مہارتیں لوڈ ہو رہی ہیں"
 
 msgid "Loading paths…"
 msgstr "راستے لوڈ ہو رہے ہیں…"
@@ -6306,11 +6270,11 @@ msgstr "بلاک منتقل کریں"
 msgid "Move down"
 msgstr "نیچے لے جائیں"
 
-msgid "Move Palimpsest.app to the Trash"
-msgstr "Palimpsest.app کو کوڑے دان میں منتقل کریں"
-
 msgid "Move or rename this file inside the skill — the path stays under references/ or scripts/."
 msgstr "اس فائل کو مہارت کے اندر منتقل کریں یا اس کا نام بدلیں — راستہ references/ یا scripts/ کے تحت ہی رہتا ہے۔"
+
+msgid "Move Palimpsest.app to the Trash"
+msgstr "Palimpsest.app کو کوڑے دان میں منتقل کریں"
 
 msgid "Move succeeded but the sidebar may be out of date — refresh to resync"
 msgstr "منتقلی ہو گئی مگر سائیڈ بار پرانا ہو سکتا ہے — دوبارہ مطابقت کے لیے تازہ کریں"
@@ -6425,9 +6389,6 @@ msgstr "غور و فکر جاری ہے…"
 
 msgid "my-feature"
 msgstr "my-feature"
-
-msgid "my@email.com"
-msgstr "my@email.com"
 
 msgid "name"
 msgstr "نام"
@@ -7043,9 +7004,6 @@ msgstr "آف لائن"
 msgid "OK can't move these, so they go when {pick} does."
 msgstr "OK انہیں منتقل نہیں کر سکتا، اس لیے یہ {pick} کے ساتھ ہی چلے جائیں گے۔"
 
-msgid "OK Desktop"
-msgstr "OK Desktop"
-
 msgid "OK last set this folder to {0} — something outside OK changed it since. The state shown is what's on disk now; your next Symlink/Unlink wins."
 msgstr "OK نے آخری بار اس فولڈر کو {0} مقرر کیا تھا — اس کے بعد OK سے باہر کسی چیز نے اسے بدل دیا۔ دکھائی گئی حالت وہی ہے جو اب ڈسک پر ہے؛ آپ کا اگلا سِم لنک یا لنک ختم کرنا فیصلہ کن ہو گا۔"
 
@@ -7242,36 +7200,6 @@ msgstr "ورک ٹری میں کھولیں"
 msgid "Open it there"
 msgstr "اسے وہیں کھولیں"
 
-msgid "Palimpsest could not reach the project server to check index maintenance. The status updates when the project reconnects."
-msgstr "Palimpsest انڈیکس کی دیکھ بھال کی جانچ کے لیے پروجیکٹ سرور تک نہیں پہنچ سکا۔ جب پروجیکٹ دوبارہ جڑ جائے گا تو حالت اپ ڈیٹ ہو جائے گی۔"
-
-msgid "Palimpsest creates and maintains a navigation file named index.md in every folder that contains Markdown."
-msgstr "Palimpsest ہر فولڈر میں index.md نامی نیویگیشن فائل بناتا اور برقرار رکھتا ہے جس میں Markdown ہوتا ہے۔"
-
-msgid "OpenKnowledge Format guidance"
-msgstr "Palimpsest Format رہنمائی"
-
-msgid "Palimpsest maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
-msgstr "Palimpsest ہر فولڈر میں index.md نامی ایک نیویگیشن فائل کو برقرار رکھتا ہے جس میں Markdown ہوتا ہے، ہر ایک فولڈر کے دستاویزات کو ٹائپ اور اس کے ذیلی فولڈرز سے لنک کرکے درج کرتا ہے۔ یہ ان فائلوں کو دوبارہ لکھتا ہے جیسے آپ کی دستاویزات تبدیل ہوتی ہیں، اور جو کچھ بھی آپ خود ان میں ترمیم کرتے ہیں اسے تبدیل کر دیا جاتا ہے۔"
-
-msgid "Palimpsest rewrites these index.md files as documents change, so manual edits to them are replaced."
-msgstr "Palimpsest ان index.md فائلوں کو دوبارہ لکھتا ہے جیسے ہی دستاویزات میں تبدیلی آتی ہے، لہذا ان میں دستی ترامیم تبدیل کردی جاتی ہیں۔"
-
-msgid "Palimpsest tools are available in this thread."
-msgstr "اس تھریڈ میں Palimpsest ٹولز دستیاب ہیں۔"
-
-msgid "Palimpsest tools are unavailable because the project folder is missing, inaccessible, or has changed. Check its location and permissions, then retry."
-msgstr "Palimpsest کے ٹولز دستیاب نہیں ہیں کیونکہ پروجیکٹ فولڈر موجود نہیں، اس تک رسائی ممکن نہیں یا وہ تبدیل ہو گیا ہے۔ اس کا مقام اور اجازتیں چیک کریں، پھر دوبارہ کوشش کریں۔"
-
-msgid "Palimpsest tools are unavailable: a file Palimpsest didn't write is already at {bridgePath}."
-msgstr "Palimpsest ٹولز دستیاب نہیں: {bridgePath} پر پہلے سے ایسی فائل موجود ہے جو Palimpsest نے نہیں لکھی۔"
-
-msgid "Palimpsest tools are unavailable: something is already at {bridgePath} but couldn't be read, so Palimpsest left it alone."
-msgstr "Palimpsest ٹولز دستیاب نہیں: {bridgePath} پر پہلے سے کچھ موجود ہے مگر اسے پڑھا نہیں جا سکا، اس لیے Palimpsest نے اسے ویسا ہی چھوڑ دیا۔"
-
-msgid "Palimpsest's own copy of {0} is damaged and won't run. It can download a fresh copy of {1} {2} (about {3} MB from {4}) to replace it."
-msgstr "Palimpsest کی اپنی {0} نقل خراب ہے اور چلتی نہیں۔ یہ اسے تبدیل کرنے کے لیے {1} {2} کی نئی نقل ڈاؤن لوڈ کر سکتا ہے (تقریباً {3} MB، {4} سے)۔"
-
 msgid "Open link"
 msgstr "لنک کھولیں"
 
@@ -7380,194 +7308,8 @@ msgstr "ورک ٹری کھولا جا رہا ہے"
 msgid "Opening..."
 msgstr "کھولا جا رہا ہے..."
 
-msgid "Palimpsest"
-msgstr "Palimpsest"
-
-msgid "Palimpsest can't sign in to GitHub for this project."
-msgstr "Palimpsest اس پروجیکٹ کے لیے GitHub میں سائن اِن نہیں کر سکتا۔"
-
-msgid "Palimpsest checked {subject}"
-msgstr "Palimpsest نے {subject} کی جانچ کی"
-
-msgid "Palimpsest checked the project"
-msgstr "Palimpsest نے پروجیکٹ کی جانچ کی"
-
-msgid "Palimpsest checks for and downloads updates in the background."
-msgstr "Palimpsest پس منظر میں اپ ڈیٹس دیکھتا اور ڈاؤن لوڈ کرتا ہے۔"
-
-msgid "Palimpsest could not find this agent on this machine."
-msgstr "Palimpsest کو اس مشین پر یہ ایجنٹ نہیں ملا۔"
-
-msgid "Palimpsest couldn't finish setting up this project. The worktree was created but not opened."
-msgstr "Palimpsest اس پروجیکٹ کا سیٹ اپ مکمل نہیں کر سکا۔ ورک ٹری بن گئی، لیکن کھولی نہیں گئی۔"
-
-msgid "Palimpsest couldn't read terminal.shell in .ps/local/config.yml. Using an available Windows shell instead."
-msgstr "Palimpsest .ps/local/config.yml میں terminal.shell نہیں پڑھ سکا۔ اس کے بجائے دستیاب Windows شیل استعمال کیا جا رہا ہے۔"
-
-msgid "Palimpsest couldn't write launch settings under .ps/local/terminal because the folder is not safely contained in this project. Check that it is a real folder inside the project, not a link. Claude will ask you to approve Palimpsest."
-msgstr "Palimpsest .ps/local/terminal کے تحت لانچ کی ترتیبات نہیں لکھ سکا کیونکہ فولڈر اس پروجیکٹ کے اندر محفوظ طور پر موجود نہیں ہے۔ تصدیق کریں کہ یہ پروجیکٹ کے اندر ایک حقیقی فولڈر ہے، لنک نہیں۔ Claude آپ سے Palimpsest کو منظور کرنے کے لیے کہے گا۔"
-
-msgid "Palimpsest couldn't write launch settings under .ps/local/terminal this time. Check that the folder is writable. Claude will ask you to approve Palimpsest."
-msgstr "Palimpsest اس بار .ps/local/terminal کے تحت لانچ کی ترتیبات نہیں لکھ سکا۔ تصدیق کریں کہ فولڈر میں لکھا جا سکتا ہے۔ Claude آپ سے Palimpsest کو منظور کرنے کے لیے کہے گا۔"
-
-msgid "Palimpsest created a share link"
-msgstr "Palimpsest نے شیئر لنک بنایا"
-
-msgid "Palimpsest created a share link for {subject}"
-msgstr "Palimpsest نے {subject} کے لیے شیئر لنک بنایا"
-
-msgid "Palimpsest deleted {subject}"
-msgstr "Palimpsest نے {subject} حذف کیا"
-
-msgid "Palimpsest deleted a document"
-msgstr "Palimpsest نے ایک دستاویز حذف کی"
-
-msgid "Palimpsest discovery skill"
-msgstr "Palimpsest دریافت اسکل"
-
-msgid "Palimpsest does not recognize this entry, and cannot safely replace it in this file's format."
-msgstr "Palimpsest اس اندراج کو نہیں پہچانتا، اور اس فائل کی فارمیٹ میں اسے محفوظ طریقے سے تبدیل نہیں کر سکتا۔"
-
-msgid "Palimpsest does not recognize this entry. Turning it on replaces it."
-msgstr "Palimpsest اس اندراج کو نہیں پہچانتا۔ اسے آن کرنے پر یہ تبدیل ہو جائے گا۔"
-
-msgid "Palimpsest doesn't check for or download updates on its own. Check for updates still works when you want a newer version."
-msgstr "Palimpsest خود سے اپ ڈیٹس نہیں دیکھتا یا ڈاؤن لوڈ نہیں کرتا۔ نیا ورژن چاہیں تو \"اپ ڈیٹس دیکھیں\" اب بھی کام کرتا ہے۔"
-
-msgid "Palimpsest edited {subject}"
-msgstr "Palimpsest نے {subject} میں ترمیم کی"
-
-msgid "Palimpsest edited a document"
-msgstr "Palimpsest نے ایک دستاویز میں ترمیم کی"
-
-msgid "Palimpsest files were removed"
-msgstr "Palimpsest کی فائلیں ہٹا دی گئیں"
-
-msgid "Palimpsest has no credential stored for this host. Add a token in Settings, or let git use the credentials it already has."
-msgstr "Palimpsest نے اس ہوسٹ کے لیے کوئی کریڈینشل محفوظ نہیں کیا۔ ترتیبات میں ٹوکن شامل کریں، یا git کو وہ کریڈینشلز استعمال کرنے دیں جو اس کے پاس پہلے سے ہیں۔"
-
-msgid "Palimpsest imported {source}"
-msgstr "Palimpsest نے {source} درآمد کیا"
-
-msgid "Palimpsest imported a skill"
-msgstr "Palimpsest نے ایک اسکل درآمد کی"
-
-msgid "Palimpsest initializes at <0>{projectDir}</0> — the parent of <1>{pickedRelative}</1> because it contains a <2>.git</2> folder (one .ps/ per git repo). <3>Content directory</3> defaults to <4>.</4> (the whole repo); type a sub-folder to narrow it."
-msgstr "Palimpsest کا ابتدائیہ <0>{projectDir}</0> پر ہوتا ہے — جو <1>{pickedRelative}</1> کا والد ہے کیونکہ اس میں <2>.git</2> فولڈر ہے (ہر git ریپو کے لیے ایک .ps/)۔ <3>مواد کی ڈائریکٹری</3> طے شدہ طور پر <4>.</4> ہوتی ہے (پورا ریپو)؛ اسے محدود کرنے کے لیے کوئی ذیلی فولڈر لکھیں۔"
-
-msgid "Palimpsest installed {subject}"
-msgstr "Palimpsest نے {subject} انسٹال کیا"
-
-msgid "Palimpsest installed a skill"
-msgstr "Palimpsest نے ایک اسکل انسٹال کی"
-
-msgid "Palimpsest integrations checked."
-msgstr "Palimpsest انٹیگریشنز جانچ لی گئیں۔"
-
-msgid "Palimpsest is set up at the repository root here, so the pack goes inside <0>{sanitized}</0> rather than at the top of the repository."
-msgstr "یہاں Palimpsest ریپوزٹری کی جڑ میں سیٹ ہوتا ہے، اس لیے پیک ریپوزٹری کے اوپر کے بجائے <0>{sanitized}</0> کے اندر جاتا ہے۔"
-
-msgid "Palimpsest is using this GitHub account."
-msgstr "Palimpsest یہی GitHub اکاؤنٹ استعمال کر رہا ہے۔"
-
-msgid "Palimpsest keeps retrying and shows them as soon as the file can be read."
-msgstr "Palimpsest دوبارہ کوشش کرتا رہتا ہے اور فائل پڑھنے کے قابل ہوتے ہی انہیں دکھا دے گا۔"
-
-msgid "Palimpsest left this file alone because it could not parse it safely. Fix the file by hand, then try again."
-msgstr "Palimpsest نے اس فائل کو تبدیل نہیں کیا کیونکہ وہ اسے محفوظ طریقے سے پارس نہیں کر سکا۔ فائل کو خود درست کریں، پھر دوبارہ کوشش کریں۔"
-
-msgid "Palimpsest listed the installed skills"
-msgstr "Palimpsest نے انسٹال شدہ اسکلز کی فہرست دی"
-
-msgid "Palimpsest logs across projects. No project is open, so project server logs are not included."
-msgstr "مختلف پروجیکٹس کے Palimpsest لاگز۔ کوئی پروجیکٹ کھلا نہیں، اس لیے پروجیکٹ سرور کے لاگز شامل نہیں ہیں۔"
-
-msgid "Palimpsest logs, including activity across projects."
-msgstr "Palimpsest لاگز، جن میں مختلف پروجیکٹس کی سرگرمی شامل ہے۔"
-
-msgid "Palimpsest looked at the link graph"
-msgstr "Palimpsest نے لنک گراف دیکھا"
-
-msgid "Palimpsest looked up links for {subject}"
-msgstr "Palimpsest نے {subject} کے لنکس تلاش کیے"
-
-msgid "Palimpsest looked up the authoring palette"
-msgstr "Palimpsest نے تحریری پیلیٹ دیکھا"
-
-msgid "Palimpsest moved {subject} to {destination}"
-msgstr "Palimpsest نے {subject} کو {destination} میں منتقل کیا"
-
-msgid "Palimpsest moved a document"
-msgstr "Palimpsest نے ایک دستاویز منتقل کی"
-
-msgid "Palimpsest on GitHub"
-msgstr "GitHub پر Palimpsest"
-
-msgid "Palimpsest on this computer changed to a different build, but this tab is still running the old one."
-msgstr "اس کمپیوٹر پر Palimpsest کسی دوسرے بلڈ میں بدل گیا ہے، لیکن یہ ٹیب ابھی بھی پرانا بلڈ چلا رہا ہے۔"
-
-msgid "Palimpsest on this computer is now v{serverVersion}, but this tab is still running v{tabVersion}."
-msgstr "اس کمپیوٹر پر Palimpsest اب v{serverVersion} ہے، لیکن یہ ٹیب ابھی بھی v{tabVersion} چلا رہا ہے۔"
-
-msgid "Palimpsest opened the live preview"
-msgstr "Palimpsest نے لائیو پیش منظر کھولا"
-
-msgid "Palimpsest quit unexpectedly last time."
-msgstr "پچھلی بار Palimpsest غیر متوقع طور پر بند ہو گیا تھا۔"
-
-msgid "Palimpsest ran {command}"
-msgstr "Palimpsest نے {command} چلایا"
-
-msgid "Palimpsest ran {tool}"
-msgstr "Palimpsest نے {tool} چلایا"
-
-msgid "Palimpsest ran a command"
-msgstr "Palimpsest نے ایک کمانڈ چلائی"
-
-msgid "Palimpsest read the edit history"
-msgstr "Palimpsest نے ترمیم کی تاریخ پڑھی"
-
-msgid "Palimpsest read the history of {subject}"
-msgstr "Palimpsest نے {subject} کی تاریخ پڑھی"
-
-msgid "Palimpsest read the project settings"
-msgstr "Palimpsest نے پروجیکٹ کی ترتیبات پڑھیں"
-
-msgid "Palimpsest read the setting {key}"
-msgstr "Palimpsest نے ترتیب {key} پڑھی"
-
-msgid "Palimpsest restored an earlier version"
-msgstr "Palimpsest نے پچھلا ورژن بحال کیا"
-
-msgid "Palimpsest restored an earlier version of {subject}"
-msgstr "Palimpsest نے {subject} کا پچھلا ورژن بحال کیا"
-
-msgid "Palimpsest saved a checkpoint"
-msgstr "Palimpsest نے ایک چیک پوائنٹ محفوظ کیا"
-
-msgid "Palimpsest searched for {query}"
-msgstr "Palimpsest نے {query} تلاش کیا"
-
-msgid "Palimpsest searched the knowledge base"
-msgstr "Palimpsest نے نالج بیس میں تلاش کیا"
-
-msgid "Palimpsest skill saved. Upload it in Claude Desktop, then click Cowork again."
-msgstr "Palimpsest اسکل محفوظ ہو گئی۔ اسے Claude Desktop میں اپ لوڈ کریں، پھر دوبارہ Cowork پر کلک کریں۔"
-
-msgid "Palimpsest stores its configuration and internal files inside a newly created <0>.ok</0> directory in your project root folder."
-msgstr "Palimpsest اپنی کنفیگریشن اور داخلی فائلیں آپ کے پروجیکٹ کے جڑ فولڈر میں نئے بنے <0>.ok</0> ڈائریکٹری کے اندر رکھتا ہے۔"
-
-msgid "Palimpsest will be initialized at <0>{gitRoot}</0> — the parent of your new folder, because it contains a <1>.git</1> folder (one project per git repo)."
-msgstr "Palimpsest کا ابتدائیہ <0>{gitRoot}</0> پر ہو گا — جو آپ کے نئے فولڈر کا والد ہے، کیونکہ اس میں <1>.git</1> فولڈر ہے (ہر git ریپو کے لیے ایک پروجیکٹ)۔"
-
-msgid "Palimpsest will create commits and push them to your remote automatically. If you do not want automatic commits in your git history, you should not enable auto-sync."
-msgstr "Palimpsest کمٹس بنا کر خودکار طور پر آپ کے ریموٹ پر پُش کرے گا۔ اگر آپ اپنی git تاریخ میں خودکار کمٹس نہیں چاہتے تو خودکار مطابقت پذیری فعال نہ کریں۔"
-
-msgid "Palimpsest wrote a document"
-msgstr "Palimpsest نے ایک دستاویز لکھی"
-
-msgid "Palimpsest wrote to {subject}"
-msgstr "Palimpsest نے {subject} میں لکھا"
+msgid "OpenKnowledge Format guidance"
+msgstr "Palimpsest Format رہنمائی"
 
 msgid "Opens a folder picker to choose where to clone the repository."
 msgstr "ریپازٹری کہاں کلون کرنی ہے، یہ منتخب کرنے کے لیے فولڈر منتخب کنندہ کھولتا ہے۔"
@@ -7704,6 +7446,219 @@ msgstr "صفحات پہلی بار اسی وقت ایمبیڈ ہوتے ہیں ج
 
 msgid "Pages indexed: {semanticIndexedCount} of {semanticTotalCount}."
 msgstr "انڈیکس شدہ صفحات: {semanticTotalCount} میں سے {semanticIndexedCount}۔"
+
+msgid "Palimpsest"
+msgstr "Palimpsest"
+
+msgid "Palimpsest can't sign in to GitHub for this project."
+msgstr "Palimpsest اس پروجیکٹ کے لیے GitHub میں سائن اِن نہیں کر سکتا۔"
+
+msgid "Palimpsest checked {subject}"
+msgstr "Palimpsest نے {subject} کی جانچ کی"
+
+msgid "Palimpsest checked the project"
+msgstr "Palimpsest نے پروجیکٹ کی جانچ کی"
+
+msgid "Palimpsest could not find this agent on this machine."
+msgstr "Palimpsest کو اس مشین پر یہ ایجنٹ نہیں ملا۔"
+
+msgid "Palimpsest could not reach the project server to check index maintenance. The status updates when the project reconnects."
+msgstr "Palimpsest انڈیکس کی دیکھ بھال کی جانچ کے لیے پروجیکٹ سرور تک نہیں پہنچ سکا۔ جب پروجیکٹ دوبارہ جڑ جائے گا تو حالت اپ ڈیٹ ہو جائے گی۔"
+
+msgid "Palimpsest couldn't finish setting up this project. The worktree was created but not opened."
+msgstr "Palimpsest اس پروجیکٹ کا سیٹ اپ مکمل نہیں کر سکا۔ ورک ٹری بن گئی، لیکن کھولی نہیں گئی۔"
+
+msgid "Palimpsest couldn't read terminal.shell in .ps/local/config.yml. Using an available Windows shell instead."
+msgstr "Palimpsest .ps/local/config.yml میں terminal.shell نہیں پڑھ سکا۔ اس کے بجائے دستیاب Windows شیل استعمال کیا جا رہا ہے۔"
+
+msgid "Palimpsest couldn't write launch settings under .ps/local/terminal because the folder is not safely contained in this project. Check that it is a real folder inside the project, not a link. Claude will ask you to approve Palimpsest."
+msgstr "Palimpsest .ps/local/terminal کے تحت لانچ کی ترتیبات نہیں لکھ سکا کیونکہ فولڈر اس پروجیکٹ کے اندر محفوظ طور پر موجود نہیں ہے۔ تصدیق کریں کہ یہ پروجیکٹ کے اندر ایک حقیقی فولڈر ہے، لنک نہیں۔ Claude آپ سے Palimpsest کو منظور کرنے کے لیے کہے گا۔"
+
+msgid "Palimpsest couldn't write launch settings under .ps/local/terminal this time. Check that the folder is writable. Claude will ask you to approve Palimpsest."
+msgstr "Palimpsest اس بار .ps/local/terminal کے تحت لانچ کی ترتیبات نہیں لکھ سکا۔ تصدیق کریں کہ فولڈر میں لکھا جا سکتا ہے۔ Claude آپ سے Palimpsest کو منظور کرنے کے لیے کہے گا۔"
+
+msgid "Palimpsest created a share link"
+msgstr "Palimpsest نے شیئر لنک بنایا"
+
+msgid "Palimpsest created a share link for {subject}"
+msgstr "Palimpsest نے {subject} کے لیے شیئر لنک بنایا"
+
+msgid "Palimpsest creates and maintains a navigation file named index.md in every folder that contains Markdown."
+msgstr "Palimpsest ہر فولڈر میں index.md نامی نیویگیشن فائل بناتا اور برقرار رکھتا ہے جس میں Markdown ہوتا ہے۔"
+
+msgid "Palimpsest deleted {subject}"
+msgstr "Palimpsest نے {subject} حذف کیا"
+
+msgid "Palimpsest deleted a document"
+msgstr "Palimpsest نے ایک دستاویز حذف کی"
+
+msgid "Palimpsest Desktop"
+msgstr ""
+
+msgid "Palimpsest discovery skill"
+msgstr "Palimpsest دریافت اسکل"
+
+msgid "Palimpsest does not recognize this entry, and cannot safely replace it in this file's format."
+msgstr "Palimpsest اس اندراج کو نہیں پہچانتا، اور اس فائل کی فارمیٹ میں اسے محفوظ طریقے سے تبدیل نہیں کر سکتا۔"
+
+msgid "Palimpsest does not recognize this entry. Turning it on replaces it."
+msgstr "Palimpsest اس اندراج کو نہیں پہچانتا۔ اسے آن کرنے پر یہ تبدیل ہو جائے گا۔"
+
+msgid "Palimpsest edited {subject}"
+msgstr "Palimpsest نے {subject} میں ترمیم کی"
+
+msgid "Palimpsest edited a document"
+msgstr "Palimpsest نے ایک دستاویز میں ترمیم کی"
+
+msgid "Palimpsest files were removed"
+msgstr "Palimpsest کی فائلیں ہٹا دی گئیں"
+
+msgid "Palimpsest has no credential stored for this host. Add a token in Settings, or let git use the credentials it already has."
+msgstr "Palimpsest نے اس ہوسٹ کے لیے کوئی کریڈینشل محفوظ نہیں کیا۔ ترتیبات میں ٹوکن شامل کریں، یا git کو وہ کریڈینشلز استعمال کرنے دیں جو اس کے پاس پہلے سے ہیں۔"
+
+msgid "Palimpsest imported {source}"
+msgstr "Palimpsest نے {source} درآمد کیا"
+
+msgid "Palimpsest imported a skill"
+msgstr "Palimpsest نے ایک اسکل درآمد کی"
+
+msgid "Palimpsest initializes at <0>{projectDir}</0> — the parent of <1>{pickedRelative}</1> because it contains a <2>.git</2> folder (one .ps/ per git repo). <3>Content directory</3> defaults to <4>.</4> (the whole repo); type a sub-folder to narrow it."
+msgstr "Palimpsest کا ابتدائیہ <0>{projectDir}</0> پر ہوتا ہے — جو <1>{pickedRelative}</1> کا والد ہے کیونکہ اس میں <2>.git</2> فولڈر ہے (ہر git ریپو کے لیے ایک .ps/)۔ <3>مواد کی ڈائریکٹری</3> طے شدہ طور پر <4>.</4> ہوتی ہے (پورا ریپو)؛ اسے محدود کرنے کے لیے کوئی ذیلی فولڈر لکھیں۔"
+
+msgid "Palimpsest installed {subject}"
+msgstr "Palimpsest نے {subject} انسٹال کیا"
+
+msgid "Palimpsest installed a skill"
+msgstr "Palimpsest نے ایک اسکل انسٹال کی"
+
+msgid "Palimpsest integrations checked."
+msgstr "Palimpsest انٹیگریشنز جانچ لی گئیں۔"
+
+msgid "Palimpsest is set up at the repository root here, so the pack goes inside <0>{sanitized}</0> rather than at the top of the repository."
+msgstr "یہاں Palimpsest ریپوزٹری کی جڑ میں سیٹ ہوتا ہے، اس لیے پیک ریپوزٹری کے اوپر کے بجائے <0>{sanitized}</0> کے اندر جاتا ہے۔"
+
+msgid "Palimpsest is using this GitHub account."
+msgstr "Palimpsest یہی GitHub اکاؤنٹ استعمال کر رہا ہے۔"
+
+msgid "Palimpsest keeps retrying and shows them as soon as the file can be read."
+msgstr "Palimpsest دوبارہ کوشش کرتا رہتا ہے اور فائل پڑھنے کے قابل ہوتے ہی انہیں دکھا دے گا۔"
+
+msgid "Palimpsest left this file alone because it could not parse it safely. Fix the file by hand, then try again."
+msgstr "Palimpsest نے اس فائل کو تبدیل نہیں کیا کیونکہ وہ اسے محفوظ طریقے سے پارس نہیں کر سکا۔ فائل کو خود درست کریں، پھر دوبارہ کوشش کریں۔"
+
+msgid "Palimpsest listed the installed skills"
+msgstr "Palimpsest نے انسٹال شدہ اسکلز کی فہرست دی"
+
+msgid "Palimpsest logs across projects. No project is open, so project server logs are not included."
+msgstr "مختلف پروجیکٹس کے Palimpsest لاگز۔ کوئی پروجیکٹ کھلا نہیں، اس لیے پروجیکٹ سرور کے لاگز شامل نہیں ہیں۔"
+
+msgid "Palimpsest logs, including activity across projects."
+msgstr "Palimpsest لاگز، جن میں مختلف پروجیکٹس کی سرگرمی شامل ہے۔"
+
+msgid "Palimpsest looked at the link graph"
+msgstr "Palimpsest نے لنک گراف دیکھا"
+
+msgid "Palimpsest looked up links for {subject}"
+msgstr "Palimpsest نے {subject} کے لنکس تلاش کیے"
+
+msgid "Palimpsest looked up the authoring palette"
+msgstr "Palimpsest نے تحریری پیلیٹ دیکھا"
+
+msgid "Palimpsest maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
+msgstr "Palimpsest ہر فولڈر میں index.md نامی ایک نیویگیشن فائل کو برقرار رکھتا ہے جس میں Markdown ہوتا ہے، ہر ایک فولڈر کے دستاویزات کو ٹائپ اور اس کے ذیلی فولڈرز سے لنک کرکے درج کرتا ہے۔ یہ ان فائلوں کو دوبارہ لکھتا ہے جیسے آپ کی دستاویزات تبدیل ہوتی ہیں، اور جو کچھ بھی آپ خود ان میں ترمیم کرتے ہیں اسے تبدیل کر دیا جاتا ہے۔"
+
+msgid "Palimpsest moved {subject} to {destination}"
+msgstr "Palimpsest نے {subject} کو {destination} میں منتقل کیا"
+
+msgid "Palimpsest moved a document"
+msgstr "Palimpsest نے ایک دستاویز منتقل کی"
+
+msgid "Palimpsest on GitHub"
+msgstr "GitHub پر Palimpsest"
+
+msgid "Palimpsest on this computer changed to a different build, but this tab is still running the old one."
+msgstr "اس کمپیوٹر پر Palimpsest کسی دوسرے بلڈ میں بدل گیا ہے، لیکن یہ ٹیب ابھی بھی پرانا بلڈ چلا رہا ہے۔"
+
+msgid "Palimpsest on this computer is now v{serverVersion}, but this tab is still running v{tabVersion}."
+msgstr "اس کمپیوٹر پر Palimpsest اب v{serverVersion} ہے، لیکن یہ ٹیب ابھی بھی v{tabVersion} چلا رہا ہے۔"
+
+msgid "Palimpsest opened the live preview"
+msgstr "Palimpsest نے لائیو پیش منظر کھولا"
+
+msgid "Palimpsest quit unexpectedly last time."
+msgstr "پچھلی بار Palimpsest غیر متوقع طور پر بند ہو گیا تھا۔"
+
+msgid "Palimpsest ran {command}"
+msgstr "Palimpsest نے {command} چلایا"
+
+msgid "Palimpsest ran {tool}"
+msgstr "Palimpsest نے {tool} چلایا"
+
+msgid "Palimpsest ran a command"
+msgstr "Palimpsest نے ایک کمانڈ چلائی"
+
+msgid "Palimpsest read the edit history"
+msgstr "Palimpsest نے ترمیم کی تاریخ پڑھی"
+
+msgid "Palimpsest read the history of {subject}"
+msgstr "Palimpsest نے {subject} کی تاریخ پڑھی"
+
+msgid "Palimpsest read the project settings"
+msgstr "Palimpsest نے پروجیکٹ کی ترتیبات پڑھیں"
+
+msgid "Palimpsest read the setting {key}"
+msgstr "Palimpsest نے ترتیب {key} پڑھی"
+
+msgid "Palimpsest restored an earlier version"
+msgstr "Palimpsest نے پچھلا ورژن بحال کیا"
+
+msgid "Palimpsest restored an earlier version of {subject}"
+msgstr "Palimpsest نے {subject} کا پچھلا ورژن بحال کیا"
+
+msgid "Palimpsest rewrites these index.md files as documents change, so manual edits to them are replaced."
+msgstr "Palimpsest ان index.md فائلوں کو دوبارہ لکھتا ہے جیسے ہی دستاویزات میں تبدیلی آتی ہے، لہذا ان میں دستی ترامیم تبدیل کردی جاتی ہیں۔"
+
+msgid "Palimpsest saved a checkpoint"
+msgstr "Palimpsest نے ایک چیک پوائنٹ محفوظ کیا"
+
+msgid "Palimpsest searched for {query}"
+msgstr "Palimpsest نے {query} تلاش کیا"
+
+msgid "Palimpsest searched the knowledge base"
+msgstr "Palimpsest نے نالج بیس میں تلاش کیا"
+
+msgid "Palimpsest skill saved. Upload it in Claude Desktop, then click Cowork again."
+msgstr "Palimpsest اسکل محفوظ ہو گئی۔ اسے Claude Desktop میں اپ لوڈ کریں، پھر دوبارہ Cowork پر کلک کریں۔"
+
+msgid "Palimpsest stores its configuration and internal files inside a newly created <0>.ok</0> directory in your project root folder."
+msgstr "Palimpsest اپنی کنفیگریشن اور داخلی فائلیں آپ کے پروجیکٹ کے جڑ فولڈر میں نئے بنے <0>.ok</0> ڈائریکٹری کے اندر رکھتا ہے۔"
+
+msgid "Palimpsest tools are available in this thread."
+msgstr "اس تھریڈ میں Palimpsest ٹولز دستیاب ہیں۔"
+
+msgid "Palimpsest tools are unavailable because the project folder is missing, inaccessible, or has changed. Check its location and permissions, then retry."
+msgstr "Palimpsest کے ٹولز دستیاب نہیں ہیں کیونکہ پروجیکٹ فولڈر موجود نہیں، اس تک رسائی ممکن نہیں یا وہ تبدیل ہو گیا ہے۔ اس کا مقام اور اجازتیں چیک کریں، پھر دوبارہ کوشش کریں۔"
+
+msgid "Palimpsest tools are unavailable: a file Palimpsest didn't write is already at {bridgePath}."
+msgstr "Palimpsest ٹولز دستیاب نہیں: {bridgePath} پر پہلے سے ایسی فائل موجود ہے جو Palimpsest نے نہیں لکھی۔"
+
+msgid "Palimpsest tools are unavailable: something is already at {bridgePath} but couldn't be read, so Palimpsest left it alone."
+msgstr "Palimpsest ٹولز دستیاب نہیں: {bridgePath} پر پہلے سے کچھ موجود ہے مگر اسے پڑھا نہیں جا سکا، اس لیے Palimpsest نے اسے ویسا ہی چھوڑ دیا۔"
+
+msgid "Palimpsest will be initialized at <0>{gitRoot}</0> — the parent of your new folder, because it contains a <1>.git</1> folder (one project per git repo)."
+msgstr "Palimpsest کا ابتدائیہ <0>{gitRoot}</0> پر ہو گا — جو آپ کے نئے فولڈر کا والد ہے، کیونکہ اس میں <1>.git</1> فولڈر ہے (ہر git ریپو کے لیے ایک پروجیکٹ)۔"
+
+msgid "Palimpsest will create commits and push them to your remote automatically. If you do not want automatic commits in your git history, you should not enable auto-sync."
+msgstr "Palimpsest کمٹس بنا کر خودکار طور پر آپ کے ریموٹ پر پُش کرے گا۔ اگر آپ اپنی git تاریخ میں خودکار کمٹس نہیں چاہتے تو خودکار مطابقت پذیری فعال نہ کریں۔"
+
+msgid "Palimpsest wrote a document"
+msgstr "Palimpsest نے ایک دستاویز لکھی"
+
+msgid "Palimpsest wrote to {subject}"
+msgstr "Palimpsest نے {subject} میں لکھا"
+
+msgid "Palimpsest's own copy of {0} is damaged and won't run. It can download a fresh copy of {1} {2} (about {3} MB from {4}) to replace it."
+msgstr "Palimpsest کی اپنی {0} نقل خراب ہے اور چلتی نہیں۔ یہ اسے تبدیل کرنے کے لیے {1} {2} کی نئی نقل ڈاؤن لوڈ کر سکتا ہے (تقریباً {3} MB، {4} سے)۔"
 
 msgid "Pan down"
 msgstr "نیچے کھسکائیں"
@@ -7904,9 +7859,6 @@ msgstr "Blob Run کھیلیں"
 msgid "Please choose Good or Not great."
 msgstr "براہِ کرم «اچھا» یا «زیادہ اچھا نہیں» منتخب کریں۔"
 
-msgid "Please enter a valid email address."
-msgstr "براہِ کرم درست ای میل پتہ درج کریں۔"
-
 msgid "Please enter a valid email."
 msgstr "براہِ کرم درست ای میل درج کریں۔"
 
@@ -8008,12 +7960,6 @@ msgstr "مسائل"
 
 msgid "Problems in {0}"
 msgstr "{0} میں مسائل"
-
-msgid "Product updates"
-msgstr "مصنوعات کی اپ ڈیٹس"
-
-msgid "Product updates in your inbox."
-msgstr "مصنوعات کی اپ ڈیٹس آپ کے اِن باکس میں۔"
 
 msgid "project"
 msgstr "پروجیکٹ"
@@ -9851,9 +9797,6 @@ msgstr "منتخب اقتباس کو ایجنٹ پینل میں تیار رکھ�
 msgid "stale Git entry"
 msgstr "پرانی Git انٹری"
 
-msgid "Star us on GitHub"
-msgstr "GitHub پر ہمیں ستارہ دیں"
-
 msgid "Start a bug report with a screenshot of the screen as it looks right now."
 msgstr "اسکرین اس وقت جیسی دکھ رہی ہے اس کا اسکرین شاٹ لے کر بگ رپورٹ شروع کریں۔"
 
@@ -9920,9 +9863,6 @@ msgstr "حالت"
 msgid "Status"
 msgstr "حالت"
 
-msgid "Stay in the loop"
-msgstr "باخبر رہیں"
-
 msgid "Stays on this computer. Not committed to git."
 msgstr "اسی کمپیوٹر پر رہتا ہے۔ git میں کمٹ نہیں ہوتا۔"
 
@@ -9988,15 +9928,6 @@ msgstr "ذیلی فولڈر کا نام"
 
 msgid "Subfolder under current folder"
 msgstr "موجودہ فولڈر کے تحت ذیلی فولڈر"
-
-msgid "Subscribe"
-msgstr "رکن بنیں"
-
-msgid "Subscribing..."
-msgstr "رکنیت لی جا رہی ہے..."
-
-msgid "Subscriptions aren't available right now."
-msgstr "رکنیتیں ابھی دستیاب نہیں۔"
 
 msgid "Suggestion menu navigation"
 msgstr "تجاویز کے مینو میں نیویگیشن"
@@ -10269,9 +10200,6 @@ msgstr "متن"
 msgid "Thanks for giving Palimpsest a try."
 msgstr "Palimpsest آزمانے کا شکریہ۔"
 
-msgid "Thanks for subscribing. Watch your inbox for product updates."
-msgstr "رکنیت لینے کا شکریہ۔ مصنوعات کی اپ ڈیٹس کے لیے اپنا اِن باکس دیکھتے رہیں۔"
-
 msgid "Thanks for the feedback!"
 msgstr "رائے دینے کا شکریہ!"
 
@@ -10339,8 +10267,8 @@ msgstr "اب {editor} والا ورژن ماخذ ہے"
 msgid "The {targetNoun} could not be opened — try navigating to it manually."
 msgstr "{targetNoun} نہیں کھل سکا — دستی طور پر وہاں جانے کی کوشش کریں۔"
 
-msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs OpenKnowledge Format–conformant."
-msgstr "وہ <0>type</0> جو اس ٹیمپلیٹ سے بننے والی ہر دستاویز کو ملتا ہے (مثلاً <1>research-note</1>)۔ نئی دستاویزات کو Palimpsest Format سے ہم آہنگ رکھتا ہے۔"
+msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs Open Knowledge Format–conformant."
+msgstr ""
 
 msgid "The agent is working"
 msgstr "ایجنٹ کام کر رہا ہے"
@@ -10477,6 +10405,9 @@ msgstr "وہ ماڈل شناخت جو آپ کا اینڈ پوائنٹ فراہم
 msgid "the open agent"
 msgstr "کھلا ہوا ایجنٹ"
 
+msgid "The original text was deleted."
+msgstr "اصل متن حذف کر دیا گیا تھا۔"
+
 msgid "The Palimpsest project is missing at this checkout path."
 msgstr "اس چیک آؤٹ پاتھ پر Palimpsest پروجیکٹ موجود نہیں ہے۔"
 
@@ -10491,9 +10422,6 @@ msgstr "Palimpsest سرور نے جواب دینے میں بہت وقت لیا،
 
 msgid "The Palimpsest server took too long to answer. Ask the agent to try again."
 msgstr "Palimpsest سرور نے جواب دینے میں بہت وقت لیا۔ ایجنٹ سے دوبارہ کوشش کرنے کو کہیں۔"
-
-msgid "The original text was deleted."
-msgstr "اصل متن حذف کر دیا گیا تھا۔"
 
 msgid "The path can't leave the skill (no . or ..)"
 msgstr "پاتھ اسکل سے باہر نہیں جا سکتا (. یا .. نہیں)"
@@ -11071,9 +10999,6 @@ msgstr "یہ تھیم فائل پڑھی نہیں جا سکی"
 msgid "This theme file is too large"
 msgstr "یہ تھیم فائل بہت بڑی ہے"
 
-msgid "This update is no longer ready to install."
-msgstr "یہ اپ ڈیٹ اب نصب کرنے کے لیے تیار نہیں ہے۔"
-
 msgid "This usually means one of:"
 msgstr "اس کا عام طور پر مطلب ان میں سے کوئی ایک ہے:"
 
@@ -11452,10 +11377,6 @@ msgstr "غیر ٹریک شدہ"
 msgid "Up to date"
 msgstr "تازہ ترین"
 
-msgctxt "settings search keyword"
-msgid "update"
-msgstr "اپ ڈیٹ"
-
 msgid "Update"
 msgstr "اپ ڈیٹ کریں"
 
@@ -11488,12 +11409,6 @@ msgstr "{updatedRelative} اپ ڈیٹ ہوا"
 
 msgid "updated folder properties"
 msgstr "فولڈر کی خصوصیات تازہ کیں"
-
-msgid "Updated to Version {version}"
-msgstr "ورژن {version} پر تازہ ہو گیا"
-
-msgid "Updates and feedback"
-msgstr "اپ ڈیٹس اور رائے"
 
 msgid "Updates flow in"
 msgstr "اپ ڈیٹس آتی رہتی ہیں"
@@ -11812,11 +11727,8 @@ msgstr "آپ جو شیئر کرتے ہیں وہ Palimpsest ٹیم کو بھیج�
 msgid "What's included"
 msgstr "کیا شامل ہے"
 
-msgid "What's new"
-msgstr "نیا کیا ہے"
-
-msgid "When enabled, the agent opens or refreshes the preview after each edit. Disable if you manage your own preview window (OK Desktop, a browser tab on another display, etc.)."
-msgstr "فعال ہونے پر، ایجنٹ ہر ترمیم کے بعد پیش منظر کھولتا یا تازہ کرتا ہے۔ اگر آپ اپنی پیش منظر ونڈو خود سنبھالتے ہیں تو اسے بند کر دیں (OK Desktop، کسی اور ڈسپلے پر براؤزر ٹیب، وغیرہ)۔"
+msgid "When enabled, the agent opens or refreshes the preview after each edit. Disable if you manage your own preview window (Palimpsest Desktop, a browser tab on another display, etc.)."
+msgstr ""
 
 msgid "When the agent runs its scheduled work."
 msgstr "ایجنٹ اپنا طے شدہ کام کب چلاتا ہے۔"
@@ -12008,9 +11920,6 @@ msgstr "آپ اپ ڈیٹس دیکھنے سے زیادہ بار پُش کر رہ�
 
 msgid "You're signed out — sign in to resume syncing."
 msgstr "آپ سائن آؤٹ ہیں — مطابقت پذیری جاری رکھنے کے لیے سائن اِن کریں۔"
-
-msgid "You're subscribed!"
-msgstr "آپ رکن بن گئے!"
 
 msgid "you@company.com"
 msgstr "you@company.com"

@@ -1,10 +1,6 @@
 import { lintGutter } from '@codemirror/lint';
 import { EditorState } from '@codemirror/state';
-import {
-  DEFAULT_LINTER_CONFIG,
-  type LintDiagnostic,
-  type LintRange,
-} from '@palimpsest/core';
+import { DEFAULT_LINTER_CONFIG, type LintDiagnostic, type LintRange } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { createMarkdownLintExtension, mapLintDiagnostics } from './markdown-lint-source.ts';
 

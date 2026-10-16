@@ -75,12 +75,12 @@ export function terminalLaunchEnvSlots(
 }
 
 const BASH_STRUCTURED_LAUNCH_SCRIPT =
-  `mapfile -d '' -t __ok_argv < <(printf '%s' "$1" | base64 -d); ` +
-  `((\${#__ok_argv[@]})) || exit 1; ` +
-  `mapfile -d '' -t __ok_env < <(printf '%s' "$2" | base64 -d); ` +
-  `(for ((__ok_i = 0; __ok_i < \${#__ok_env[@]}; __ok_i += 2)); do __ok_slot="\${__ok_env[__ok_i + 1]}"; ` +
-  `export "\${__ok_env[__ok_i]}=\${!__ok_slot}"; done; exec "\${__ok_argv[@]}"); ` +
-  `for ((__ok_i = 1; __ok_i < \${#__ok_env[@]}; __ok_i += 2)); do unset "\${__ok_env[__ok_i]}"; done; ` +
+  `mapfile -d '' -t __ps_argv < <(printf '%s' "$1" | base64 -d); ` +
+  `((\${#__ps_argv[@]})) || exit 1; ` +
+  `mapfile -d '' -t __ps_env < <(printf '%s' "$2" | base64 -d); ` +
+  `(for ((__ps_i = 0; __ps_i < \${#__ps_env[@]}; __ps_i += 2)); do __ps_slot="\${__ps_env[__ps_i + 1]}"; ` +
+  `export "\${__ps_env[__ps_i]}=\${!__ps_slot}"; done; exec "\${__ps_argv[@]}"); ` +
+  `for ((__ps_i = 1; __ps_i < \${#__ps_env[@]}; __ps_i += 2)); do unset "\${__ps_env[__ps_i]}"; done; ` +
   `exec "$BASH" --login -i`;
 
 const TERMINAL_LAUNCH_ENV_NAME = /^[A-Za-z_][A-Za-z0-9_]*$/;
@@ -224,15 +224,15 @@ export function composeWindowsShellLaunchArgs(
   const names = slots.map(({ name }) => psQuoteArg(name)).join(', ');
   const slotNames = slots.map(({ slot }) => psQuoteArg(slot)).join(', ');
   const script =
-    `$__ok_names = @(${names}); $__ok_slots = @(${slotNames}); $__ok_prev = @{}; ` +
-    'for ($__ok_i = 0; $__ok_i -lt $__ok_names.Length; $__ok_i++) { ' +
-    '$__ok_prev[$__ok_names[$__ok_i]] = [Environment]::GetEnvironmentVariable($__ok_names[$__ok_i]); ' +
-    "[Environment]::SetEnvironmentVariable($__ok_names[$__ok_i], [Environment]::GetEnvironmentVariable($__ok_slots[$__ok_i]), 'Process') }; " +
+    `$__ps_names = @(${names}); $__ps_slots = @(${slotNames}); $__ps_prev = @{}; ` +
+    'for ($__ps_i = 0; $__ps_i -lt $__ps_names.Length; $__ps_i++) { ' +
+    '$__ps_prev[$__ps_names[$__ps_i]] = [Environment]::GetEnvironmentVariable($__ps_names[$__ps_i]); ' +
+    "[Environment]::SetEnvironmentVariable($__ps_names[$__ps_i], [Environment]::GetEnvironmentVariable($__ps_slots[$__ps_i]), 'Process') }; " +
     `try { ${command} } finally { ` +
-    'for ($__ok_i = 0; $__ok_i -lt $__ok_names.Length; $__ok_i++) { ' +
-    "[Environment]::SetEnvironmentVariable($__ok_names[$__ok_i], $__ok_prev[$__ok_names[$__ok_i]], 'Process'); " +
-    "[Environment]::SetEnvironmentVariable($__ok_slots[$__ok_i], $null, 'Process') }; " +
-    'Remove-Variable __ok_names, __ok_slots, __ok_prev, __ok_i -ErrorAction SilentlyContinue }';
+    'for ($__ps_i = 0; $__ps_i -lt $__ps_names.Length; $__ps_i++) { ' +
+    "[Environment]::SetEnvironmentVariable($__ps_names[$__ps_i], $__ps_prev[$__ps_names[$__ps_i]], 'Process'); " +
+    "[Environment]::SetEnvironmentVariable($__ps_slots[$__ps_i], $null, 'Process') }; " +
+    'Remove-Variable __ps_names, __ps_slots, __ps_prev, __ps_i -ErrorAction SilentlyContinue }';
   return ['-NoExit', '-EncodedCommand', encodePowerShellCommand(script)];
 }
 

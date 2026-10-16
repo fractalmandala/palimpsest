@@ -1,10 +1,10 @@
+import { t } from '@lingui/core/macro';
 import type {
   ThreadAuthMethod,
   ThreadInfo,
   ThreadStatus,
 } from '@palimpsest/core/acp/thread-protocol';
 import type { TerminalCli } from '@palimpsest/core/handoff';
-import { t } from '@lingui/core/macro';
 
 export type ThreadAuthActionKind = 'resume' | 'retry' | 'new-chat' | 'terminal-sign-in';
 

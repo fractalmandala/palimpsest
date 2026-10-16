@@ -1,9 +1,9 @@
+import { Trans } from '@lingui/react/macro';
 import {
   PICKER_LOCALES,
   SUPPORTED_LOCALES,
   type SupportedLocale,
 } from '@palimpsest/core/i18n/locales';
-import { Trans } from '@lingui/react/macro';
 import type { Ref } from 'react';
 import {
   Select,

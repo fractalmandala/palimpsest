@@ -1,7 +1,4 @@
-import {
-  discoverGitRepository,
-  type GitRepository,
-} from '@palimpsest/core/git-repository';
+import { discoverGitRepository, type GitRepository } from '@palimpsest/core/git-repository';
 import { getLogger } from './logger.ts';
 import { classifyParcelNotification } from './parcel-recovery.ts';
 import { subscribeParcel } from './parcel-subscription.ts';

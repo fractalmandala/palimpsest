@@ -1,8 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import type {
-  ThreadClientFrame,
-  ThreadServerFrame,
-} from '@palimpsest/core/acp/thread-protocol';
+import type { ThreadClientFrame, ThreadServerFrame } from '@palimpsest/core/acp/thread-protocol';
 import type { WebSocketRoute } from '@playwright/test';
 import { expect, test, waitForActiveProviderSynced } from './_helpers';
 import { startHiddenChatAgent } from './hidden-chat-transport.test-helper';

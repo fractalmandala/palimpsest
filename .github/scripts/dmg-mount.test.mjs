@@ -56,7 +56,7 @@ describe('withMountedDmg', () => {
 
     expect(result).toBe('callback-result');
     expect(seen).toMatch(/Palimpsest\.app$/);
-    expect(seen).not.toMatch(/ok-dmg-mount-/);
+    expect(seen).not.toMatch(/ps-dmg-mount-/);
 
     const attach = calls.find((c) => c[1] === 'attach');
     expect(attach).toBeDefined();

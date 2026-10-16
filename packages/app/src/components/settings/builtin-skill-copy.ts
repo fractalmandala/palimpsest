@@ -8,7 +8,7 @@ export function useBuiltinSkillBlurb(): (idOrName: string) => string | null {
       case 'palimpsest-discovery':
         return t`How to set up new projects with Palimpsest.`;
       case 'write-skill':
-      case 'open-knowledge-write-skill':
+      case 'palimpsest-write-skill':
         return t`How to write a new skill and install it.`;
       case 'project':
       case 'palimpsest':

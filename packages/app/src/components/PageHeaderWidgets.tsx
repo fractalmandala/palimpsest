@@ -1,7 +1,7 @@
-// oxlint-disable ok/no-raw-html-interactive-element -- matches the existing PropertyWidgets.tsx posture — raw `<input>` is the typed-input affordance shared across every frontmatter widget; migrating to shadcn `<Input>` is the file-wide pre-rule backlog described in PropertyWidgets.tsx's top-of-file ignore comment.
+// oxlint-disable ps/no-raw-html-interactive-element -- matches the existing PropertyWidgets.tsx posture — raw `<input>` is the typed-input affordance shared across every frontmatter widget; migrating to shadcn `<Input>` is the file-wide pre-rule backlog described in PropertyWidgets.tsx's top-of-file ignore comment.
 
-import { ALLOWED_IMAGE_MIME_TYPES } from '@palimpsest/core/constants/upload';
 import { useLingui } from '@lingui/react/macro';
+import { ALLOWED_IMAGE_MIME_TYPES } from '@palimpsest/core/constants/upload';
 import { ImagePlus, Smile, Upload, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { FrimousseEmojiPicker } from '@/components/emoji-picker';

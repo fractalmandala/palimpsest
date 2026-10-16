@@ -1,5 +1,7 @@
 const PS_CHECKPOINT_PREFIX = 'ps-checkpoint-v1: ';
 
+const LEGACY_CHECKPOINT_PREFIX = 'ok-checkpoint-v1: ';
+
 export type AutoConsolidationTrigger = 'dead-chain' | 'session-close' | 'boot' | 'ttl';
 
 export type ParsedCheckpoint =
@@ -92,10 +94,15 @@ export function parseCheckpoint(body: string): ParsedCheckpoint | null {
   if (!body) return null;
   for (const line of body.split('\n')) {
     const trimmed = line.trim();
-    if (!trimmed.startsWith(PS_CHECKPOINT_PREFIX)) continue;
+    const rest = trimmed.startsWith(PS_CHECKPOINT_PREFIX)
+      ? trimmed.slice(PS_CHECKPOINT_PREFIX.length)
+      : trimmed.startsWith(LEGACY_CHECKPOINT_PREFIX)
+        ? trimmed.slice(LEGACY_CHECKPOINT_PREFIX.length)
+        : null;
+    if (rest === null) continue;
     let parsed: unknown;
     try {
-      parsed = JSON.parse(trimmed.slice(PS_CHECKPOINT_PREFIX.length));
+      parsed = JSON.parse(rest);
     } catch {
       return null;
     }

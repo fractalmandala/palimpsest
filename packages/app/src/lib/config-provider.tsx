@@ -1,12 +1,6 @@
 import { HocuspocusProvider } from '@hocuspocus/provider';
-import {
-  bindConfigDoc,
-  type ConfigBinding,
-} from '@palimpsest/core/config/bind-config-doc';
-import {
-  bindPsignoreDoc,
-  type PsignoreBinding,
-} from '@palimpsest/core/config/bind-psignore-doc';
+import { bindConfigDoc, type ConfigBinding } from '@palimpsest/core/config/bind-config-doc';
+import { bindPsignoreDoc, type PsignoreBinding } from '@palimpsest/core/config/bind-psignore-doc';
 import type { WriteScope } from '@palimpsest/core/config/errors';
 import { mergeLayered } from '@palimpsest/core/config/merge-layered';
 import type { Config } from '@palimpsest/core/config/schema';
@@ -55,7 +49,7 @@ function logProviderEvent(
 ) {
   console.warn(
     JSON.stringify({
-      event: `ok-${role}-${event}`,
+      event: `ps-${role}-${event}`,
       docName,
       code: closeEvent?.code,
       reason: closeEvent?.reason ?? undefined,

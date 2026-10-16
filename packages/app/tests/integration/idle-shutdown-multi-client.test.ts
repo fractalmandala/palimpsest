@@ -12,12 +12,7 @@ import { join, resolve } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
 import { HocuspocusProvider } from '@hocuspocus/provider';
 import { defaultScheduler, LOCAL_DIR, PS_DIR } from '@palimpsest/core';
-import {
-  type BootedServer,
-  bootServer,
-  ConfigSchema,
-  ensureProjectGit,
-} from '@palimpsest/server';
+import { type BootedServer, bootServer, ConfigSchema, ensureProjectGit } from '@palimpsest/server';
 import { afterAll, beforeAll, expect, onTestFinished, test, vi } from 'vitest';
 import * as Y from 'yjs';
 import { configureTestGitRepository } from '../../../../test-support/configure-git-fixture.test-helper.ts';

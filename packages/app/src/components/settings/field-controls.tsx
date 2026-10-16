@@ -1,10 +1,7 @@
-import {
-  type ConfigValidationError,
-  isKnownConfigError,
-} from '@palimpsest/core/config/errors';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { type ConfigValidationError, isKnownConfigError } from '@palimpsest/core/config/errors';
 import { getFieldMeta } from '@palimpsest/core/config/field-registry';
 import { type Config, ConfigSchema } from '@palimpsest/core/config/schema';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { Check, RotateCcw } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useEffect, useRef, useState } from 'react';

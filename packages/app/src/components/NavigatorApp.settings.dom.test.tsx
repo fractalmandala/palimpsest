@@ -1,3 +1,4 @@
+import { I18nProvider } from '@lingui/react';
 import type { ConfigPatch } from '@palimpsest/core/config/schema';
 import type {
   PsAboutInfo,
@@ -5,7 +6,6 @@ import type {
   PsUserConfigPatchResult,
   PsUserConfigSnapshot,
 } from '@palimpsest/core/desktop-bridge';
-import { I18nProvider } from '@lingui/react';
 import { act, cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ThemeProvider } from 'next-themes';
@@ -87,14 +87,12 @@ function makeNavigatorBridge(
   const setThemeSource = vi.fn(async () => ({ ok: true as const }));
   const setLanguagePreference = vi.fn(async () => ({ ok: true as const }));
   const openExternal = vi.fn(async (_url: string) => undefined);
-  const checkNow = vi.fn(async () => undefined);
   const menuDispatch = vi.fn(async (request: { kind: string }) =>
     request.kind === 'query'
       ? ({
           recentProjects: [],
           spellCheckEnabled: true,
           showDevToolsMenu: false,
-          canCheckForUpdates: false,
           canReconfigureMcpWiring: options.integrationsMenuItem === true,
         } as unknown as PsMenuRendererSnapshot)
       : undefined,
@@ -119,8 +117,6 @@ function makeNavigatorBridge(
         about: NAVIGATOR_ABOUT,
       }),
     },
-    update: { checkNow },
-    onUpdateManualCheck: () => () => {},
     onRecentRemovedMissing: () => () => {},
     setThemeSource,
     setLanguagePreference,
@@ -153,7 +149,6 @@ function makeNavigatorBridge(
     patches,
     menuDispatch,
     openExternal,
-    checkNow,
     setThemeSource,
     setLanguagePreference,
     emitChange: (text: string) => {
@@ -284,14 +279,14 @@ describe('NavigatorApp settings', () => {
     expect(screen.queryByTestId('settings-user-config-unavailable')).toBeNull();
   });
 
-  test('About & updates is listed, enabled and opens without a project', async () => {
+  test('About is listed, enabled and opens without a project', async () => {
     const user = userEvent.setup();
     const stub = makeNavigatorBridge('');
     renderNavigator(stub.bridge, { asWindowBridge: true });
     await screen.findByTestId('settings-dialog', {}, { timeout: ASYNC_TIMEOUT_MS });
 
     const about = sidebarItem('about');
-    expect(about.textContent).toBe('About & updates');
+    expect(about.textContent).toBe('About');
     expect(about.disabled).toBe(false);
     expect(about.getAttribute('aria-disabled')).toBeNull();
     await user.click(about);
@@ -303,17 +298,15 @@ describe('NavigatorApp settings', () => {
     await user.click(await within(section).findByRole('button', { name: 'Release notes' }));
     expect(stub.openExternal).toHaveBeenCalledWith(NAVIGATOR_ABOUT.releaseNotesUrl);
 
-    await user.click(within(section).getByRole('button', { name: 'Check for updates' }));
-    expect(stub.checkNow).toHaveBeenCalledTimes(1);
   });
 
-  test('settings search and the version link both reach About & updates', async () => {
+  test('settings search and the version link both reach About', async () => {
     const user = userEvent.setup();
     const stub = makeNavigatorBridge('');
     renderNavigator(stub.bridge, { asWindowBridge: true });
     await screen.findByTestId('settings-dialog', {}, { timeout: ASYNC_TIMEOUT_MS });
 
-    await user.type(screen.getByTestId('settings-search-input'), 'updates');
+    await user.type(screen.getByTestId('settings-search-input'), 'version');
     await user.click(await screen.findByTestId('settings-search-result-section:about'));
     expect(
       await screen.findByTestId('settings-about', {}, { timeout: ASYNC_TIMEOUT_MS }),

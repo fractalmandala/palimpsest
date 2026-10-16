@@ -1,9 +1,6 @@
-import {
-  type AttachmentPart,
-  isTextishMime,
-} from '@palimpsest/core/acp/thread-protocol';
 import { i18n } from '@lingui/core';
 import { plural, t } from '@lingui/core/macro';
+import { type AttachmentPart, isTextishMime } from '@palimpsest/core/acp/thread-protocol';
 import { formatToolList } from '@/lib/tool-list-format';
 
 export const ALLOWED_IMAGE_MIMES: ReadonlySet<string> = new Set([

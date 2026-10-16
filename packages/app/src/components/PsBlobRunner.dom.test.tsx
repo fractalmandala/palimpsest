@@ -95,7 +95,7 @@ describe('PsBlobRunner', () => {
   test('a press in the lower band ducks, and releasing stands the blob back up', async () => {
     const { PsBlobRunner } = await import('./PsBlobRunner');
     const { createRunnerState, isDucked, setDucking, startRunner } = await import(
-      './ok-blob-runner-logic'
+      './ps-blob-runner-logic'
     );
     render(<PsBlobRunner />);
 
@@ -114,7 +114,7 @@ describe('PsBlobRunner', () => {
 
   test('anchors the score to the player physically, not logically', async () => {
     const { PsBlobRunner } = await import('./PsBlobRunner');
-    const { PLAYER_X } = await import('./ok-blob-runner-logic');
+    const { PLAYER_X } = await import('./ps-blob-runner-logic');
     render(<PsBlobRunner />);
 
     const score = document.querySelector<HTMLElement>('[data-slot="ps-blob-runner-score"]');
@@ -126,7 +126,7 @@ describe('PsBlobRunner', () => {
   test('keeps the anchor with a stored best, which adds a second span', async () => {
     localStorage.setItem('ps-blob-runner-best', '421');
     const { PsBlobRunner } = await import('./PsBlobRunner');
-    const { PLAYER_X } = await import('./ok-blob-runner-logic');
+    const { PLAYER_X } = await import('./ps-blob-runner-logic');
     render(<PsBlobRunner />);
 
     const score = document.querySelector<HTMLElement>('[data-slot="ps-blob-runner-score"]');

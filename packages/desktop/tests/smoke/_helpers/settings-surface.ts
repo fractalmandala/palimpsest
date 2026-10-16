@@ -57,8 +57,8 @@ export function seedProjectProfile(
   prefix: string,
   options: SeedProjectProfileOptions = {},
 ): SeededProjectProfile {
-  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), `ok-${prefix}-home-`)));
-  const projectDir = realpathSync(mkdtempSync(join(tmpdir(), `ok-${prefix}-project-`)));
+  const tmpHome = realpathSync(mkdtempSync(join(tmpdir(), `ps-${prefix}-home-`)));
+  const projectDir = realpathSync(mkdtempSync(join(tmpdir(), `ps-${prefix}-project-`)));
   mkdirSync(join(projectDir, '.ps'), { recursive: true });
   writeFileSync(join(projectDir, '.ps', 'config.yml'), "content:\n  dir: '.'\n");
   writeFileSync(join(projectDir, 'note.md'), '# Note\n\nProse for the checker to look at.\n');
@@ -203,7 +203,7 @@ export async function awaitUserInterfaceLanguage(
 }
 
 export function seedExtraProject(prefix: string): string {
-  const dir = realpathSync(mkdtempSync(join(tmpdir(), `ok-${prefix}-project2-`)));
+  const dir = realpathSync(mkdtempSync(join(tmpdir(), `ps-${prefix}-project2-`)));
   mkdirSync(join(dir, '.ps'), { recursive: true });
   writeFileSync(join(dir, '.ps', 'config.yml'), "content:\n  dir: '.'\n");
   writeFileSync(join(dir, 'note.md'), '# Second\n\nMore prose for the checker.\n');

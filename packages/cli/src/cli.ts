@@ -38,7 +38,7 @@ import { mcpCommand } from './commands/mcp.ts';
 import { migrateCommand } from './commands/migrate.ts';
 import { openCommand } from './commands/open.ts';
 import { previewCommand } from './commands/preview.ts';
-import { psCommand } from './commands/ps.ts';
+import { serversCommand } from './commands/servers.ts';
 import { pullCommand } from './commands/pull.ts';
 import { pushCommand } from './commands/push.ts';
 import { repairSkillsCommand } from './commands/repair-skills.ts';
@@ -93,7 +93,7 @@ program
     if (anchorRoot !== null) {
       recordInvocationCwd(process.cwd());
       process.chdir(anchorRoot);
-      console.error(`[ok] Using Palimpsest project at ${anchorRoot}`);
+      console.error(`[ps] Using Palimpsest project at ${anchorRoot}`);
     }
 
     let config: Config;
@@ -103,16 +103,16 @@ program
       if (shouldAnnounceRemovedKeys(subcommandName)) {
         for (const diagnostic of loaded.diagnostics) {
           if (diagnostic.code !== 'REMOVED_KEY') continue;
-          console.error(`[ok] ${humanFormat(diagnostic)}`);
+          console.error(`[ps] ${humanFormat(diagnostic)}`);
         }
       }
       for (const key of loaded.ignoredCommittedKeys) {
-        console.error(`[ok] ${formatIgnoredCommittedKey(key)}`);
+        console.error(`[ps] ${formatIgnoredCommittedKey(key)}`);
       }
     } catch (err) {
       if (subcommandName === 'uninstall' || subcommandName === 'deinit') {
         console.error(
-          `[ok] project config could not be loaded; ${subcommandName} will use defaults: ${err instanceof Error ? err.message : String(err)}`,
+          `[ps] project config could not be loaded; ${subcommandName} will use defaults: ${err instanceof Error ? err.message : String(err)}`,
         );
         config = ConfigSchema.parse({});
       } else {
@@ -187,7 +187,7 @@ program.addCommand(statusCommand(() => resolvedConfig));
 program.addCommand(deinitCommand());
 program.addCommand(uninstallCommand());
 
-program.addCommand(psCommand());
+program.addCommand(serversCommand());
 
 program.addCommand(diagnoseCommand());
 

@@ -385,11 +385,7 @@ describe('SettingsDialogShell userBinding gating (Tier-3 mount)', () => {
 
     expect(screen.getByTestId('settings-sidebar-item-claude-desktop')).toBeTruthy();
     expect(
-      servedCore.readersOf(
-        '@palimpsest/core/constants/feature-flags',
-        'SHOW_INSTALL_SKILL',
-        since,
-      ),
+      servedCore.readersOf('@palimpsest/core/constants/feature-flags', 'SHOW_INSTALL_SKILL', since),
     ).toEqual(['components/settings/SettingsDialogShell.tsx']);
   });
 
@@ -405,11 +401,7 @@ describe('SettingsDialogShell userBinding gating (Tier-3 mount)', () => {
     });
     expect(screen.queryByTestId('settings-search-result-rule:MD013')).toBeNull();
     expect(
-      servedCore.readersOf(
-        '@palimpsest/core/markdown/lint',
-        'MARKDOWNLINT_RULE_CATALOG',
-        since,
-      ),
+      servedCore.readersOf('@palimpsest/core/markdown/lint', 'MARKDOWNLINT_RULE_CATALOG', since),
     ).toEqual(['components/settings/settings-search-index.ts']);
   });
 });

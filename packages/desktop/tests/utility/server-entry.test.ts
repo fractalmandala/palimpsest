@@ -320,8 +320,7 @@ describe('setupUtility (IPC handshake + lifecycle)', () => {
 
     setupUtility({
       parentPort: env.parentPort,
-      importServer: () =>
-        Promise.resolve({} as unknown as typeof import('@palimpsest/server')),
+      importServer: () => Promise.resolve({} as unknown as typeof import('@palimpsest/server')),
       exit: env.exit,
       parentPid: 99999,
       killProbe: env.killProbe,
@@ -362,8 +361,7 @@ describe('setupUtility (IPC handshake + lifecycle)', () => {
 
     setupUtility({
       parentPort: env.parentPort,
-      importServer: () =>
-        Promise.resolve({} as unknown as typeof import('@palimpsest/server')),
+      importServer: () => Promise.resolve({} as unknown as typeof import('@palimpsest/server')),
       exit: env.exit,
       parentPid: 99999,
       killProbe: env.killProbe,
@@ -401,8 +399,7 @@ describe('setupUtility (IPC handshake + lifecycle)', () => {
 
     setupUtility({
       parentPort: env.parentPort,
-      importServer: () =>
-        Promise.resolve({} as unknown as typeof import('@palimpsest/server')),
+      importServer: () => Promise.resolve({} as unknown as typeof import('@palimpsest/server')),
       exit: env.exit,
       parentPid: 99999,
       killProbe: env.killProbe,
@@ -435,8 +432,7 @@ describe('setupUtility (IPC handshake + lifecycle)', () => {
 
     setupUtility({
       parentPort: env.parentPort,
-      importServer: () =>
-        Promise.resolve({} as unknown as typeof import('@palimpsest/server')),
+      importServer: () => Promise.resolve({} as unknown as typeof import('@palimpsest/server')),
       exit: env.exit,
       parentPid: 99999,
       killProbe: env.killProbe,
@@ -467,8 +463,7 @@ describe('setupUtility (IPC handshake + lifecycle)', () => {
 
     setupUtility({
       parentPort: env.parentPort,
-      importServer: () =>
-        Promise.resolve({} as unknown as typeof import('@palimpsest/server')),
+      importServer: () => Promise.resolve({} as unknown as typeof import('@palimpsest/server')),
       exit: env.exit,
       parentPid: 99999,
       killProbe: env.killProbe,

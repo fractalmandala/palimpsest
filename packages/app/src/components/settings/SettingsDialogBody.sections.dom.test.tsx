@@ -1058,11 +1058,7 @@ describe('SettingsDialogBody section runtime dispatch', () => {
 
     expect(screen.getByText('Install in Claude Desktop')).not.toBeNull();
     expect(
-      servedCore.readersOf(
-        '@palimpsest/core/constants/feature-flags',
-        'SHOW_INSTALL_SKILL',
-        since,
-      ),
+      servedCore.readersOf('@palimpsest/core/constants/feature-flags', 'SHOW_INSTALL_SKILL', since),
     ).toEqual(['components/settings/IntegrationsSection.tsx']);
   });
 

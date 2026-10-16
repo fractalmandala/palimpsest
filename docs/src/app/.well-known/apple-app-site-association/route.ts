@@ -1,7 +1,10 @@
 export const dynamic = 'force-static';
 
 const APPLE_TEAM_ID = '6NZGSG335T';
-const APP_BUNDLE_IDS = ['com.fractalmandala.palimpsest', 'com.fractalmandala.palimpsest.beta'] as const;
+const APP_BUNDLE_IDS = [
+  'com.fractalmandala.palimpsest',
+  'com.fractalmandala.palimpsest.beta',
+] as const;
 
 const AASA_MANIFEST = {
   applinks: {

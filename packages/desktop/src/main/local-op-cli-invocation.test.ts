@@ -7,10 +7,8 @@ import {
   resolveLocalOpCliInvocation,
 } from './local-op-cli-invocation.ts';
 
-const WIN_EXE =
-  'C:\\Users\\q\\AppData\\Local\\Programs\\@palimpsestdesktop\\Palimpsest.exe';
-const WIN_RESOURCES =
-  'C:\\Users\\q\\AppData\\Local\\Programs\\@palimpsestdesktop\\resources';
+const WIN_EXE = 'C:\\Users\\q\\AppData\\Local\\Programs\\@palimpsestdesktop\\Palimpsest.exe';
+const WIN_RESOURCES = 'C:\\Users\\q\\AppData\\Local\\Programs\\@palimpsestdesktop\\resources';
 
 const WORKSPACE_CLI = '/src/palimpsest/packages/cli/dist/cli.mjs';
 

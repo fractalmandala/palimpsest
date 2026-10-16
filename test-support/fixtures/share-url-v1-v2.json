@@ -4,7 +4,7 @@
     "maxV2TokenChars": 3984,
     "maxV2PayloadBytes": 2988,
     "maxV2SharedUrlUtf8Bytes": 2985,
-    "maxV2CustomUriChars": 4012,
+    "maxV2CustomUriChars": 4009,
     "maxDeferredCookieBytes": 4096,
     "maxCase": {
       "sharedUrl": "https://github.com/o/r/blob/main/wiki/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.md",
@@ -20,7 +20,7 @@
     {
       "id": "v1-document",
       "version": 1,
-      "sharedUrl": "https://github.com/fractalmandala/palimpsest/blob/main/docs/guide.md",
+      "sharedUrl": "https://github.com/inkeep/open-knowledge/blob/main/docs/guide.md",
       "target": {
         "kind": "doc",
         "docPath": "docs/guide.md"
@@ -30,7 +30,7 @@
     {
       "id": "v1-folder",
       "version": 1,
-      "sharedUrl": "https://github.com/fractalmandala/palimpsest/tree/main/docs/guides",
+      "sharedUrl": "https://github.com/inkeep/open-knowledge/tree/main/docs/guides",
       "target": {
         "kind": "folder",
         "folderPath": "docs/guides"
@@ -40,7 +40,7 @@
     {
       "id": "v1-repository-root",
       "version": 1,
-      "sharedUrl": "https://github.com/fractalmandala/palimpsest/tree/main",
+      "sharedUrl": "https://github.com/inkeep/open-knowledge/tree/main",
       "target": {
         "kind": "folder",
         "folderPath": ""
@@ -51,7 +51,7 @@
       "id": "v2-one-segment-document",
       "version": 2,
       "contentRootDepth": 1,
-      "sharedUrl": "https://github.com/fractalmandala/palimpsest/blob/main/wiki/modules/backend-libraries.md",
+      "sharedUrl": "https://github.com/inkeep/open-knowledge/blob/main/wiki/modules/backend-libraries.md",
       "target": {
         "kind": "doc",
         "docPath": "modules/backend-libraries.md"
@@ -62,7 +62,7 @@
       "id": "v2-one-segment-folder",
       "version": 2,
       "contentRootDepth": 1,
-      "sharedUrl": "https://github.com/fractalmandala/palimpsest/tree/main/wiki/modules",
+      "sharedUrl": "https://github.com/inkeep/open-knowledge/tree/main/wiki/modules",
       "target": {
         "kind": "folder",
         "folderPath": "modules"
@@ -73,7 +73,7 @@
       "id": "v2-one-segment-content-root",
       "version": 2,
       "contentRootDepth": 1,
-      "sharedUrl": "https://github.com/fractalmandala/palimpsest/tree/main/wiki",
+      "sharedUrl": "https://github.com/inkeep/open-knowledge/tree/main/wiki",
       "target": {
         "kind": "folder",
         "folderPath": ""
@@ -84,7 +84,7 @@
       "id": "v2-two-segment-document",
       "version": 2,
       "contentRootDepth": 2,
-      "sharedUrl": "https://github.com/fractalmandala/palimpsest/blob/main/docs/wiki/guide.md",
+      "sharedUrl": "https://github.com/inkeep/open-knowledge/blob/main/docs/wiki/guide.md",
       "target": {
         "kind": "doc",
         "docPath": "guide.md"
@@ -95,7 +95,7 @@
       "id": "v2-unicode-root",
       "version": 2,
       "contentRootDepth": 2,
-      "sharedUrl": "https://github.com/fractalmandala/palimpsest/blob/main/%E7%9F%A5%E8%AD%98/%E8%B3%87%E6%96%99/%E6%A1%88%E5%85%A7.md",
+      "sharedUrl": "https://github.com/inkeep/open-knowledge/blob/main/%E7%9F%A5%E8%AD%98/%E8%B3%87%E6%96%99/%E6%A1%88%E5%85%A7.md",
       "target": {
         "kind": "doc",
         "docPath": "案內.md"
@@ -106,7 +106,7 @@
       "id": "v2-slashed-branch",
       "version": 2,
       "contentRootDepth": 1,
-      "sharedUrl": "https://github.com/fractalmandala/palimpsest/blob/feat%2Fshare-v2/wiki/a.md",
+      "sharedUrl": "https://github.com/inkeep/open-knowledge/blob/feat%2Fshare-v2/wiki/a.md",
       "target": {
         "kind": "doc",
         "docPath": "a.md"
@@ -130,19 +130,19 @@
       "id": "v1-noncanonical-pad-bits",
       "token": "AWh0dHBzOi8vZ2l0aHViLmNvbS9pbmtlZXAvb3Blbi1rbm93bGVkZ2UvYmxvYi9tYWluL2RvY3MvZ3VpZGUubWR",
       "canonicalToken": "AWh0dHBzOi8vZ2l0aHViLmNvbS9pbmtlZXAvb3Blbi1rbm93bGVkZ2UvYmxvYi9tYWluL2RvY3MvZ3VpZGUubWQ",
-      "sharedUrl": "https://github.com/fractalmandala/palimpsest/blob/main/docs/guide.md"
+      "sharedUrl": "https://github.com/inkeep/open-knowledge/blob/main/docs/guide.md"
     },
     {
       "id": "v1-query-suffix",
       "token": "AWh0dHBzOi8vZ2l0aHViLmNvbS9pbmtlZXAvb3Blbi1rbm93bGVkZ2UvYmxvYi9tYWluL2RvY3MvZ3VpZGUubWQ?utm_source=slack",
       "canonicalToken": "AWh0dHBzOi8vZ2l0aHViLmNvbS9pbmtlZXAvb3Blbi1rbm93bGVkZ2UvYmxvYi9tYWluL2RvY3MvZ3VpZGUubWQ",
-      "sharedUrl": "https://github.com/fractalmandala/palimpsest/blob/main/docs/guide.md"
+      "sharedUrl": "https://github.com/inkeep/open-knowledge/blob/main/docs/guide.md"
     },
     {
       "id": "v1-fragment-suffix",
       "token": "AWh0dHBzOi8vZ2l0aHViLmNvbS9pbmtlZXAvb3Blbi1rbm93bGVkZ2UvYmxvYi9tYWluL2RvY3MvZ3VpZGUubWQ#section",
       "canonicalToken": "AWh0dHBzOi8vZ2l0aHViLmNvbS9pbmtlZXAvb3Blbi1rbm93bGVkZ2UvYmxvYi9tYWluL2RvY3MvZ3VpZGUubWQ",
-      "sharedUrl": "https://github.com/fractalmandala/palimpsest/blob/main/docs/guide.md"
+      "sharedUrl": "https://github.com/inkeep/open-knowledge/blob/main/docs/guide.md"
     }
   ],
   "invalidTokens": [

@@ -1,6 +1,6 @@
-import type { CreateScenario, InstallState } from '@palimpsest/core';
 import { i18n } from '@lingui/core';
 import * as actualLinguiMacro from '@lingui/react/macro';
+import type { CreateScenario, InstallState } from '@palimpsest/core';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { JSONContent } from '@tiptap/core';
 import { type ReactNode, type Ref, useImperativeHandle, useRef, useState } from 'react';

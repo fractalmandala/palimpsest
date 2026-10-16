@@ -1,9 +1,5 @@
 import { HocuspocusProvider } from '@hocuspocus/provider';
-import {
-  addsBlankLines,
-  composeWithDerivedBody,
-  normalizeBridge,
-} from '@palimpsest/core/bridge';
+import { addsBlankLines, composeWithDerivedBody, normalizeBridge } from '@palimpsest/core/bridge';
 import { LINEAGE_EPOCH_KEY } from '@palimpsest/core/constants/doc-lifecycle';
 import { stripFrontmatter } from '@palimpsest/core/extensions/frontmatter';
 import { MarkdownManager } from '@palimpsest/core/markdown';

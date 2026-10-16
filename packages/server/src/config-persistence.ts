@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
+import type { Counter } from '@opentelemetry/api';
 import {
   addConfigSpanEvent,
   CONFIG_DOC_NAME_OKIGNORE,
@@ -20,7 +21,6 @@ import {
   resolveConfigPath,
   withFileLock,
 } from '@palimpsest/core/server';
-import type { Counter } from '@opentelemetry/api';
 import { parseDocument, stringify } from 'yaml';
 import type * as Y from 'yjs';
 import {

@@ -1,7 +1,4 @@
-import type {
-  RenamedAssetMapping,
-  RenamedDocMapping,
-} from '@palimpsest/core/schemas/api';
+import type { RenamedAssetMapping, RenamedDocMapping } from '@palimpsest/core/schemas/api';
 import type { RenamedFolderMapping } from './editor-tabs';
 
 export interface LocalRenameReconciliation {

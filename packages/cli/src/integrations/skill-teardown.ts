@@ -1,11 +1,7 @@
 import { existsSync, lstatSync, readdirSync, rmdirSync, rmSync } from 'node:fs';
 import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { USER_SKILL_HOSTS } from '@palimpsest/core';
-import {
-  BUNDLE_SKILL_NAME,
-  type BundleId,
-  USER_GLOBAL_BUNDLE_IDS,
-} from '@palimpsest/server';
+import { BUNDLE_SKILL_NAME, type BundleId, USER_GLOBAL_BUNDLE_IDS } from '@palimpsest/server';
 
 interface LegacyFanoutHost {
   readonly hostDir: string;

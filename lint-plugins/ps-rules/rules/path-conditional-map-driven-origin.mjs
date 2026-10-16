@@ -2,7 +2,7 @@ import { docsUrl } from '../docs.mjs';
 
 const URL = docsUrl('path-conditional-map-driven-origin');
 
-const MESSAGE = `Observer-side transact call missing sanctioned origin. Pass \`OBSERVER_SYNC_ORIGIN\` as the second argument: \`doc.transact(fn, OBSERVER_SYNC_ORIGIN)\`. Bare \`doc.transact(fn)\` (or a wrong origin) routes the write to \`openknowledge-service\` and breaks per-session UndoManager attribution. See ${URL}`;
+const MESSAGE = `Observer-side transact call missing sanctioned origin. Pass \`OBSERVER_SYNC_ORIGIN\` as the second argument: \`doc.transact(fn, OBSERVER_SYNC_ORIGIN)\`. Bare \`doc.transact(fn)\` (or a wrong origin) routes the write to \`palimpsest-service\` and breaks per-session UndoManager attribution. See ${URL}`;
 
 export const pathConditionalMapDrivenOrigin = {
   meta: {

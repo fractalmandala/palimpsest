@@ -1,9 +1,9 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
+// oxlint-disable ps/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
-import { ProblemDetailsSchema } from '@palimpsest/core/schemas/api';
-import type { TimelineEntry } from '@palimpsest/core/types/timeline';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
+import { ProblemDetailsSchema } from '@palimpsest/core/schemas/api';
+import type { TimelineEntry } from '@palimpsest/core/types/timeline';
 import {
   ArrowLeftRight,
   FilePlus,
@@ -66,7 +66,13 @@ function describeEntry(entry: TimelineEntry): { Icon: LucideIcon; label: string;
 
 function authorName(entry: TimelineEntry): string {
   if (entry.contributors.length > 0) return entry.contributors[0].name;
-  if (entry.author === 'openknowledge-service' || entry.author === 'server') return t`Auto-save`;
+  if (
+    entry.author === 'palimpsest-service' ||
+    entry.author === 'openknowledge-service' ||
+    entry.author === 'openknowledge-server' ||
+    entry.author === 'server'
+  )
+    return t`Auto-save`;
   return entry.author || t`Unknown`;
 }
 

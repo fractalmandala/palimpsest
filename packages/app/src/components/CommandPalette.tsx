@@ -1,7 +1,8 @@
-// oxlint-disable ok/no-raw-html-interactive-element -- pre-rule backlog — file uses raw <button>/<input>/<textarea> awaiting shadcn migration; tracked at https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-raw-html-interactive-element
+// oxlint-disable ps/no-raw-html-interactive-element -- pre-rule backlog — file uses raw <button>/<input>/<textarea> awaiting shadcn migration; tracked at https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-raw-html-interactive-element
 
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
+// oxlint-disable ps/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
+import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import type { WorktreeSelectorEntry } from '@palimpsest/core/git/worktree-selector-model';
 import {
   assertNeverSemanticQueryOutcome,
@@ -9,7 +10,6 @@ import {
   isSemanticSearchOffered,
   semanticProviderErrorBlocks,
 } from '@palimpsest/core/schemas/api';
-import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { Check, FileText, Folder, GitBranch, Hash, Sparkles } from 'lucide-react';
 import {
   type Dispatch,
@@ -1095,8 +1095,8 @@ export function CommandPalette({ bridge = null, open, onOpenChange }: CommandPal
                 {semanticView.notice === 'restart-required' ? (
                   <CommandEmpty data-testid="command-palette-semantic-restart-required">
                     <Trans>
-                      The provider's vector size kept changing. Restart Palimpsest before
-                      searching by meaning again.
+                      The provider's vector size kept changing. Restart Palimpsest before searching
+                      by meaning again.
                     </Trans>
                   </CommandEmpty>
                 ) : null}

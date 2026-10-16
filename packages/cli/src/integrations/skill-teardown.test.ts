@@ -47,7 +47,7 @@ describe('userGlobalSkillBundleTargets', () => {
   test('includes both built-in bundles by name (discovery + write-skill)', () => {
     const paths = userGlobalSkillBundleTargets(HOME).map((t) => t.path);
     expect(paths.some((p) => p.endsWith('/palimpsest-discovery'))).toBe(true);
-    expect(paths.some((p) => p.endsWith('/open-knowledge-write-skill'))).toBe(true);
+    expect(paths.some((p) => p.endsWith('/palimpsest-write-skill'))).toBe(true);
   });
 
   test('never targets the shared ~/.agents/skills root itself', () => {
@@ -76,7 +76,7 @@ describe('legacy fan-out sweep', () => {
   test('removes OK skill dirs left in hosts OK never supported', () => {
     const home = tmpHome();
     const zencoder = plantSkill(home, '.zencoder', 'palimpsest-discovery');
-    const terramind = plantSkill(home, '.terramind', 'open-knowledge-write-skill');
+    const terramind = plantSkill(home, '.terramind', 'palimpsest-write-skill');
     const tabnine = plantSkill(home, join('.tabnine', 'agent'), 'palimpsest-discovery');
     const rovodev = plantSkill(home, '.rovodev', 'palimpsest');
 

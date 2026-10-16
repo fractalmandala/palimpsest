@@ -107,9 +107,7 @@ describe('runSingleFileOpen', () => {
     expect(rec.openTargets).toEqual([
       `palimpsest://open?file=${encodeURIComponent('/Users/me/notes/todo.md')}`,
     ]);
-    expect(rec.openTargetOptions).toEqual([
-      { desktopBundlePath: '/Applications/Palimpsest.app' },
-    ]);
+    expect(rec.openTargetOptions).toEqual([{ desktopBundlePath: '/Applications/Palimpsest.app' }]);
     expect(rec.browserOpens).toHaveLength(0);
   });
 

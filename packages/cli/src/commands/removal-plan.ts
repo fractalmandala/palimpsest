@@ -2,10 +2,10 @@ import { lstatSync, readdirSync, readFileSync, rmSync, unlinkSync } from 'node:f
 import { basename, join, relative, resolve, sep } from 'node:path';
 import {
   currentDesktopProduct,
+  PROJECT_SKILL_PROJECTION_PATHS,
   PS_DIR,
   PS_USER_HOME_AUTH_FILE,
   PS_USER_HOME_SECRETS_FILE,
-  PROJECT_SKILL_PROJECTION_PATHS,
   resolveDesktopProductName,
   SHARED_OK_ENTRIES,
   SKILLS_STORE_DIRNAME,
@@ -21,7 +21,7 @@ import {
 import { clearAllEmbeddingsKeys } from '../auth/embeddings-key-store.ts';
 import { clearTokenFromAllBackends } from '../auth/token-store.ts';
 import {
-  DESKTOP_LEGACY_PRODUCT_NAME,
+  DESKTOP_LEGACY_PRODUCT_NAMES,
   desktopUpdaterCacheDir,
   desktopUserDataDir,
   stateDirIsOurs,
@@ -395,14 +395,16 @@ export function applicationDataOps(
   ];
 
   if (platform === 'darwin' && resolveDesktopProductName() === 'stable') {
-    const legacy = desktopUserDataDir({ ...options, productName: DESKTOP_LEGACY_PRODUCT_NAME });
-    ops.push({
-      kind: 'remove-path',
-      group: 'Application data',
-      label: `Remove ${tildify(legacy, home)} (only if it is Palimpsest's)`,
-      path: legacy,
-      requireOurState: true,
-    });
+    for (const legacyProductName of DESKTOP_LEGACY_PRODUCT_NAMES) {
+      const legacy = desktopUserDataDir({ ...options, productName: legacyProductName });
+      ops.push({
+        kind: 'remove-path',
+        group: 'Application data',
+        label: `Remove ${tildify(legacy, home)} (only if it is Palimpsest's)`,
+        path: legacy,
+        requireOurState: true,
+      });
+    }
   }
 
   ops.push({

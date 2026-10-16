@@ -1,5 +1,5 @@
-import type { AttachmentPart, ThreadInfo } from '@palimpsest/core/acp/thread-protocol';
 import { t } from '@lingui/core/macro';
+import type { AttachmentPart, ThreadInfo } from '@palimpsest/core/acp/thread-protocol';
 import { toast } from 'sonner';
 import { agentDisplayName } from '@/lib/acp/agent-display';
 import { getAgentThreadClient, ThreadChannelUnavailableError } from '@/lib/acp/thread-client';

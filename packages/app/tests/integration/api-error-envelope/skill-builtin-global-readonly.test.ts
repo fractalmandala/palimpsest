@@ -20,7 +20,7 @@ const GLOBAL_BUILTINS = [
     description: 'What Palimpsest is and how to install it.',
   },
   {
-    name: 'open-knowledge-write-skill',
+    name: 'palimpsest-write-skill',
     description: 'Author a new Agent Skill.',
   },
 ] as const;
@@ -87,9 +87,7 @@ describe('built-in global palimpsest skills: read-only surfacing', () => {
     const beforeParsed = SkillsListSuccessSchema.safeParse(await before.json());
     expect(beforeParsed.success).toBe(true);
     if (!beforeParsed.success) return;
-    expect(beforeParsed.data.skills.find((s) => s.name === 'palimpsest')?.installed).toBe(
-      false,
-    );
+    expect(beforeParsed.data.skills.find((s) => s.name === 'palimpsest')?.installed).toBe(false);
 
     const res = await fetch(`${base()}/api/skill/install`, {
       method: 'POST',

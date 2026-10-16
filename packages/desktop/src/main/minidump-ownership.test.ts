@@ -102,14 +102,7 @@ describe('symlinked launch paths', () => {
     return {
       dir,
       realRoot,
-      linkedExecutable: join(
-        dir,
-        'link',
-        'Palimpsest.app',
-        'Contents',
-        'MacOS',
-        'Palimpsest',
-      ),
+      linkedExecutable: join(dir, 'link', 'Palimpsest.app', 'Contents', 'MacOS', 'Palimpsest'),
     };
   }
 
@@ -254,9 +247,7 @@ describe('crashpad app-version annotations', () => {
   });
 
   test('annotations that name no version have no version', () => {
-    expect(versionOf({ annotations: { _productName: 'Palimpsest', prod: 'Electron' } })).toBe(
-      null,
-    );
+    expect(versionOf({ annotations: { _productName: 'Palimpsest', prod: 'Electron' } })).toBe(null);
   });
 
   test('a dump truncated before its annotations has no version', () => {

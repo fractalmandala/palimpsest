@@ -1,5 +1,5 @@
-import type { ValidationDocResult } from '@palimpsest/core/markdown/lint';
 import { t } from '@lingui/core/macro';
+import type { ValidationDocResult } from '@palimpsest/core/markdown/lint';
 
 type Diagnostic = ValidationDocResult['diagnostics'][number];
 

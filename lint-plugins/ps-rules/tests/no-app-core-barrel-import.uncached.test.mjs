@@ -30,7 +30,7 @@ import { isInScope } from '../scope.mjs';
 
 const ROOT = fileURLToPath(new URL('../../..', import.meta.url));
 const RULE = 'no-app-core-barrel-import';
-const CODE = `ok(${RULE})`;
+const CODE = `ps(${RULE})`;
 const FIXTURE = `lint-plugins/ps-rules/__fixtures__/${RULE}.fixture.tsx`;
 const README = 'lint-plugins/ps-rules/README.md';
 const BARE_IMPORT = "import { sharedExtensions } from '@palimpsest/core';\n";
@@ -116,7 +116,7 @@ describe(`${RULE} oxlint rule`, () => {
     for (const fire of fires) {
       const [line, column] = fire.position.split(':').map(Number);
       expect(lines[line - 1].slice(column - 1)).toMatch(
-        /^['`]@inkeep\/open-knowledge-core(?:[?#][^'`]*)?['`]/,
+        /^['`]@palimpsest\/core(?:[?#][^'`]*)?['`]/,
       );
       expect(fire.message).toContain('Import each binding from the core subpath');
       expect(fire.message).toMatch(/https?:\/\/[^\s]+/);

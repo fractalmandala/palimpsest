@@ -1079,9 +1079,6 @@ msgstr "关于"
 msgid "About {appName}"
 msgstr "关于 {appName}"
 
-msgid "About & updates"
-msgstr "关于和更新"
-
 msgid "Above"
 msgstr "上方"
 
@@ -1737,12 +1734,6 @@ msgstr "自动"
 msgid "Automatic picks a free port each start. Choose a fixed port to keep the same address across restarts."
 msgstr "自动模式会在每次启动时选择一个空闲端口。选择固定端口可在重启后保持相同地址。"
 
-msgid "Automatic updates"
-msgstr "自动更新"
-
-msgid "Automatic updates are not available right now."
-msgstr "目前无法自动更新。"
-
 msgid "Available"
 msgstr "可用"
 
@@ -2037,14 +2028,8 @@ msgstr "聊天记录"
 msgid "Chat name"
 msgstr "对话名称"
 
-msgid "Check for updates"
-msgstr "检查更新"
-
 msgid "Check for updates every"
 msgstr "检查更新的频率"
-
-msgid "Check for updates…"
-msgstr "检查更新…"
 
 msgid "Check out remote branch"
 msgstr "检出远程分支"
@@ -2078,9 +2063,6 @@ msgstr "正在检查更新"
 
 msgid "Checking for updates on GitHub"
 msgstr "正在 GitHub 上检查更新"
-
-msgid "Checking for updates…"
-msgstr "正在检查更新…"
 
 msgid "Checking GitHub connection..."
 msgstr "正在检查 GitHub 连接…"
@@ -3202,9 +3184,6 @@ msgstr "无法保存密钥——请重试。"
 msgid "Couldn't save the resolution for {filePath}."
 msgstr "无法保存 {filePath} 的解决结果。"
 
-msgid "Couldn't save this setting. Try again."
-msgstr "无法保存此设置。请重试。"
-
 msgid "Couldn't save your theme preference."
 msgstr "无法保存你的主题偏好。"
 
@@ -3777,9 +3756,6 @@ msgstr "双击进行编辑"
 msgid "Download {0}"
 msgstr "下载 {0}"
 
-msgid "Download and install updates automatically"
-msgstr "自动下载并安装更新"
-
 msgid "Download app"
 msgstr "下载应用"
 
@@ -4026,8 +4002,8 @@ msgstr "嵌入"
 msgid "Embeddings API key"
 msgstr "嵌入服务 API 密钥"
 
-msgid "Embeddings are computed only when a search runs and are cached locally under <0>.ok/local</0>."
-msgstr "嵌入向量只在执行搜索时计算，并缓存在本地的 <0>.ok/local</0> 下。"
+msgid "Embeddings are computed only when a search runs and are cached locally under <0>.ps/local</0>."
+msgstr ""
 
 msgid "Emoji"
 msgstr "表情符号"
@@ -4552,6 +4528,9 @@ msgstr "上传文件失败"
 msgid "Fast"
 msgstr "快速"
 
+msgid "Feedback"
+msgstr ""
+
 msgid "Feedback isn't available right now. Please try again later."
 msgstr "反馈功能暂时不可用。请稍后再试。"
 
@@ -4748,15 +4727,6 @@ msgstr "无法附加文件夹和空文件，请直接拖放文件本身。"
 msgid "Follow the agent's edits"
 msgstr "跟随智能体的编辑"
 
-msgid "Follow us on"
-msgstr "关注我们："
-
-msgid "Follow us on social media"
-msgstr "在社交媒体上关注我们"
-
-msgid "Follow us on X"
-msgstr "在 X 上关注我们"
-
 msgid "Following the agent's edits"
 msgstr "正在跟随智能体的编辑"
 
@@ -4831,9 +4801,6 @@ msgstr "获取 {displayName}"
 
 msgid "Get Claude Code"
 msgstr "获取 Claude Code"
-
-msgid "Get product updates in your inbox."
-msgstr "把产品动态发到你的邮箱。"
 
 msgid "Get set up"
 msgstr "开始设置"
@@ -5551,8 +5518,8 @@ msgid "Install skill"
 msgstr "安装技巧"
 
 #. Checkbox that installs the user-global discovery skill bundle
-msgid "Install the <0>open-knowledge-discovery</0> skill"
-msgstr "安装 <0>open-knowledge-discovery</0> 技能"
+msgid "Install the <0>palimpsest-discovery</0> skill"
+msgstr ""
 
 msgid "Install the gh CLI"
 msgstr "安装 gh CLI"
@@ -5676,9 +5643,6 @@ msgstr "斜体"
 
 msgid "Item {0}"
 msgstr "项目 {0}"
-
-msgid "Join us on Discord"
-msgstr "来 Discord 加入我们"
 
 msgid "Jump to last tab"
 msgstr "跳到最后一个标签页"
@@ -5969,11 +5933,11 @@ msgstr "正在加载 {pageTarget} 的标题"
 msgid "Loading image"
 msgstr "正在加载图片"
 
-msgid "Loading Palimpsest skills"
-msgstr "正在加载 Palimpsest 技能"
-
 msgid "Loading pages"
 msgstr "正在加载页面"
+
+msgid "Loading Palimpsest skills"
+msgstr "正在加载 Palimpsest 技能"
 
 msgid "Loading paths…"
 msgstr "正在加载路径…"
@@ -6306,11 +6270,11 @@ msgstr "移动块"
 msgid "Move down"
 msgstr "下移"
 
-msgid "Move Palimpsest.app to the Trash"
-msgstr "将 Palimpsest.app 移到废纸篓"
-
 msgid "Move or rename this file inside the skill — the path stays under references/ or scripts/."
 msgstr "在技能内部移动或重命名这个文件——路径仍保持在 references/ 或 scripts/ 下。"
+
+msgid "Move Palimpsest.app to the Trash"
+msgstr "将 Palimpsest.app 移到废纸篓"
 
 msgid "Move succeeded but the sidebar may be out of date — refresh to resync"
 msgstr "移动成功，但侧边栏可能不是最新的——请刷新以重新同步"
@@ -6425,9 +6389,6 @@ msgstr "正在沉思…"
 
 msgid "my-feature"
 msgstr "my-feature"
-
-msgid "my@email.com"
-msgstr "my@email.com"
 
 msgid "name"
 msgstr "名称"
@@ -7043,9 +7004,6 @@ msgstr "离线"
 msgid "OK can't move these, so they go when {pick} does."
 msgstr "OK 无法移动这些内容，它们会随 {pick} 一起消失。"
 
-msgid "OK Desktop"
-msgstr "OK 桌面版"
-
 msgid "OK last set this folder to {0} — something outside OK changed it since. The state shown is what's on disk now; your next Symlink/Unlink wins."
 msgstr "OK 上次把这个文件夹设为 {0}——此后 OK 之外的操作改动过它。显示的是磁盘上现在的状态；你下一次的「符号链接/取消链接」会覆盖它。"
 
@@ -7242,36 +7200,6 @@ msgstr "在 worktree 中打开"
 msgid "Open it there"
 msgstr "在那里打开"
 
-msgid "Palimpsest could not reach the project server to check index maintenance. The status updates when the project reconnects."
-msgstr "Palimpsest 无法连接到项目服务器以检查索引维护。项目重新连接后，状态会更新。"
-
-msgid "Palimpsest creates and maintains a navigation file named index.md in every folder that contains Markdown."
-msgstr "Palimpsest 在包含 Markdown 的每个文件夹中创建并维护名为 index.md 的导航文件。"
-
-msgid "OpenKnowledge Format guidance"
-msgstr "Palimpsest Format 指导"
-
-msgid "Palimpsest maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
-msgstr "Palimpsest 在包含 Markdown 的每个文件夹中维护一个名为 index.md 的导航文件，每个文件夹按类型列出该文件夹的文档并链接到其子文件夹。当您的文档发生更改时，它会重写这些文件，并且您自己编辑到其中的任何内容都会被替换。"
-
-msgid "Palimpsest rewrites these index.md files as documents change, so manual edits to them are replaced."
-msgstr "当文档更改时，Palimpsest 会重写这些 index.md 文件，因此对它们的手动编辑将被替换。"
-
-msgid "Palimpsest tools are available in this thread."
-msgstr "此线程中已可使用 Palimpsest 工具。"
-
-msgid "Palimpsest tools are unavailable because the project folder is missing, inaccessible, or has changed. Check its location and permissions, then retry."
-msgstr "Palimpsest 工具不可用，因为项目文件夹缺失、无法访问或已更改。请检查其位置和权限，然后重试。"
-
-msgid "Palimpsest tools are unavailable: a file Palimpsest didn't write is already at {bridgePath}."
-msgstr "Palimpsest 工具不可用：{bridgePath} 处已存在一个并非 Palimpsest 写入的文件。"
-
-msgid "Palimpsest tools are unavailable: something is already at {bridgePath} but couldn't be read, so Palimpsest left it alone."
-msgstr "Palimpsest 工具不可用：{bridgePath} 处已有内容，但无法读取，因此 Palimpsest 未做改动。"
-
-msgid "Palimpsest's own copy of {0} is damaged and won't run. It can download a fresh copy of {1} {2} (about {3} MB from {4}) to replace it."
-msgstr "Palimpsest 自己的 {0} 副本已损坏，无法运行。它可以下载一份新的 {1} {2}（约 {3} MB，来自 {4}）来替换它。"
-
 msgid "Open link"
 msgstr "打开链接"
 
@@ -7380,194 +7308,8 @@ msgstr "正在打开 worktree"
 msgid "Opening..."
 msgstr "正在打开…"
 
-msgid "Palimpsest"
-msgstr "Palimpsest"
-
-msgid "Palimpsest can't sign in to GitHub for this project."
-msgstr "Palimpsest 无法为此项目登录 GitHub。"
-
-msgid "Palimpsest checked {subject}"
-msgstr "Palimpsest 检查了 {subject}"
-
-msgid "Palimpsest checked the project"
-msgstr "Palimpsest 检查了项目"
-
-msgid "Palimpsest checks for and downloads updates in the background."
-msgstr "Palimpsest 会在后台检查并下载更新。"
-
-msgid "Palimpsest could not find this agent on this machine."
-msgstr "Palimpsest 未在此设备上找到该智能体。"
-
-msgid "Palimpsest couldn't finish setting up this project. The worktree was created but not opened."
-msgstr "Palimpsest 无法完成此项目的设置。工作树已创建，但未打开。"
-
-msgid "Palimpsest couldn't read terminal.shell in .ps/local/config.yml. Using an available Windows shell instead."
-msgstr "Palimpsest 无法读取 .ps/local/config.yml 中的 terminal.shell，将改用可用的 Windows shell。"
-
-msgid "Palimpsest couldn't write launch settings under .ps/local/terminal because the folder is not safely contained in this project. Check that it is a real folder inside the project, not a link. Claude will ask you to approve Palimpsest."
-msgstr "Palimpsest 无法在 .ps/local/terminal 下写入启动设置，因为该文件夹未安全地包含在此项目中。请确认它是项目内的真实文件夹，而不是链接。Claude 将要求你批准 Palimpsest。"
-
-msgid "Palimpsest couldn't write launch settings under .ps/local/terminal this time. Check that the folder is writable. Claude will ask you to approve Palimpsest."
-msgstr "Palimpsest 此次无法在 .ps/local/terminal 下写入启动设置。请确认该文件夹可写。Claude 将要求你批准 Palimpsest。"
-
-msgid "Palimpsest created a share link"
-msgstr "Palimpsest 创建了分享链接"
-
-msgid "Palimpsest created a share link for {subject}"
-msgstr "Palimpsest 为 {subject} 创建了分享链接"
-
-msgid "Palimpsest deleted {subject}"
-msgstr "Palimpsest 删除了 {subject}"
-
-msgid "Palimpsest deleted a document"
-msgstr "Palimpsest 删除了一个文档"
-
-msgid "Palimpsest discovery skill"
-msgstr "Palimpsest 发现技能"
-
-msgid "Palimpsest does not recognize this entry, and cannot safely replace it in this file's format."
-msgstr "Palimpsest 无法识别此条目，且无法在此文件格式中安全替换。"
-
-msgid "Palimpsest does not recognize this entry. Turning it on replaces it."
-msgstr "Palimpsest 无法识别此条目。启用后将替换它。"
-
-msgid "Palimpsest doesn't check for or download updates on its own. Check for updates still works when you want a newer version."
-msgstr "Palimpsest 不会自行检查或下载更新。需要新版本时，仍可使用“检查更新”。"
-
-msgid "Palimpsest edited {subject}"
-msgstr "Palimpsest 编辑了 {subject}"
-
-msgid "Palimpsest edited a document"
-msgstr "Palimpsest 编辑了一个文档"
-
-msgid "Palimpsest files were removed"
-msgstr "已移除 Palimpsest 文件"
-
-msgid "Palimpsest has no credential stored for this host. Add a token in Settings, or let git use the credentials it already has."
-msgstr "Palimpsest 没有为这个主机保存任何凭据。请在「设置」中添加一个令牌，或者让 git 使用它已有的凭据。"
-
-msgid "Palimpsest imported {source}"
-msgstr "Palimpsest 导入了 {source}"
-
-msgid "Palimpsest imported a skill"
-msgstr "Palimpsest 导入了一个技能"
-
-msgid "Palimpsest initializes at <0>{projectDir}</0> — the parent of <1>{pickedRelative}</1> because it contains a <2>.git</2> folder (one .ps/ per git repo). <3>Content directory</3> defaults to <4>.</4> (the whole repo); type a sub-folder to narrow it."
-msgstr "Palimpsest 会在 <0>{projectDir}</0> 初始化——它是 <1>{pickedRelative}</1> 的上级目录，因为其中包含 <2>.git</2> 文件夹（每个 git 仓库一个 .ps/）。<3>内容目录</3>默认为 <4>.</4>（整个仓库）；输入子文件夹可缩小范围。"
-
-msgid "Palimpsest installed {subject}"
-msgstr "Palimpsest 安装了 {subject}"
-
-msgid "Palimpsest installed a skill"
-msgstr "Palimpsest 安装了一个技能"
-
-msgid "Palimpsest integrations checked."
-msgstr "已检查 Palimpsest 集成。"
-
-msgid "Palimpsest is set up at the repository root here, so the pack goes inside <0>{sanitized}</0> rather than at the top of the repository."
-msgstr "这里的 Palimpsest 设置在仓库根目录，因此入门包会放进 <0>{sanitized}</0>，而不是仓库顶层。"
-
-msgid "Palimpsest is using this GitHub account."
-msgstr "Palimpsest 正在使用这个 GitHub 账户。"
-
-msgid "Palimpsest keeps retrying and shows them as soon as the file can be read."
-msgstr "Palimpsest 会持续重试，并在文件可以读取后立即显示这些设置。"
-
-msgid "Palimpsest left this file alone because it could not parse it safely. Fix the file by hand, then try again."
-msgstr "Palimpsest 未修改此文件，因为无法安全地解析它。请手动修复该文件，然后重试。"
-
-msgid "Palimpsest listed the installed skills"
-msgstr "Palimpsest 列出了已安装的技能"
-
-msgid "Palimpsest logs across projects. No project is open, so project server logs are not included."
-msgstr "跨项目的 Palimpsest 日志。当前未打开任何项目，因此不包含项目服务器日志。"
-
-msgid "Palimpsest logs, including activity across projects."
-msgstr "Palimpsest 日志，包括跨项目的活动。"
-
-msgid "Palimpsest looked at the link graph"
-msgstr "Palimpsest 查看了链接图谱"
-
-msgid "Palimpsest looked up links for {subject}"
-msgstr "Palimpsest 查找了 {subject} 的链接"
-
-msgid "Palimpsest looked up the authoring palette"
-msgstr "Palimpsest 查看了创作面板"
-
-msgid "Palimpsest moved {subject} to {destination}"
-msgstr "Palimpsest 将 {subject} 移动到 {destination}"
-
-msgid "Palimpsest moved a document"
-msgstr "Palimpsest 移动了一个文档"
-
-msgid "Palimpsest on GitHub"
-msgstr "GitHub 上的 Palimpsest"
-
-msgid "Palimpsest on this computer changed to a different build, but this tab is still running the old one."
-msgstr "这台电脑上的 Palimpsest 已换成另一个构建，但这个标签页仍在运行旧的构建。"
-
-msgid "Palimpsest on this computer is now v{serverVersion}, but this tab is still running v{tabVersion}."
-msgstr "这台电脑上的 Palimpsest 现在是 v{serverVersion}，但这个标签页仍在运行 v{tabVersion}。"
-
-msgid "Palimpsest opened the live preview"
-msgstr "Palimpsest 打开了实时预览"
-
-msgid "Palimpsest quit unexpectedly last time."
-msgstr "Palimpsest 上次意外退出了。"
-
-msgid "Palimpsest ran {command}"
-msgstr "Palimpsest 运行了 {command}"
-
-msgid "Palimpsest ran {tool}"
-msgstr "Palimpsest 运行了 {tool}"
-
-msgid "Palimpsest ran a command"
-msgstr "Palimpsest 运行了一条命令"
-
-msgid "Palimpsest read the edit history"
-msgstr "Palimpsest 查看了编辑历史"
-
-msgid "Palimpsest read the history of {subject}"
-msgstr "Palimpsest 查看了 {subject} 的历史"
-
-msgid "Palimpsest read the project settings"
-msgstr "Palimpsest 读取了项目设置"
-
-msgid "Palimpsest read the setting {key}"
-msgstr "Palimpsest 读取了设置 {key}"
-
-msgid "Palimpsest restored an earlier version"
-msgstr "Palimpsest 恢复了较早的版本"
-
-msgid "Palimpsest restored an earlier version of {subject}"
-msgstr "Palimpsest 恢复了 {subject} 的较早版本"
-
-msgid "Palimpsest saved a checkpoint"
-msgstr "Palimpsest 保存了一个检查点"
-
-msgid "Palimpsest searched for {query}"
-msgstr "Palimpsest 搜索了 {query}"
-
-msgid "Palimpsest searched the knowledge base"
-msgstr "Palimpsest 搜索了知识库"
-
-msgid "Palimpsest skill saved. Upload it in Claude Desktop, then click Cowork again."
-msgstr "已保存 Palimpsest 技能。请在 Claude Desktop 中上传，然后再次点击 Cowork。"
-
-msgid "Palimpsest stores its configuration and internal files inside a newly created <0>.ok</0> directory in your project root folder."
-msgstr "Palimpsest 会把配置和内部文件保存在你项目根目录中新建的 <0>.ok</0> 目录里。"
-
-msgid "Palimpsest will be initialized at <0>{gitRoot}</0> — the parent of your new folder, because it contains a <1>.git</1> folder (one project per git repo)."
-msgstr "Palimpsest 会在 <0>{gitRoot}</0> 初始化——它是你新文件夹的上级目录，因为其中包含 <1>.git</1> 文件夹（每个 git 仓库一个项目）。"
-
-msgid "Palimpsest will create commits and push them to your remote automatically. If you do not want automatic commits in your git history, you should not enable auto-sync."
-msgstr "Palimpsest 会自动创建提交并推送到你的远程仓库。如果你不希望 git 历史中出现自动提交，就不应该启用自动同步。"
-
-msgid "Palimpsest wrote a document"
-msgstr "Palimpsest 写入了一个文档"
-
-msgid "Palimpsest wrote to {subject}"
-msgstr "Palimpsest 写入了 {subject}"
+msgid "OpenKnowledge Format guidance"
+msgstr "Palimpsest Format 指导"
 
 msgid "Opens a folder picker to choose where to clone the repository."
 msgstr "打开文件夹选择器，选择把仓库克隆到哪里。"
@@ -7704,6 +7446,219 @@ msgstr "页面会在搜索第一次需要它们时生成嵌入向量。"
 
 msgid "Pages indexed: {semanticIndexedCount} of {semanticTotalCount}."
 msgstr "已建立索引的页面：{semanticIndexedCount} / {semanticTotalCount}。"
+
+msgid "Palimpsest"
+msgstr "Palimpsest"
+
+msgid "Palimpsest can't sign in to GitHub for this project."
+msgstr "Palimpsest 无法为此项目登录 GitHub。"
+
+msgid "Palimpsest checked {subject}"
+msgstr "Palimpsest 检查了 {subject}"
+
+msgid "Palimpsest checked the project"
+msgstr "Palimpsest 检查了项目"
+
+msgid "Palimpsest could not find this agent on this machine."
+msgstr "Palimpsest 未在此设备上找到该智能体。"
+
+msgid "Palimpsest could not reach the project server to check index maintenance. The status updates when the project reconnects."
+msgstr "Palimpsest 无法连接到项目服务器以检查索引维护。项目重新连接后，状态会更新。"
+
+msgid "Palimpsest couldn't finish setting up this project. The worktree was created but not opened."
+msgstr "Palimpsest 无法完成此项目的设置。工作树已创建，但未打开。"
+
+msgid "Palimpsest couldn't read terminal.shell in .ps/local/config.yml. Using an available Windows shell instead."
+msgstr "Palimpsest 无法读取 .ps/local/config.yml 中的 terminal.shell，将改用可用的 Windows shell。"
+
+msgid "Palimpsest couldn't write launch settings under .ps/local/terminal because the folder is not safely contained in this project. Check that it is a real folder inside the project, not a link. Claude will ask you to approve Palimpsest."
+msgstr "Palimpsest 无法在 .ps/local/terminal 下写入启动设置，因为该文件夹未安全地包含在此项目中。请确认它是项目内的真实文件夹，而不是链接。Claude 将要求你批准 Palimpsest。"
+
+msgid "Palimpsest couldn't write launch settings under .ps/local/terminal this time. Check that the folder is writable. Claude will ask you to approve Palimpsest."
+msgstr "Palimpsest 此次无法在 .ps/local/terminal 下写入启动设置。请确认该文件夹可写。Claude 将要求你批准 Palimpsest。"
+
+msgid "Palimpsest created a share link"
+msgstr "Palimpsest 创建了分享链接"
+
+msgid "Palimpsest created a share link for {subject}"
+msgstr "Palimpsest 为 {subject} 创建了分享链接"
+
+msgid "Palimpsest creates and maintains a navigation file named index.md in every folder that contains Markdown."
+msgstr "Palimpsest 在包含 Markdown 的每个文件夹中创建并维护名为 index.md 的导航文件。"
+
+msgid "Palimpsest deleted {subject}"
+msgstr "Palimpsest 删除了 {subject}"
+
+msgid "Palimpsest deleted a document"
+msgstr "Palimpsest 删除了一个文档"
+
+msgid "Palimpsest Desktop"
+msgstr ""
+
+msgid "Palimpsest discovery skill"
+msgstr "Palimpsest 发现技能"
+
+msgid "Palimpsest does not recognize this entry, and cannot safely replace it in this file's format."
+msgstr "Palimpsest 无法识别此条目，且无法在此文件格式中安全替换。"
+
+msgid "Palimpsest does not recognize this entry. Turning it on replaces it."
+msgstr "Palimpsest 无法识别此条目。启用后将替换它。"
+
+msgid "Palimpsest edited {subject}"
+msgstr "Palimpsest 编辑了 {subject}"
+
+msgid "Palimpsest edited a document"
+msgstr "Palimpsest 编辑了一个文档"
+
+msgid "Palimpsest files were removed"
+msgstr "已移除 Palimpsest 文件"
+
+msgid "Palimpsest has no credential stored for this host. Add a token in Settings, or let git use the credentials it already has."
+msgstr "Palimpsest 没有为这个主机保存任何凭据。请在「设置」中添加一个令牌，或者让 git 使用它已有的凭据。"
+
+msgid "Palimpsest imported {source}"
+msgstr "Palimpsest 导入了 {source}"
+
+msgid "Palimpsest imported a skill"
+msgstr "Palimpsest 导入了一个技能"
+
+msgid "Palimpsest initializes at <0>{projectDir}</0> — the parent of <1>{pickedRelative}</1> because it contains a <2>.git</2> folder (one .ps/ per git repo). <3>Content directory</3> defaults to <4>.</4> (the whole repo); type a sub-folder to narrow it."
+msgstr "Palimpsest 会在 <0>{projectDir}</0> 初始化——它是 <1>{pickedRelative}</1> 的上级目录，因为其中包含 <2>.git</2> 文件夹（每个 git 仓库一个 .ps/）。<3>内容目录</3>默认为 <4>.</4>（整个仓库）；输入子文件夹可缩小范围。"
+
+msgid "Palimpsest installed {subject}"
+msgstr "Palimpsest 安装了 {subject}"
+
+msgid "Palimpsest installed a skill"
+msgstr "Palimpsest 安装了一个技能"
+
+msgid "Palimpsest integrations checked."
+msgstr "已检查 Palimpsest 集成。"
+
+msgid "Palimpsest is set up at the repository root here, so the pack goes inside <0>{sanitized}</0> rather than at the top of the repository."
+msgstr "这里的 Palimpsest 设置在仓库根目录，因此入门包会放进 <0>{sanitized}</0>，而不是仓库顶层。"
+
+msgid "Palimpsest is using this GitHub account."
+msgstr "Palimpsest 正在使用这个 GitHub 账户。"
+
+msgid "Palimpsest keeps retrying and shows them as soon as the file can be read."
+msgstr "Palimpsest 会持续重试，并在文件可以读取后立即显示这些设置。"
+
+msgid "Palimpsest left this file alone because it could not parse it safely. Fix the file by hand, then try again."
+msgstr "Palimpsest 未修改此文件，因为无法安全地解析它。请手动修复该文件，然后重试。"
+
+msgid "Palimpsest listed the installed skills"
+msgstr "Palimpsest 列出了已安装的技能"
+
+msgid "Palimpsest logs across projects. No project is open, so project server logs are not included."
+msgstr "跨项目的 Palimpsest 日志。当前未打开任何项目，因此不包含项目服务器日志。"
+
+msgid "Palimpsest logs, including activity across projects."
+msgstr "Palimpsest 日志，包括跨项目的活动。"
+
+msgid "Palimpsest looked at the link graph"
+msgstr "Palimpsest 查看了链接图谱"
+
+msgid "Palimpsest looked up links for {subject}"
+msgstr "Palimpsest 查找了 {subject} 的链接"
+
+msgid "Palimpsest looked up the authoring palette"
+msgstr "Palimpsest 查看了创作面板"
+
+msgid "Palimpsest maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
+msgstr "Palimpsest 在包含 Markdown 的每个文件夹中维护一个名为 index.md 的导航文件，每个文件夹按类型列出该文件夹的文档并链接到其子文件夹。当您的文档发生更改时，它会重写这些文件，并且您自己编辑到其中的任何内容都会被替换。"
+
+msgid "Palimpsest moved {subject} to {destination}"
+msgstr "Palimpsest 将 {subject} 移动到 {destination}"
+
+msgid "Palimpsest moved a document"
+msgstr "Palimpsest 移动了一个文档"
+
+msgid "Palimpsest on GitHub"
+msgstr "GitHub 上的 Palimpsest"
+
+msgid "Palimpsest on this computer changed to a different build, but this tab is still running the old one."
+msgstr "这台电脑上的 Palimpsest 已换成另一个构建，但这个标签页仍在运行旧的构建。"
+
+msgid "Palimpsest on this computer is now v{serverVersion}, but this tab is still running v{tabVersion}."
+msgstr "这台电脑上的 Palimpsest 现在是 v{serverVersion}，但这个标签页仍在运行 v{tabVersion}。"
+
+msgid "Palimpsest opened the live preview"
+msgstr "Palimpsest 打开了实时预览"
+
+msgid "Palimpsest quit unexpectedly last time."
+msgstr "Palimpsest 上次意外退出了。"
+
+msgid "Palimpsest ran {command}"
+msgstr "Palimpsest 运行了 {command}"
+
+msgid "Palimpsest ran {tool}"
+msgstr "Palimpsest 运行了 {tool}"
+
+msgid "Palimpsest ran a command"
+msgstr "Palimpsest 运行了一条命令"
+
+msgid "Palimpsest read the edit history"
+msgstr "Palimpsest 查看了编辑历史"
+
+msgid "Palimpsest read the history of {subject}"
+msgstr "Palimpsest 查看了 {subject} 的历史"
+
+msgid "Palimpsest read the project settings"
+msgstr "Palimpsest 读取了项目设置"
+
+msgid "Palimpsest read the setting {key}"
+msgstr "Palimpsest 读取了设置 {key}"
+
+msgid "Palimpsest restored an earlier version"
+msgstr "Palimpsest 恢复了较早的版本"
+
+msgid "Palimpsest restored an earlier version of {subject}"
+msgstr "Palimpsest 恢复了 {subject} 的较早版本"
+
+msgid "Palimpsest rewrites these index.md files as documents change, so manual edits to them are replaced."
+msgstr "当文档更改时，Palimpsest 会重写这些 index.md 文件，因此对它们的手动编辑将被替换。"
+
+msgid "Palimpsest saved a checkpoint"
+msgstr "Palimpsest 保存了一个检查点"
+
+msgid "Palimpsest searched for {query}"
+msgstr "Palimpsest 搜索了 {query}"
+
+msgid "Palimpsest searched the knowledge base"
+msgstr "Palimpsest 搜索了知识库"
+
+msgid "Palimpsest skill saved. Upload it in Claude Desktop, then click Cowork again."
+msgstr "已保存 Palimpsest 技能。请在 Claude Desktop 中上传，然后再次点击 Cowork。"
+
+msgid "Palimpsest stores its configuration and internal files inside a newly created <0>.ok</0> directory in your project root folder."
+msgstr "Palimpsest 会把配置和内部文件保存在你项目根目录中新建的 <0>.ok</0> 目录里。"
+
+msgid "Palimpsest tools are available in this thread."
+msgstr "此线程中已可使用 Palimpsest 工具。"
+
+msgid "Palimpsest tools are unavailable because the project folder is missing, inaccessible, or has changed. Check its location and permissions, then retry."
+msgstr "Palimpsest 工具不可用，因为项目文件夹缺失、无法访问或已更改。请检查其位置和权限，然后重试。"
+
+msgid "Palimpsest tools are unavailable: a file Palimpsest didn't write is already at {bridgePath}."
+msgstr "Palimpsest 工具不可用：{bridgePath} 处已存在一个并非 Palimpsest 写入的文件。"
+
+msgid "Palimpsest tools are unavailable: something is already at {bridgePath} but couldn't be read, so Palimpsest left it alone."
+msgstr "Palimpsest 工具不可用：{bridgePath} 处已有内容，但无法读取，因此 Palimpsest 未做改动。"
+
+msgid "Palimpsest will be initialized at <0>{gitRoot}</0> — the parent of your new folder, because it contains a <1>.git</1> folder (one project per git repo)."
+msgstr "Palimpsest 会在 <0>{gitRoot}</0> 初始化——它是你新文件夹的上级目录，因为其中包含 <1>.git</1> 文件夹（每个 git 仓库一个项目）。"
+
+msgid "Palimpsest will create commits and push them to your remote automatically. If you do not want automatic commits in your git history, you should not enable auto-sync."
+msgstr "Palimpsest 会自动创建提交并推送到你的远程仓库。如果你不希望 git 历史中出现自动提交，就不应该启用自动同步。"
+
+msgid "Palimpsest wrote a document"
+msgstr "Palimpsest 写入了一个文档"
+
+msgid "Palimpsest wrote to {subject}"
+msgstr "Palimpsest 写入了 {subject}"
+
+msgid "Palimpsest's own copy of {0} is damaged and won't run. It can download a fresh copy of {1} {2} (about {3} MB from {4}) to replace it."
+msgstr "Palimpsest 自己的 {0} 副本已损坏，无法运行。它可以下载一份新的 {1} {2}（约 {3} MB，来自 {4}）来替换它。"
 
 msgid "Pan down"
 msgstr "向下平移"
@@ -7904,9 +7859,6 @@ msgstr "玩 Blob Run"
 msgid "Please choose Good or Not great."
 msgstr "请选择「良好」或「不太好」。"
 
-msgid "Please enter a valid email address."
-msgstr "请输入有效的电子邮件地址。"
-
 msgid "Please enter a valid email."
 msgstr "请输入有效的邮箱。"
 
@@ -8008,12 +7960,6 @@ msgstr "问题"
 
 msgid "Problems in {0}"
 msgstr "{0} 中的问题"
-
-msgid "Product updates"
-msgstr "产品动态"
-
-msgid "Product updates in your inbox."
-msgstr "把产品动态发到你的邮箱。"
 
 msgid "project"
 msgstr "项目"
@@ -9851,9 +9797,6 @@ msgstr "把选中的内容放入智能体面板，随时可以补充并发送。
 msgid "stale Git entry"
 msgstr "过期的 Git 条目"
 
-msgid "Star us on GitHub"
-msgstr "在 GitHub 上给我们点个星"
-
 msgid "Start a bug report with a screenshot of the screen as it looks right now."
 msgstr "发起一份错误报告，并附上此刻画面的截图。"
 
@@ -9920,9 +9863,6 @@ msgstr "状态"
 msgid "Status"
 msgstr "状态"
 
-msgid "Stay in the loop"
-msgstr "保持关注"
-
 msgid "Stays on this computer. Not committed to git."
 msgstr "留在这台电脑上。不会提交到 git。"
 
@@ -9988,15 +9928,6 @@ msgstr "子文件夹名"
 
 msgid "Subfolder under current folder"
 msgstr "当前文件夹下的子文件夹"
-
-msgid "Subscribe"
-msgstr "订阅"
-
-msgid "Subscribing..."
-msgstr "正在订阅…"
-
-msgid "Subscriptions aren't available right now."
-msgstr "订阅功能暂时不可用。"
 
 msgid "Suggestion menu navigation"
 msgstr "建议菜单导航"
@@ -10269,9 +10200,6 @@ msgstr "文本"
 msgid "Thanks for giving Palimpsest a try."
 msgstr "感谢你试用 Palimpsest。"
 
-msgid "Thanks for subscribing. Watch your inbox for product updates."
-msgstr "感谢订阅。请留意你的邮箱，我们会发送产品动态。"
-
 msgid "Thanks for the feedback!"
 msgstr "感谢你的反馈！"
 
@@ -10339,8 +10267,8 @@ msgstr "{editor} 的版本现在成为来源"
 msgid "The {targetNoun} could not be opened — try navigating to it manually."
 msgstr "无法打开{targetNoun}——请尝试手动前往。"
 
-msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs OpenKnowledge Format–conformant."
-msgstr "用这个模板创建的每个文档所获得的 <0>type</0>（例如 <1>research-note</1>）。让新文档符合 Palimpsest Format。"
+msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs Open Knowledge Format–conformant."
+msgstr ""
 
 msgid "The agent is working"
 msgstr "智能体正在工作"
@@ -10477,6 +10405,9 @@ msgstr "你的端点提供的模型 id。它的向量维度会自动检测——
 msgid "the open agent"
 msgstr "已打开的智能体"
 
+msgid "The original text was deleted."
+msgstr "原始文本已被删除。"
+
 msgid "The Palimpsest project is missing at this checkout path."
 msgstr "此检出路径中缺少 Palimpsest 项目。"
 
@@ -10491,9 +10422,6 @@ msgstr "Palimpsest 服务器响应超时，更改可能已经生效。请让代�
 
 msgid "The Palimpsest server took too long to answer. Ask the agent to try again."
 msgstr "Palimpsest 服务器响应超时。请让代理重试。"
-
-msgid "The original text was deleted."
-msgstr "原始文本已被删除。"
 
 msgid "The path can't leave the skill (no . or ..)"
 msgstr "路径不能离开技能（不允许 . 或 ..）"
@@ -11071,9 +10999,6 @@ msgstr "无法读取此主题文件"
 msgid "This theme file is too large"
 msgstr "此主题文件过大"
 
-msgid "This update is no longer ready to install."
-msgstr "此更新已不再可供安装。"
-
 msgid "This usually means one of:"
 msgstr "这通常意味着以下之一："
 
@@ -11452,10 +11377,6 @@ msgstr "未跟踪"
 msgid "Up to date"
 msgstr "已是最新"
 
-msgctxt "settings search keyword"
-msgid "update"
-msgstr "更新"
-
 msgid "Update"
 msgstr "更新"
 
@@ -11488,12 +11409,6 @@ msgstr "更新于 {updatedRelative}"
 
 msgid "updated folder properties"
 msgstr "已更新文件夹属性"
-
-msgid "Updated to Version {version}"
-msgstr "已更新到版本 {version}"
-
-msgid "Updates and feedback"
-msgstr "更新与反馈"
 
 msgid "Updates flow in"
 msgstr "更新会自动流入"
@@ -11812,11 +11727,8 @@ msgstr "你分享的内容会发送给 Palimpsest 团队。"
 msgid "What's included"
 msgstr "包含的内容"
 
-msgid "What's new"
-msgstr "新功能"
-
-msgid "When enabled, the agent opens or refreshes the preview after each edit. Disable if you manage your own preview window (OK Desktop, a browser tab on another display, etc.)."
-msgstr "开启后，智能体每次编辑后都会打开或刷新预览。如果你自己管理预览窗口（OK 桌面版、另一块显示器上的浏览器标签页等），可以关闭它。"
+msgid "When enabled, the agent opens or refreshes the preview after each edit. Disable if you manage your own preview window (Palimpsest Desktop, a browser tab on another display, etc.)."
+msgstr ""
 
 msgid "When the agent runs its scheduled work."
 msgstr "智能体执行定时任务的时间。"
@@ -12008,9 +11920,6 @@ msgstr "你推送的频率高于检查更新的频率。如果其他人也在这
 
 msgid "You're signed out — sign in to resume syncing."
 msgstr "你已退出登录——请登录以继续同步。"
-
-msgid "You're subscribed!"
-msgstr "订阅成功！"
 
 msgid "you@company.com"
 msgstr "you@company.com"

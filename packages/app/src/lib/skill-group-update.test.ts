@@ -16,18 +16,18 @@ function skill(name: string, source?: string): SkillsListEntry {
 
 const sourceBucket: ProvenanceBucket = {
   kind: 'source',
-  id: 'open-knowledge-skills',
-  publisher: 'inkeep',
+  id: 'example-skills',
+  publisher: 'example',
   url: 'https://www.skills.sh/fractalmandala/palimpsest-skills',
 };
 const pluginBucket: ProvenanceBucket = {
   kind: 'plugin',
   id: 'eng',
   publisher: null,
-  url: 'https://github.com/inkeep/team-skills',
+  url: 'https://github.com/example/team-skills',
 };
 
-const GROUP = 'PROJECT/open-knowledge-skills';
+const GROUP = 'PROJECT/example-skills';
 
 describe('groupUpdatableSkills', () => {
   it('returns the group members that record a fetchable source', () => {
@@ -78,7 +78,7 @@ describe('groupUpdatableSkills', () => {
   it('ignores rows outside the group, including a prefix that merely starts the same', () => {
     const map = new Map([
       [`${GROUP}/a`, skill('a', 'fractalmandala/palimpsest-skills')],
-      ['PROJECT/open-knowledge-skills-extra/b', skill('b', 'someone/else')],
+      ['PROJECT/example-skills-extra/b', skill('b', 'someone/else')],
       ['PROJECT/loose', skill('loose', 'someone/else')],
     ]);
     const members = groupUpdatableSkills({

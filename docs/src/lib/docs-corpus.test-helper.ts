@@ -30,7 +30,11 @@ export async function readCorpus(): Promise<CorpusPage[]> {
       return {
         slug,
         source: await readFile(file, 'utf8'),
-        pageUrl: `https://github.com/fractalmandala/palimpsest/tree/main/docs/content ''),
+        pageUrl:
+          `https://github.com/fractalmandala/palimpsest/tree/main/docs/content/${slug}`.replace(
+            /\/$/,
+            '',
+          ),
       };
     }),
   );

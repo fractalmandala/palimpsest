@@ -55,8 +55,7 @@ describe('detectDesktop — platform gate (FR10)', () => {
 });
 
 describe('detectDesktop — Windows/Linux install resolution', () => {
-  const WIN_EXE =
-    'C:\\Users\\u\\AppData\\Local\\Programs\\@palimpsestdesktop\\Palimpsest.exe';
+  const WIN_EXE = 'C:\\Users\\u\\AppData\\Local\\Programs\\@palimpsestdesktop\\Palimpsest.exe';
   const BETA_WIN_EXE =
     'C:\\Users\\u\\AppData\\Local\\Programs\\palimpsest-beta-desktop\\Palimpsest Beta.exe';
   const DEB_EXE = '/opt/Palimpsest/palimpsest';
@@ -379,8 +378,7 @@ describe('detectDesktop — dev channel', () => {
 });
 
 describe('detectDesktop — headless gate (FR9 — CI is intentionally NOT a trigger)', () => {
-  const WIN_EXE =
-    'C:\\Users\\u\\AppData\\Local\\Programs\\@palimpsestdesktop\\Palimpsest.exe';
+  const WIN_EXE = 'C:\\Users\\u\\AppData\\Local\\Programs\\@palimpsestdesktop\\Palimpsest.exe';
 
   test('isTTY=false → headless', () => {
     const result = detectDesktop(baseDeps({ isTTY: false, statSync: statForFile(APP_EXEC) }));

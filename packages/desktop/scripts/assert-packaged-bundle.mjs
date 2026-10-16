@@ -36,13 +36,11 @@ export const REQUIRED_BUNDLE_PATHS = [
     reason: 'app.asar with its package.json',
   },
   {
-    pattern:
-      /^app\.asar\.unpacked\/node_modules\/@inkeep\/palimpsest\/dist\/native\/index\.js$/,
+    pattern: /^app\.asar\.unpacked\/node_modules\/@inkeep\/palimpsest\/dist\/native\/index\.js$/,
     reason: "the main process's native-config loader, unpacked",
   },
   {
-    pattern:
-      /^app\.asar\.unpacked\/node_modules\/@inkeep\/palimpsest\/dist\/native\/[^/]+\.node$/,
+    pattern: /^app\.asar\.unpacked\/node_modules\/@inkeep\/palimpsest\/dist\/native\/[^/]+\.node$/,
     reason: "the main process's native-config addon, unpacked",
   },
   {

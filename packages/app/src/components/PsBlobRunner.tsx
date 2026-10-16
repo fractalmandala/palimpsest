@@ -19,7 +19,7 @@ import {
   startRunner,
   stepRunner,
   writeBestScore,
-} from './ok-blob-runner-logic';
+} from './ps-blob-runner-logic';
 
 const TRACK_HEIGHT = Math.ceil(MAX_JUMP_HEIGHT + PLAYER_SIZE + 8);
 
@@ -231,7 +231,7 @@ export function PsBlobRunner({ autoStart = false }: PsBlobRunnerProps = {}) {
             ref={(node) => {
               obstacleRefs.current[i] = node;
             }}
-            // oxlint-disable-next-line ok/no-physical-direction-utility -- physical origin is load-bearing here
+            // oxlint-disable-next-line ps/no-physical-direction-utility -- physical origin is load-bearing here
             className="absolute bottom-0 left-0 rounded-sm bg-muted-foreground/70 will-change-transform"
             style={{ opacity: 0 }}
           />

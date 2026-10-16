@@ -16,11 +16,7 @@ import {
   parsePathId,
 } from '@palimpsest/core';
 import { scanSkillFolderStates } from '@palimpsest/core/skill-folder-state';
-import {
-  BUNDLE_SKILL_NAME,
-  type BundleId,
-  detectUserSkillHosts,
-} from '@palimpsest/server';
+import { BUNDLE_SKILL_NAME, type BundleId, detectUserSkillHosts } from '@palimpsest/server';
 import { ownServerMatcherFor } from '../commands/acp-harness-probe.ts';
 import {
   ALL_EDITOR_IDS,

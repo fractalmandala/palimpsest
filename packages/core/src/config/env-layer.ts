@@ -43,7 +43,7 @@ function camelToScreamingSnake(segment: string): string {
 
 export function mechanicalEnvName(path: readonly string[]): string {
   const segments = path[0] === 'server' ? path.slice(1) : path;
-  return `OK_${segments.map(camelToScreamingSnake).join('_')}`;
+  return `PS_${segments.map(camelToScreamingSnake).join('_')}`;
 }
 
 type AnyZ = z.ZodType<unknown>;
@@ -190,7 +190,7 @@ export function resolveEnvConfigLayer(env: Record<string, string | undefined>): 
   }
 
   for (const envVar of Object.keys(env)) {
-    if (!envVar.startsWith('OK_') || RECOGNIZED_ENV_VARS.has(envVar)) continue;
+    if (!envVar.startsWith('PS_') || RECOGNIZED_ENV_VARS.has(envVar)) continue;
     if (env[envVar] === undefined) continue;
     const diagnostic = diagnoseUnknownPsVar(envVar, mechanicalTable);
     if (diagnostic !== null) diagnostics.push(diagnostic);

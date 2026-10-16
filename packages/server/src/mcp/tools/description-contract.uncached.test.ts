@@ -1,15 +1,11 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import {
-  LINT_PLUGIN_IDS,
-  PALIMPSEST_MCP_TOOLS,
-  VALIDATION_SOURCES,
-} from '@palimpsest/core';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import type { Tool } from '@modelcontextprotocol/sdk/types.js';
+import { LINT_PLUGIN_IDS, PALIMPSEST_MCP_TOOLS, VALIDATION_SOURCES } from '@palimpsest/core';
 import { afterAll, beforeAll, expect, test } from 'vitest';
 import { ConfigSchema } from '../../config/schema.ts';
 import { installJsonSchemaDialect, JSON_SCHEMA_DIALECT_2020_12 } from '../json-schema-dialect.ts';
@@ -187,7 +183,7 @@ function currentAdviceFiles(root: string): string[] {
       (file) => /\.[cm]?tsx?$/.test(file) && !/\.(?:test|test-helper|spec)\.[cm]?tsx?$/.test(file),
     ),
   );
-  const guidance = ['packages/server/assets/skills', 'docs/content'].flatMap((path) =>
+  const guidance = ['skills', 'docs/content'].flatMap((path) =>
     filesUnder(join(root, path)).filter((file) => /\.mdx?$/.test(file)),
   );
   return [...runtime, ...guidance];
@@ -205,7 +201,7 @@ test('the advice guard covers every production surface without scanning historic
     'packages/cli/src/',
     'packages/app/src/',
     'packages/core/src/',
-    'packages/server/assets/skills/',
+    'skills/',
     'docs/content/',
   ])
     expect(
@@ -271,7 +267,7 @@ test('published scope guidance preserves selection, error, empty-scope and trunc
 
 test('skill router and published reference names and counts equal the actual serving surface', () => {
   const skill = readFileSync(
-    new URL('../../../assets/skills/project/SKILL.md', import.meta.url),
+    new URL('../../../../skills/project/SKILL.md', import.meta.url),
     'utf8',
   );
   const reference = readFileSync(

@@ -1,14 +1,13 @@
-// oxlint-disable ok/no-raw-html-interactive-element -- pre-rule backlog — file uses raw <button> awaiting shadcn Button migration; tracked at https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-raw-html-interactive-element
+// oxlint-disable ps/no-raw-html-interactive-element -- pre-rule backlog — file uses raw <button> awaiting shadcn Button migration; tracked at https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-raw-html-interactive-element
 
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
+// oxlint-disable ps/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
-import { SHOW_INSTALL_SKILL } from '@palimpsest/core/constants/feature-flags';
 import { Plural, Trans, useLingui } from '@lingui/react/macro';
-import { Suspense, useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { SHOW_INSTALL_SKILL } from '@palimpsest/core/constants/feature-flags';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { matchesCommandQuery, splitTextByQueryMatches } from '@/components/command-palette-search';
 import { SettingsDialogBodyLazy } from '@/components/settings/SettingsDialogBodyLazy';
 import { SettingsDialogErrorBoundary } from '@/components/settings/SettingsDialogErrorBoundary';
-import { UPDATE_CHECKING_NOTICE_ID } from '@/components/UpdateNotices.shared';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -27,7 +26,6 @@ import type { ConfigContextValue } from '@/lib/config-context';
 import { useConfigContext } from '@/lib/config-provider';
 import { isFileProtocolPage } from '@/lib/file-protocol-page';
 import { useClaudeDesktopIntegration } from '@/lib/handoff/use-claude-desktop-integration';
-import { getNoticesSnapshot, subscribeToNotices } from '@/lib/update-notices-store';
 import { subscribeToSettingsSection } from '@/lib/use-settings-route';
 import { cn } from '@/lib/utils';
 import { LINT_PLUGIN_META } from './lint-plugin-meta';
@@ -428,15 +426,12 @@ function SettingsDialogFrame({
             items: [
               {
                 id: 'about',
-                label: t`About & updates`,
+                label: t`About`,
                 userScope: true,
                 keywords: [
-                  t({ message: 'update', context: 'settings search keyword' }),
                   t({ message: 'version', context: 'settings search keyword' }),
                   t({ message: 'about', context: 'settings search keyword' }),
                   t`Release notes`,
-                  t`Check for updates`,
-                  t`Automatic updates`,
                 ],
               },
             ],
@@ -679,10 +674,8 @@ function SettingsSearchResultItem({
 
 function SettingsSidebarVersion({ onSelect }: { onSelect: (id: string) => void }) {
   const { t } = useLingui();
-  const notices = useSyncExternalStore(subscribeToNotices, getNoticesSnapshot, getNoticesSnapshot);
   const version = typeof window !== 'undefined' ? window.psDesktop?.appVersion : undefined;
   if (!version) return null;
-  const checkingForUpdates = notices.some((notice) => notice.id === UPDATE_CHECKING_NOTICE_ID);
 
   return (
     <div className="ml-auto shrink-0 px-2 sm:ml-0 sm:mt-auto sm:pt-3">
@@ -697,22 +690,15 @@ function SettingsSidebarVersion({ onSelect }: { onSelect: (id: string) => void }
             >
               v{version}{' '}
               <span className="sr-only">
-                <Trans>About & updates</Trans>
+                <Trans>About</Trans>
               </span>
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <Trans>About & updates</Trans>
+            <Trans>About</Trans>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <p
-        role="status"
-        className="whitespace-nowrap text-xs text-muted-foreground"
-        data-testid="settings-sidebar-update-checking"
-      >
-        {checkingForUpdates ? t`Checking for updates…` : null}
-      </p>
     </div>
   );
 }

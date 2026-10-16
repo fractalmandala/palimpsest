@@ -20,7 +20,7 @@ const markdownRouteFilesOnDisk = () =>
     return MARKDOWN_SOURCE_MARKERS.some((marker) => source.includes(marker));
   });
 
-const OVERVIEW_URL = 'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/overview.mdx';
+const OVERVIEW_URL = 'https://github.com/fractalmandala/palimpsest/docs/get-started/overview';
 
 const overviewPage = {
   url: '/docs/get-started/overview',
@@ -88,7 +88,7 @@ const ROUTES: MarkdownRoute[] = [
     canonicalUrl: null,
     status: 404,
     module: perPageRoute,
-    call: slugCall('https://github.com/fractalmandala/palimpsest/tree/main/docs/content', ['nope']),
+    call: slugCall('https://github.com/fractalmandala/palimpsest/docs/nope.md', ['nope']),
   },
   {
     name: 'llms.txt',

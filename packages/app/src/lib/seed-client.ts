@@ -1,5 +1,5 @@
-import { ProblemDetailsSchema } from '@palimpsest/core/schemas/api';
 import { t } from '@lingui/core/macro';
+import { ProblemDetailsSchema } from '@palimpsest/core/schemas/api';
 import type {
   PsPackId,
   PsScaffoldApplyResult,

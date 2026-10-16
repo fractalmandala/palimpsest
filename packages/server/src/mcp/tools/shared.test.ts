@@ -1,7 +1,4 @@
-import {
-  SKILL_INSTALL_WARNING_CODES,
-  summarizeLintPluginFailures,
-} from '@palimpsest/core';
+import { SKILL_INSTALL_WARNING_CODES, summarizeLintPluginFailures } from '@palimpsest/core';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
 import { z } from 'zod';
 
@@ -22,9 +19,9 @@ import {
   httpPost,
   INSTALL_WARNING_CODE_GLOSS,
   normalizeDocName,
-  psReservedPathRedirect,
   outputSchemaWithText,
   parseRenameCollidingPairs,
+  psReservedPathRedirect,
   requestFailureText,
   resolveProjectConfigContext,
   resolveProjectServerContext,
@@ -931,7 +928,7 @@ describe('psReservedPathRedirect', () => {
     const msg = psReservedPathRedirect('.ps/skills/research/SKILL');
     expect(msg).not.toBeNull();
     expect(msg).toContain('`skill` target');
-    expect(msg).toContain('open-knowledge-write-skill');
+    expect(msg).toContain('palimpsest-write-skill');
   });
 
   test('leading slash is tolerated', () => {

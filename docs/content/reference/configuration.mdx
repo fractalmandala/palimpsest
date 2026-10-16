@@ -107,20 +107,11 @@ Path exclusions live in a project-root `.psignore` file using gitignore syntax. 
 
 ## Precedence
 
-CLI flags (when running the bundled `ok` CLI) > environment variables > project-local config > project config > user config > defaults. Leaf values at higher levels override the same leaf below; arrays replace, they don't concatenate.
+CLI flags (when running the bundled `ps` CLI) > environment variables > project-local config > project config > user config > defaults. Leaf values at higher levels override the same leaf below; arrays replace, they don't concatenate.
 
 ## Desktop updates
 
-Automatic updates have no `config.yml` key, because they describe the machine rather than the person: `config.yml` can follow you between machines, and this preference does not. Set it in **Settings → About & updates**.
-
-| **Download and install updates automatically** | What happens |
-| --- | --- |
-| On (default) | Palimpsest checks at launch and every hour and downloads new versions in the background. On macOS and Windows it installs them when you quit; on Linux it asks you to authorize each install. |
-| Off | Palimpsest never contacts the update server on its own: no check at launch or on the hourly schedule, no new downloads, nothing installed when you quit, and no update notices. |
-
-Turn it off on a machine whose software you don't control, such as a work laptop under IT policy. **Check for updates** still works while it is off; if it finds a newer version, it offers to open the releases page instead of downloading. Turning it back on checks right away.
-
-A download already in progress when you turn it off still finishes, but it is not installed when you quit. On macOS, an update whose download had already finished before you turned it off may still be applied at the next launch, because macOS takes over a completed download.
+Palimpsest does not update itself: there are no automatic checks, downloads, or installs, and no update setting. To update, download the newest release from [GitHub Releases](https://github.com/fractalmandala/palimpsest/releases) and install it over the current one; your projects and settings carry over.
 
 ## Environment variables
 
@@ -133,8 +124,8 @@ Most users never set these — the schema settings above cover the common cases.
 | `HOST` | Server bind host. The `--bind` flag wins over this. |
 | `PORT` | Server bind port. The `--port` flag wins over this. |
 | `PS_MCP_AUTOSTART` | Set to `0` to stop MCP tool calls from auto-starting the project's Palimpsest server; tools error until you run `ps start` |
-| `PS_FORCE_BROWSER` | Set to `1` so bare `ok` runs the browser server instead of opening the installed desktop app. `ps start` without `--mode app` runs the browser server either way, and `ps start --mode app` refuses to run while it is set. |
-| `PS_FORCE_DESKTOP` | Set to `1` so bare `ok` and `ps start --mode app` open the installed desktop app even when output is not an interactive terminal, over SSH, or on Linux without a display. `PS_FORCE_BROWSER=1` takes precedence. |
+| `PS_FORCE_BROWSER` | Set to `1` so bare `ps` runs the browser server instead of opening the installed desktop app. `ps start` without `--mode app` runs the browser server either way, and `ps start --mode app` refuses to run while it is set. |
+| `PS_FORCE_DESKTOP` | Set to `1` so bare `ps` and `ps start --mode app` open the installed desktop app even when output is not an interactive terminal, over SSH, or on Linux without a display. `PS_FORCE_BROWSER=1` takes precedence. |
 | `PS_LOG_LEVEL` | Log verbosity (`info`, `debug`, `trace`). Falls back to `LOG_LEVEL` if unset. |
 
 **Advanced / operator:**

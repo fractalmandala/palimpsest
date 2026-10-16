@@ -1,5 +1,5 @@
-import type { UninstallProjectRow } from '@palimpsest/core/uninstall-bridge';
 import { Trans, useLingui } from '@lingui/react/macro';
+import type { UninstallProjectRow } from '@palimpsest/core/uninstall-bridge';
 import { useEffect, useId, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -126,8 +126,8 @@ export function UninstallPickerScreen({
         </h1>
         <p id={descriptionId} className="text-sm text-muted-foreground">
           <Trans>
-            This removes Palimpsest’s settings and integrations from your Mac and any projects
-            you select below, but keeps your markdown content and authored skills.
+            This removes Palimpsest’s settings and integrations from your Mac and any projects you
+            select below, but keeps your markdown content and authored skills.
           </Trans>
         </p>
       </header>

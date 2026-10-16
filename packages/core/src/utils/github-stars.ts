@@ -9,7 +9,7 @@ export async function getGitHubStars(init?: RequestInit): Promise<number | null>
     const res = await fetch(REPO_API_URL, {
       headers: {
         accept: 'application/vnd.github+json',
-        'user-agent': 'palimpsest.ai',
+        'user-agent': 'palimpsest',
       },
       ...restInit,
       signal,

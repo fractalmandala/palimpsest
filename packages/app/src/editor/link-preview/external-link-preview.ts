@@ -1,7 +1,4 @@
-import {
-  type LinkPreviewMetadata,
-  LinkPreviewResponseSchema,
-} from '@palimpsest/core/schemas/api';
+import { type LinkPreviewMetadata, LinkPreviewResponseSchema } from '@palimpsest/core/schemas/api';
 
 export const SUCCESS_CACHE_MAX_ENTRIES = 128;
 

@@ -12,9 +12,13 @@ export type WriterClassification =
   | 'classified-git-author'
   | 'classified-file-system'
   | 'classified-git-upstream'
-  | 'classified-openknowledge-service'
-  | 'classified-ok-generator'
+  | 'classified-palimpsest-service'
+  | 'classified-ps-generator'
   | 'unknown';
+
+export const PS_SERVICE_WRITER_ID = 'palimpsest-service';
+
+const SERVICE_WRITER_IDS: readonly string[] = ['palimpsest-service', 'openknowledge-service'];
 
 export const GIT_AUTHOR_WRITER_PREFIX = 'git-author-';
 
@@ -31,7 +35,7 @@ export interface ParsedWriter {
 }
 
 const WRITER_ID_RE =
-  /^(agent-[^/]+|principal-[^/]+|git-author-[^/]+|file-system|git-upstream|openknowledge-service|ps-generator)$/;
+  /^(agent-[^/]+|principal-[^/]+|git-author-[^/]+|file-system|git-upstream|palimpsest-service|openknowledge-service|ps-generator)$/;
 
 export type ResolvedGitDir =
   | {
@@ -90,15 +94,15 @@ export function resolveShadowDir(projectRoot: string): string {
     case 'inaccessible':
       throw new GitDirAccessError(result.gitPath, { cause: result.cause });
     case 'absent':
-      return resolve(projectRoot, '.git/ok');
+      return resolve(projectRoot, '.git/ps');
   }
 }
 
 function shadowSubdirName(gitDir: string, projectSubPath: string): string {
   if (projectSubPath === '') return 'ps';
-  const hashed = `ok-${hashedShadowSlug(projectSubPath)}`;
+  const hashed = `ps-${hashedShadowSlug(projectSubPath)}`;
   if (existsSync(resolve(gitDir, hashed))) return hashed;
-  const legacy = `ok-${legacyShadowSlug(projectSubPath)}`;
+  const legacy = `ps-${legacyShadowSlug(projectSubPath)}`;
   switch (shadowOwner(resolve(gitDir, legacy), projectSubPath)) {
     case 'ours':
     case 'unrecorded':
@@ -283,14 +287,17 @@ export interface ShadowContributor {
 
 const PS_CONTRIBUTORS_PREFIX = 'ps-contributors: ';
 
+const LEGACY_CONTRIBUTORS_PREFIX = 'ok-contributors: ';
+
 export function parseContributors(body: string): ShadowContributor[] {
   if (!body) return [];
   const contributors: ShadowContributor[] = [];
   for (const line of body.split('\n')) {
     const trimmed = line.trim();
-    if (!trimmed.startsWith(PS_CONTRIBUTORS_PREFIX)) continue;
+    const rest = stripKnownPrefix(trimmed, PS_CONTRIBUTORS_PREFIX, LEGACY_CONTRIBUTORS_PREFIX);
+    if (rest === null) continue;
     try {
-      const parsed = JSON.parse(trimmed.slice(PS_CONTRIBUTORS_PREFIX.length)) as unknown;
+      const parsed = JSON.parse(rest) as unknown;
       if (
         parsed !== null &&
         typeof parsed === 'object' &&
@@ -356,6 +363,15 @@ export interface PsActorEntry {
 
 const PS_ACTOR_PREFIX = 'ps-actor: ';
 
+const LEGACY_ACTOR_PREFIX = 'ok-actor: ';
+
+function stripKnownPrefix(value: string, ...prefixes: readonly string[]): string | null {
+  for (const prefix of prefixes) {
+    if (value.startsWith(prefix)) return value.slice(prefix.length);
+  }
+  return null;
+}
+
 export function formatPsActor(entry: PsActorEntry): string {
   const { summaries, previous_paths, ...rest } = entry;
   const payload: Record<string, unknown> = { ...rest };
@@ -386,7 +402,7 @@ function parsePsActorObject(obj: Record<string, unknown>): PsActorEntry | null {
         writer_id = 'git-upstream';
         break;
       default:
-        writer_id = 'openknowledge-service';
+        writer_id = PS_SERVICE_WRITER_ID;
     }
   }
   const summaries =
@@ -432,10 +448,11 @@ export function parsePsActor(body: string): PsActorEntry | null {
   if (!body) return null;
   for (const line of body.split('\n')) {
     const trimmed = line.trim();
-    if (!trimmed.startsWith(PS_ACTOR_PREFIX)) continue;
+    const rest = stripKnownPrefix(trimmed, PS_ACTOR_PREFIX, LEGACY_ACTOR_PREFIX);
+    if (rest === null) continue;
     let parsed: unknown;
     try {
-      parsed = JSON.parse(trimmed.slice(PS_ACTOR_PREFIX.length));
+      parsed = JSON.parse(rest);
     } catch {
       return null;
     }
@@ -450,10 +467,11 @@ export function parsePsActors(body: string): PsActorEntry[] {
   const out: PsActorEntry[] = [];
   for (const line of body.split('\n')) {
     const trimmed = line.trim();
-    if (!trimmed.startsWith(PS_ACTOR_PREFIX)) continue;
+    const rest = stripKnownPrefix(trimmed, PS_ACTOR_PREFIX, LEGACY_ACTOR_PREFIX);
+    if (rest === null) continue;
     let parsed: unknown;
     try {
-      parsed = JSON.parse(trimmed.slice(PS_ACTOR_PREFIX.length));
+      parsed = JSON.parse(rest);
     } catch {
       continue;
     }
@@ -549,10 +567,10 @@ export function parseWriterId(id: string): ParsedWriter {
   if (id === 'file-system') return { id, classification: 'classified-file-system', isAgent: null };
   if (id === 'git-upstream')
     return { id, classification: 'classified-git-upstream', isAgent: null };
-  if (id === 'openknowledge-service')
-    return { id, classification: 'classified-openknowledge-service', isAgent: null };
+  if ((SERVICE_WRITER_IDS as readonly string[]).includes(id))
+    return { id, classification: 'classified-palimpsest-service', isAgent: null };
   if (id === PS_GENERATOR_WRITER_ID)
-    return { id, classification: 'classified-ok-generator', isAgent: null };
+    return { id, classification: 'classified-ps-generator', isAgent: null };
   return { id, classification: 'unknown', isAgent: null };
 }
 

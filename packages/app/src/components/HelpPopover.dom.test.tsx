@@ -68,12 +68,13 @@ describe('HelpPopover runtime behavior', () => {
     expect(typeof mod.HelpPopover).toBe('function');
   });
 
-  test('groups links under Resources, Community, and Product updates navs', async () => {
+  test('groups links under Resources and Community navs', async () => {
     await renderOpenHelpPopover();
 
-    for (const heading of ['Resources', 'Community', 'Product updates']) {
+    for (const heading of ['Resources', 'Community']) {
       expect(screen.getByRole('navigation', { name: heading })).not.toBeNull();
     }
+    expect(screen.queryByRole('navigation', { name: 'Product updates' })).toBeNull();
     expect(screen.queryByText(/Help\s*&\s*Resources/i)).toBeNull();
     expect(screen.queryByText('Settings')).toBeNull();
   });
@@ -128,20 +129,6 @@ describe('HelpPopover runtime behavior', () => {
         rel: 'noopener noreferrer',
         hasIcon: true,
       },
-      {
-        label: 'X (Twitter)',
-        href: 'https://x.com/Palimpsest',
-        target: '_blank',
-        rel: 'noopener noreferrer',
-        hasIcon: true,
-      },
-      {
-        label: 'Discord',
-        href: 'https://discord.gg/VRKk2EaGHN',
-        target: '_blank',
-        rel: 'noopener noreferrer',
-        hasIcon: true,
-      },
     ]);
   });
 
@@ -160,19 +147,6 @@ describe('HelpPopover runtime behavior', () => {
     await waitFor(() => expect(within(githubLink).getByText('1.2k')).not.toBeNull());
   });
 
-  test('Product updates exposes a What’s new link and a Subscribe action', async () => {
-    await renderOpenHelpPopover();
-
-    const nav = screen.getByRole('navigation', { name: 'Product updates' });
-    const whatsNew = within(nav).getByRole('link', { name: "What's new" });
-    expect(whatsNew.getAttribute('href')).toBe('https://github.com/fractalmandala/palimpsest/releases');
-
-    const subscribe = within(nav).getByRole('button', { name: 'Subscribe' });
-    expect(subscribe).not.toBeNull();
-
-    await userEvent.click(subscribe);
-    expect(screen.getByTestId('subscribe-email')).not.toBeNull();
-  });
 });
 
 describe('HelpPopover with the desktop bridge present', () => {
@@ -220,40 +194,27 @@ describe('HelpPopover with the desktop bridge present', () => {
   });
 });
 
-describe('HelpPopover version and updates on the desktop app', () => {
-  function aboutInfo(updateChecks: 'available' | 'unavailable') {
+describe('HelpPopover version on the desktop app', () => {
+  function aboutInfo() {
     return {
       productName: 'Palimpsest Beta',
       version: '0.83.0-beta.8',
       releasesUrl: 'https://example.test/releases',
       releaseNotesUrl: 'https://example.test/releases/tag/v0.83.0-beta.8',
-      updateChecks,
     };
   }
 
-  function installBridge(updateChecks: 'available' | 'unavailable' | null) {
-    const checkNow = vi.fn(async () => {});
-    const snapshot = (checks: 'available' | 'unavailable' | null) => ({
+  function installBridge(withAbout: boolean) {
+    const query = vi.fn(async () => ({
       channel: 'latest' as const,
       schemaIncompatibility: null,
-      ...(checks ? { about: aboutInfo(checks) } : {}),
-    });
-    const query = vi.fn(async () => snapshot(updateChecks));
+      ...(withAbout ? { about: aboutInfo() } : {}),
+    }));
     (window as unknown as { psDesktop?: unknown }).psDesktop = {
       appVersion: '0.83.0-beta.8',
-      update: { checkNow },
       state: { query },
     };
-    return { checkNow, query, snapshot };
-  }
-
-  async function waitForAboutData() {
-    const nav = screen.getByRole('navigation', { name: 'Product updates' });
-    await waitFor(() =>
-      expect(within(nav).getByRole('link', { name: "What's new" }).getAttribute('href')).toBe(
-        'https://example.test/releases',
-      ),
-    );
+    return { query };
   }
 
   afterEach(() => {
@@ -261,93 +222,29 @@ describe('HelpPopover version and updates on the desktop app', () => {
     window.location.hash = '';
   });
 
-  test('the version row opens Settings at About & updates', async () => {
-    installBridge('available');
+  test('the version row opens Settings at About', async () => {
+    installBridge(true);
     await renderOpenHelpPopover();
 
-    await userEvent.click(screen.getByRole('button', { name: 'v0.83.0-beta.8 About & updates' }));
+    await userEvent.click(screen.getByRole('button', { name: 'v0.83.0-beta.8 About' }));
 
     expect(window.location.hash).toBe('#settings/about');
   });
 
-  test('Check for updates starts a check when the updater is running', async () => {
-    const { checkNow } = installBridge('available');
+  test('renders no updater UI', async () => {
+    installBridge(true);
     await renderOpenHelpPopover();
 
-    const nav = screen.getByRole('navigation', { name: 'Product updates' });
-    await userEvent.click(await within(nav).findByRole('button', { name: 'Check for updates' }));
-
-    expect(checkNow).toHaveBeenCalledTimes(1);
-  });
-
-  test('What’s new follows the release page the installed build names', async () => {
-    installBridge('available');
-    await renderOpenHelpPopover();
-
-    await waitForAboutData();
-  });
-
-  test('Check for updates is absent when the updater did not start', async () => {
-    installBridge('unavailable');
-    await renderOpenHelpPopover();
-
-    await waitForAboutData();
-    expect(screen.getByRole('button', { name: 'v0.83.0-beta.8 About & updates' })).not.toBeNull();
+    expect(screen.queryByRole('button', { name: /updates/i })).toBeNull();
     expect(screen.queryByRole('button', { name: 'Check for updates' })).toBeNull();
-  });
-
-  test('reopening the popover picks up an updater that finished booting', async () => {
-    const { query, snapshot } = installBridge('unavailable');
-    await renderOpenHelpPopover();
-    await waitForAboutData();
-    expect(screen.queryByRole('button', { name: 'Check for updates' })).toBeNull();
-
-    query.mockResolvedValue(snapshot('available'));
-    await userEvent.keyboard('{Escape}');
-    await userEvent.click(screen.getByRole('button', { name: 'Resources' }));
-
-    const nav = screen.getByRole('navigation', { name: 'Product updates' });
-    expect(await within(nav).findByRole('button', { name: 'Check for updates' })).not.toBeNull();
-  });
-
-  test('a failed About read or check leaves a renderer log entry', async () => {
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    try {
-      const { query, checkNow } = installBridge('available');
-      const queryError = new Error('state query gone');
-      query.mockRejectedValueOnce(queryError);
-      await renderOpenHelpPopover();
-      await waitFor(() =>
-        expect(warn).toHaveBeenCalledWith('[help-popover] bridge.state.query() failed', queryError),
-      );
-
-      const checkError = new Error('check-now handler removed');
-      checkNow.mockRejectedValueOnce(checkError);
-      await userEvent.keyboard('{Escape}');
-      await userEvent.click(screen.getByRole('button', { name: 'Resources' }));
-      const nav = screen.getByRole('navigation', { name: 'Product updates' });
-      await userEvent.click(await within(nav).findByRole('button', { name: 'Check for updates' }));
-      await waitFor(() =>
-        expect(warn).toHaveBeenCalledWith(
-          '[help-popover] bridge.update.checkNow() failed',
-          checkError,
-        ),
-      );
-    } finally {
-      warn.mockRestore();
-    }
   });
 
   test('an older desktop build without About data keeps the version row only', async () => {
-    installBridge(null);
+    installBridge(false);
     await renderOpenHelpPopover();
     await act(async () => {});
 
-    expect(screen.getByRole('button', { name: 'v0.83.0-beta.8 About & updates' })).not.toBeNull();
-    expect(screen.queryByRole('button', { name: 'Check for updates' })).toBeNull();
-    expect(screen.getByRole('link', { name: "What's new" }).getAttribute('href')).toBe(
-      'https://github.com/fractalmandala/palimpsest/releases',
-    );
+    expect(screen.getByRole('button', { name: 'v0.83.0-beta.8 About' })).not.toBeNull();
   });
 
   test('the web host shows no version row', async () => {
@@ -367,11 +264,7 @@ describe('HelpPopover core replacement liveness', () => {
     const githubLink = within(nav).getByRole('link', { name: /GitHub/ });
     await waitFor(() => expect(within(githubLink).getByText('1.2k')).not.toBeNull());
     expect(
-      servedCore.readersOf(
-        '@palimpsest/core/utils/github-stars',
-        'getGitHubStars',
-        since,
-      ),
+      servedCore.readersOf('@palimpsest/core/utils/github-stars', 'getGitHubStars', since),
     ).toEqual(['components/HelpPopover.tsx']);
   });
 });

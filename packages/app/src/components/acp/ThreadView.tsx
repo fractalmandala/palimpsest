@@ -1,5 +1,7 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
+// oxlint-disable ps/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
+import { plural } from '@lingui/core/macro';
+import { Plural, useLingui } from '@lingui/react/macro';
 import { deriveAgentPosture } from '@palimpsest/core/acp/agent-posture';
 import {
   type AttachmentPart,
@@ -11,8 +13,6 @@ import {
   type ThreadFailureDetail,
   type ThreadInfo,
 } from '@palimpsest/core/acp/thread-protocol';
-import { plural } from '@lingui/core/macro';
-import { Plural, useLingui } from '@lingui/react/macro';
 import {
   ArrowUp,
   Check,

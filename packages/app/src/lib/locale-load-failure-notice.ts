@@ -1,5 +1,5 @@
-import type { SupportedLocale } from '@palimpsest/core/i18n/locales';
 import { t } from '@lingui/core/macro';
+import type { SupportedLocale } from '@palimpsest/core/i18n/locales';
 import { toast } from 'sonner';
 import { i18n } from './i18n';
 

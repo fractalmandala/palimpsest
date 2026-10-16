@@ -70,8 +70,7 @@ describe.each(['async', 'sync'] as const)('Pi trust lock (%s)', (mode) => {
   }
 
   test('coordinates with a separate Pi writer and preserves its update', async () => {
-    const original =
-      mode === 'sync' ? { existing: false, palimpsest: true } : { existing: false };
+    const original = mode === 'sync' ? { existing: false, palimpsest: true } : { existing: false };
     writeFileSync(canonical, JSON.stringify(original));
     const releasePi = lockfile.lockSync(dirname(configured), {
       realpath: false,

@@ -1,14 +1,11 @@
+import { useLingui } from '@lingui/react/macro';
 import {
   EDITOR_PROJECT_SKILL_ROOT,
   EDITOR_USER_SKILL_ROOT,
 } from '@palimpsest/core/constants/editors';
-import {
-  AGENTS_SKILLS_ROOT,
-  PACK_SKILL_PREFIX,
-} from '@palimpsest/core/constants/skills';
+import { AGENTS_SKILLS_ROOT, PACK_SKILL_PREFIX } from '@palimpsest/core/constants/skills';
 import type { SkillScope, SkillsListEntry } from '@palimpsest/core/schemas/api';
 import { SkillUserTargetEditorSchema } from '@palimpsest/core/skill-targets/schema';
-import { useLingui } from '@lingui/react/macro';
 
 export function customPlacementRoot(placement: { path: string }): string {
   return placement.path.split('/').slice(0, -1).join('/');

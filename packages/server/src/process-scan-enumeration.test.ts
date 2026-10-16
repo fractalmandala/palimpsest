@@ -15,7 +15,7 @@ import { findPsProcessPids, scanLockProcesses } from './process-scan.ts';
 const originalPlatform = process.platform;
 const fixturePid = 24680;
 const lockDir = resolve('/missing/notes-é/.ps/local');
-const command = `node --ok-lock-dir-b64=${Buffer.from(lockDir).toString('base64url')}`;
+const command = `node --ps-lock-dir-b64=${Buffer.from(lockDir).toString('base64url')}`;
 const row = `${fixturePid} ${command}`;
 const enobufs = Object.assign(new Error('output exceeds the buffered reader'), { code: 'ENOBUFS' });
 const unavailable = Object.assign(new Error('command not found'), { code: 'ENOENT' });
@@ -107,7 +107,7 @@ describe('process enumeration', () => {
   it('retains project paths split across byte chunks and an unterminated final row', async () => {
     const project = resolve('/missing/notes-é');
     const output = Buffer.from(
-      `PID COMMAND\n12345 /usr/bin/unrelated-service\n${fixturePid} node --ok-project-path=${project}`,
+      `PID COMMAND\n12345 /usr/bin/unrelated-service\n${fixturePid} node --ps-project-path=${project}`,
     );
     providePsOutput(Array.from(output, (byte) => Buffer.from([byte])));
 
@@ -121,7 +121,7 @@ describe('process enumeration', () => {
   });
 
   it('keeps carriage returns inside a process command', async () => {
-    providePsOutput(['PID COMMAND\n12345 unrelated\r97531 open-knowledge-server notes\n', row]);
+    providePsOutput(['PID COMMAND\n12345 unrelated\r97531 palimpsest-server notes\n', row]);
 
     expect(await scanLockProcesses()).toEqual({
       candidates: [{ lockDir, pid: fixturePid, source: 'lock-dir-argument' }],
@@ -143,7 +143,7 @@ describe('process enumeration', () => {
     Object.defineProperty(process, 'platform', { value: 'darwin' });
     const readSync = providePsOutput([
       'PID COMMAND\n',
-      '13579 unrelated\\01297531 open-knowledge-server notes\n',
+      '13579 unrelated\\01297531 palimpsest-server notes\n',
       `${row}\n`,
     ]);
     spawnSync.mockImplementation((program: string, args: string[]) => {
@@ -151,7 +151,7 @@ describe('process enumeration', () => {
       return {
         status: 0,
         stdout: args.includes('-l')
-          ? `13579 unrelated\n97531 open-knowledge-server notes\n${row}\n`
+          ? `13579 unrelated\n97531 palimpsest-server notes\n${row}\n`
           : `13579\n${fixturePid}\n`,
       };
     });

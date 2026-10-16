@@ -1,5 +1,5 @@
-import { TERMINAL_CLIS, type TerminalCli } from '@palimpsest/core/handoff';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { TERMINAL_CLIS, type TerminalCli } from '@palimpsest/core/handoff';
 import {
   Bot,
   CheckIcon,

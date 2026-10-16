@@ -1,13 +1,10 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { skillFileLiveDocName, skillLiveDocName } from '@palimpsest/core/constants/cc1';
-import {
-  stripFrontmatter,
-  unwrapFrontmatterFences,
-} from '@palimpsest/core/extensions/frontmatter';
+import { stripFrontmatter, unwrapFrontmatterFences } from '@palimpsest/core/extensions/frontmatter';
 import { extractFrontmatterTags } from '@palimpsest/core/frontmatter/tags';
 import type { SkillScope } from '@palimpsest/core/schemas/api';
 import type { SkillPreview as SkillPreviewData } from '@palimpsest/core/skills-catalog/schema';
 import { estimateSkillCost } from '@palimpsest/core/skills-catalog/skill-cost';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { AlignLeft, Eye, Gauge, Tag, Type } from 'lucide-react';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { PropertyDisplayRow } from '@/components/PropertyDisplayRow';

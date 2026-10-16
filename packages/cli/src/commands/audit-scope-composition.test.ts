@@ -15,13 +15,13 @@ import { hostname, tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { PassThrough, type Readable } from 'node:stream';
 import { fileURLToPath } from 'node:url';
+import { CallToolResultSchema } from '@modelcontextprotocol/sdk/types.js';
 import {
   ProblemDetailsSchema,
   type ValidationAuditResponse,
   ValidationAuditResponseSchema,
 } from '@palimpsest/core';
 import { ConfigSchema, readServerLock } from '@palimpsest/server';
-import { CallToolResultSchema } from '@modelcontextprotocol/sdk/types.js';
 import { afterAll, afterEach, test as baseTest, beforeAll, describe, expect, vi } from 'vitest';
 import type { BootedServer } from '../../../server/src/boot.ts';
 import { bootCompositionRig } from '../../../server/src/composition-rig.test-helper.ts';
@@ -155,9 +155,7 @@ async function http(name: string, path: string): Promise<ValidationAuditResponse
 
 beforeAll(() => {
   if (!existsSync(CLI_ENTRY)) {
-    throw new Error(
-      'Build the CLI first: pnpm exec turbo run build --filter=@palimpsest/cli',
-    );
+    throw new Error('Build the CLI first: pnpm exec turbo run build --filter=@palimpsest/cli');
   }
   root = realpathSync(mkdtempSync(join(tmpdir(), 'ps-cli-scope-')));
   headless = realpathSync(mkdtempSync(join(tmpdir(), 'ps-headless-scope-')));

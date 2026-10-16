@@ -11,11 +11,7 @@ import {
 } from 'node:fs';
 import { hostname, tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import {
-  isProcessAlive,
-  type LockProcessScan,
-  scanLockProcesses,
-} from '@palimpsest/server';
+import { isProcessAlive, type LockProcessScan, scanLockProcesses } from '@palimpsest/server';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { hasLsof } from '../../../../test-support/capabilities.test-helper.ts';
 import {
@@ -65,7 +61,7 @@ describe.skipIf(process.platform === 'win32')('uninstall lock recovery in an iso
       process.execPath,
       [
         '-e',
-        "process.title = 'open-knowledge-server fixture'; process.send('ready'); setInterval(() => {}, 1000)",
+        "process.title = 'palimpsest-server fixture'; process.send('ready'); setInterval(() => {}, 1000)",
       ],
       { cwd: project, stdio: ['ignore', 'ignore', 'ignore', 'ipc'] },
     );

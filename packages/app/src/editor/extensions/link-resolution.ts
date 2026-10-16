@@ -1,7 +1,4 @@
-import {
-  classifyMarkdownHref,
-  resolveAssetProjectPath,
-} from '@palimpsest/core/utils/link-targets';
+import { classifyMarkdownHref, resolveAssetProjectPath } from '@palimpsest/core/utils/link-targets';
 import { resolveName } from '@palimpsest/core/utils/target-namespace';
 import { resolveLinkTargetIntent } from '../../components/link-target-intent';
 import { isLinkValidationVisible } from '../link-validation-policy';

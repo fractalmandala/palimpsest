@@ -81,7 +81,7 @@ describe('parseFixRef', () => {
   test('accepts a PR URL and keeps its owner/repo', () => {
     expect(parseFixRef('https://github.com/inkeep/agents-private/pull/2767')).toEqual({
       kind: 'pr',
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'agents-private',
       number: 2767,
     });
@@ -99,7 +99,7 @@ describe('parseFixRef', () => {
   test('resolves a bare #N / N against the default repo', () => {
     expect(parseFixRef('#2767')).toEqual({
       kind: 'pr',
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'agents-private',
       number: 2767,
     });
@@ -347,7 +347,7 @@ describe('resolvePrivateSha', () => {
   test('resolves a PR ref through the injected boundary', () => {
     const seen = [];
     const sha = resolvePrivateSha(
-      { kind: 'pr', owner: 'inkeep', repo: 'agents-private', number: 2767 },
+      { kind: 'pr', owner: 'example', repo: 'agents-private', number: 2767 },
       {
         resolvePrMergeSha: (ref) => {
           seen.push(ref);
@@ -356,13 +356,13 @@ describe('resolvePrivateSha', () => {
       },
     );
     expect(sha).toBe(PRIVATE_SHA);
-    expect(seen).toEqual([{ kind: 'pr', owner: 'inkeep', repo: 'agents-private', number: 2767 }]);
+    expect(seen).toEqual([{ kind: 'pr', owner: 'example', repo: 'agents-private', number: 2767 }]);
   });
 
   test('propagates an unmerged-PR failure instead of returning nothing', () => {
     expect(() =>
       resolvePrivateSha(
-        { kind: 'pr', owner: 'inkeep', repo: 'agents-private', number: 1 },
+        { kind: 'pr', owner: 'example', repo: 'agents-private', number: 1 },
         {
           resolvePrMergeSha: () => {
             throw new Error('is not merged; there is no fix commit to resolve.');

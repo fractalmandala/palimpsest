@@ -189,9 +189,9 @@ describe('proxyFetchBranchInfo', () => {
       { projectPath: '/tmp/p', branch: 'main', kind: 'doc', path: 'a.md' },
       buildDeps({ fetch: fetchMock }),
     );
-    expect(headerOf(seen, 'x-ok-client-protocol')).toBe('2');
-    expect(headerOf(seen, 'x-ok-client-kind')).toBe('desktop-main');
-    expect(headerOf(seen, 'x-ok-client-runtime')).toBe(RUNTIME_VERSION);
+    expect(headerOf(seen, 'x-ps-client-protocol')).toBe('2');
+    expect(headerOf(seen, 'x-ps-client-kind')).toBe('desktop-main');
+    expect(headerOf(seen, 'x-ps-client-runtime')).toBe(RUNTIME_VERSION);
   });
 
   test('returns null when the server returns non-2xx', async () => {
@@ -256,7 +256,7 @@ describe('proxyRunCheckout', () => {
     expect(result).toEqual({ ok: true });
     expect(capturedBody).toBeDefined();
     expect(JSON.parse(capturedBody as string)).toEqual({ branch: 'feat/foo' });
-    expect(headerOf(capturedInit, 'x-ok-client-kind')).toBe('desktop-main');
+    expect(headerOf(capturedInit, 'x-ps-client-kind')).toBe('desktop-main');
     expect(headerOf(capturedInit, 'content-type')).toBe('application/json');
   });
 

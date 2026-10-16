@@ -1313,7 +1313,11 @@ describe('handleBugReportSend — zip path containment', () => {
     if (result.ok) throw new Error('expected refusal');
     expect(result.reason).toBe('send-failed');
     expect(result.fallback.mailtoUrl).not.toContain(encodeURIComponent(outsideZip));
-    expect(result.fallback.mailtoUrl.startsWith('mailto:https://github.com/fractalmandala/palimpsest/issues?')).toBe(true);
+    expect(
+      result.fallback.mailtoUrl.startsWith(
+        'mailto:https://github.com/fractalmandala/palimpsest/issues?',
+      ),
+    ).toBe(true);
     expect(stub.requests).toHaveLength(0);
   });
 
@@ -1377,7 +1381,11 @@ describe('handleBugReportSend — transport hardening', () => {
 
     expect(result.ok).toBe(false);
     if (result.ok) throw new Error('expected fallback');
-    expect(result.fallback.mailtoUrl.startsWith('mailto:https://github.com/fractalmandala/palimpsest/issues?')).toBe(true);
+    expect(
+      result.fallback.mailtoUrl.startsWith(
+        'mailto:https://github.com/fractalmandala/palimpsest/issues?',
+      ),
+    ).toBe(true);
     expect(stub.requests.map((r) => `${r.method} ${r.path}`)).toEqual(['POST /api/bug-report']);
   });
 
@@ -1503,7 +1511,11 @@ describe('handleBugReportSend — transport hardening', () => {
     expect(result.ok).toBe(false);
     if (result.ok) throw new Error('expected refusal');
     expect(result.reason).toBe('send-failed');
-    expect(result.fallback.mailtoUrl.startsWith('mailto:https://github.com/fractalmandala/palimpsest/issues?')).toBe(true);
+    expect(
+      result.fallback.mailtoUrl.startsWith(
+        'mailto:https://github.com/fractalmandala/palimpsest/issues?',
+      ),
+    ).toBe(true);
     expect(stub.requests).toHaveLength(0);
   });
 
@@ -1630,7 +1642,11 @@ describe('handleBugReportSend — email fallback', () => {
 
     expect(result.ok).toBe(false);
     if (result.ok) throw new Error('expected fallback');
-    expect(result.fallback.mailtoUrl.startsWith('mailto:https://github.com/fractalmandala/palimpsest/issues?')).toBe(true);
+    expect(
+      result.fallback.mailtoUrl.startsWith(
+        'mailto:https://github.com/fractalmandala/palimpsest/issues?',
+      ),
+    ).toBe(true);
   });
 
   test('a failed PUT falls back and never fires the completion call', async () => {

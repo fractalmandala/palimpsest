@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import type {
   ShareConstructUrlErrorCode,
   ShareConstructUrlRequest,
@@ -5,7 +6,6 @@ import type {
   ShareFreshness,
 } from '@palimpsest/core/schemas/api';
 import { ShareConstructUrlResponseSchema } from '@palimpsest/core/schemas/api';
-import { t } from '@lingui/core/macro';
 import { docNameToMarkdownPath } from '@/lib/doc-paths';
 
 const SHARE_CONSTRUCT_URL_PATH = '/api/share/construct-url';

@@ -1,5 +1,5 @@
-import type { ShareFreshness } from '@palimpsest/core/schemas/api';
 import { Trans, useLingui } from '@lingui/react/macro';
+import type { ShareFreshness } from '@palimpsest/core/schemas/api';
 import { ArrowUpRight, Check, Info, RefreshCw, TriangleAlert } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';

@@ -281,9 +281,7 @@ describe('ReportBugDialog', () => {
     const logsCheckbox = screen.getByRole('checkbox', { name: /Logs & system info/ });
     expect(logsCheckbox.getAttribute('aria-checked')).toBe('true');
     expect(logsCheckbox.hasAttribute('disabled')).toBe(true);
-    expect(
-      screen.getByText('Palimpsest logs, including activity across projects.'),
-    ).not.toBeNull();
+    expect(screen.getByText('Palimpsest logs, including activity across projects.')).not.toBeNull();
 
     const checkbox = screen.getByRole('checkbox', { name: 'Detailed diagnostics' });
     expect(checkbox.getAttribute('aria-checked')).toBe('false');
@@ -448,7 +446,10 @@ describe('ReportBugDialog', () => {
       {
         ok: false as const,
         reason: 'send-failed' as const,
-        fallback: { mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=Palimpsest%20bug' },
+        fallback: {
+          mailtoUrl:
+            'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=Palimpsest%20bug',
+        },
       },
     ],
     [
@@ -456,7 +457,10 @@ describe('ReportBugDialog', () => {
       {
         ok: false as const,
         reason: 'email-draft' as const,
-        fallback: { mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=Palimpsest%20bug' },
+        fallback: {
+          mailtoUrl:
+            'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=Palimpsest%20bug',
+        },
       },
     ],
   ])(

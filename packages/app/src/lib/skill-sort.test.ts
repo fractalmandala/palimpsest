@@ -130,17 +130,17 @@ describe('createSkillSortComparator', () => {
   });
 
   test('groups order alphabetically among themselves', () => {
-    const groups = new Set(['Global/ponytail', 'Global/eng', 'Global/open-knowledge-skills']);
+    const groups = new Set(['Global/ponytail', 'Global/eng', 'Global/example-skills']);
     const skills = new Set([
       'Global/ponytail/audit',
       'Global/eng/browser',
-      'Global/open-knowledge-skills/discovery',
+      'Global/example-skills/discovery',
     ]);
     expect(
       sortPaths(
         [
           `Global/ponytail/audit/${SKILL_MD_PATH}`,
-          `Global/open-knowledge-skills/discovery/${SKILL_MD_PATH}`,
+          `Global/example-skills/discovery/${SKILL_MD_PATH}`,
           `Global/eng/browser/${SKILL_MD_PATH}`,
         ],
         new Set(),
@@ -149,7 +149,7 @@ describe('createSkillSortComparator', () => {
       ),
     ).toEqual([
       `Global/eng/browser/${SKILL_MD_PATH}`,
-      `Global/open-knowledge-skills/discovery/${SKILL_MD_PATH}`,
+      `Global/example-skills/discovery/${SKILL_MD_PATH}`,
       `Global/ponytail/audit/${SKILL_MD_PATH}`,
     ]);
   });

@@ -99,8 +99,7 @@ describe('findPsProcessPids with Windows Unix tools', () => {
   it('returns PIDs parsed from pgrep output when pgrep is available', async () => {
     spawnSyncSpy.mockReturnValue(
       makeSpawnResult({
-        stdout:
-          '12345 /usr/local/bin/bun /path/to/palimpsest/packages/cli/dist/cli.mjs start\n',
+        stdout: '12345 /usr/local/bin/bun /path/to/palimpsest/packages/cli/dist/cli.mjs start\n',
         status: 0,
       }),
     );
@@ -129,7 +128,7 @@ describe('findPsProcessPids with Windows Unix tools', () => {
     const encoded = Buffer.from('/Users/mike/notes/.ps/local', 'utf8').toString('base64url');
     spawnSyncSpy.mockReturnValue(
       makeSpawnResult({
-        stdout: `24680 /Applications/Palimpsest.app/Contents/Frameworks/Palimpsest Helper --type=utility --ok-lock-dir-b64=${encoded}\n`,
+        stdout: `24680 /Applications/Palimpsest.app/Contents/Frameworks/Palimpsest Helper --type=utility --ps-lock-dir-b64=${encoded}\n`,
         status: 0,
       }),
     );
@@ -172,8 +171,7 @@ describe('findPsProcessPids with Windows Unix tools', () => {
       .mockReturnValueOnce(
         makeSpawnResult({
           stdout:
-            'PID COMMAND\n 99999 /usr/local/bin/palimpsest start\n' +
-            '   123 some-other-process\n',
+            'PID COMMAND\n 99999 /usr/local/bin/palimpsest start\n' + '   123 some-other-process\n',
           status: 0,
         }),
       );
@@ -411,7 +409,7 @@ describe('discoverLockDirs', () => {
     spawnSyncSpy
       .mockReturnValueOnce(
         makeSpawnResult({
-          stdout: `PID COMMAND\n77 /Applications/Palimpsest.app/Contents/Frameworks/Palimpsest Helper --type=utility --ok-lock-dir-b64=${encoded}\n`,
+          stdout: `PID COMMAND\n77 /Applications/Palimpsest.app/Contents/Frameworks/Palimpsest Helper --type=utility --ps-lock-dir-b64=${encoded}\n`,
           status: 0,
         }),
       )
@@ -441,7 +439,7 @@ describe('discoverLockDirs', () => {
     spawnSyncSpy
       .mockReturnValueOnce(
         makeSpawnResult({
-          stdout: `PID COMMAND\n93943 /Applications/Palimpsest.app/Contents/Frameworks/Palimpsest Helper (Renderer).app/Contents/MacOS/Palimpsest Helper (Renderer) --type=renderer --ok-collab-url=ws://localhost:51473/collab --ok-project-path=${projectPath} --ok-project-name=garth_nix --seatbelt-client=53\n`,
+          stdout: `PID COMMAND\n93943 /Applications/Palimpsest.app/Contents/Frameworks/Palimpsest Helper (Renderer).app/Contents/MacOS/Palimpsest Helper (Renderer) --type=renderer --ok-collab-url=ws://localhost:51473/collab --ps-project-path=${projectPath} --ok-project-name=garth_nix --seatbelt-client=53\n`,
           status: 0,
         }),
       )
@@ -461,7 +459,7 @@ describe('discoverLockDirs', () => {
       .mockReturnValueOnce(
         makeSpawnResult({
           stdout:
-            'PID COMMAND\n93943 /Applications/Palimpsest Helper (Renderer) --type=renderer --ok-project-path=relative/notes --ok-project-name=notes\n',
+            'PID COMMAND\n93943 /Applications/Palimpsest Helper (Renderer) --type=renderer --ps-project-path=relative/notes --ok-project-name=notes\n',
           status: 0,
         }),
       )
@@ -499,7 +497,7 @@ describe('discoverLockDirs', () => {
       .mockReturnValueOnce(
         makeSpawnResult({
           stdout:
-            'PID COMMAND\n42 /Applications/Palimpsest.app/Contents/Frameworks/Helper --ok-lock-dir-b64=\n',
+            'PID COMMAND\n42 /Applications/Palimpsest.app/Contents/Frameworks/Helper --ps-lock-dir-b64=\n',
           status: 0,
         }),
       )
@@ -519,7 +517,7 @@ describe('discoverLockDirs', () => {
     spawnSyncSpy
       .mockReturnValueOnce(
         makeSpawnResult({
-          stdout: `PID COMMAND\n42 /Applications/Helper --ok-lock-dir-b64=${encoded}\n`,
+          stdout: `PID COMMAND\n42 /Applications/Helper --ps-lock-dir-b64=${encoded}\n`,
           status: 0,
         }),
       )
@@ -702,7 +700,7 @@ describe('lock recovery process evidence', () => {
     spawnSyncMock
       .mockReturnValueOnce(
         makeSpawnResult({
-          stdout: `PID COMMAND\n${process.pid} node --ok-lock-dir-b64=${Buffer.from(lockDir).toString('base64url')}\n`,
+          stdout: `PID COMMAND\n${process.pid} node --ps-lock-dir-b64=${Buffer.from(lockDir).toString('base64url')}\n`,
         }),
       )
       .mockReturnValueOnce(makeSpawnResult({ status: 1 }));
@@ -715,7 +713,7 @@ describe('lock recovery process evidence', () => {
     spawnSyncMock
       .mockReturnValueOnce(
         makeSpawnResult({
-          stdout: `PID COMMAND\n${process.pid} open-knowledge-server notes\n`,
+          stdout: `PID COMMAND\n${process.pid} palimpsest-server notes\n`,
         }),
       )
       .mockReturnValueOnce(makeSpawnResult({ status: 1 }))
@@ -730,7 +728,7 @@ describe('lock recovery process evidence', () => {
     spawnSyncMock
       .mockReturnValueOnce(
         makeSpawnResult({
-          stdout: `PID COMMAND\n${process.pid} open-knowledge-server notes\n`,
+          stdout: `PID COMMAND\n${process.pid} palimpsest-server notes\n`,
         }),
       )
       .mockReturnValueOnce(makeSpawnResult({ status: 1 }))
@@ -747,7 +745,7 @@ describe('lock recovery process evidence', () => {
     spawnSyncMock
       .mockReturnValueOnce(
         makeSpawnResult({
-          stdout: `PID COMMAND\n${process.pid} open-knowledge-server notes\n`,
+          stdout: `PID COMMAND\n${process.pid} palimpsest-server notes\n`,
         }),
       )
       .mockReturnValueOnce(makeSpawnResult({ status: 1 }))
@@ -776,7 +774,7 @@ describe('lock recovery process evidence', () => {
     spawnSyncMock
       .mockReturnValueOnce(
         makeSpawnResult({
-          stdout: `PID COMMAND\n${process.pid} open-knowledge-server notes\n`,
+          stdout: `PID COMMAND\n${process.pid} palimpsest-server notes\n`,
         }),
       )
       .mockReturnValueOnce(makeSpawnResult({ status: 1 }))
@@ -802,7 +800,7 @@ describe('lock recovery process evidence', () => {
     spawnSyncMock
       .mockReturnValueOnce(
         makeSpawnResult({
-          stdout: `PID COMMAND\n${process.pid} open-knowledge-server notes\n`,
+          stdout: `PID COMMAND\n${process.pid} palimpsest-server notes\n`,
         }),
       )
       .mockReturnValueOnce(makeSpawnResult({ status: 1 }))
@@ -828,7 +826,7 @@ describe('lock recovery process evidence', () => {
     spawnSyncMock
       .mockReturnValueOnce(
         makeSpawnResult({
-          stdout: `PID COMMAND\n${process.pid} open-knowledge-server notes\n`,
+          stdout: `PID COMMAND\n${process.pid} palimpsest-server notes\n`,
         }),
       )
       .mockReturnValueOnce(makeSpawnResult({ status: 1 }))
@@ -850,7 +848,7 @@ describe('lock recovery process evidence', () => {
     spawnSyncMock
       .mockReturnValueOnce(
         makeSpawnResult({
-          stdout: `PID COMMAND\n${process.pid} open-knowledge-server notes\n`,
+          stdout: `PID COMMAND\n${process.pid} palimpsest-server notes\n`,
         }),
       )
       .mockReturnValueOnce(makeSpawnResult({ status: 1 }))
@@ -873,7 +871,7 @@ describe('lock recovery process evidence', () => {
     spawnSyncMock
       .mockReturnValueOnce(
         makeSpawnResult({
-          stdout: `PID COMMAND\n${process.pid} open-knowledge-server notes\n${process.pid} node cli.mjs --ok-project-path=/notes\n`,
+          stdout: `PID COMMAND\n${process.pid} palimpsest-server notes\n${process.pid} node cli.mjs --ps-project-path=/notes\n`,
         }),
       )
       .mockReturnValueOnce(makeSpawnResult({ status: 1 }))
@@ -896,7 +894,7 @@ describe('lock recovery process evidence', () => {
     spawnSyncMock
       .mockReturnValueOnce(
         makeSpawnResult({
-          stdout: `PID COMMAND\n${process.pid} open-knowledge-server notes\n`,
+          stdout: `PID COMMAND\n${process.pid} palimpsest-server notes\n`,
         }),
       )
       .mockReturnValueOnce(makeSpawnResult({ status: 1 }))
@@ -910,7 +908,7 @@ describe('lock recovery process evidence', () => {
     spawnSyncMock
       .mockReturnValueOnce(
         makeSpawnResult({
-          stdout: `PID COMMAND\n${pids.map((pid) => `${pid} open-knowledge-server notes`).join('\n')}`,
+          stdout: `PID COMMAND\n${pids.map((pid) => `${pid} palimpsest-server notes`).join('\n')}`,
         }),
       )
       .mockReturnValueOnce(makeSpawnResult({ status: 1 }))

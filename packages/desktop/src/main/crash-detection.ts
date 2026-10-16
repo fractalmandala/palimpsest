@@ -9,12 +9,10 @@ import {
 } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
 import type { ProcessTerminationLookup, ProcessTerminationQuery } from '@palimpsest/cli';
-import {
-  MINIDUMP_FILE_EXTENSION,
-  type PsBugReportCrashDetectedEvent,
-} from '@palimpsest/core';
+import { MINIDUMP_FILE_EXTENSION, type PsBugReportCrashDetectedEvent } from '@palimpsest/core';
 import { asReportableAppVersion } from './crashed-app-version.ts';
 import type { DesktopCrashProcessSnapshot } from './desktop-process-observability.ts';
+import type { AppState } from './state-store.ts';
 import {
   classifyPreviousLiveness,
   classifyPreviousStall,
@@ -205,6 +203,70 @@ export interface InstallInFlight {
   attemptedVersion: string;
   handoffAt: number;
   recordedHandoff: boolean;
+}
+
+const INSTALL_IN_FLIGHT_GRACE_MS = 30 * 60 * 1000;
+
+const INSTALL_DEFER_MAX_BOOTS = 3;
+
+function resolveInstallHandoffMoment(
+  state: AppState,
+  stagedAt: number | null,
+): number | null {
+  return state.attemptedInstallHandoffAt ?? stagedAt;
+}
+
+function hasRecordedHandoff(state: AppState): boolean {
+  return state.attemptedInstallHandoffAt !== null;
+}
+
+function installHandoffAgeMs(handoffAt: number | null, nowMs: number): number | null {
+  if (handoffAt === null) return null;
+  const elapsed = nowMs - handoffAt;
+  return Number.isFinite(elapsed) && elapsed >= 0 ? elapsed : null;
+}
+
+export function installWasInFlightDuring(
+  state: AppState,
+  span: { deathFromMs: number; deathToMs: number },
+  stagedAt: number | null,
+): InstallInFlight | null {
+  const { deathFromMs, deathToMs } = span;
+  if (!Number.isFinite(deathToMs)) return null;
+  const spanStartMs =
+    hasRecordedHandoff(state) && Number.isFinite(deathFromMs)
+      ? Math.min(deathFromMs, deathToMs)
+      : deathToMs;
+  const spanCollapsed = spanStartMs === deathToMs;
+  const handoffAt = resolveInstallHandoffMoment(state, stagedAt);
+  const anchorMs =
+    handoffAt === null ? deathToMs : Math.min(Math.max(handoffAt, spanStartMs), deathToMs);
+  return installInFlightAt(state, anchorMs, stagedAt, spanCollapsed);
+}
+
+function installInFlightAt(
+  state: AppState,
+  nowMs: number,
+  stagedAt: number | null,
+  enforceDeferBudget: boolean,
+): InstallInFlight | null {
+  const attempted = state.attemptedInstall;
+  if (attempted === null) return null;
+  const handoffAt = resolveInstallHandoffMoment(state, stagedAt);
+  const handoffAgeMs = installHandoffAgeMs(handoffAt, nowMs);
+  if (
+    handoffAt === null ||
+    handoffAgeMs === null ||
+    handoffAgeMs > INSTALL_IN_FLIGHT_GRACE_MS ||
+    (enforceDeferBudget && state.attemptedInstallDeferredBoots >= INSTALL_DEFER_MAX_BOOTS)
+  ) {
+    return null;
+  }
+  return {
+    attemptedVersion: attempted,
+    handoffAt,
+    recordedHandoff: hasRecordedHandoff(state),
+  };
 }
 
 export interface CrashDetection {

@@ -1,7 +1,4 @@
-import {
-  bindConfigDoc,
-  type ConfigBinding,
-} from '@palimpsest/core/config/bind-config-doc';
+import { bindConfigDoc, type ConfigBinding } from '@palimpsest/core/config/bind-config-doc';
 import { type RenderResult, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';

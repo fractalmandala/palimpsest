@@ -1,8 +1,8 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import {
   UNINSTALL_RESULT_WAIT_TIMEOUT_MS,
   type UninstallScreenSpec,
 } from '@palimpsest/core/uninstall-bridge';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import {
   requestUninstallScreen,

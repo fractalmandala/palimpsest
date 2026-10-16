@@ -1,9 +1,9 @@
 import { createReadStream } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { pipeline } from 'node:stream/promises';
-import { EmptyRequestSchema } from '@palimpsest/core';
 import { SpanStatusCode, trace } from '@opentelemetry/api';
 import { ATTR_ERROR_TYPE } from '@opentelemetry/semantic-conventions';
+import { EmptyRequestSchema } from '@palimpsest/core';
 import type { PinoLogger } from '../logger.ts';
 import type { AssetService } from '../services/assets.ts';
 import { type ApiRouteGroup, createApiRouteGroup } from './api-pipeline.ts';

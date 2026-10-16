@@ -27,9 +27,7 @@ describe('findLocalSkillPreviewTabId', () => {
         level: 'global',
       }),
     ];
-    expect(findLocalSkillPreviewTabId(open, 'builtin', 'palimpsest', '', 'global')).toBe(
-      open[0],
-    );
+    expect(findLocalSkillPreviewTabId(open, 'builtin', 'palimpsest', '', 'global')).toBe(open[0]);
   });
 
   test('does not cross flavors or levels', () => {

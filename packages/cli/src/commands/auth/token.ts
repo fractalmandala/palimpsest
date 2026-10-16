@@ -1,9 +1,5 @@
-import {
-  currentCliCommandName,
-  gitCredentialHostKey,
-  isGitCredentialHost,
-} from '@palimpsest/core';
 import password from '@inquirer/password';
+import { currentCliCommandName, gitCredentialHostKey, isGitCredentialHost } from '@palimpsest/core';
 import { Command } from 'commander';
 import type { TokenStore } from '../../auth/token-store.ts';
 import { readTokenFromStdin } from './read-token-stdin.ts';

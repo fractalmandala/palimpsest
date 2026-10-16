@@ -1,8 +1,4 @@
-import {
-  currentCliCommandName,
-  currentDesktopProduct,
-  piToolNamespace,
-} from '@palimpsest/core';
+import { currentCliCommandName, currentDesktopProduct, piToolNamespace } from '@palimpsest/core';
 import {
   buildManagedServerEntry,
   type McpInstallOptions,
@@ -48,8 +44,8 @@ export function buildPiExtensionSource(options: McpInstallOptions = {}): string 
   return `${header}
 /**
  * Palimpsest bridge for Pi — MANAGED FILE, written by \`${currentCliCommandName()} init\`.
- * Hand edits are overwritten whenever OK re-syncs this project; remove it
- * with \`${currentCliCommandName()} deinit\` (or delete the file) to disconnect Pi from OK.
+ * Hand edits are overwritten whenever Palimpsest re-syncs this project; remove it
+ * with \`${currentCliCommandName()} deinit\` (or delete the file) to disconnect Pi from Palimpsest.
  *
  * On session start it spawns Palimpsest's MCP stdio server via Palimpsest's
  * resilient launcher (bundle, then npx, then version-manager probes), performs

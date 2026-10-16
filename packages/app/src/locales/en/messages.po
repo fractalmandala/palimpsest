@@ -1079,9 +1079,6 @@ msgstr "About"
 msgid "About {appName}"
 msgstr "About {appName}"
 
-msgid "About & updates"
-msgstr "About & updates"
-
 msgid "Above"
 msgstr "Above"
 
@@ -1737,12 +1734,6 @@ msgstr "Automatic"
 msgid "Automatic picks a free port each start. Choose a fixed port to keep the same address across restarts."
 msgstr "Automatic picks a free port each start. Choose a fixed port to keep the same address across restarts."
 
-msgid "Automatic updates"
-msgstr "Automatic updates"
-
-msgid "Automatic updates are not available right now."
-msgstr "Automatic updates are not available right now."
-
 msgid "Available"
 msgstr "Available"
 
@@ -2037,14 +2028,8 @@ msgstr "Chat history"
 msgid "Chat name"
 msgstr "Chat name"
 
-msgid "Check for updates"
-msgstr "Check for updates"
-
 msgid "Check for updates every"
 msgstr "Check for updates every"
-
-msgid "Check for updates…"
-msgstr "Check for updates…"
 
 msgid "Check out remote branch"
 msgstr "Check out remote branch"
@@ -2078,9 +2063,6 @@ msgstr "Checking for updates"
 
 msgid "Checking for updates on GitHub"
 msgstr "Checking for updates on GitHub"
-
-msgid "Checking for updates…"
-msgstr "Checking for updates…"
 
 msgid "Checking GitHub connection..."
 msgstr "Checking GitHub connection..."
@@ -3202,9 +3184,6 @@ msgstr "Couldn't save the key — please try again."
 msgid "Couldn't save the resolution for {filePath}."
 msgstr "Couldn't save the resolution for {filePath}."
 
-msgid "Couldn't save this setting. Try again."
-msgstr "Couldn't save this setting. Try again."
-
 msgid "Couldn't save your theme preference."
 msgstr "Couldn't save your theme preference."
 
@@ -3777,9 +3756,6 @@ msgstr "Double-click to edit"
 msgid "Download {0}"
 msgstr "Download {0}"
 
-msgid "Download and install updates automatically"
-msgstr "Download and install updates automatically"
-
 msgid "Download app"
 msgstr "Download app"
 
@@ -4026,8 +4002,8 @@ msgstr "embeddings"
 msgid "Embeddings API key"
 msgstr "Embeddings API key"
 
-msgid "Embeddings are computed only when a search runs and are cached locally under <0>.ok/local</0>."
-msgstr "Embeddings are computed only when a search runs and are cached locally under <0>.ok/local</0>."
+msgid "Embeddings are computed only when a search runs and are cached locally under <0>.ps/local</0>."
+msgstr "Embeddings are computed only when a search runs and are cached locally under <0>.ps/local</0>."
 
 msgid "Emoji"
 msgstr "Emoji"
@@ -4552,6 +4528,9 @@ msgstr "Failed to upload file"
 msgid "Fast"
 msgstr "Fast"
 
+msgid "Feedback"
+msgstr "Feedback"
+
 msgid "Feedback isn't available right now. Please try again later."
 msgstr "Feedback isn't available right now. Please try again later."
 
@@ -4748,15 +4727,6 @@ msgstr "Folders and empty files can't be attached — drop the files themselves.
 msgid "Follow the agent's edits"
 msgstr "Follow the agent's edits"
 
-msgid "Follow us on"
-msgstr "Follow us on"
-
-msgid "Follow us on social media"
-msgstr "Follow us on social media"
-
-msgid "Follow us on X"
-msgstr "Follow us on X"
-
 msgid "Following the agent's edits"
 msgstr "Following the agent's edits"
 
@@ -4831,9 +4801,6 @@ msgstr "Get {displayName}"
 
 msgid "Get Claude Code"
 msgstr "Get Claude Code"
-
-msgid "Get product updates in your inbox."
-msgstr "Get product updates in your inbox."
 
 msgid "Get set up"
 msgstr "Get set up"
@@ -5551,8 +5518,8 @@ msgid "Install skill"
 msgstr "Install skill"
 
 #. Checkbox that installs the user-global discovery skill bundle
-msgid "Install the <0>open-knowledge-discovery</0> skill"
-msgstr "Install the <0>open-knowledge-discovery</0> skill"
+msgid "Install the <0>palimpsest-discovery</0> skill"
+msgstr "Install the <0>palimpsest-discovery</0> skill"
 
 msgid "Install the gh CLI"
 msgstr "Install the gh CLI"
@@ -5676,9 +5643,6 @@ msgstr "Italic"
 
 msgid "Item {0}"
 msgstr "Item {0}"
-
-msgid "Join us on Discord"
-msgstr "Join us on Discord"
 
 msgid "Jump to last tab"
 msgstr "Jump to last tab"
@@ -5969,11 +5933,11 @@ msgstr "Loading headings for {pageTarget}"
 msgid "Loading image"
 msgstr "Loading image"
 
-msgid "Loading Palimpsest skills"
-msgstr "Loading Palimpsest skills"
-
 msgid "Loading pages"
 msgstr "Loading pages"
+
+msgid "Loading Palimpsest skills"
+msgstr "Loading Palimpsest skills"
 
 msgid "Loading paths…"
 msgstr "Loading paths…"
@@ -6306,11 +6270,11 @@ msgstr "Move block"
 msgid "Move down"
 msgstr "Move down"
 
-msgid "Move Palimpsest.app to the Trash"
-msgstr "Move Palimpsest.app to the Trash"
-
 msgid "Move or rename this file inside the skill — the path stays under references/ or scripts/."
 msgstr "Move or rename this file inside the skill — the path stays under references/ or scripts/."
+
+msgid "Move Palimpsest.app to the Trash"
+msgstr "Move Palimpsest.app to the Trash"
 
 msgid "Move succeeded but the sidebar may be out of date — refresh to resync"
 msgstr "Move succeeded but the sidebar may be out of date — refresh to resync"
@@ -6425,9 +6389,6 @@ msgstr "Musing…"
 
 msgid "my-feature"
 msgstr "my-feature"
-
-msgid "my@email.com"
-msgstr "my@email.com"
 
 msgid "name"
 msgstr "name"
@@ -7043,9 +7004,6 @@ msgstr "Offline"
 msgid "OK can't move these, so they go when {pick} does."
 msgstr "OK can't move these, so they go when {pick} does."
 
-msgid "OK Desktop"
-msgstr "OK Desktop"
-
 msgid "OK last set this folder to {0} — something outside OK changed it since. The state shown is what's on disk now; your next Symlink/Unlink wins."
 msgstr "OK last set this folder to {0} — something outside OK changed it since. The state shown is what's on disk now; your next Symlink/Unlink wins."
 
@@ -7242,36 +7200,6 @@ msgstr "Open in worktree"
 msgid "Open it there"
 msgstr "Open it there"
 
-msgid "Palimpsest could not reach the project server to check index maintenance. The status updates when the project reconnects."
-msgstr "Palimpsest could not reach the project server to check index maintenance. The status updates when the project reconnects."
-
-msgid "Palimpsest creates and maintains a navigation file named index.md in every folder that contains Markdown."
-msgstr "Palimpsest creates and maintains a navigation file named index.md in every folder that contains Markdown."
-
-msgid "OpenKnowledge Format guidance"
-msgstr "Palimpsest Format guidance"
-
-msgid "Palimpsest maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
-msgstr "Palimpsest maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
-
-msgid "Palimpsest rewrites these index.md files as documents change, so manual edits to them are replaced."
-msgstr "Palimpsest rewrites these index.md files as documents change, so manual edits to them are replaced."
-
-msgid "Palimpsest tools are available in this thread."
-msgstr "Palimpsest tools are available in this thread."
-
-msgid "Palimpsest tools are unavailable because the project folder is missing, inaccessible, or has changed. Check its location and permissions, then retry."
-msgstr "Palimpsest tools are unavailable because the project folder is missing, inaccessible, or has changed. Check its location and permissions, then retry."
-
-msgid "Palimpsest tools are unavailable: a file Palimpsest didn't write is already at {bridgePath}."
-msgstr "Palimpsest tools are unavailable: a file Palimpsest didn't write is already at {bridgePath}."
-
-msgid "Palimpsest tools are unavailable: something is already at {bridgePath} but couldn't be read, so Palimpsest left it alone."
-msgstr "Palimpsest tools are unavailable: something is already at {bridgePath} but couldn't be read, so Palimpsest left it alone."
-
-msgid "Palimpsest's own copy of {0} is damaged and won't run. It can download a fresh copy of {1} {2} (about {3} MB from {4}) to replace it."
-msgstr "Palimpsest's own copy of {0} is damaged and won't run. It can download a fresh copy of {1} {2} (about {3} MB from {4}) to replace it."
-
 msgid "Open link"
 msgstr "Open link"
 
@@ -7380,194 +7308,8 @@ msgstr "Opening worktree"
 msgid "Opening..."
 msgstr "Opening..."
 
-msgid "Palimpsest"
-msgstr "Palimpsest"
-
-msgid "Palimpsest can't sign in to GitHub for this project."
-msgstr "Palimpsest can't sign in to GitHub for this project."
-
-msgid "Palimpsest checked {subject}"
-msgstr "Palimpsest checked {subject}"
-
-msgid "Palimpsest checked the project"
-msgstr "Palimpsest checked the project"
-
-msgid "Palimpsest checks for and downloads updates in the background."
-msgstr "Palimpsest checks for and downloads updates in the background."
-
-msgid "Palimpsest could not find this agent on this machine."
-msgstr "Palimpsest could not find this agent on this machine."
-
-msgid "Palimpsest couldn't finish setting up this project. The worktree was created but not opened."
-msgstr "Palimpsest couldn't finish setting up this project. The worktree was created but not opened."
-
-msgid "Palimpsest couldn't read terminal.shell in .ps/local/config.yml. Using an available Windows shell instead."
-msgstr "Palimpsest couldn't read terminal.shell in .ps/local/config.yml. Using an available Windows shell instead."
-
-msgid "Palimpsest couldn't write launch settings under .ps/local/terminal because the folder is not safely contained in this project. Check that it is a real folder inside the project, not a link. Claude will ask you to approve Palimpsest."
-msgstr "Palimpsest couldn't write launch settings under .ps/local/terminal because the folder is not safely contained in this project. Check that it is a real folder inside the project, not a link. Claude will ask you to approve Palimpsest."
-
-msgid "Palimpsest couldn't write launch settings under .ps/local/terminal this time. Check that the folder is writable. Claude will ask you to approve Palimpsest."
-msgstr "Palimpsest couldn't write launch settings under .ps/local/terminal this time. Check that the folder is writable. Claude will ask you to approve Palimpsest."
-
-msgid "Palimpsest created a share link"
-msgstr "Palimpsest created a share link"
-
-msgid "Palimpsest created a share link for {subject}"
-msgstr "Palimpsest created a share link for {subject}"
-
-msgid "Palimpsest deleted {subject}"
-msgstr "Palimpsest deleted {subject}"
-
-msgid "Palimpsest deleted a document"
-msgstr "Palimpsest deleted a document"
-
-msgid "Palimpsest discovery skill"
-msgstr "Palimpsest discovery skill"
-
-msgid "Palimpsest does not recognize this entry, and cannot safely replace it in this file's format."
-msgstr "Palimpsest does not recognize this entry, and cannot safely replace it in this file's format."
-
-msgid "Palimpsest does not recognize this entry. Turning it on replaces it."
-msgstr "Palimpsest does not recognize this entry. Turning it on replaces it."
-
-msgid "Palimpsest doesn't check for or download updates on its own. Check for updates still works when you want a newer version."
-msgstr "Palimpsest doesn't check for or download updates on its own. Check for updates still works when you want a newer version."
-
-msgid "Palimpsest edited {subject}"
-msgstr "Palimpsest edited {subject}"
-
-msgid "Palimpsest edited a document"
-msgstr "Palimpsest edited a document"
-
-msgid "Palimpsest files were removed"
-msgstr "Palimpsest files were removed"
-
-msgid "Palimpsest has no credential stored for this host. Add a token in Settings, or let git use the credentials it already has."
-msgstr "Palimpsest has no credential stored for this host. Add a token in Settings, or let git use the credentials it already has."
-
-msgid "Palimpsest imported {source}"
-msgstr "Palimpsest imported {source}"
-
-msgid "Palimpsest imported a skill"
-msgstr "Palimpsest imported a skill"
-
-msgid "Palimpsest initializes at <0>{projectDir}</0> — the parent of <1>{pickedRelative}</1> because it contains a <2>.git</2> folder (one .ps/ per git repo). <3>Content directory</3> defaults to <4>.</4> (the whole repo); type a sub-folder to narrow it."
-msgstr "Palimpsest initializes at <0>{projectDir}</0> — the parent of <1>{pickedRelative}</1> because it contains a <2>.git</2> folder (one .ps/ per git repo). <3>Content directory</3> defaults to <4>.</4> (the whole repo); type a sub-folder to narrow it."
-
-msgid "Palimpsest installed {subject}"
-msgstr "Palimpsest installed {subject}"
-
-msgid "Palimpsest installed a skill"
-msgstr "Palimpsest installed a skill"
-
-msgid "Palimpsest integrations checked."
-msgstr "Palimpsest integrations checked."
-
-msgid "Palimpsest is set up at the repository root here, so the pack goes inside <0>{sanitized}</0> rather than at the top of the repository."
-msgstr "Palimpsest is set up at the repository root here, so the pack goes inside <0>{sanitized}</0> rather than at the top of the repository."
-
-msgid "Palimpsest is using this GitHub account."
-msgstr "Palimpsest is using this GitHub account."
-
-msgid "Palimpsest keeps retrying and shows them as soon as the file can be read."
-msgstr "Palimpsest keeps retrying and shows them as soon as the file can be read."
-
-msgid "Palimpsest left this file alone because it could not parse it safely. Fix the file by hand, then try again."
-msgstr "Palimpsest left this file alone because it could not parse it safely. Fix the file by hand, then try again."
-
-msgid "Palimpsest listed the installed skills"
-msgstr "Palimpsest listed the installed skills"
-
-msgid "Palimpsest logs across projects. No project is open, so project server logs are not included."
-msgstr "Palimpsest logs across projects. No project is open, so project server logs are not included."
-
-msgid "Palimpsest logs, including activity across projects."
-msgstr "Palimpsest logs, including activity across projects."
-
-msgid "Palimpsest looked at the link graph"
-msgstr "Palimpsest looked at the link graph"
-
-msgid "Palimpsest looked up links for {subject}"
-msgstr "Palimpsest looked up links for {subject}"
-
-msgid "Palimpsest looked up the authoring palette"
-msgstr "Palimpsest looked up the authoring palette"
-
-msgid "Palimpsest moved {subject} to {destination}"
-msgstr "Palimpsest moved {subject} to {destination}"
-
-msgid "Palimpsest moved a document"
-msgstr "Palimpsest moved a document"
-
-msgid "Palimpsest on GitHub"
-msgstr "Palimpsest on GitHub"
-
-msgid "Palimpsest on this computer changed to a different build, but this tab is still running the old one."
-msgstr "Palimpsest on this computer changed to a different build, but this tab is still running the old one."
-
-msgid "Palimpsest on this computer is now v{serverVersion}, but this tab is still running v{tabVersion}."
-msgstr "Palimpsest on this computer is now v{serverVersion}, but this tab is still running v{tabVersion}."
-
-msgid "Palimpsest opened the live preview"
-msgstr "Palimpsest opened the live preview"
-
-msgid "Palimpsest quit unexpectedly last time."
-msgstr "Palimpsest quit unexpectedly last time."
-
-msgid "Palimpsest ran {command}"
-msgstr "Palimpsest ran {command}"
-
-msgid "Palimpsest ran {tool}"
-msgstr "Palimpsest ran {tool}"
-
-msgid "Palimpsest ran a command"
-msgstr "Palimpsest ran a command"
-
-msgid "Palimpsest read the edit history"
-msgstr "Palimpsest read the edit history"
-
-msgid "Palimpsest read the history of {subject}"
-msgstr "Palimpsest read the history of {subject}"
-
-msgid "Palimpsest read the project settings"
-msgstr "Palimpsest read the project settings"
-
-msgid "Palimpsest read the setting {key}"
-msgstr "Palimpsest read the setting {key}"
-
-msgid "Palimpsest restored an earlier version"
-msgstr "Palimpsest restored an earlier version"
-
-msgid "Palimpsest restored an earlier version of {subject}"
-msgstr "Palimpsest restored an earlier version of {subject}"
-
-msgid "Palimpsest saved a checkpoint"
-msgstr "Palimpsest saved a checkpoint"
-
-msgid "Palimpsest searched for {query}"
-msgstr "Palimpsest searched for {query}"
-
-msgid "Palimpsest searched the knowledge base"
-msgstr "Palimpsest searched the knowledge base"
-
-msgid "Palimpsest skill saved. Upload it in Claude Desktop, then click Cowork again."
-msgstr "Palimpsest skill saved. Upload it in Claude Desktop, then click Cowork again."
-
-msgid "Palimpsest stores its configuration and internal files inside a newly created <0>.ok</0> directory in your project root folder."
-msgstr "Palimpsest stores its configuration and internal files inside a newly created <0>.ok</0> directory in your project root folder."
-
-msgid "Palimpsest will be initialized at <0>{gitRoot}</0> — the parent of your new folder, because it contains a <1>.git</1> folder (one project per git repo)."
-msgstr "Palimpsest will be initialized at <0>{gitRoot}</0> — the parent of your new folder, because it contains a <1>.git</1> folder (one project per git repo)."
-
-msgid "Palimpsest will create commits and push them to your remote automatically. If you do not want automatic commits in your git history, you should not enable auto-sync."
-msgstr "Palimpsest will create commits and push them to your remote automatically. If you do not want automatic commits in your git history, you should not enable auto-sync."
-
-msgid "Palimpsest wrote a document"
-msgstr "Palimpsest wrote a document"
-
-msgid "Palimpsest wrote to {subject}"
-msgstr "Palimpsest wrote to {subject}"
+msgid "OpenKnowledge Format guidance"
+msgstr "Palimpsest Format guidance"
 
 msgid "Opens a folder picker to choose where to clone the repository."
 msgstr "Opens a folder picker to choose where to clone the repository."
@@ -7704,6 +7446,219 @@ msgstr "Pages are embedded the first time a search needs them."
 
 msgid "Pages indexed: {semanticIndexedCount} of {semanticTotalCount}."
 msgstr "Pages indexed: {semanticIndexedCount} of {semanticTotalCount}."
+
+msgid "Palimpsest"
+msgstr "Palimpsest"
+
+msgid "Palimpsest can't sign in to GitHub for this project."
+msgstr "Palimpsest can't sign in to GitHub for this project."
+
+msgid "Palimpsest checked {subject}"
+msgstr "Palimpsest checked {subject}"
+
+msgid "Palimpsest checked the project"
+msgstr "Palimpsest checked the project"
+
+msgid "Palimpsest could not find this agent on this machine."
+msgstr "Palimpsest could not find this agent on this machine."
+
+msgid "Palimpsest could not reach the project server to check index maintenance. The status updates when the project reconnects."
+msgstr "Palimpsest could not reach the project server to check index maintenance. The status updates when the project reconnects."
+
+msgid "Palimpsest couldn't finish setting up this project. The worktree was created but not opened."
+msgstr "Palimpsest couldn't finish setting up this project. The worktree was created but not opened."
+
+msgid "Palimpsest couldn't read terminal.shell in .ps/local/config.yml. Using an available Windows shell instead."
+msgstr "Palimpsest couldn't read terminal.shell in .ps/local/config.yml. Using an available Windows shell instead."
+
+msgid "Palimpsest couldn't write launch settings under .ps/local/terminal because the folder is not safely contained in this project. Check that it is a real folder inside the project, not a link. Claude will ask you to approve Palimpsest."
+msgstr "Palimpsest couldn't write launch settings under .ps/local/terminal because the folder is not safely contained in this project. Check that it is a real folder inside the project, not a link. Claude will ask you to approve Palimpsest."
+
+msgid "Palimpsest couldn't write launch settings under .ps/local/terminal this time. Check that the folder is writable. Claude will ask you to approve Palimpsest."
+msgstr "Palimpsest couldn't write launch settings under .ps/local/terminal this time. Check that the folder is writable. Claude will ask you to approve Palimpsest."
+
+msgid "Palimpsest created a share link"
+msgstr "Palimpsest created a share link"
+
+msgid "Palimpsest created a share link for {subject}"
+msgstr "Palimpsest created a share link for {subject}"
+
+msgid "Palimpsest creates and maintains a navigation file named index.md in every folder that contains Markdown."
+msgstr "Palimpsest creates and maintains a navigation file named index.md in every folder that contains Markdown."
+
+msgid "Palimpsest deleted {subject}"
+msgstr "Palimpsest deleted {subject}"
+
+msgid "Palimpsest deleted a document"
+msgstr "Palimpsest deleted a document"
+
+msgid "Palimpsest Desktop"
+msgstr "Palimpsest Desktop"
+
+msgid "Palimpsest discovery skill"
+msgstr "Palimpsest discovery skill"
+
+msgid "Palimpsest does not recognize this entry, and cannot safely replace it in this file's format."
+msgstr "Palimpsest does not recognize this entry, and cannot safely replace it in this file's format."
+
+msgid "Palimpsest does not recognize this entry. Turning it on replaces it."
+msgstr "Palimpsest does not recognize this entry. Turning it on replaces it."
+
+msgid "Palimpsest edited {subject}"
+msgstr "Palimpsest edited {subject}"
+
+msgid "Palimpsest edited a document"
+msgstr "Palimpsest edited a document"
+
+msgid "Palimpsest files were removed"
+msgstr "Palimpsest files were removed"
+
+msgid "Palimpsest has no credential stored for this host. Add a token in Settings, or let git use the credentials it already has."
+msgstr "Palimpsest has no credential stored for this host. Add a token in Settings, or let git use the credentials it already has."
+
+msgid "Palimpsest imported {source}"
+msgstr "Palimpsest imported {source}"
+
+msgid "Palimpsest imported a skill"
+msgstr "Palimpsest imported a skill"
+
+msgid "Palimpsest initializes at <0>{projectDir}</0> — the parent of <1>{pickedRelative}</1> because it contains a <2>.git</2> folder (one .ps/ per git repo). <3>Content directory</3> defaults to <4>.</4> (the whole repo); type a sub-folder to narrow it."
+msgstr "Palimpsest initializes at <0>{projectDir}</0> — the parent of <1>{pickedRelative}</1> because it contains a <2>.git</2> folder (one .ps/ per git repo). <3>Content directory</3> defaults to <4>.</4> (the whole repo); type a sub-folder to narrow it."
+
+msgid "Palimpsest installed {subject}"
+msgstr "Palimpsest installed {subject}"
+
+msgid "Palimpsest installed a skill"
+msgstr "Palimpsest installed a skill"
+
+msgid "Palimpsest integrations checked."
+msgstr "Palimpsest integrations checked."
+
+msgid "Palimpsest is set up at the repository root here, so the pack goes inside <0>{sanitized}</0> rather than at the top of the repository."
+msgstr "Palimpsest is set up at the repository root here, so the pack goes inside <0>{sanitized}</0> rather than at the top of the repository."
+
+msgid "Palimpsest is using this GitHub account."
+msgstr "Palimpsest is using this GitHub account."
+
+msgid "Palimpsest keeps retrying and shows them as soon as the file can be read."
+msgstr "Palimpsest keeps retrying and shows them as soon as the file can be read."
+
+msgid "Palimpsest left this file alone because it could not parse it safely. Fix the file by hand, then try again."
+msgstr "Palimpsest left this file alone because it could not parse it safely. Fix the file by hand, then try again."
+
+msgid "Palimpsest listed the installed skills"
+msgstr "Palimpsest listed the installed skills"
+
+msgid "Palimpsest logs across projects. No project is open, so project server logs are not included."
+msgstr "Palimpsest logs across projects. No project is open, so project server logs are not included."
+
+msgid "Palimpsest logs, including activity across projects."
+msgstr "Palimpsest logs, including activity across projects."
+
+msgid "Palimpsest looked at the link graph"
+msgstr "Palimpsest looked at the link graph"
+
+msgid "Palimpsest looked up links for {subject}"
+msgstr "Palimpsest looked up links for {subject}"
+
+msgid "Palimpsest looked up the authoring palette"
+msgstr "Palimpsest looked up the authoring palette"
+
+msgid "Palimpsest maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
+msgstr "Palimpsest maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
+
+msgid "Palimpsest moved {subject} to {destination}"
+msgstr "Palimpsest moved {subject} to {destination}"
+
+msgid "Palimpsest moved a document"
+msgstr "Palimpsest moved a document"
+
+msgid "Palimpsest on GitHub"
+msgstr "Palimpsest on GitHub"
+
+msgid "Palimpsest on this computer changed to a different build, but this tab is still running the old one."
+msgstr "Palimpsest on this computer changed to a different build, but this tab is still running the old one."
+
+msgid "Palimpsest on this computer is now v{serverVersion}, but this tab is still running v{tabVersion}."
+msgstr "Palimpsest on this computer is now v{serverVersion}, but this tab is still running v{tabVersion}."
+
+msgid "Palimpsest opened the live preview"
+msgstr "Palimpsest opened the live preview"
+
+msgid "Palimpsest quit unexpectedly last time."
+msgstr "Palimpsest quit unexpectedly last time."
+
+msgid "Palimpsest ran {command}"
+msgstr "Palimpsest ran {command}"
+
+msgid "Palimpsest ran {tool}"
+msgstr "Palimpsest ran {tool}"
+
+msgid "Palimpsest ran a command"
+msgstr "Palimpsest ran a command"
+
+msgid "Palimpsest read the edit history"
+msgstr "Palimpsest read the edit history"
+
+msgid "Palimpsest read the history of {subject}"
+msgstr "Palimpsest read the history of {subject}"
+
+msgid "Palimpsest read the project settings"
+msgstr "Palimpsest read the project settings"
+
+msgid "Palimpsest read the setting {key}"
+msgstr "Palimpsest read the setting {key}"
+
+msgid "Palimpsest restored an earlier version"
+msgstr "Palimpsest restored an earlier version"
+
+msgid "Palimpsest restored an earlier version of {subject}"
+msgstr "Palimpsest restored an earlier version of {subject}"
+
+msgid "Palimpsest rewrites these index.md files as documents change, so manual edits to them are replaced."
+msgstr "Palimpsest rewrites these index.md files as documents change, so manual edits to them are replaced."
+
+msgid "Palimpsest saved a checkpoint"
+msgstr "Palimpsest saved a checkpoint"
+
+msgid "Palimpsest searched for {query}"
+msgstr "Palimpsest searched for {query}"
+
+msgid "Palimpsest searched the knowledge base"
+msgstr "Palimpsest searched the knowledge base"
+
+msgid "Palimpsest skill saved. Upload it in Claude Desktop, then click Cowork again."
+msgstr "Palimpsest skill saved. Upload it in Claude Desktop, then click Cowork again."
+
+msgid "Palimpsest stores its configuration and internal files inside a newly created <0>.ok</0> directory in your project root folder."
+msgstr "Palimpsest stores its configuration and internal files inside a newly created <0>.ok</0> directory in your project root folder."
+
+msgid "Palimpsest tools are available in this thread."
+msgstr "Palimpsest tools are available in this thread."
+
+msgid "Palimpsest tools are unavailable because the project folder is missing, inaccessible, or has changed. Check its location and permissions, then retry."
+msgstr "Palimpsest tools are unavailable because the project folder is missing, inaccessible, or has changed. Check its location and permissions, then retry."
+
+msgid "Palimpsest tools are unavailable: a file Palimpsest didn't write is already at {bridgePath}."
+msgstr "Palimpsest tools are unavailable: a file Palimpsest didn't write is already at {bridgePath}."
+
+msgid "Palimpsest tools are unavailable: something is already at {bridgePath} but couldn't be read, so Palimpsest left it alone."
+msgstr "Palimpsest tools are unavailable: something is already at {bridgePath} but couldn't be read, so Palimpsest left it alone."
+
+msgid "Palimpsest will be initialized at <0>{gitRoot}</0> — the parent of your new folder, because it contains a <1>.git</1> folder (one project per git repo)."
+msgstr "Palimpsest will be initialized at <0>{gitRoot}</0> — the parent of your new folder, because it contains a <1>.git</1> folder (one project per git repo)."
+
+msgid "Palimpsest will create commits and push them to your remote automatically. If you do not want automatic commits in your git history, you should not enable auto-sync."
+msgstr "Palimpsest will create commits and push them to your remote automatically. If you do not want automatic commits in your git history, you should not enable auto-sync."
+
+msgid "Palimpsest wrote a document"
+msgstr "Palimpsest wrote a document"
+
+msgid "Palimpsest wrote to {subject}"
+msgstr "Palimpsest wrote to {subject}"
+
+msgid "Palimpsest's own copy of {0} is damaged and won't run. It can download a fresh copy of {1} {2} (about {3} MB from {4}) to replace it."
+msgstr "Palimpsest's own copy of {0} is damaged and won't run. It can download a fresh copy of {1} {2} (about {3} MB from {4}) to replace it."
 
 msgid "Pan down"
 msgstr "Pan down"
@@ -7904,9 +7859,6 @@ msgstr "Play Blob Run"
 msgid "Please choose Good or Not great."
 msgstr "Please choose Good or Not great."
 
-msgid "Please enter a valid email address."
-msgstr "Please enter a valid email address."
-
 msgid "Please enter a valid email."
 msgstr "Please enter a valid email."
 
@@ -8008,12 +7960,6 @@ msgstr "Problems"
 
 msgid "Problems in {0}"
 msgstr "Problems in {0}"
-
-msgid "Product updates"
-msgstr "Product updates"
-
-msgid "Product updates in your inbox."
-msgstr "Product updates in your inbox."
 
 msgid "project"
 msgstr "project"
@@ -9851,9 +9797,6 @@ msgstr "Stage the selected passage in the agents panel, ready to extend and send
 msgid "stale Git entry"
 msgstr "stale Git entry"
 
-msgid "Star us on GitHub"
-msgstr "Star us on GitHub"
-
 msgid "Start a bug report with a screenshot of the screen as it looks right now."
 msgstr "Start a bug report with a screenshot of the screen as it looks right now."
 
@@ -9920,9 +9863,6 @@ msgstr "status"
 msgid "Status"
 msgstr "Status"
 
-msgid "Stay in the loop"
-msgstr "Stay in the loop"
-
 msgid "Stays on this computer. Not committed to git."
 msgstr "Stays on this computer. Not committed to git."
 
@@ -9988,15 +9928,6 @@ msgstr "Subfolder name"
 
 msgid "Subfolder under current folder"
 msgstr "Subfolder under current folder"
-
-msgid "Subscribe"
-msgstr "Subscribe"
-
-msgid "Subscribing..."
-msgstr "Subscribing..."
-
-msgid "Subscriptions aren't available right now."
-msgstr "Subscriptions aren't available right now."
 
 msgid "Suggestion menu navigation"
 msgstr "Suggestion menu navigation"
@@ -10269,9 +10200,6 @@ msgstr "Text"
 msgid "Thanks for giving Palimpsest a try."
 msgstr "Thanks for giving Palimpsest a try."
 
-msgid "Thanks for subscribing. Watch your inbox for product updates."
-msgstr "Thanks for subscribing. Watch your inbox for product updates."
-
 msgid "Thanks for the feedback!"
 msgstr "Thanks for the feedback!"
 
@@ -10339,8 +10267,8 @@ msgstr "The {editor} version is now the source"
 msgid "The {targetNoun} could not be opened — try navigating to it manually."
 msgstr "The {targetNoun} could not be opened — try navigating to it manually."
 
-msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs OpenKnowledge Format–conformant."
-msgstr "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs Palimpsest Format–conformant."
+msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs Open Knowledge Format–conformant."
+msgstr "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs Open Knowledge Format–conformant."
 
 msgid "The agent is working"
 msgstr "The agent is working"
@@ -10477,6 +10405,9 @@ msgstr "The model id your endpoint serves. Its vector size is detected automatic
 msgid "the open agent"
 msgstr "the open agent"
 
+msgid "The original text was deleted."
+msgstr "The original text was deleted."
+
 msgid "The Palimpsest project is missing at this checkout path."
 msgstr "The Palimpsest project is missing at this checkout path."
 
@@ -10491,9 +10422,6 @@ msgstr "The Palimpsest server took too long to answer, and the change may still 
 
 msgid "The Palimpsest server took too long to answer. Ask the agent to try again."
 msgstr "The Palimpsest server took too long to answer. Ask the agent to try again."
-
-msgid "The original text was deleted."
-msgstr "The original text was deleted."
 
 msgid "The path can't leave the skill (no . or ..)"
 msgstr "The path can't leave the skill (no . or ..)"
@@ -11071,9 +10999,6 @@ msgstr "This theme file couldn’t be read"
 msgid "This theme file is too large"
 msgstr "This theme file is too large"
 
-msgid "This update is no longer ready to install."
-msgstr "This update is no longer ready to install."
-
 msgid "This usually means one of:"
 msgstr "This usually means one of:"
 
@@ -11452,10 +11377,6 @@ msgstr "Untracked"
 msgid "Up to date"
 msgstr "Up to date"
 
-msgctxt "settings search keyword"
-msgid "update"
-msgstr "update"
-
 msgid "Update"
 msgstr "Update"
 
@@ -11488,12 +11409,6 @@ msgstr "Updated {updatedRelative}"
 
 msgid "updated folder properties"
 msgstr "updated folder properties"
-
-msgid "Updated to Version {version}"
-msgstr "Updated to Version {version}"
-
-msgid "Updates and feedback"
-msgstr "Updates and feedback"
 
 msgid "Updates flow in"
 msgstr "Updates flow in"
@@ -11812,11 +11727,8 @@ msgstr "What you share is sent to the Palimpsest team."
 msgid "What's included"
 msgstr "What's included"
 
-msgid "What's new"
-msgstr "What's new"
-
-msgid "When enabled, the agent opens or refreshes the preview after each edit. Disable if you manage your own preview window (OK Desktop, a browser tab on another display, etc.)."
-msgstr "When enabled, the agent opens or refreshes the preview after each edit. Disable if you manage your own preview window (OK Desktop, a browser tab on another display, etc.)."
+msgid "When enabled, the agent opens or refreshes the preview after each edit. Disable if you manage your own preview window (Palimpsest Desktop, a browser tab on another display, etc.)."
+msgstr "When enabled, the agent opens or refreshes the preview after each edit. Disable if you manage your own preview window (Palimpsest Desktop, a browser tab on another display, etc.)."
 
 msgid "When the agent runs its scheduled work."
 msgstr "When the agent runs its scheduled work."
@@ -12008,9 +11920,6 @@ msgstr "You're pushing more often than you check for updates. If others write to
 
 msgid "You're signed out — sign in to resume syncing."
 msgstr "You're signed out — sign in to resume syncing."
-
-msgid "You're subscribed!"
-msgstr "You're subscribed!"
 
 msgid "you@company.com"
 msgstr "you@company.com"

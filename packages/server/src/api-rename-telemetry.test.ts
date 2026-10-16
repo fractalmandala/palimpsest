@@ -3,7 +3,6 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { Readable } from 'node:stream';
-import type { Principal } from '@palimpsest/core';
 import { metrics } from '@opentelemetry/api';
 import {
   AggregationTemporality,
@@ -12,6 +11,7 @@ import {
   MeterProvider,
   PeriodicExportingMetricReader,
 } from '@opentelemetry/sdk-metrics';
+import type { Principal } from '@palimpsest/core';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from 'vitest';
 import {
   __resetRenameTelemetryForTesting,

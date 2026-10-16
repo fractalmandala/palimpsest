@@ -1,10 +1,7 @@
 import { spawnSync } from 'node:child_process';
 import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
-import type {
-  ThreadEvent,
-  ThreadServerFrame,
-} from '@palimpsest/core/acp/thread-protocol';
+import type { ThreadEvent, ThreadServerFrame } from '@palimpsest/core/acp/thread-protocol';
 import { describe, expect, test } from 'vitest';
 import type { AgentSessionManager } from '../agent-sessions.ts';
 import { getLogger } from '../logger.ts';

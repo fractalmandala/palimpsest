@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { PS_DIR } from '../../constants/ps-dir.ts';
 import {
-  PALIMPSEST_SKILLS_REPO,
   PACK_SKILL_PREFIX,
+  PALIMPSEST_SKILLS_REPO,
   RENAMED_PACK_SKILLS,
 } from '../../constants/skills.ts';
 

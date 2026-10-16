@@ -1,4 +1,4 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
+// oxlint-disable ps/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
 import { Trans, useLingui } from '@lingui/react/macro';
 import { ArrowRight, CheckCircle2, Copy, Download, MoveUpRight } from 'lucide-react';
@@ -19,7 +19,8 @@ import { dispatchExternalLinkClick } from '@/lib/external-link';
 import { cn } from '@/lib/utils';
 
 const INSTALL_COMMAND = 'npx @palimpsest/cli cowork';
-const DOCS_URL = 'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/integrations/claude-code.mdx';
+const DOCS_URL =
+  'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/integrations/claude-code.mdx';
 
 interface InstallInClaudeDesktopDialogProps {
   open: boolean;
@@ -273,8 +274,8 @@ export function InstallInClaudeDesktopDialog({
               <div className="flex items-center gap-2 text-sm">
                 <Spinner aria-hidden="true" className="h-4 w-4" />
                 <Trans>
-                  Building <InlineCode>palimpsest.skill</InlineCode> and opening the Claude
-                  Desktop App
+                  Building <InlineCode>palimpsest.skill</InlineCode> and opening the Claude Desktop
+                  App
                 </Trans>
               </div>
             )}

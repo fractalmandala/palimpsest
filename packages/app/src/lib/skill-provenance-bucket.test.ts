@@ -37,8 +37,8 @@ describe('bucketForSkill', () => {
     );
     expect(b).toEqual({
       kind: 'source',
-      id: 'open-knowledge-skills',
-      publisher: 'inkeep',
+      id: 'palimpsest-skills',
+      publisher: 'fractalmandala',
       url: 'https://www.skills.sh/fractalmandala/palimpsest-skills',
     });
   });
@@ -48,7 +48,7 @@ describe('bucketForSkill', () => {
       skill({ source: 'fractalmandala/palimpsest-skills', importedAt: '2026-08-13T00:00:00.000Z' }),
     );
     expect(b).not.toBeNull();
-    expect(b && bucketKey(b)).toBe('source:open-knowledge-skills\u0001inkeep');
+    expect(b && bucketKey(b)).toBe('source:palimpsest-skills\u0001fractalmandala');
   });
 
   test('a plugin-cache source buckets as its plugin, so a copy rejoins the originals', () => {
@@ -64,15 +64,15 @@ describe('bucketForSkill', () => {
   test('a cache copy with a server-resolved marketplaceUrl carries a verified parent owner', () => {
     const b = bucketForSkill(
       skill({
-        source: '/Users/x/.claude/plugins/cache/inkeep-team-skills/applied-ai/1.0.0/skills/codie',
-        marketplaceUrl: 'https://github.com/inkeep/team-skills',
+        source: '/Users/x/.claude/plugins/cache/example-team-skills/applied-ai/1.0.0/skills/codie',
+        marketplaceUrl: 'https://github.com/example/team-skills',
         importedAt: 'now',
       }),
     );
     expect(b?.parent).toEqual({
-      id: 'inkeep-team-skills',
-      publisher: 'inkeep',
-      url: 'https://github.com/inkeep/team-skills',
+      id: 'example-team-skills',
+      publisher: 'example',
+      url: 'https://github.com/example/team-skills',
       marketplace: true,
     });
   });

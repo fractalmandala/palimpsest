@@ -1,5 +1,5 @@
-import { humanFormat } from '@palimpsest/core/config/errors';
 import { useLingui } from '@lingui/react/macro';
+import { humanFormat } from '@palimpsest/core/config/errors';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Switch } from '@/components/ui/switch';

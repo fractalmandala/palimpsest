@@ -1,6 +1,6 @@
-# The `ok` oxlint rules
+# The `ps` oxlint rules
 
-Custom lint rules for this workspace. Each rule is a module under `rules/`, composed into the single `ok` plugin by [`index.mjs`](index.mjs) and switched on in [`oxlint.config.ts`](../../oxlint.config.ts) as `ps/<rule-name>`. A rule that only applies to a subset of files carries its globs in [`scope.mjs`](scope.mjs) rather than in config — see [Scope it, if it is not workspace-wide](#3-scope-it-if-it-is-not-workspace-wide) below.
+Custom lint rules for this workspace. Each rule is a module under `rules/`, composed into the single `ps` plugin by [`index.mjs`](index.mjs) and switched on in [`oxlint.config.ts`](../../oxlint.config.ts) as `ps/<rule-name>`. A rule that only applies to a subset of files carries its globs in [`scope.mjs`](scope.mjs) rather than in config — see [Scope it, if it is not workspace-wide](#3-scope-it-if-it-is-not-workspace-wide) below.
 
 Rules surface as lint errors during `pnpm run lint:oxlint` (i.e. `pnpm lint` and `pnpm check`) and as inline editor squiggles via the oxc LSP.
 
@@ -170,7 +170,7 @@ Rule: [`lint-plugins/ps-rules/rules/no-uninstall-forbidden-import.mjs`](rules/no
 
 ### `path-conditional-map-driven-origin`
 
-Observer A origin discipline. Inside `packages/server/src/server-observers.ts`, every `Y.Doc.transact()` call MUST pass the sanctioned origin `OBSERVER_SYNC_ORIGIN` as its second argument (`doc.transact(fn, OBSERVER_SYNC_ORIGIN)`). Bare `doc.transact(fn)` - or a wrong origin - routes the write to `openknowledge-service` and breaks per-session UndoManager attribution (the `trackedOrigins` Set-identity match skips the transaction).
+Observer A origin discipline. Inside `packages/server/src/server-observers.ts`, every `Y.Doc.transact()` call MUST pass the sanctioned origin `OBSERVER_SYNC_ORIGIN` as its second argument (`doc.transact(fn, OBSERVER_SYNC_ORIGIN)`). Bare `doc.transact(fn)` - or a wrong origin - routes the write to `palimpsest-service` and breaks per-session UndoManager attribution (the `trackedOrigins` Set-identity match skips the transaction).
 
 **Scoped** (see the rule's `RULE_SCOPES` entry in [`scope.mjs`](scope.mjs)) to `packages/server/src/server-observers.ts`. Other server files routing through `session.dc.document.transact(fn, session.origin)` are out of scope - that contract is enforced by `paired-write-enforcement.test.ts`.
 
@@ -180,7 +180,7 @@ The rule does NOT catch:
 - Transact calls outside `server-observers.ts` (scoped to the one observer-dispatch file)
 - An origin passed in a position other than the second argument (the contract is second-argument placement; no real call site does otherwise)
 
-**Scope** (`RULE_SCOPES['path-conditional-map-driven-origin']` in [`scope.mjs`](scope.mjs)). Observer A origin discipline. Scoped to the one file that owns the observer-cross-CRDT transact spine. Inside this file every `doc.transact(fn, origin)` must pass `OBSERVER_SYNC_ORIGIN` as the second argument; bare `doc.transact(fn)` (or a wrong origin) routes the write to `openknowledge-service` and breaks per-session UndoManager attribution. Other server files routing through `session.dc.document.transact(fn, session.origin)` are out of scope - that contract is enforced by `paired-write-enforcement.test.ts`.
+**Scope** (`RULE_SCOPES['path-conditional-map-driven-origin']` in [`scope.mjs`](scope.mjs)). Observer A origin discipline. Scoped to the one file that owns the observer-cross-CRDT transact spine. Inside this file every `doc.transact(fn, origin)` must pass `OBSERVER_SYNC_ORIGIN` as the second argument; bare `doc.transact(fn)` (or a wrong origin) routes the write to `palimpsest-service` and breaks per-session UndoManager attribution. Other server files routing through `session.dc.document.transact(fn, session.origin)` are out of scope - that contract is enforced by `paired-write-enforcement.test.ts`.
 
 Included: `packages/server/src/server-observers.ts`, `lint-plugins/ps-rules/__fixtures__/path-conditional-map-driven-origin.fixture.tsx`.
 
@@ -818,7 +818,7 @@ const FIXTURE = `lint-plugins/ps-rules/__fixtures__/${RULE}.fixture.tsx`;
 
 describe(`${RULE} oxlint rule`, () => {
   test('fires at exactly its positive cases, by its own code, and on no negative case', () => {
-    const fires = lintPsRulesFixture(FIXTURE).filter((d) => d.code === `ok(${RULE})`);
+    const fires = lintPsRulesFixture(FIXTURE).filter((d) => d.code === `ps(${RULE})`);
     expect(fires.map((fire) => fire.position)).toEqual(['12:5', '18:5']);
     for (const fire of fires) {
       expect(fire.message).toContain('<fix-noun>');

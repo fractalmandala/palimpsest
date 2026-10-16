@@ -548,7 +548,7 @@ export async function installPackedCli(
     mkdirSync(graphDir, { recursive: true });
     cpSync(join(installPrefix, 'package-lock.json'), graphPath);
   }
-  const installed = join(installPrefix, 'node_modules', '@inkeep', 'palimpsest');
+  const installed = join(installPrefix, 'node_modules', '@example', 'palimpsest');
   for (const asset of ['dist/cli.mjs', 'dist/public/index.html', 'dist/assets/skills']) {
     if (!existsSync(join(installed, asset))) {
       throw new Error(`Packed CLI is missing required asset: ${asset}`);

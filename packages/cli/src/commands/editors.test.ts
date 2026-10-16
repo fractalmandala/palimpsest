@@ -514,7 +514,7 @@ describe('buildManagedServerEntry', () => {
     expect(entry).toEqual({
       command: 'node',
       args: ['/repo/packages/cli/dist/cli.mjs', 'mcp'],
-      env: { MCP_DEBUG: '1', PS_LOG_FILE: '/tmp/ok-mcp.log' },
+      env: { MCP_DEBUG: '1', PS_LOG_FILE: '/tmp/ps-mcp.log' },
     });
   });
 
@@ -1086,9 +1086,9 @@ describe('entryCarriesOwnChain is anchored to how Palimpsest launches', () => {
         args: ['-y', '@palimpsest/cli@latest', 'mcp'],
       }),
     ).toBe(true);
-    expect(
-      entryCarriesOwnChain({ command: 'npx', args: ['-y', '@palimpsest/cli', 'mcp'] }),
-    ).toBe(true);
+    expect(entryCarriesOwnChain({ command: 'npx', args: ['-y', '@palimpsest/cli', 'mcp'] })).toBe(
+      true,
+    );
   });
 
   it('a foreign command that merely mentions the marker or the package is not ours', async () => {

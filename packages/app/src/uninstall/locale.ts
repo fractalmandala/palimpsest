@@ -1,8 +1,5 @@
 import { readBrowserLanguages } from '@palimpsest/core/i18n/browser-locale-provider';
-import {
-  AUTO_DETECTABLE_LOCALES,
-  SUPPORTED_LOCALES,
-} from '@palimpsest/core/i18n/locales';
+import { AUTO_DETECTABLE_LOCALES, SUPPORTED_LOCALES } from '@palimpsest/core/i18n/locales';
 import { resolveLocale } from '@palimpsest/core/i18n/resolve-locale';
 import { dynamicActivate } from '@/lib/activate-locale';
 import {

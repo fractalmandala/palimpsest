@@ -1,5 +1,5 @@
-import type { SkillScope } from '@palimpsest/core/schemas/api';
 import { Trans, useLingui } from '@lingui/react/macro';
+import type { SkillScope } from '@palimpsest/core/schemas/api';
 import { ArrowUpRight, RefreshCw, Undo2 } from 'lucide-react';
 import { lazy, Suspense, useState } from 'react';
 import { Button } from '@/components/ui/button';

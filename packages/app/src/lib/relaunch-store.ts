@@ -1,18 +1,10 @@
 import { useSyncExternalStore } from 'react';
-import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 
 let relaunchInFlight = false;
 const listeners = new Set<() => void>();
-let attached = false;
 
 function notify(): void {
   for (const l of listeners) l();
-}
-
-function setInFlight(next: boolean): void {
-  if (relaunchInFlight === next) return;
-  relaunchInFlight = next;
-  notify();
 }
 
 export function getRelaunchInFlightSnapshot(): boolean {
@@ -26,33 +18,16 @@ export function subscribeRelaunchInFlight(listener: () => void): () => void {
   };
 }
 
-export function attachRelaunchStateSubscribers(
-  bridge: Pick<PsDesktopBridge, 'onUpdateRelaunching' | 'onUpdateRelaunchFailed'>,
-): () => void {
-  const offs = [
-    bridge.onUpdateRelaunching(() => setInFlight(true)),
-    bridge.onUpdateRelaunchFailed(() => setInFlight(false)),
-  ];
-  return () => {
-    for (const off of offs) off();
-  };
-}
-
-export function installRelaunchStateBridge(): void {
-  if (attached) return;
-  if (typeof window === 'undefined') return;
-  const bridge = window.psDesktop;
-  if (!bridge) return;
-  attached = true;
-  attachRelaunchStateSubscribers(bridge);
-}
-
 export function useRelaunchInFlight(): boolean {
   return useSyncExternalStore(subscribeRelaunchInFlight, getRelaunchInFlightSnapshot, () => false);
 }
 
 export function resetRelaunchStoreForTest(): void {
   relaunchInFlight = false;
-  attached = false;
   listeners.clear();
+}
+
+export function setRelaunchInFlightForTest(next: boolean): void {
+  relaunchInFlight = next;
+  notify();
 }

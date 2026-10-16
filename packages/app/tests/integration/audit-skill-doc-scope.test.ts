@@ -1,10 +1,7 @@
 import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import {
-  type ValidationAuditResponse,
-  ValidationAuditResponseSchema,
-} from '@palimpsest/core';
+import { type ValidationAuditResponse, ValidationAuditResponseSchema } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { HARNESS_BOOT_TIMEOUT_MS } from './harness-boot-timeout';
 import { awaitBacklinkIndexed, createTestServer, type TestServer } from './test-harness.ts';

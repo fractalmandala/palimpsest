@@ -1,7 +1,4 @@
-import {
-  ProblemDetailsSchema,
-  UploadAssetSuccessSchema,
-} from '@palimpsest/core/schemas/api';
+import { ProblemDetailsSchema, UploadAssetSuccessSchema } from '@palimpsest/core/schemas/api';
 import { HttpResponseParseError } from '../http-client.ts';
 import { getCurrentDocName } from './current-doc-name.ts';
 import { singleFileUploadMessage } from './upload-admission.ts';

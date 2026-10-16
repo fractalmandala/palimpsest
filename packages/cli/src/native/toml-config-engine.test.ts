@@ -116,7 +116,7 @@ describe('createTomlConfigEngine', () => {
     expect(captured).toEqual({ toml: 'x = 1\n', name: 'palimpsest' });
   });
 
-  test('the real native engine removes Palimpsest's entry, preserving a sibling', () => {
+  test("the real native engine removes Palimpsest's entry, preserving a sibling", () => {
     const engine = createTomlConfigEngine();
     if (engine.backend !== 'native') throw new Error('native addon must be built for this gate');
     const input =
@@ -132,7 +132,7 @@ describe('createTomlConfigEngine', () => {
     expect(again.text).toBe(removed.text);
   });
 
-  test('the real native engine upserts Palimpsest's entry, preserving a sibling', () => {
+  test("the real native engine upserts Palimpsest's entry, preserving a sibling", () => {
     const engine = createTomlConfigEngine();
     if (engine.backend !== 'native') throw new Error('native addon must be built for this gate');
     const input = '# keep\n[mcp_servers.other]\ncommand = "node"\n';

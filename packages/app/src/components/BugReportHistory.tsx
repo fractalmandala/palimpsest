@@ -1,5 +1,5 @@
-import type { PsBugReportListRow } from '@palimpsest/core/logger-types';
 import { Trans, useLingui } from '@lingui/react/macro';
+import type { PsBugReportListRow } from '@palimpsest/core/logger-types';
 import { ChevronDownIcon, FolderOpenIcon, MailIcon, RotateCwIcon, Trash2Icon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Badge } from '@/components/ui/badge';

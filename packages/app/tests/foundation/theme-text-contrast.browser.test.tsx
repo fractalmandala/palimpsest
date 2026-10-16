@@ -7,8 +7,8 @@ import {
 } from '@codemirror/search';
 import { EditorView } from '@codemirror/view';
 import { HocuspocusProvider } from '@hocuspocus/provider';
-import { sharedExtensions } from '@palimpsest/core/extensions/shared';
 import { tags } from '@lezer/highlight';
+import { sharedExtensions } from '@palimpsest/core/extensions/shared';
 import { FileTree } from '@pierre/trees';
 import { act, cleanup, waitFor } from '@testing-library/react';
 import { Editor } from '@tiptap/core';
@@ -276,7 +276,7 @@ function richEditorPortal(editor: Editor) {
   const target = document.createElement('div');
   target.className = 'tiptap-editor-portal-content';
   const content = createPortal(
-    // oxlint-disable-next-line ok/no-unportaled-editor-content -- This fixture gives each editor an exclusive portal target.
+    // oxlint-disable-next-line ps/no-unportaled-editor-content -- This fixture gives each editor an exclusive portal target.
     <EditorContent editor={editor} />,
     target,
   );

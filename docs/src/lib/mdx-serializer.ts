@@ -7,6 +7,7 @@ import remarkStringify from 'remark-stringify';
 import { unified } from 'unified';
 import { visit } from 'unist-util-visit';
 import { parse as parseYaml } from 'yaml';
+import { SITE_URL } from './site.ts';
 
 export type ComponentDisposition =
   | 'flatten'
@@ -205,6 +206,7 @@ function absolutise(url: string, base: URL): string {
   const path = suffixAt === -1 ? url : url.slice(0, suffixAt);
   const suffix = suffixAt === -1 ? '' : url.slice(suffixAt);
   const target = path.replace(SOURCE_EXTENSION, '');
+  if (target.startsWith('/')) return `${SITE_URL}${target}${suffix}`;
   if (!SOURCE_EXTENSION.test(path) || !FOLDER_INDEX.test(target)) {
     return new URL(target + suffix, base).href;
   }

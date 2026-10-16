@@ -1079,9 +1079,6 @@ msgstr "정보"
 msgid "About {appName}"
 msgstr "{appName} 정보"
 
-msgid "About & updates"
-msgstr "정보 및 업데이트"
-
 msgid "Above"
 msgstr "위"
 
@@ -1737,12 +1734,6 @@ msgstr "자동"
 msgid "Automatic picks a free port each start. Choose a fixed port to keep the same address across restarts."
 msgstr "자동을 선택하면 시작할 때마다 사용 가능한 포트를 고릅니다. 재시작해도 같은 주소를 유지하려면 고정 포트를 선택하세요."
 
-msgid "Automatic updates"
-msgstr "자동 업데이트"
-
-msgid "Automatic updates are not available right now."
-msgstr "지금은 자동 업데이트를 사용할 수 없습니다."
-
 msgid "Available"
 msgstr "사용 가능"
 
@@ -2037,14 +2028,8 @@ msgstr "채팅 기록"
 msgid "Chat name"
 msgstr "채팅 이름"
 
-msgid "Check for updates"
-msgstr "업데이트 확인"
-
 msgid "Check for updates every"
 msgstr "업데이트 확인 주기"
-
-msgid "Check for updates…"
-msgstr "업데이트 확인…"
 
 msgid "Check out remote branch"
 msgstr "원격 브랜치 체크아웃"
@@ -2078,9 +2063,6 @@ msgstr "업데이트 확인 중"
 
 msgid "Checking for updates on GitHub"
 msgstr "GitHub에서 업데이트 확인 중"
-
-msgid "Checking for updates…"
-msgstr "업데이트 확인 중…"
 
 msgid "Checking GitHub connection..."
 msgstr "GitHub 연결 확인 중…"
@@ -3202,9 +3184,6 @@ msgstr "키를 저장하지 못했습니다. 다시 시도합니다."
 msgid "Couldn't save the resolution for {filePath}."
 msgstr "{filePath}의 해결 결과를 저장하지 못했습니다."
 
-msgid "Couldn't save this setting. Try again."
-msgstr "이 설정을 저장하지 못했습니다. 다시 시도하세요."
-
 msgid "Couldn't save your theme preference."
 msgstr "테마 설정을 저장하지 못했습니다."
 
@@ -3777,9 +3756,6 @@ msgstr "편집하려면 두 번 클릭"
 msgid "Download {0}"
 msgstr "{0} 다운로드"
 
-msgid "Download and install updates automatically"
-msgstr "업데이트를 자동으로 다운로드하고 설치"
-
 msgid "Download app"
 msgstr "앱 다운로드"
 
@@ -4026,8 +4002,8 @@ msgstr "임베딩"
 msgid "Embeddings API key"
 msgstr "임베딩 API 키"
 
-msgid "Embeddings are computed only when a search runs and are cached locally under <0>.ok/local</0>."
-msgstr "검색을 실행할 때만 임베딩을 계산하며, <0>.ok/local</0>에 로컬로 캐시합니다."
+msgid "Embeddings are computed only when a search runs and are cached locally under <0>.ps/local</0>."
+msgstr ""
 
 msgid "Emoji"
 msgstr "이모지"
@@ -4552,6 +4528,9 @@ msgstr "파일을 업로드하지 못했습니다"
 msgid "Fast"
 msgstr "빠름"
 
+msgid "Feedback"
+msgstr ""
+
 msgid "Feedback isn't available right now. Please try again later."
 msgstr "현재 피드백을 사용할 수 없습니다. 나중에 다시 시도하세요."
 
@@ -4748,15 +4727,6 @@ msgstr "폴더와 빈 파일은 첨부할 수 없습니다. 파일 자체를 드
 msgid "Follow the agent's edits"
 msgstr "에이전트 변경 내용 따라가기"
 
-msgid "Follow us on"
-msgstr "팔로우:"
-
-msgid "Follow us on social media"
-msgstr "소셜 미디어에서 팔로우하세요"
-
-msgid "Follow us on X"
-msgstr "X에서 팔로우하세요"
-
 msgid "Following the agent's edits"
 msgstr "에이전트 변경 내용 따라가는 중"
 
@@ -4831,9 +4801,6 @@ msgstr "{displayName} 가져오기"
 
 msgid "Get Claude Code"
 msgstr "Claude Code 받기"
-
-msgid "Get product updates in your inbox."
-msgstr "받은 편지함에서 제품 업데이트를 받아 보세요."
 
 msgid "Get set up"
 msgstr "설정 시작"
@@ -5551,8 +5518,8 @@ msgid "Install skill"
 msgstr "스킬 설치"
 
 #. Checkbox that installs the user-global discovery skill bundle
-msgid "Install the <0>open-knowledge-discovery</0> skill"
-msgstr "<0>open-knowledge-discovery</0> 스킬 설치"
+msgid "Install the <0>palimpsest-discovery</0> skill"
+msgstr ""
 
 msgid "Install the gh CLI"
 msgstr "gh CLI 설치"
@@ -5676,9 +5643,6 @@ msgstr "기울임꼴"
 
 msgid "Item {0}"
 msgstr "항목 {0}"
-
-msgid "Join us on Discord"
-msgstr "Discord에서 함께하기"
 
 msgid "Jump to last tab"
 msgstr "마지막 탭으로 이동"
@@ -5969,11 +5933,11 @@ msgstr "{pageTarget}의 제목을 불러오는 중"
 msgid "Loading image"
 msgstr "이미지 불러오는 중"
 
-msgid "Loading Palimpsest skills"
-msgstr "Palimpsest 스킬 불러오는 중"
-
 msgid "Loading pages"
 msgstr "페이지를 불러오는 중"
+
+msgid "Loading Palimpsest skills"
+msgstr "Palimpsest 스킬 불러오는 중"
 
 msgid "Loading paths…"
 msgstr "경로를 불러오는 중…"
@@ -6306,11 +6270,11 @@ msgstr "블록 이동"
 msgid "Move down"
 msgstr "아래로 이동"
 
-msgid "Move Palimpsest.app to the Trash"
-msgstr "Palimpsest.app을 휴지통으로 이동하세요"
-
 msgid "Move or rename this file inside the skill — the path stays under references/ or scripts/."
 msgstr "이 스킬 내부에서 파일을 이동하거나 이름을 바꿉니다. 경로는 references/ 또는 scripts/ 아래에 유지됩니다."
+
+msgid "Move Palimpsest.app to the Trash"
+msgstr "Palimpsest.app을 휴지통으로 이동하세요"
 
 msgid "Move succeeded but the sidebar may be out of date — refresh to resync"
 msgstr "이동은 성공했지만 사이드바가 최신 상태가 아닐 수 있습니다. 다시 동기화하려면 새로 고침하세요."
@@ -6425,9 +6389,6 @@ msgstr "생각 중…"
 
 msgid "my-feature"
 msgstr "my-feature"
-
-msgid "my@email.com"
-msgstr "my@email.com"
 
 msgid "name"
 msgstr "이름"
@@ -7043,9 +7004,6 @@ msgstr "오프라인"
 msgid "OK can't move these, so they go when {pick} does."
 msgstr "OK가 이 항목은 옮길 수 없어 {pick}과(와) 함께 사라집니다."
 
-msgid "OK Desktop"
-msgstr "OK Desktop"
-
 msgid "OK last set this folder to {0} — something outside OK changed it since. The state shown is what's on disk now; your next Symlink/Unlink wins."
 msgstr "OK가 마지막으로 이 폴더에 설정한 값은 {0}이지만, 그 후 OK 외부에서 변경되었습니다. 현재 디스크의 상태를 표시하며 다음 Symlink/Unlink 작업이 적용됩니다."
 
@@ -7242,36 +7200,6 @@ msgstr "워크트리에서 열기"
 msgid "Open it there"
 msgstr "그곳에서 열기"
 
-msgid "Palimpsest could not reach the project server to check index maintenance. The status updates when the project reconnects."
-msgstr "Palimpsest가 프로젝트 서버에 연결할 수 없어 인덱스 유지 관리 상태를 확인하지 못했습니다. 프로젝트가 다시 연결되면 상태가 업데이트됩니다."
-
-msgid "Palimpsest creates and maintains a navigation file named index.md in every folder that contains Markdown."
-msgstr "Palimpsest는 Markdown이 있는 모든 폴더에 index.md라는 탐색 파일을 만들고 유지합니다."
-
-msgid "OpenKnowledge Format guidance"
-msgstr "Palimpsest Format 안내"
-
-msgid "Palimpsest maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
-msgstr "Palimpsest는 Markdown이 있는 모든 폴더에 index.md라는 탐색 파일을 유지합니다. 각 파일에는 해당 폴더의 문서가 유형별로 나열되고 하위 폴더 링크가 포함됩니다. 문서가 변경되면 파일을 다시 작성하며, 직접 편집한 내용은 대체됩니다."
-
-msgid "Palimpsest rewrites these index.md files as documents change, so manual edits to them are replaced."
-msgstr "문서가 변경되면 Palimpsest가 index.md 파일을 다시 작성하므로 직접 편집한 내용은 대체됩니다."
-
-msgid "Palimpsest tools are available in this thread."
-msgstr "이 스레드에서 Palimpsest 도구를 사용할 수 있습니다."
-
-msgid "Palimpsest tools are unavailable because the project folder is missing, inaccessible, or has changed. Check its location and permissions, then retry."
-msgstr "프로젝트 폴더가 없거나, 접근할 수 없거나, 변경되어 Palimpsest 도구를 사용할 수 없습니다. 위치와 권한을 확인한 후 다시 시도하세요."
-
-msgid "Palimpsest tools are unavailable: a file Palimpsest didn't write is already at {bridgePath}."
-msgstr "Palimpsest 도구를 사용할 수 없습니다. {bridgePath}에 Palimpsest가 작성하지 않은 파일이 이미 있습니다."
-
-msgid "Palimpsest tools are unavailable: something is already at {bridgePath} but couldn't be read, so Palimpsest left it alone."
-msgstr "Palimpsest 도구를 사용할 수 없습니다. {bridgePath}에 이미 무언가 있지만 읽을 수 없어 Palimpsest가 그대로 두었습니다."
-
-msgid "Palimpsest's own copy of {0} is damaged and won't run. It can download a fresh copy of {1} {2} (about {3} MB from {4}) to replace it."
-msgstr "Palimpsest의 {0} 복사본이 손상되어 실행할 수 없습니다. 교체용으로 {1} {2} 새 복사본을 다운로드할 수 있습니다(약 {3}MB, {4}에서)."
-
 msgid "Open link"
 msgstr "링크 열기"
 
@@ -7380,194 +7308,8 @@ msgstr "워크트리 여는 중"
 msgid "Opening..."
 msgstr "여는 중…"
 
-msgid "Palimpsest"
-msgstr "Palimpsest"
-
-msgid "Palimpsest can't sign in to GitHub for this project."
-msgstr "Palimpsest는 이 프로젝트에서 GitHub에 로그인할 수 없습니다."
-
-msgid "Palimpsest checked {subject}"
-msgstr "Palimpsest에서 {subject} 확인"
-
-msgid "Palimpsest checked the project"
-msgstr "Palimpsest에서 프로젝트 확인"
-
-msgid "Palimpsest checks for and downloads updates in the background."
-msgstr "Palimpsest가 백그라운드에서 업데이트를 확인하고 다운로드합니다."
-
-msgid "Palimpsest could not find this agent on this machine."
-msgstr "Palimpsest가 이 컴퓨터에서 이 에이전트를 찾지 못했습니다."
-
-msgid "Palimpsest couldn't finish setting up this project. The worktree was created but not opened."
-msgstr "Palimpsest가 이 프로젝트 설정을 완료하지 못했습니다. 워크트리는 생성되었지만 열리지 않았습니다."
-
-msgid "Palimpsest couldn't read terminal.shell in .ps/local/config.yml. Using an available Windows shell instead."
-msgstr "Palimpsest가 .ps/local/config.yml의 terminal.shell을 읽을 수 없습니다. 대신 사용 가능한 Windows 셸을 사용합니다."
-
-msgid "Palimpsest couldn't write launch settings under .ps/local/terminal because the folder is not safely contained in this project. Check that it is a real folder inside the project, not a link. Claude will ask you to approve Palimpsest."
-msgstr "폴더가 이 프로젝트 안에 안전하게 포함되어 있지 않아 Palimpsest가 .ps/local/terminal 아래에 실행 설정을 쓸 수 없습니다. 프로젝트 내부의 실제 폴더이며 링크가 아닌지 확인하세요. Claude가 Palimpsest 승인을 요청합니다."
-
-msgid "Palimpsest couldn't write launch settings under .ps/local/terminal this time. Check that the folder is writable. Claude will ask you to approve Palimpsest."
-msgstr "이번에는 Palimpsest가 .ps/local/terminal 아래에 실행 설정을 쓸 수 없습니다. 폴더에 쓰기 권한이 있는지 확인하세요. Claude가 Palimpsest 승인을 요청합니다."
-
-msgid "Palimpsest created a share link"
-msgstr "Palimpsest에서 공유 링크 생성"
-
-msgid "Palimpsest created a share link for {subject}"
-msgstr "Palimpsest에서 {subject} 공유 링크 생성"
-
-msgid "Palimpsest deleted {subject}"
-msgstr "Palimpsest에서 {subject} 삭제"
-
-msgid "Palimpsest deleted a document"
-msgstr "Palimpsest에서 문서 삭제"
-
-msgid "Palimpsest discovery skill"
-msgstr "Palimpsest 검색 스킬"
-
-msgid "Palimpsest does not recognize this entry, and cannot safely replace it in this file's format."
-msgstr "Palimpsest가 이 항목을 인식하지 못하며, 이 파일 형식에서는 안전하게 대체할 수 없습니다."
-
-msgid "Palimpsest does not recognize this entry. Turning it on replaces it."
-msgstr "Palimpsest가 이 항목을 인식하지 못합니다. 켜면 이 항목을 대체합니다."
-
-msgid "Palimpsest doesn't check for or download updates on its own. Check for updates still works when you want a newer version."
-msgstr "Palimpsest가 스스로 업데이트를 확인하거나 다운로드하지 않습니다. 새 버전이 필요하면 업데이트 확인을 계속 사용할 수 있습니다."
-
-msgid "Palimpsest edited {subject}"
-msgstr "Palimpsest에서 {subject} 편집"
-
-msgid "Palimpsest edited a document"
-msgstr "Palimpsest에서 문서 편집"
-
-msgid "Palimpsest files were removed"
-msgstr "Palimpsest 파일을 제거했습니다"
-
-msgid "Palimpsest has no credential stored for this host. Add a token in Settings, or let git use the credentials it already has."
-msgstr "Palimpsest에 이 호스트용으로 저장된 자격 증명이 없습니다. 설정에서 토큰을 추가하거나, git이 이미 가지고 있는 자격 증명을 사용하도록 두세요."
-
-msgid "Palimpsest imported {source}"
-msgstr "Palimpsest에서 {source} 가져오기"
-
-msgid "Palimpsest imported a skill"
-msgstr "Palimpsest에서 스킬 가져오기"
-
-msgid "Palimpsest initializes at <0>{projectDir}</0> — the parent of <1>{pickedRelative}</1> because it contains a <2>.git</2> folder (one .ps/ per git repo). <3>Content directory</3> defaults to <4>.</4> (the whole repo); type a sub-folder to narrow it."
-msgstr "Palimpsest는 <0>{projectDir}</0>에서 초기화됩니다. <2>.git</2> 폴더가 포함되어 있어 <1>{pickedRelative}</1>의 상위 폴더입니다(리포지토리마다 .ps/ 하나). <3>Content directory</3>의 기본값은 <4>.</4>입니다(전체 리포지토리). 범위를 좁히려면 하위 폴더를 입력하세요."
-
-msgid "Palimpsest installed {subject}"
-msgstr "Palimpsest에서 {subject} 설치"
-
-msgid "Palimpsest installed a skill"
-msgstr "Palimpsest에서 스킬 설치"
-
-msgid "Palimpsest integrations checked."
-msgstr "Palimpsest 통합을 확인했습니다."
-
-msgid "Palimpsest is set up at the repository root here, so the pack goes inside <0>{sanitized}</0> rather than at the top of the repository."
-msgstr "Palimpsest는 여기 리포지토리 루트에 설정되어 있으므로 팩은 리포지토리 최상위가 아니라 <0>{sanitized}</0> 안에 들어갑니다."
-
-msgid "Palimpsest is using this GitHub account."
-msgstr "Palimpsest가 이 GitHub 계정을 사용 중입니다."
-
-msgid "Palimpsest keeps retrying and shows them as soon as the file can be read."
-msgstr "Palimpsest가 계속 다시 시도하며, 파일을 읽을 수 있게 되면 바로 표시합니다."
-
-msgid "Palimpsest left this file alone because it could not parse it safely. Fix the file by hand, then try again."
-msgstr "Palimpsest가 이 파일을 안전하게 파싱할 수 없어 파일을 변경하지 않았습니다. 파일을 직접 수정한 뒤 다시 시도하세요."
-
-msgid "Palimpsest listed the installed skills"
-msgstr "Palimpsest에서 설치된 스킬 목록 확인"
-
-msgid "Palimpsest logs across projects. No project is open, so project server logs are not included."
-msgstr "여러 프로젝트의 Palimpsest 로그입니다. 열린 프로젝트가 없으므로 프로젝트 서버 로그는 포함되지 않습니다."
-
-msgid "Palimpsest logs, including activity across projects."
-msgstr "여러 프로젝트의 활동을 포함한 Palimpsest 로그입니다."
-
-msgid "Palimpsest looked at the link graph"
-msgstr "Palimpsest에서 링크 그래프 확인"
-
-msgid "Palimpsest looked up links for {subject}"
-msgstr "Palimpsest에서 {subject} 링크 조회"
-
-msgid "Palimpsest looked up the authoring palette"
-msgstr "Palimpsest에서 작성 팔레트 조회"
-
-msgid "Palimpsest moved {subject} to {destination}"
-msgstr "Palimpsest에서 {subject} 이동 위치 {destination}"
-
-msgid "Palimpsest moved a document"
-msgstr "Palimpsest에서 문서 이동"
-
-msgid "Palimpsest on GitHub"
-msgstr "GitHub에서 Palimpsest 열기"
-
-msgid "Palimpsest on this computer changed to a different build, but this tab is still running the old one."
-msgstr "이 컴퓨터의 Palimpsest가 다른 빌드로 바뀌었지만 이 탭은 아직 이전 빌드를 실행하고 있습니다."
-
-msgid "Palimpsest on this computer is now v{serverVersion}, but this tab is still running v{tabVersion}."
-msgstr "이 컴퓨터의 Palimpsest는 이제 v{serverVersion}이지만 이 탭은 아직 v{tabVersion}을 실행하고 있습니다."
-
-msgid "Palimpsest opened the live preview"
-msgstr "Palimpsest에서 실시간 미리보기 열기"
-
-msgid "Palimpsest quit unexpectedly last time."
-msgstr "Palimpsest가 지난번에 예기치 않게 종료되었습니다."
-
-msgid "Palimpsest ran {command}"
-msgstr "Palimpsest에서 {command} 실행"
-
-msgid "Palimpsest ran {tool}"
-msgstr "Palimpsest에서 {tool} 실행"
-
-msgid "Palimpsest ran a command"
-msgstr "Palimpsest에서 명령 실행"
-
-msgid "Palimpsest read the edit history"
-msgstr "Palimpsest에서 편집 기록 조회"
-
-msgid "Palimpsest read the history of {subject}"
-msgstr "Palimpsest에서 {subject} 기록 조회"
-
-msgid "Palimpsest read the project settings"
-msgstr "Palimpsest에서 프로젝트 설정 조회"
-
-msgid "Palimpsest read the setting {key}"
-msgstr "Palimpsest에서 설정 조회: {key}"
-
-msgid "Palimpsest restored an earlier version"
-msgstr "Palimpsest에서 이전 버전 복원"
-
-msgid "Palimpsest restored an earlier version of {subject}"
-msgstr "Palimpsest에서 {subject} 이전 버전 복원"
-
-msgid "Palimpsest saved a checkpoint"
-msgstr "Palimpsest에서 체크포인트 저장"
-
-msgid "Palimpsest searched for {query}"
-msgstr "Palimpsest에서 {query} 검색"
-
-msgid "Palimpsest searched the knowledge base"
-msgstr "Palimpsest에서 지식 베이스 검색"
-
-msgid "Palimpsest skill saved. Upload it in Claude Desktop, then click Cowork again."
-msgstr "Palimpsest 스킬 저장됨. Claude Desktop에 업로드 후 Cowork 다시 클릭하세요."
-
-msgid "Palimpsest stores its configuration and internal files inside a newly created <0>.ok</0> directory in your project root folder."
-msgstr "Palimpsest는 프로젝트 루트 폴더에 새로 만든 <0>.ok</0> 디렉터리 안에 구성과 내부 파일을 저장합니다."
-
-msgid "Palimpsest will be initialized at <0>{gitRoot}</0> — the parent of your new folder, because it contains a <1>.git</1> folder (one project per git repo)."
-msgstr "Palimpsest는 <0>{gitRoot}</0>에서 초기화됩니다. 새 폴더의 상위 폴더이며 <1>.git</1> 폴더를 포함하기 때문입니다(리포지토리마다 프로젝트 하나)."
-
-msgid "Palimpsest will create commits and push them to your remote automatically. If you do not want automatic commits in your git history, you should not enable auto-sync."
-msgstr "Palimpsest는 자동으로 커밋을 생성해 원격에 푸시합니다. git 기록에 자동 커밋을 남기고 싶지 않다면 자동 동기화를 사용하지 마세요."
-
-msgid "Palimpsest wrote a document"
-msgstr "Palimpsest에서 문서 작성"
-
-msgid "Palimpsest wrote to {subject}"
-msgstr "Palimpsest에서 {subject} 작성"
+msgid "OpenKnowledge Format guidance"
+msgstr "Palimpsest Format 안내"
 
 msgid "Opens a folder picker to choose where to clone the repository."
 msgstr "저장소를 클론할 위치를 선택하는 폴더 선택기를 엽니다."
@@ -7704,6 +7446,219 @@ msgstr "검색에 필요할 때 페이지를 처음 임베딩합니다."
 
 msgid "Pages indexed: {semanticIndexedCount} of {semanticTotalCount}."
 msgstr "인덱싱된 페이지: {semanticTotalCount}개 중 {semanticIndexedCount}개."
+
+msgid "Palimpsest"
+msgstr "Palimpsest"
+
+msgid "Palimpsest can't sign in to GitHub for this project."
+msgstr "Palimpsest는 이 프로젝트에서 GitHub에 로그인할 수 없습니다."
+
+msgid "Palimpsest checked {subject}"
+msgstr "Palimpsest에서 {subject} 확인"
+
+msgid "Palimpsest checked the project"
+msgstr "Palimpsest에서 프로젝트 확인"
+
+msgid "Palimpsest could not find this agent on this machine."
+msgstr "Palimpsest가 이 컴퓨터에서 이 에이전트를 찾지 못했습니다."
+
+msgid "Palimpsest could not reach the project server to check index maintenance. The status updates when the project reconnects."
+msgstr "Palimpsest가 프로젝트 서버에 연결할 수 없어 인덱스 유지 관리 상태를 확인하지 못했습니다. 프로젝트가 다시 연결되면 상태가 업데이트됩니다."
+
+msgid "Palimpsest couldn't finish setting up this project. The worktree was created but not opened."
+msgstr "Palimpsest가 이 프로젝트 설정을 완료하지 못했습니다. 워크트리는 생성되었지만 열리지 않았습니다."
+
+msgid "Palimpsest couldn't read terminal.shell in .ps/local/config.yml. Using an available Windows shell instead."
+msgstr "Palimpsest가 .ps/local/config.yml의 terminal.shell을 읽을 수 없습니다. 대신 사용 가능한 Windows 셸을 사용합니다."
+
+msgid "Palimpsest couldn't write launch settings under .ps/local/terminal because the folder is not safely contained in this project. Check that it is a real folder inside the project, not a link. Claude will ask you to approve Palimpsest."
+msgstr "폴더가 이 프로젝트 안에 안전하게 포함되어 있지 않아 Palimpsest가 .ps/local/terminal 아래에 실행 설정을 쓸 수 없습니다. 프로젝트 내부의 실제 폴더이며 링크가 아닌지 확인하세요. Claude가 Palimpsest 승인을 요청합니다."
+
+msgid "Palimpsest couldn't write launch settings under .ps/local/terminal this time. Check that the folder is writable. Claude will ask you to approve Palimpsest."
+msgstr "이번에는 Palimpsest가 .ps/local/terminal 아래에 실행 설정을 쓸 수 없습니다. 폴더에 쓰기 권한이 있는지 확인하세요. Claude가 Palimpsest 승인을 요청합니다."
+
+msgid "Palimpsest created a share link"
+msgstr "Palimpsest에서 공유 링크 생성"
+
+msgid "Palimpsest created a share link for {subject}"
+msgstr "Palimpsest에서 {subject} 공유 링크 생성"
+
+msgid "Palimpsest creates and maintains a navigation file named index.md in every folder that contains Markdown."
+msgstr "Palimpsest는 Markdown이 있는 모든 폴더에 index.md라는 탐색 파일을 만들고 유지합니다."
+
+msgid "Palimpsest deleted {subject}"
+msgstr "Palimpsest에서 {subject} 삭제"
+
+msgid "Palimpsest deleted a document"
+msgstr "Palimpsest에서 문서 삭제"
+
+msgid "Palimpsest Desktop"
+msgstr ""
+
+msgid "Palimpsest discovery skill"
+msgstr "Palimpsest 검색 스킬"
+
+msgid "Palimpsest does not recognize this entry, and cannot safely replace it in this file's format."
+msgstr "Palimpsest가 이 항목을 인식하지 못하며, 이 파일 형식에서는 안전하게 대체할 수 없습니다."
+
+msgid "Palimpsest does not recognize this entry. Turning it on replaces it."
+msgstr "Palimpsest가 이 항목을 인식하지 못합니다. 켜면 이 항목을 대체합니다."
+
+msgid "Palimpsest edited {subject}"
+msgstr "Palimpsest에서 {subject} 편집"
+
+msgid "Palimpsest edited a document"
+msgstr "Palimpsest에서 문서 편집"
+
+msgid "Palimpsest files were removed"
+msgstr "Palimpsest 파일을 제거했습니다"
+
+msgid "Palimpsest has no credential stored for this host. Add a token in Settings, or let git use the credentials it already has."
+msgstr "Palimpsest에 이 호스트용으로 저장된 자격 증명이 없습니다. 설정에서 토큰을 추가하거나, git이 이미 가지고 있는 자격 증명을 사용하도록 두세요."
+
+msgid "Palimpsest imported {source}"
+msgstr "Palimpsest에서 {source} 가져오기"
+
+msgid "Palimpsest imported a skill"
+msgstr "Palimpsest에서 스킬 가져오기"
+
+msgid "Palimpsest initializes at <0>{projectDir}</0> — the parent of <1>{pickedRelative}</1> because it contains a <2>.git</2> folder (one .ps/ per git repo). <3>Content directory</3> defaults to <4>.</4> (the whole repo); type a sub-folder to narrow it."
+msgstr "Palimpsest는 <0>{projectDir}</0>에서 초기화됩니다. <2>.git</2> 폴더가 포함되어 있어 <1>{pickedRelative}</1>의 상위 폴더입니다(리포지토리마다 .ps/ 하나). <3>Content directory</3>의 기본값은 <4>.</4>입니다(전체 리포지토리). 범위를 좁히려면 하위 폴더를 입력하세요."
+
+msgid "Palimpsest installed {subject}"
+msgstr "Palimpsest에서 {subject} 설치"
+
+msgid "Palimpsest installed a skill"
+msgstr "Palimpsest에서 스킬 설치"
+
+msgid "Palimpsest integrations checked."
+msgstr "Palimpsest 통합을 확인했습니다."
+
+msgid "Palimpsest is set up at the repository root here, so the pack goes inside <0>{sanitized}</0> rather than at the top of the repository."
+msgstr "Palimpsest는 여기 리포지토리 루트에 설정되어 있으므로 팩은 리포지토리 최상위가 아니라 <0>{sanitized}</0> 안에 들어갑니다."
+
+msgid "Palimpsest is using this GitHub account."
+msgstr "Palimpsest가 이 GitHub 계정을 사용 중입니다."
+
+msgid "Palimpsest keeps retrying and shows them as soon as the file can be read."
+msgstr "Palimpsest가 계속 다시 시도하며, 파일을 읽을 수 있게 되면 바로 표시합니다."
+
+msgid "Palimpsest left this file alone because it could not parse it safely. Fix the file by hand, then try again."
+msgstr "Palimpsest가 이 파일을 안전하게 파싱할 수 없어 파일을 변경하지 않았습니다. 파일을 직접 수정한 뒤 다시 시도하세요."
+
+msgid "Palimpsest listed the installed skills"
+msgstr "Palimpsest에서 설치된 스킬 목록 확인"
+
+msgid "Palimpsest logs across projects. No project is open, so project server logs are not included."
+msgstr "여러 프로젝트의 Palimpsest 로그입니다. 열린 프로젝트가 없으므로 프로젝트 서버 로그는 포함되지 않습니다."
+
+msgid "Palimpsest logs, including activity across projects."
+msgstr "여러 프로젝트의 활동을 포함한 Palimpsest 로그입니다."
+
+msgid "Palimpsest looked at the link graph"
+msgstr "Palimpsest에서 링크 그래프 확인"
+
+msgid "Palimpsest looked up links for {subject}"
+msgstr "Palimpsest에서 {subject} 링크 조회"
+
+msgid "Palimpsest looked up the authoring palette"
+msgstr "Palimpsest에서 작성 팔레트 조회"
+
+msgid "Palimpsest maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
+msgstr "Palimpsest는 Markdown이 있는 모든 폴더에 index.md라는 탐색 파일을 유지합니다. 각 파일에는 해당 폴더의 문서가 유형별로 나열되고 하위 폴더 링크가 포함됩니다. 문서가 변경되면 파일을 다시 작성하며, 직접 편집한 내용은 대체됩니다."
+
+msgid "Palimpsest moved {subject} to {destination}"
+msgstr "Palimpsest에서 {subject} 이동 위치 {destination}"
+
+msgid "Palimpsest moved a document"
+msgstr "Palimpsest에서 문서 이동"
+
+msgid "Palimpsest on GitHub"
+msgstr "GitHub에서 Palimpsest 열기"
+
+msgid "Palimpsest on this computer changed to a different build, but this tab is still running the old one."
+msgstr "이 컴퓨터의 Palimpsest가 다른 빌드로 바뀌었지만 이 탭은 아직 이전 빌드를 실행하고 있습니다."
+
+msgid "Palimpsest on this computer is now v{serverVersion}, but this tab is still running v{tabVersion}."
+msgstr "이 컴퓨터의 Palimpsest는 이제 v{serverVersion}이지만 이 탭은 아직 v{tabVersion}을 실행하고 있습니다."
+
+msgid "Palimpsest opened the live preview"
+msgstr "Palimpsest에서 실시간 미리보기 열기"
+
+msgid "Palimpsest quit unexpectedly last time."
+msgstr "Palimpsest가 지난번에 예기치 않게 종료되었습니다."
+
+msgid "Palimpsest ran {command}"
+msgstr "Palimpsest에서 {command} 실행"
+
+msgid "Palimpsest ran {tool}"
+msgstr "Palimpsest에서 {tool} 실행"
+
+msgid "Palimpsest ran a command"
+msgstr "Palimpsest에서 명령 실행"
+
+msgid "Palimpsest read the edit history"
+msgstr "Palimpsest에서 편집 기록 조회"
+
+msgid "Palimpsest read the history of {subject}"
+msgstr "Palimpsest에서 {subject} 기록 조회"
+
+msgid "Palimpsest read the project settings"
+msgstr "Palimpsest에서 프로젝트 설정 조회"
+
+msgid "Palimpsest read the setting {key}"
+msgstr "Palimpsest에서 설정 조회: {key}"
+
+msgid "Palimpsest restored an earlier version"
+msgstr "Palimpsest에서 이전 버전 복원"
+
+msgid "Palimpsest restored an earlier version of {subject}"
+msgstr "Palimpsest에서 {subject} 이전 버전 복원"
+
+msgid "Palimpsest rewrites these index.md files as documents change, so manual edits to them are replaced."
+msgstr "문서가 변경되면 Palimpsest가 index.md 파일을 다시 작성하므로 직접 편집한 내용은 대체됩니다."
+
+msgid "Palimpsest saved a checkpoint"
+msgstr "Palimpsest에서 체크포인트 저장"
+
+msgid "Palimpsest searched for {query}"
+msgstr "Palimpsest에서 {query} 검색"
+
+msgid "Palimpsest searched the knowledge base"
+msgstr "Palimpsest에서 지식 베이스 검색"
+
+msgid "Palimpsest skill saved. Upload it in Claude Desktop, then click Cowork again."
+msgstr "Palimpsest 스킬 저장됨. Claude Desktop에 업로드 후 Cowork 다시 클릭하세요."
+
+msgid "Palimpsest stores its configuration and internal files inside a newly created <0>.ok</0> directory in your project root folder."
+msgstr "Palimpsest는 프로젝트 루트 폴더에 새로 만든 <0>.ok</0> 디렉터리 안에 구성과 내부 파일을 저장합니다."
+
+msgid "Palimpsest tools are available in this thread."
+msgstr "이 스레드에서 Palimpsest 도구를 사용할 수 있습니다."
+
+msgid "Palimpsest tools are unavailable because the project folder is missing, inaccessible, or has changed. Check its location and permissions, then retry."
+msgstr "프로젝트 폴더가 없거나, 접근할 수 없거나, 변경되어 Palimpsest 도구를 사용할 수 없습니다. 위치와 권한을 확인한 후 다시 시도하세요."
+
+msgid "Palimpsest tools are unavailable: a file Palimpsest didn't write is already at {bridgePath}."
+msgstr "Palimpsest 도구를 사용할 수 없습니다. {bridgePath}에 Palimpsest가 작성하지 않은 파일이 이미 있습니다."
+
+msgid "Palimpsest tools are unavailable: something is already at {bridgePath} but couldn't be read, so Palimpsest left it alone."
+msgstr "Palimpsest 도구를 사용할 수 없습니다. {bridgePath}에 이미 무언가 있지만 읽을 수 없어 Palimpsest가 그대로 두었습니다."
+
+msgid "Palimpsest will be initialized at <0>{gitRoot}</0> — the parent of your new folder, because it contains a <1>.git</1> folder (one project per git repo)."
+msgstr "Palimpsest는 <0>{gitRoot}</0>에서 초기화됩니다. 새 폴더의 상위 폴더이며 <1>.git</1> 폴더를 포함하기 때문입니다(리포지토리마다 프로젝트 하나)."
+
+msgid "Palimpsest will create commits and push them to your remote automatically. If you do not want automatic commits in your git history, you should not enable auto-sync."
+msgstr "Palimpsest는 자동으로 커밋을 생성해 원격에 푸시합니다. git 기록에 자동 커밋을 남기고 싶지 않다면 자동 동기화를 사용하지 마세요."
+
+msgid "Palimpsest wrote a document"
+msgstr "Palimpsest에서 문서 작성"
+
+msgid "Palimpsest wrote to {subject}"
+msgstr "Palimpsest에서 {subject} 작성"
+
+msgid "Palimpsest's own copy of {0} is damaged and won't run. It can download a fresh copy of {1} {2} (about {3} MB from {4}) to replace it."
+msgstr "Palimpsest의 {0} 복사본이 손상되어 실행할 수 없습니다. 교체용으로 {1} {2} 새 복사본을 다운로드할 수 있습니다(약 {3}MB, {4}에서)."
 
 msgid "Pan down"
 msgstr "아래로 이동"
@@ -7904,9 +7859,6 @@ msgstr "Blob Run 재생"
 msgid "Please choose Good or Not great."
 msgstr "좋음 또는 별로 좋지 않음을 선택하세요."
 
-msgid "Please enter a valid email address."
-msgstr "유효한 이메일 주소를 입력하세요."
-
 msgid "Please enter a valid email."
 msgstr "유효한 이메일을 입력하세요."
 
@@ -8008,12 +7960,6 @@ msgstr "문제"
 
 msgid "Problems in {0}"
 msgstr "{0}의 문제"
-
-msgid "Product updates"
-msgstr "제품 업데이트"
-
-msgid "Product updates in your inbox."
-msgstr "받은 편지함의 제품 업데이트입니다."
 
 msgid "project"
 msgstr "프로젝트"
@@ -9851,9 +9797,6 @@ msgstr "선택한 구절을 에이전트 패널에 올려 이어서 작성하고
 msgid "stale Git entry"
 msgstr "오래된 Git 항목"
 
-msgid "Star us on GitHub"
-msgstr "GitHub에서 별표를 눌러 주세요"
-
 msgid "Start a bug report with a screenshot of the screen as it looks right now."
 msgstr "지금 화면에 보이는 그대로의 스크린샷과 함께 버그 신고를 시작합니다."
 
@@ -9920,9 +9863,6 @@ msgstr "상태"
 msgid "Status"
 msgstr "상태"
 
-msgid "Stay in the loop"
-msgstr "계속 소식 받기"
-
 msgid "Stays on this computer. Not committed to git."
 msgstr "이 컴퓨터에 유지됩니다. git에 커밋되지 않습니다."
 
@@ -9988,15 +9928,6 @@ msgstr "하위 폴더 이름"
 
 msgid "Subfolder under current folder"
 msgstr "현재 폴더의 하위 폴더"
-
-msgid "Subscribe"
-msgstr "구독"
-
-msgid "Subscribing..."
-msgstr "구독 중…"
-
-msgid "Subscriptions aren't available right now."
-msgstr "지금은 구독을 사용할 수 없습니다."
 
 msgid "Suggestion menu navigation"
 msgstr "제안 메뉴 탐색"
@@ -10269,9 +10200,6 @@ msgstr "텍스트"
 msgid "Thanks for giving Palimpsest a try."
 msgstr "Palimpsest를 사용해 주셔서 감사합니다."
 
-msgid "Thanks for subscribing. Watch your inbox for product updates."
-msgstr "구독해 주셔서 감사합니다. 받은 편지함에서 제품 업데이트를 확인하세요."
-
 msgid "Thanks for the feedback!"
 msgstr "피드백 감사합니다!"
 
@@ -10339,8 +10267,8 @@ msgstr "{editor} 버전이 이제 소스입니다"
 msgid "The {targetNoun} could not be opened — try navigating to it manually."
 msgstr "{targetNoun} 열기에 실패했습니다. 직접 이동해 보세요."
 
-msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs OpenKnowledge Format–conformant."
-msgstr "이 템플릿으로 만든 모든 문서에 설정되는 <0>type</0>입니다(예: <1>research-note</1>). 새 문서를 Palimpsest Format에 맞게 유지합니다."
+msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs Open Knowledge Format–conformant."
+msgstr ""
 
 msgid "The agent is working"
 msgstr "에이전트 작업 중"
@@ -10477,6 +10405,9 @@ msgstr "엔드포인트가 제공하는 모델 ID입니다. 벡터 크기는 자
 msgid "the open agent"
 msgstr "열린 에이전트"
 
+msgid "The original text was deleted."
+msgstr "원문이 삭제되었습니다."
+
 msgid "The Palimpsest project is missing at this checkout path."
 msgstr "이 체크아웃 경로에 Palimpsest 프로젝트가 없습니다."
 
@@ -10491,9 +10422,6 @@ msgstr "Palimpsest 서버의 응답이 너무 오래 걸렸으며 변경 사항�
 
 msgid "The Palimpsest server took too long to answer. Ask the agent to try again."
 msgstr "Palimpsest 서버의 응답이 너무 오래 걸렸습니다. 에이전트에게 다시 시도해 달라고 요청하세요."
-
-msgid "The original text was deleted."
-msgstr "원문이 삭제되었습니다."
 
 msgid "The path can't leave the skill (no . or ..)"
 msgstr "경로는 스킬 밖으로 나갈 수 없습니다 (. 또는 .. 불가)"
@@ -11071,9 +10999,6 @@ msgstr "이 테마 파일을 읽지 못했습니다"
 msgid "This theme file is too large"
 msgstr "이 테마 파일은 너무 큽니다"
 
-msgid "This update is no longer ready to install."
-msgstr "이 업데이트는 더 이상 설치할 준비가 되어 있지 않습니다."
-
 msgid "This usually means one of:"
 msgstr "일반적으로 다음 중 하나입니다:"
 
@@ -11452,10 +11377,6 @@ msgstr "추적 안 됨"
 msgid "Up to date"
 msgstr "최신 상태"
 
-msgctxt "settings search keyword"
-msgid "update"
-msgstr "업데이트"
-
 msgid "Update"
 msgstr "업데이트"
 
@@ -11488,12 +11409,6 @@ msgstr "{updatedRelative} 업데이트됨"
 
 msgid "updated folder properties"
 msgstr "폴더 속성 업데이트됨"
-
-msgid "Updated to Version {version}"
-msgstr "버전 {version}으로 업데이트됨"
-
-msgid "Updates and feedback"
-msgstr "업데이트 및 피드백"
 
 msgid "Updates flow in"
 msgstr "업데이트가 들어옴"
@@ -11812,11 +11727,8 @@ msgstr "공유하신 내용은 Palimpsest 팀에 전송됩니다."
 msgid "What's included"
 msgstr "포함되는 항목"
 
-msgid "What's new"
-msgstr "새로운 기능"
-
-msgid "When enabled, the agent opens or refreshes the preview after each edit. Disable if you manage your own preview window (OK Desktop, a browser tab on another display, etc.)."
-msgstr "사용하도록 설정하면 에이전트가 편집할 때마다 미리보기를 엽니다. 자체 미리보기 창을 관리하는 경우 사용하지 않도록 설정하세요(OK Desktop, 다른 디스플레이의 브라우저 탭 등)."
+msgid "When enabled, the agent opens or refreshes the preview after each edit. Disable if you manage your own preview window (Palimpsest Desktop, a browser tab on another display, etc.)."
+msgstr ""
 
 msgid "When the agent runs its scheduled work."
 msgstr "에이전트가 예약된 작업을 실행할 때"
@@ -12008,9 +11920,6 @@ msgstr "업데이트를 확인하는 것보다 더 자주 푸시하고 있습니
 
 msgid "You're signed out — sign in to resume syncing."
 msgstr "로그아웃된 상태입니다. 동기화를 계속하려면 로그인하세요."
-
-msgid "You're subscribed!"
-msgstr "구독했습니다!"
 
 msgid "you@company.com"
 msgstr "you@company.com"

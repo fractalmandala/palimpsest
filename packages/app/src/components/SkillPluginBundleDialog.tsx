@@ -1,9 +1,8 @@
+import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { EDITOR_LABELS } from '@palimpsest/core/constants/editors';
 import type { SkillScope } from '@palimpsest/core/schemas/api';
 import type { SkillTargetEditor } from '@palimpsest/core/skill-targets/schema';
 import type { PluginBundleMetadata } from '@palimpsest/core/skills-catalog/schema';
-
-import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useId, useState } from 'react';
 import { toast } from 'sonner';
 import { AgentIconCluster } from '@/components/AgentIconCluster';

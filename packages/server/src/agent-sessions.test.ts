@@ -1,5 +1,4 @@
 import type { Document } from '@hocuspocus/server';
-import { sharedExtensions, stripFrontmatter } from '@palimpsest/core';
 import { metrics } from '@opentelemetry/api';
 import {
   AggregationTemporality,
@@ -7,6 +6,7 @@ import {
   MeterProvider,
   PeriodicExportingMetricReader,
 } from '@opentelemetry/sdk-metrics';
+import { sharedExtensions, stripFrontmatter } from '@palimpsest/core';
 import { getSchema } from '@tiptap/core';
 import { yXmlFragmentToProseMirrorRootNode } from '@tiptap/y-tiptap';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';

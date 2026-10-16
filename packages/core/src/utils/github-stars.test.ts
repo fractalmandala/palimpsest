@@ -53,7 +53,7 @@ describe('getGitHubStars', () => {
     if (request === undefined) throw new Error('no request was made');
     expect(new URL(request.url).pathname).toBe('/repos/fractalmandala/palimpsest');
     expect(request.headers.get('accept')).toBe('application/vnd.github+json');
-    expect(request.headers.get('user-agent')).toBe('palimpsest.ai');
+    expect(request.headers.get('user-agent')).toBe('palimpsest');
   });
 
   test('forwards caller init keys other than signal, which is how the docs layout gets ISR', async () => {

@@ -1,5 +1,5 @@
-import { isExcalidrawDocFile } from '@palimpsest/core/constants/upload';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { isExcalidrawDocFile } from '@palimpsest/core/constants/upload';
 import type { PanzoomObject } from '@panzoom/panzoom';
 import { AlertTriangle, ExternalLink } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';

@@ -441,14 +441,11 @@ describe('startBundleIdentityWatcher', () => {
 describe('captureBootIdentity', () => {
   test('returns { resolvedPath, inode } when both fs probes succeed', () => {
     const logs: string[] = [];
-    const result = captureBootIdentity(
-      '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
-      {
-        realpathSync: () => '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
-        statInoSync: () => 299_520_753,
-        log: (m) => logs.push(m),
-      },
-    );
+    const result = captureBootIdentity('/Applications/Palimpsest.app/Contents/MacOS/Palimpsest', {
+      realpathSync: () => '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
+      statInoSync: () => 299_520_753,
+      log: (m) => logs.push(m),
+    });
     expect(result).toEqual({
       resolvedPath: '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
       inode: 299_520_753,
@@ -476,16 +473,13 @@ describe('captureBootIdentity', () => {
 
   test('returns undefined and logs underlying error when statInoSync throws', () => {
     const logs: string[] = [];
-    const result = captureBootIdentity(
-      '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
-      {
-        realpathSync: () => '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
-        statInoSync: () => {
-          throw new Error("EACCES: permission denied, stat '/path/to/bundle'");
-        },
-        log: (m) => logs.push(m),
+    const result = captureBootIdentity('/Applications/Palimpsest.app/Contents/MacOS/Palimpsest', {
+      realpathSync: () => '/Applications/Palimpsest.app/Contents/MacOS/Palimpsest',
+      statInoSync: () => {
+        throw new Error("EACCES: permission denied, stat '/path/to/bundle'");
       },
-    );
+      log: (m) => logs.push(m),
+    });
     expect(result).toBeUndefined();
     const joined = logs.join(' ');
     expect(joined).toMatch(/stat/i);

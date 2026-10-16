@@ -1,5 +1,5 @@
-import type { SearchSource, SemanticQueryOutcome } from '@palimpsest/core';
 import type { Counter, Histogram } from '@opentelemetry/api';
+import type { SearchSource, SemanticQueryOutcome } from '@palimpsest/core';
 import { getLogger } from '../logger.ts';
 import { getMeter } from '../telemetry.ts';
 

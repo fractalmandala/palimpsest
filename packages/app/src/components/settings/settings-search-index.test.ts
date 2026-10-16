@@ -1,5 +1,5 @@
-import { MARKDOWNLINT_RULE_CATALOG } from '@palimpsest/core';
 import type { MessageDescriptor } from '@lingui/core';
+import { MARKDOWNLINT_RULE_CATALOG } from '@palimpsest/core';
 import { describe, expect, test, vi } from 'vitest';
 import { matchesCommandQuery } from '@/components/command-palette-search';
 import { FIELDS_USER_PREFERENCES } from './settings-fields';

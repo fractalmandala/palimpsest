@@ -1,10 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import type {
-  ThreadClientFrame,
-  ThreadServerFrame,
-} from '@palimpsest/core/acp/thread-protocol';
+import type { ThreadClientFrame, ThreadServerFrame } from '@palimpsest/core/acp/thread-protocol';
 import type { WorkerServer } from './_helpers';
 
 interface HiddenChatAgent {

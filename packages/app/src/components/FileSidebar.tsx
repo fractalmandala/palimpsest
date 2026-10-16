@@ -1,7 +1,7 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
+// oxlint-disable ps/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
-import { humanFormat } from '@palimpsest/core/config/errors';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { humanFormat } from '@palimpsest/core/config/errors';
 import {
   ChevronRight,
   Copy,
@@ -698,7 +698,7 @@ function FileSidebarInner() {
                                     }
                                     data-testid="tree-options-show-ps-folders"
                                   >
-                                    <Trans>.ok folders</Trans>
+                                    <Trans>.ps folders</Trans>
                                   </DropdownMenuCheckboxItem>
                                   <DropdownMenuCheckboxItem
                                     checked={showOnlyMarkdownFiles}

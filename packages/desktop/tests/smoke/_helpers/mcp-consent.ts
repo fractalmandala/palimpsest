@@ -13,7 +13,7 @@ export function seedMcpConsentComplete(tmpHome: string): void {
       configured: true,
       configuredAt: new Date().toISOString(),
       editors: [],
-      cliPath: '/usr/local/bin/ok',
+      cliPath: '/usr/local/bin/ps',
     }),
   );
 }

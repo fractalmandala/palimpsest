@@ -83,7 +83,7 @@ describe('bundledSkillCandidates', () => {
   });
 
   test('the server build installed with the desktop app probes its build output first', () => {
-    const server = ['app', 'node_modules', '@inkeep', 'open-knowledge-server'];
+    const server = ['app', 'node_modules', '@example', 'palimpsest-server'];
     expect(
       bundledSkillCandidates('packs/psf', moduleAt(...server, 'dist', 'index.mjs'), {}),
     ).toEqual([

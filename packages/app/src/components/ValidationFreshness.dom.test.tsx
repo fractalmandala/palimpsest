@@ -1,7 +1,4 @@
-import type {
-  ValidationAuditCountsResponse,
-  ValidationAuditResponse,
-} from '@palimpsest/core';
+import type { ValidationAuditCountsResponse, ValidationAuditResponse } from '@palimpsest/core';
 import { cleanup, render, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { emitLintConfigChanged } from '@/editor/lint-config-client';

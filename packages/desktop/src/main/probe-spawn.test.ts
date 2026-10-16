@@ -23,10 +23,10 @@ import { psManagedBinDirs } from '../shared/ps-child-env.ts';
 import { buildShellEnv } from '../utility/pty-host.ts';
 import { cliProbeArgs, runLoginShellProbe } from './claude-readiness.ts';
 import {
-  psProbeSpawnEnv,
   probeEnvVerdict,
   probeSpawnArgs,
   probeSpawnDetached,
+  psProbeSpawnEnv,
   realProbeSpawn,
   realProbeTimers,
 } from './probe-spawn.ts';

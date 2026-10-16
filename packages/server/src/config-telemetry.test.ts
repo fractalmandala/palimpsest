@@ -1,13 +1,6 @@
 import { mkdirSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import {
-  bindConfigDoc,
-  CONFIG_DOC_NAME_PROJECT,
-  type ConfigDocProvider,
-  type ConfigPatch,
-} from '@palimpsest/core';
-import { writeConfigPatch } from '@palimpsest/core/server';
 import { context, metrics, trace } from '@opentelemetry/api';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import {
@@ -16,6 +9,13 @@ import {
   type ReadableSpan,
   SimpleSpanProcessor,
 } from '@opentelemetry/sdk-trace-base';
+import {
+  bindConfigDoc,
+  CONFIG_DOC_NAME_PROJECT,
+  type ConfigDocProvider,
+  type ConfigPatch,
+} from '@palimpsest/core';
+import { writeConfigPatch } from '@palimpsest/core/server';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import * as Y from 'yjs';
 import { applyExternalConfigChange, storeConfigDoc } from './config-persistence.ts';

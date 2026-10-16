@@ -896,7 +896,7 @@ async function makeLocalOnlyRepo(): Promise<Handle> {
     join(mainRepo, '.mcp.json'),
     JSON.stringify({
       mcpServers: {
-        'palimpsest': { command: '/bin/sh', args: ['-l', '-c', '# ps-mcp-v1\nexec ps mcp'] },
+        palimpsest: { command: '/bin/sh', args: ['-l', '-c', '# ps-mcp-v1\nexec ps mcp'] },
       },
     }),
   );
@@ -1090,7 +1090,7 @@ describe('worktree-service — inherited OK setup (no consent dialog)', () => {
     mkdirSync(join(handle.mainRepo, '.cursor'), { recursive: true });
     writeFileSync(
       join(handle.mainRepo, '.cursor', 'mcp.json'),
-      JSON.stringify({ mcpServers: { 'palimpsest': { command: '# ps-mcp-v1' } } }),
+      JSON.stringify({ mcpServers: { palimpsest: { command: '# ps-mcp-v1' } } }),
     );
 
     const result = await createWorktree({

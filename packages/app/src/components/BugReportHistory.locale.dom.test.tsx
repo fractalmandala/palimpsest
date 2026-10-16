@@ -1,5 +1,5 @@
-import type { PsBugReportListRow } from '@palimpsest/core';
 import { i18n } from '@lingui/core';
+import type { PsBugReportListRow } from '@palimpsest/core';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, test } from 'vitest';
 import { BugReportHistoryList } from './BugReportHistory';

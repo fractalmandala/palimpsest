@@ -39,12 +39,9 @@ import {
   shouldInstallColdMountInstrumentation,
 } from '@/lib/perf/cold-mount-instrumentation';
 import { installPointerPositionTracker } from '@/lib/pointer-position';
-import { installRelaunchStateBridge } from '@/lib/relaunch-store';
 import { requestStoragePersistence } from '@/lib/request-storage-persistence';
 import { installShareReceivedListener } from '@/lib/share/receive-store';
 import { seedInitialDocHashFromWindow } from '@/lib/single-file-initial-doc';
-import { installSubscribeCardStore } from '@/lib/subscribe-card-store';
-import { installUpdateNoticesBridge } from '@/lib/update-notices-store';
 import '@fontsource-variable/inter';
 import '@fontsource-variable/jetbrains-mono';
 import 'react-medium-image-zoom/dist/styles.css';
@@ -66,11 +63,9 @@ if (import.meta.env.DEV || import.meta.env.MODE === 'test') {
   initWebVitals();
 }
 
-installUpdateNoticesBridge();
 
 installOnboardingCardStore();
 
-installSubscribeCardStore();
 
 installFeedbackNudgeStore();
 
@@ -80,7 +75,6 @@ if (typeof window !== 'undefined' && window.psDesktop !== undefined) {
   installPointerPositionTracker();
 }
 
-installRelaunchStateBridge();
 
 if (typeof window !== 'undefined') {
   installDeepLinkListener({ bridge: window.psDesktop });

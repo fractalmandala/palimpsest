@@ -1,4 +1,5 @@
 import type { HocuspocusProvider } from '@hocuspocus/provider';
+import { useLingui } from '@lingui/react/macro';
 import {
   isExternalSkillDocName,
   parseManagedArtifactName,
@@ -6,7 +7,6 @@ import {
   templateContentDocName,
 } from '@palimpsest/core/constants/cc1';
 import type { SkillScope } from '@palimpsest/core/schemas/api';
-import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { PropertyPanel } from '@/components/PropertyPanel';

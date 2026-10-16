@@ -1,6 +1,6 @@
+import { Trans } from '@lingui/react/macro';
 import type { InlineAssetMediaKind } from '@palimpsest/core/constants/upload';
 import { toDesktopAssetHref } from '@palimpsest/core/utils/asset-href';
-import { Trans } from '@lingui/react/macro';
 import { useState } from 'react';
 import { MermaidFileViewer } from '@/components/MermaidFileViewer';
 import { NotInSidebarIndicator } from '@/components/NotInSidebarIndicator';

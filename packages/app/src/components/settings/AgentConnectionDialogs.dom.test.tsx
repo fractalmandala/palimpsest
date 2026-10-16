@@ -1,3 +1,4 @@
+import * as actualLinguiMacro from '@lingui/react/macro';
 import {
   AGENT_REGISTRY,
   type AgentId,
@@ -8,7 +9,6 @@ import {
   type SatisfierId,
   type SurfaceState,
 } from '@palimpsest/core';
-import * as actualLinguiMacro from '@lingui/react/macro';
 import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type ReactNode, useState } from 'react';
@@ -486,9 +486,7 @@ describe('AgentConnectionDialogs', () => {
     const dialog = await screen.findByRole('dialog');
     await user.click(within(dialog).getByRole('checkbox', { name: 'Project MCP server' }));
     await user.click(within(dialog).getByRole('checkbox', { name: 'Project skill' }));
-    await user.click(
-      within(dialog).getByRole('checkbox', { name: 'Palimpsest discovery skill' }),
-    );
+    await user.click(within(dialog).getByRole('checkbox', { name: 'Palimpsest discovery skill' }));
     await user.click(within(dialog).getByRole('button', { name: 'Save changes' }));
 
     await within(dialog).findByText(/shared with/);
@@ -540,9 +538,7 @@ describe('AgentConnectionDialogs', () => {
     await renderConfigureDialog(async () => result(snapshot), 'cursor');
     const dialog = await screen.findByRole('dialog');
     await user.click(within(dialog).getByRole('checkbox', { name: 'Project skill' }));
-    await user.click(
-      within(dialog).getByRole('checkbox', { name: 'Palimpsest discovery skill' }),
-    );
+    await user.click(within(dialog).getByRole('checkbox', { name: 'Palimpsest discovery skill' }));
 
     expect(tallyText(dialog)).toBe('1 added · 1 removed');
     expect(
@@ -566,11 +562,7 @@ describe('AgentConnectionDialogs', () => {
     expect(tallyText(dialog)).toBe('1 removed');
     expect(dialog.textContent).not.toContain('disconnects');
 
-    for (const name of [
-      'Project MCP server',
-      'Global MCP server',
-      'Palimpsest discovery skill',
-    ]) {
+    for (const name of ['Project MCP server', 'Global MCP server', 'Palimpsest discovery skill']) {
       await user.click(within(dialog).getByRole('checkbox', { name }));
     }
     expect(dialog.textContent).toContain(note);
@@ -773,9 +765,7 @@ describe('AgentConnectionDialogs', () => {
 
     await renderConfigureDialog(apply, 'cursor');
     const dialog = screen.getByRole('dialog', { name: 'Cursor' });
-    await user.click(
-      within(dialog).getByRole('checkbox', { name: 'Palimpsest discovery skill' }),
-    );
+    await user.click(within(dialog).getByRole('checkbox', { name: 'Palimpsest discovery skill' }));
     await user.click(within(dialog).getByRole('button', { name: 'Save changes' }));
 
     const alert = await within(dialog).findByRole('alert');
@@ -1137,9 +1127,7 @@ describe('a failed save names its reason', () => {
     });
     const text = await saveAndReadAlert('claude', apply);
     expect(text).toContain('Project MCP server');
-    expect(text).toContain(
-      'Palimpsest left this file alone because it could not parse it safely.',
-    );
+    expect(text).toContain('Palimpsest left this file alone because it could not parse it safely.');
   });
 
   test('a config file the agent has not created yet says to open the agent first', async () => {

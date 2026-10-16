@@ -320,11 +320,11 @@ describe('two-level provenance nesting (repo parent over pack/plugin child)', ()
       ],
       showSkillGroups: true,
     });
-    expect(r.paths).toContain('PROJECT/open-knowledge-skills/alpha/a/SKILL.md');
-    expect(r.paths).toContain('PROJECT/open-knowledge-skills/beta/c/SKILL.md');
-    expect(r.groupByPrefix.get('PROJECT/open-knowledge-skills')?.kind).toBe('source');
-    expect(r.groupByPrefix.get('PROJECT/open-knowledge-skills/alpha')?.kind).toBe('plugin');
-    expect(r.skillByPrefix.get('PROJECT/open-knowledge-skills/alpha/a')?.name).toBe('a');
+    expect(r.paths).toContain('PROJECT/example-skills/alpha/a/SKILL.md');
+    expect(r.paths).toContain('PROJECT/example-skills/beta/c/SKILL.md');
+    expect(r.groupByPrefix.get('PROJECT/example-skills')?.kind).toBe('source');
+    expect(r.groupByPrefix.get('PROJECT/example-skills/alpha')?.kind).toBe('plugin');
+    expect(r.skillByPrefix.get('PROJECT/example-skills/alpha/a')?.name).toBe('a');
   });
 
   it('a pack plus a loose import from the same repo: pack nests, loose sits under the parent', () => {
@@ -332,9 +332,9 @@ describe('two-level provenance nesting (repo parent over pack/plugin child)', ()
       skills: [packed('a', 'alpha'), packed('b', 'alpha'), imported('loose', OKS)],
       showSkillGroups: true,
     });
-    expect(r.paths).toContain('PROJECT/open-knowledge-skills/alpha/a/SKILL.md');
-    expect(r.paths).toContain('PROJECT/open-knowledge-skills/loose/SKILL.md');
-    expect(r.skillByPrefix.get('PROJECT/open-knowledge-skills/loose')?.name).toBe('loose');
+    expect(r.paths).toContain('PROJECT/example-skills/alpha/a/SKILL.md');
+    expect(r.paths).toContain('PROJECT/example-skills/loose/SKILL.md');
+    expect(r.skillByPrefix.get('PROJECT/example-skills/loose')?.name).toBe('loose');
   });
 
   it('a one-skill pack beside a loose repo sibling nests the full hierarchy', () => {
@@ -342,10 +342,10 @@ describe('two-level provenance nesting (repo parent over pack/plugin child)', ()
       skills: [packed('note-taking', 'plain-notes'), imported('palimpsest', OKS)],
       showSkillGroups: true,
     });
-    expect(r.paths).toContain('PROJECT/open-knowledge-skills/plain-notes/note-taking/SKILL.md');
-    expect(r.paths).toContain('PROJECT/open-knowledge-skills/palimpsest/SKILL.md');
-    expect(r.groupByPrefix.get('PROJECT/open-knowledge-skills')?.kind).toBe('source');
-    expect(r.groupByPrefix.get('PROJECT/open-knowledge-skills/plain-notes')?.kind).toBe('plugin');
+    expect(r.paths).toContain('PROJECT/example-skills/plain-notes/note-taking/SKILL.md');
+    expect(r.paths).toContain('PROJECT/example-skills/palimpsest/SKILL.md');
+    expect(r.groupByPrefix.get('PROJECT/example-skills')?.kind).toBe('source');
+    expect(r.groupByPrefix.get('PROJECT/example-skills/plain-notes')?.kind).toBe('plugin');
   });
 
   it('a single pack with no repo siblings collapses the parent away', () => {
@@ -354,7 +354,7 @@ describe('two-level provenance nesting (repo parent over pack/plugin child)', ()
       showSkillGroups: true,
     });
     expect(r.paths).toContain('PROJECT/alpha/a/SKILL.md');
-    expect(r.groupByPrefix.has('PROJECT/open-knowledge-skills')).toBe(false);
+    expect(r.groupByPrefix.has('PROJECT/example-skills')).toBe(false);
     expect(r.groupByPrefix.get('PROJECT/alpha')?.kind).toBe('plugin');
   });
 
@@ -439,9 +439,9 @@ describe('bucket size decides the shape', () => {
       skills: [imported('a', OKS), imported('b', OKS)],
       showSkillGroups: true,
     });
-    expect([...r.groupByPrefix.keys()]).toEqual(['PROJECT/open-knowledge-skills']);
-    expect(r.paths).toContain('PROJECT/open-knowledge-skills/a/SKILL.md');
-    expect(r.paths).toContain('PROJECT/open-knowledge-skills/b/SKILL.md');
+    expect([...r.groupByPrefix.keys()]).toEqual(['PROJECT/example-skills']);
+    expect(r.paths).toContain('PROJECT/example-skills/a/SKILL.md');
+    expect(r.paths).toContain('PROJECT/example-skills/b/SKILL.md');
   });
 
   it('flattens a bucket of one onto the skill row — no group row', () => {
@@ -455,7 +455,7 @@ describe('bucket size decides the shape', () => {
       skills: [imported('a', OKS), imported('b', OKS), imported('c', OKS, { scope: 'global' })],
       showSkillGroups: true,
     });
-    expect([...r.groupByPrefix.keys()]).toEqual(['PROJECT/open-knowledge-skills']);
+    expect([...r.groupByPrefix.keys()]).toEqual(['PROJECT/example-skills']);
     expect(r.paths).toContain('GLOBAL/c/SKILL.md');
   });
 });
@@ -465,12 +465,12 @@ describe('built-ins are not a population', () => {
     const r = build({
       skills: [
         imported('palimpsest-discovery', OKS, { scope: 'global' }),
-        imported('open-knowledge-write-skill', OKS, { scope: 'global' }),
+        imported('palimpsest-write-skill', OKS, { scope: 'global' }),
       ],
       showSkillGroups: true,
     });
-    expect([...r.groupByPrefix.keys()]).toEqual(['GLOBAL/open-knowledge-skills']);
-    expect(r.paths).toContain('GLOBAL/open-knowledge-skills/palimpsest-discovery/SKILL.md');
+    expect([...r.groupByPrefix.keys()]).toEqual(['GLOBAL/example-skills']);
+    expect(r.paths).toContain('GLOBAL/example-skills/palimpsest-discovery/SKILL.md');
   });
 });
 
@@ -538,10 +538,8 @@ describe('grouped rows stay navigable', () => {
       showSkillGroups: true,
       isSkillMdActive: (s) => s.name === 'a',
     });
-    expect(r.activePath).toBe('PROJECT/open-knowledge-skills/a/SKILL.md');
-    expect(r.expanded).toEqual(
-      expect.arrayContaining(['PROJECT/', 'PROJECT/open-knowledge-skills/']),
-    );
+    expect(r.activePath).toBe('PROJECT/example-skills/a/SKILL.md');
+    expect(r.expanded).toEqual(expect.arrayContaining(['PROJECT/', 'PROJECT/example-skills/']));
   });
 
   it('keys skillByPrefix on the grouped path so row lookup still resolves', () => {
@@ -549,22 +547,20 @@ describe('grouped rows stay navigable', () => {
       skills: [imported('a', OKS), imported('b', OKS)],
       showSkillGroups: true,
     });
-    expect(r.skillByPrefix.get('PROJECT/open-knowledge-skills/a')?.name).toBe('a');
+    expect(r.skillByPrefix.get('PROJECT/example-skills/a')?.name).toBe('a');
   });
 });
 
 describe('group ids and skill names share a level', () => {
   it('does not form a group whose id collides with a sibling skill segment', () => {
     const r = build({
-      skills: [imported('a', OKS), imported('b', OKS), skill({ name: 'open-knowledge-skills' })],
+      skills: [imported('a', OKS), imported('b', OKS), skill({ name: 'example-skills' })],
       showSkillGroups: true,
     });
     expect(r.groupByPrefix.size).toBe(0);
     expect(r.paths).toContain('PROJECT/a/SKILL.md');
     expect(r.paths).toContain('PROJECT/b/SKILL.md');
-    expect(r.skillByPrefix.get('PROJECT/open-knowledge-skills')?.name).toBe(
-      'open-knowledge-skills',
-    );
+    expect(r.skillByPrefix.get('PROJECT/example-skills')?.name).toBe('example-skills');
   });
 
   it('still groups when no skill segment claims the id', () => {
@@ -572,7 +568,7 @@ describe('group ids and skill names share a level', () => {
       skills: [imported('a', OKS), imported('b', OKS)],
       showSkillGroups: true,
     });
-    expect([...r.groupByPrefix.keys()]).toEqual(['PROJECT/open-knowledge-skills']);
+    expect([...r.groupByPrefix.keys()]).toEqual(['PROJECT/example-skills']);
   });
 
   it('groups a plugin named after one of its OWN skills', () => {
@@ -617,9 +613,9 @@ describe('pinned skills', () => {
       pinnedByScope: pins(['a']),
     });
     expect(r.paths).toContain('PROJECT/a/SKILL.md');
-    expect(r.paths).toContain('PROJECT/open-knowledge-skills/a/SKILL.md');
+    expect(r.paths).toContain('PROJECT/example-skills/a/SKILL.md');
     expect(r.pinnedPrefixes.has('PROJECT/a')).toBe(true);
-    expect(r.pinnedPrefixes.has('PROJECT/open-knowledge-skills/a')).toBe(false);
+    expect(r.pinnedPrefixes.has('PROJECT/example-skills/a')).toBe(false);
   });
 
   it('an ungrouped pinned skill keeps its row, marked', () => {
@@ -644,7 +640,7 @@ describe('pinned skills', () => {
       pinnedByScope: pins(['a']),
     });
     expect(r.skillByPrefix.get('PROJECT/a')?.name).toBe('a');
-    expect(r.skillByPrefix.get('PROJECT/open-knowledge-skills/a')?.name).toBe('a');
+    expect(r.skillByPrefix.get('PROJECT/example-skills/a')?.name).toBe('a');
   });
 
   it('a pinned DETECTED plugin resident keeps its group row and floats a twin too', () => {
@@ -691,17 +687,17 @@ describe('restoring hand-expanded folders across a remount', () => {
     const r = build({
       skills: [imported('a', OKS), imported('b', OKS)],
       showSkillGroups: true,
-      userExpanded: new Set(['PROJECT/open-knowledge-skills/']),
+      userExpanded: new Set(['PROJECT/example-skills/']),
     });
-    expect(r.expanded).toContain('PROJECT/open-knowledge-skills/');
+    expect(r.expanded).toContain('PROJECT/example-skills/');
   });
 
   it('ignores a stale prefix that no longer names anything', () => {
     const r = build({
       skills: [skill({ name: 'mine' })],
-      userExpanded: new Set(['PROJECT/open-knowledge-skills/']),
+      userExpanded: new Set(['PROJECT/example-skills/']),
     });
-    expect(r.expanded).not.toContain('PROJECT/open-knowledge-skills/');
+    expect(r.expanded).not.toContain('PROJECT/example-skills/');
   });
 });
 

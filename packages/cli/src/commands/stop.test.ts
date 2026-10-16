@@ -422,7 +422,7 @@ describe('formatNoTargetMessage', () => {
     const msg = formatNoTargetMessage('/proj', 2);
     expect(msg).toContain('Nothing was running for /proj');
     expect(msg).toContain('2 other palimpsest servers are running');
-    expect(msg).toContain('ps ps');
+    expect(msg).toContain('ps servers');
     expect(msg).not.toContain('no other');
   });
 
@@ -444,11 +444,11 @@ describe('formatNoTargetMessage', () => {
     }
   });
 
-  test('drops the `ps ps` pointer when the caller prints the listing itself', () => {
+  test('drops the `ps servers` pointer when the caller prints the listing itself', () => {
     const msg = formatNoTargetMessage('/proj', 2, { listingFollows: true });
     expect(msg).toContain('Nothing was running for /proj');
     expect(msg).toContain('2 other palimpsest servers are running');
-    expect(msg).not.toContain('ps ps');
+    expect(msg).not.toContain('ps servers');
   });
 });
 

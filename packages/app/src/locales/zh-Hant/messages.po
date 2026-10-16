@@ -1079,9 +1079,6 @@ msgstr "關於"
 msgid "About {appName}"
 msgstr "關於 {appName}"
 
-msgid "About & updates"
-msgstr "關於與更新"
-
 msgid "Above"
 msgstr "上方"
 
@@ -1737,12 +1734,6 @@ msgstr "自動"
 msgid "Automatic picks a free port each start. Choose a fixed port to keep the same address across restarts."
 msgstr "自動模式會在每次啟動時挑選一個空閒的連接埠。選擇固定連接埠可在重新啟動後維持相同位址。"
 
-msgid "Automatic updates"
-msgstr "自動更新"
-
-msgid "Automatic updates are not available right now."
-msgstr "目前無法自動更新。"
-
 msgid "Available"
 msgstr "可用"
 
@@ -2037,14 +2028,8 @@ msgstr "聊天記錄"
 msgid "Chat name"
 msgstr "對話名稱"
 
-msgid "Check for updates"
-msgstr "檢查更新"
-
 msgid "Check for updates every"
 msgstr "檢查更新的頻率"
-
-msgid "Check for updates…"
-msgstr "檢查更新…"
 
 msgid "Check out remote branch"
 msgstr "簽出遠端分支"
@@ -2078,9 +2063,6 @@ msgstr "正在檢查更新"
 
 msgid "Checking for updates on GitHub"
 msgstr "正在 GitHub 上檢查更新"
-
-msgid "Checking for updates…"
-msgstr "正在檢查更新…"
 
 msgid "Checking GitHub connection..."
 msgstr "正在檢查 GitHub 連線…"
@@ -3202,9 +3184,6 @@ msgstr "無法儲存金鑰——請再試一次。"
 msgid "Couldn't save the resolution for {filePath}."
 msgstr "無法儲存 {filePath} 的解決結果。"
 
-msgid "Couldn't save this setting. Try again."
-msgstr "無法儲存此設定。請再試一次。"
-
 msgid "Couldn't save your theme preference."
 msgstr "無法儲存你的主題偏好。"
 
@@ -3777,9 +3756,6 @@ msgstr "按兩下即可編輯"
 msgid "Download {0}"
 msgstr "下載 {0}"
 
-msgid "Download and install updates automatically"
-msgstr "自動下載並安裝更新"
-
 msgid "Download app"
 msgstr "下載應用程式"
 
@@ -4026,8 +4002,8 @@ msgstr "嵌入"
 msgid "Embeddings API key"
 msgstr "嵌入服務 API 金鑰"
 
-msgid "Embeddings are computed only when a search runs and are cached locally under <0>.ok/local</0>."
-msgstr "嵌入向量只在執行搜尋時計算，並快取在本機的 <0>.ok/local</0> 底下。"
+msgid "Embeddings are computed only when a search runs and are cached locally under <0>.ps/local</0>."
+msgstr ""
 
 msgid "Emoji"
 msgstr "表情符號"
@@ -4552,6 +4528,9 @@ msgstr "上傳檔案失敗"
 msgid "Fast"
 msgstr "快速"
 
+msgid "Feedback"
+msgstr ""
+
 msgid "Feedback isn't available right now. Please try again later."
 msgstr "意見回饋功能目前無法使用。請稍後再試。"
 
@@ -4748,15 +4727,6 @@ msgstr "無法附加資料夾和空檔案，請直接拖放檔案本身。"
 msgid "Follow the agent's edits"
 msgstr "跟著代理的編輯走"
 
-msgid "Follow us on"
-msgstr "追蹤我們："
-
-msgid "Follow us on social media"
-msgstr "在社群媒體上追蹤我們"
-
-msgid "Follow us on X"
-msgstr "在 X 上追蹤我們"
-
 msgid "Following the agent's edits"
 msgstr "正在跟著代理的編輯走"
 
@@ -4831,9 +4801,6 @@ msgstr "取得 {displayName}"
 
 msgid "Get Claude Code"
 msgstr "取得 Claude Code"
-
-msgid "Get product updates in your inbox."
-msgstr "把產品動態寄到你的信箱。"
 
 msgid "Get set up"
 msgstr "開始設定"
@@ -5551,8 +5518,8 @@ msgid "Install skill"
 msgstr "安裝技巧"
 
 #. Checkbox that installs the user-global discovery skill bundle
-msgid "Install the <0>open-knowledge-discovery</0> skill"
-msgstr "安裝 <0>open-knowledge-discovery</0> 技能"
+msgid "Install the <0>palimpsest-discovery</0> skill"
+msgstr ""
 
 msgid "Install the gh CLI"
 msgstr "安裝 gh CLI"
@@ -5676,9 +5643,6 @@ msgstr "斜體"
 
 msgid "Item {0}"
 msgstr "項目 {0}"
-
-msgid "Join us on Discord"
-msgstr "來 Discord 加入我們"
 
 msgid "Jump to last tab"
 msgstr "跳到最後一個分頁"
@@ -5969,11 +5933,11 @@ msgstr "正在載入 {pageTarget} 的標題"
 msgid "Loading image"
 msgstr "正在載入圖片"
 
-msgid "Loading Palimpsest skills"
-msgstr "正在載入 Palimpsest 技能"
-
 msgid "Loading pages"
 msgstr "正在載入頁面"
+
+msgid "Loading Palimpsest skills"
+msgstr "正在載入 Palimpsest 技能"
 
 msgid "Loading paths…"
 msgstr "正在載入路徑…"
@@ -6306,11 +6270,11 @@ msgstr "移動區塊"
 msgid "Move down"
 msgstr "下移"
 
-msgid "Move Palimpsest.app to the Trash"
-msgstr "將 Palimpsest.app 移到垃圾桶"
-
 msgid "Move or rename this file inside the skill — the path stays under references/ or scripts/."
 msgstr "在技能內部移動或重新命名這個檔案——路徑仍會留在 references/ 或 scripts/ 底下。"
+
+msgid "Move Palimpsest.app to the Trash"
+msgstr "將 Palimpsest.app 移到垃圾桶"
 
 msgid "Move succeeded but the sidebar may be out of date — refresh to resync"
 msgstr "移動成功，但側邊欄可能不是最新的——請重新整理以重新同步"
@@ -6425,9 +6389,6 @@ msgstr "沉思中…"
 
 msgid "my-feature"
 msgstr "my-feature"
-
-msgid "my@email.com"
-msgstr "my@email.com"
 
 msgid "name"
 msgstr "名稱"
@@ -7043,9 +7004,6 @@ msgstr "離線"
 msgid "OK can't move these, so they go when {pick} does."
 msgstr "OK 無法移動這些內容，它們會隨 {pick} 一起消失。"
 
-msgid "OK Desktop"
-msgstr "OK 桌面版"
-
 msgid "OK last set this folder to {0} — something outside OK changed it since. The state shown is what's on disk now; your next Symlink/Unlink wins."
 msgstr "OK 上次把這個資料夾設為 {0}——之後 OK 以外的東西改動過它。顯示的是磁碟上現在的狀態；你下一次的「符號連結／取消連結」會覆蓋它。"
 
@@ -7242,36 +7200,6 @@ msgstr "在 worktree 中開啟"
 msgid "Open it there"
 msgstr "在那裡開啟"
 
-msgid "Palimpsest could not reach the project server to check index maintenance. The status updates when the project reconnects."
-msgstr "Palimpsest 無法連線到專案伺服器以檢查索引維護。專案重新連線後，狀態就會更新。"
-
-msgid "Palimpsest creates and maintains a navigation file named index.md in every folder that contains Markdown."
-msgstr "Palimpsest 在包含 Markdown 的每個資料夾中建立並維護名為 index.md 的導覽檔案。"
-
-msgid "OpenKnowledge Format guidance"
-msgstr "Palimpsest Format 指導"
-
-msgid "Palimpsest maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
-msgstr "Palimpsest 在包含 Markdown 的每個資料夾中維護一個名為 index.md 的導航文件，每個資料夾按類型列出該資料夾的文件並連結到其子資料夾。當您的文件發生更改時，它會重寫這些文件，並且您自己編輯到其中的任何內容都會被替換。"
-
-msgid "Palimpsest rewrites these index.md files as documents change, so manual edits to them are replaced."
-msgstr "當文件變更時，Palimpsest 會重寫這些 index.md 文件，因此對它們的手動編輯將會被取代。"
-
-msgid "Palimpsest tools are available in this thread."
-msgstr "此執行緒中已可使用 Palimpsest 工具。"
-
-msgid "Palimpsest tools are unavailable because the project folder is missing, inaccessible, or has changed. Check its location and permissions, then retry."
-msgstr "Palimpsest 工具無法使用，因為專案資料夾遺失、無法存取或已變更。請檢查其位置和權限，然後重試。"
-
-msgid "Palimpsest tools are unavailable: a file Palimpsest didn't write is already at {bridgePath}."
-msgstr "Palimpsest 工具無法使用：{bridgePath} 已存在一個並非 Palimpsest 寫入的檔案。"
-
-msgid "Palimpsest tools are unavailable: something is already at {bridgePath} but couldn't be read, so Palimpsest left it alone."
-msgstr "Palimpsest 工具無法使用：{bridgePath} 已有內容，但無法讀取，因此 Palimpsest 未做更動。"
-
-msgid "Palimpsest's own copy of {0} is damaged and won't run. It can download a fresh copy of {1} {2} (about {3} MB from {4}) to replace it."
-msgstr "Palimpsest 自己的 {0} 副本已損壞，無法執行。它可以下載一份新的 {1} {2}（約 {3} MB，來自 {4}）來替換它。"
-
 msgid "Open link"
 msgstr "開啟連結"
 
@@ -7380,194 +7308,8 @@ msgstr "正在開啟 worktree"
 msgid "Opening..."
 msgstr "正在開啟…"
 
-msgid "Palimpsest"
-msgstr "Palimpsest"
-
-msgid "Palimpsest can't sign in to GitHub for this project."
-msgstr "Palimpsest 無法為此專案登入 GitHub。"
-
-msgid "Palimpsest checked {subject}"
-msgstr "Palimpsest 檢查了 {subject}"
-
-msgid "Palimpsest checked the project"
-msgstr "Palimpsest 檢查了專案"
-
-msgid "Palimpsest checks for and downloads updates in the background."
-msgstr "Palimpsest 會在背景檢查並下載更新。"
-
-msgid "Palimpsest could not find this agent on this machine."
-msgstr "Palimpsest 未在此裝置上找到該代理程式。"
-
-msgid "Palimpsest couldn't finish setting up this project. The worktree was created but not opened."
-msgstr "Palimpsest 無法完成此專案的設定。工作樹已建立，但未開啟。"
-
-msgid "Palimpsest couldn't read terminal.shell in .ps/local/config.yml. Using an available Windows shell instead."
-msgstr "Palimpsest 無法讀取 .ps/local/config.yml 中的 terminal.shell，將改用可用的 Windows shell。"
-
-msgid "Palimpsest couldn't write launch settings under .ps/local/terminal because the folder is not safely contained in this project. Check that it is a real folder inside the project, not a link. Claude will ask you to approve Palimpsest."
-msgstr "Palimpsest 無法在 .ps/local/terminal 下寫入啟動設定，因為該資料夾未安全地包含在此專案中。請確認它是專案內的真實資料夾，而不是連結。Claude 將要求你核准 Palimpsest。"
-
-msgid "Palimpsest couldn't write launch settings under .ps/local/terminal this time. Check that the folder is writable. Claude will ask you to approve Palimpsest."
-msgstr "Palimpsest 此次無法在 .ps/local/terminal 下寫入啟動設定。請確認該資料夾可寫入。Claude 將要求你核准 Palimpsest。"
-
-msgid "Palimpsest created a share link"
-msgstr "Palimpsest 建立了分享連結"
-
-msgid "Palimpsest created a share link for {subject}"
-msgstr "Palimpsest 為 {subject} 建立了分享連結"
-
-msgid "Palimpsest deleted {subject}"
-msgstr "Palimpsest 刪除了 {subject}"
-
-msgid "Palimpsest deleted a document"
-msgstr "Palimpsest 刪除了一個文件"
-
-msgid "Palimpsest discovery skill"
-msgstr "Palimpsest 探索技能"
-
-msgid "Palimpsest does not recognize this entry, and cannot safely replace it in this file's format."
-msgstr "Palimpsest 無法辨識此項目，且無法在此檔案格式中安全取代。"
-
-msgid "Palimpsest does not recognize this entry. Turning it on replaces it."
-msgstr "Palimpsest 無法辨識此項目。啟用後將取代它。"
-
-msgid "Palimpsest doesn't check for or download updates on its own. Check for updates still works when you want a newer version."
-msgstr "Palimpsest 不會自行檢查或下載更新。需要新版本時，仍可使用「檢查更新」。"
-
-msgid "Palimpsest edited {subject}"
-msgstr "Palimpsest 編輯了 {subject}"
-
-msgid "Palimpsest edited a document"
-msgstr "Palimpsest 編輯了一個文件"
-
-msgid "Palimpsest files were removed"
-msgstr "已移除 Palimpsest 檔案"
-
-msgid "Palimpsest has no credential stored for this host. Add a token in Settings, or let git use the credentials it already has."
-msgstr "Palimpsest 沒有為這個主機儲存任何憑證。請在「設定」中新增一個權杖，或者讓 git 使用它已有的憑證。"
-
-msgid "Palimpsest imported {source}"
-msgstr "Palimpsest 匯入了 {source}"
-
-msgid "Palimpsest imported a skill"
-msgstr "Palimpsest 匯入了一個技能"
-
-msgid "Palimpsest initializes at <0>{projectDir}</0> — the parent of <1>{pickedRelative}</1> because it contains a <2>.git</2> folder (one .ps/ per git repo). <3>Content directory</3> defaults to <4>.</4> (the whole repo); type a sub-folder to narrow it."
-msgstr "Palimpsest 會在 <0>{projectDir}</0> 初始化——它是 <1>{pickedRelative}</1> 的上層目錄，因為裡面有 <2>.git</2> 資料夾（每個 git 儲存庫一個 .ps/）。<3>內容目錄</3>預設是 <4>.</4>（整個儲存庫）；輸入子資料夾可以縮小範圍。"
-
-msgid "Palimpsest installed {subject}"
-msgstr "Palimpsest 安裝了 {subject}"
-
-msgid "Palimpsest installed a skill"
-msgstr "Palimpsest 安裝了一個技能"
-
-msgid "Palimpsest integrations checked."
-msgstr "已檢查 Palimpsest 整合。"
-
-msgid "Palimpsest is set up at the repository root here, so the pack goes inside <0>{sanitized}</0> rather than at the top of the repository."
-msgstr "這裡的 Palimpsest 設定在存放庫根目錄，因此入門套件會放進 <0>{sanitized}</0>，而不是存放庫頂層。"
-
-msgid "Palimpsest is using this GitHub account."
-msgstr "Palimpsest 正在使用這個 GitHub 帳戶。"
-
-msgid "Palimpsest keeps retrying and shows them as soon as the file can be read."
-msgstr "Palimpsest 會持續重試，並在檔案可以讀取後立即顯示這些設定。"
-
-msgid "Palimpsest left this file alone because it could not parse it safely. Fix the file by hand, then try again."
-msgstr "Palimpsest 未修改此檔案，因為無法安全地解析它。請手動修正該檔案，然後再試一次。"
-
-msgid "Palimpsest listed the installed skills"
-msgstr "Palimpsest 列出了已安裝的技能"
-
-msgid "Palimpsest logs across projects. No project is open, so project server logs are not included."
-msgstr "跨專案的 Palimpsest 紀錄。目前未開啟任何專案，因此不包含專案伺服器紀錄。"
-
-msgid "Palimpsest logs, including activity across projects."
-msgstr "Palimpsest 紀錄，包括跨專案的活動。"
-
-msgid "Palimpsest looked at the link graph"
-msgstr "Palimpsest 查看了連結圖譜"
-
-msgid "Palimpsest looked up links for {subject}"
-msgstr "Palimpsest 查詢了 {subject} 的連結"
-
-msgid "Palimpsest looked up the authoring palette"
-msgstr "Palimpsest 查看了創作面板"
-
-msgid "Palimpsest moved {subject} to {destination}"
-msgstr "Palimpsest 將 {subject} 移動到 {destination}"
-
-msgid "Palimpsest moved a document"
-msgstr "Palimpsest 移動了一個文件"
-
-msgid "Palimpsest on GitHub"
-msgstr "GitHub 上的 Palimpsest"
-
-msgid "Palimpsest on this computer changed to a different build, but this tab is still running the old one."
-msgstr "這台電腦上的 Palimpsest 已換成另一個組建，但這個分頁仍在執行舊的組建。"
-
-msgid "Palimpsest on this computer is now v{serverVersion}, but this tab is still running v{tabVersion}."
-msgstr "這台電腦上的 Palimpsest 現在是 v{serverVersion}，但這個分頁仍在執行 v{tabVersion}。"
-
-msgid "Palimpsest opened the live preview"
-msgstr "Palimpsest 開啟了即時預覽"
-
-msgid "Palimpsest quit unexpectedly last time."
-msgstr "Palimpsest 上次非預期地結束了。"
-
-msgid "Palimpsest ran {command}"
-msgstr "Palimpsest 執行了 {command}"
-
-msgid "Palimpsest ran {tool}"
-msgstr "Palimpsest 執行了 {tool}"
-
-msgid "Palimpsest ran a command"
-msgstr "Palimpsest 執行了一個指令"
-
-msgid "Palimpsest read the edit history"
-msgstr "Palimpsest 查看了編輯歷史"
-
-msgid "Palimpsest read the history of {subject}"
-msgstr "Palimpsest 查看了 {subject} 的歷史"
-
-msgid "Palimpsest read the project settings"
-msgstr "Palimpsest 讀取了專案設定"
-
-msgid "Palimpsest read the setting {key}"
-msgstr "Palimpsest 讀取了設定 {key}"
-
-msgid "Palimpsest restored an earlier version"
-msgstr "Palimpsest 還原了較早的版本"
-
-msgid "Palimpsest restored an earlier version of {subject}"
-msgstr "Palimpsest 還原了 {subject} 的較早版本"
-
-msgid "Palimpsest saved a checkpoint"
-msgstr "Palimpsest 儲存了一個檢查點"
-
-msgid "Palimpsest searched for {query}"
-msgstr "Palimpsest 搜尋了 {query}"
-
-msgid "Palimpsest searched the knowledge base"
-msgstr "Palimpsest 搜尋了知識庫"
-
-msgid "Palimpsest skill saved. Upload it in Claude Desktop, then click Cowork again."
-msgstr "已儲存 Palimpsest 技能。請在 Claude Desktop 中上傳，然後再次點選 Cowork。"
-
-msgid "Palimpsest stores its configuration and internal files inside a newly created <0>.ok</0> directory in your project root folder."
-msgstr "Palimpsest 會把設定和內部檔案放在你專案根資料夾中新建的 <0>.ok</0> 目錄裡。"
-
-msgid "Palimpsest will be initialized at <0>{gitRoot}</0> — the parent of your new folder, because it contains a <1>.git</1> folder (one project per git repo)."
-msgstr "Palimpsest 會在 <0>{gitRoot}</0> 初始化——它是你新資料夾的上層目錄，因為裡面有 <1>.git</1> 資料夾（每個 git 儲存庫一個專案）。"
-
-msgid "Palimpsest will create commits and push them to your remote automatically. If you do not want automatic commits in your git history, you should not enable auto-sync."
-msgstr "Palimpsest 會自動建立提交並推送到你的遠端。如果你不希望 git 記錄中出現自動提交，就不該啟用自動同步。"
-
-msgid "Palimpsest wrote a document"
-msgstr "Palimpsest 寫入了一個文件"
-
-msgid "Palimpsest wrote to {subject}"
-msgstr "Palimpsest 寫入了 {subject}"
+msgid "OpenKnowledge Format guidance"
+msgstr "Palimpsest Format 指導"
 
 msgid "Opens a folder picker to choose where to clone the repository."
 msgstr "開啟資料夾選擇器，挑一個地方把儲存庫複製過去。"
@@ -7704,6 +7446,219 @@ msgstr "頁面會在搜尋第一次需要它們的時候產生嵌入向量。"
 
 msgid "Pages indexed: {semanticIndexedCount} of {semanticTotalCount}."
 msgstr "已建立索引的頁面：{semanticIndexedCount} / {semanticTotalCount}。"
+
+msgid "Palimpsest"
+msgstr "Palimpsest"
+
+msgid "Palimpsest can't sign in to GitHub for this project."
+msgstr "Palimpsest 無法為此專案登入 GitHub。"
+
+msgid "Palimpsest checked {subject}"
+msgstr "Palimpsest 檢查了 {subject}"
+
+msgid "Palimpsest checked the project"
+msgstr "Palimpsest 檢查了專案"
+
+msgid "Palimpsest could not find this agent on this machine."
+msgstr "Palimpsest 未在此裝置上找到該代理程式。"
+
+msgid "Palimpsest could not reach the project server to check index maintenance. The status updates when the project reconnects."
+msgstr "Palimpsest 無法連線到專案伺服器以檢查索引維護。專案重新連線後，狀態就會更新。"
+
+msgid "Palimpsest couldn't finish setting up this project. The worktree was created but not opened."
+msgstr "Palimpsest 無法完成此專案的設定。工作樹已建立，但未開啟。"
+
+msgid "Palimpsest couldn't read terminal.shell in .ps/local/config.yml. Using an available Windows shell instead."
+msgstr "Palimpsest 無法讀取 .ps/local/config.yml 中的 terminal.shell，將改用可用的 Windows shell。"
+
+msgid "Palimpsest couldn't write launch settings under .ps/local/terminal because the folder is not safely contained in this project. Check that it is a real folder inside the project, not a link. Claude will ask you to approve Palimpsest."
+msgstr "Palimpsest 無法在 .ps/local/terminal 下寫入啟動設定，因為該資料夾未安全地包含在此專案中。請確認它是專案內的真實資料夾，而不是連結。Claude 將要求你核准 Palimpsest。"
+
+msgid "Palimpsest couldn't write launch settings under .ps/local/terminal this time. Check that the folder is writable. Claude will ask you to approve Palimpsest."
+msgstr "Palimpsest 此次無法在 .ps/local/terminal 下寫入啟動設定。請確認該資料夾可寫入。Claude 將要求你核准 Palimpsest。"
+
+msgid "Palimpsest created a share link"
+msgstr "Palimpsest 建立了分享連結"
+
+msgid "Palimpsest created a share link for {subject}"
+msgstr "Palimpsest 為 {subject} 建立了分享連結"
+
+msgid "Palimpsest creates and maintains a navigation file named index.md in every folder that contains Markdown."
+msgstr "Palimpsest 在包含 Markdown 的每個資料夾中建立並維護名為 index.md 的導覽檔案。"
+
+msgid "Palimpsest deleted {subject}"
+msgstr "Palimpsest 刪除了 {subject}"
+
+msgid "Palimpsest deleted a document"
+msgstr "Palimpsest 刪除了一個文件"
+
+msgid "Palimpsest Desktop"
+msgstr ""
+
+msgid "Palimpsest discovery skill"
+msgstr "Palimpsest 探索技能"
+
+msgid "Palimpsest does not recognize this entry, and cannot safely replace it in this file's format."
+msgstr "Palimpsest 無法辨識此項目，且無法在此檔案格式中安全取代。"
+
+msgid "Palimpsest does not recognize this entry. Turning it on replaces it."
+msgstr "Palimpsest 無法辨識此項目。啟用後將取代它。"
+
+msgid "Palimpsest edited {subject}"
+msgstr "Palimpsest 編輯了 {subject}"
+
+msgid "Palimpsest edited a document"
+msgstr "Palimpsest 編輯了一個文件"
+
+msgid "Palimpsest files were removed"
+msgstr "已移除 Palimpsest 檔案"
+
+msgid "Palimpsest has no credential stored for this host. Add a token in Settings, or let git use the credentials it already has."
+msgstr "Palimpsest 沒有為這個主機儲存任何憑證。請在「設定」中新增一個權杖，或者讓 git 使用它已有的憑證。"
+
+msgid "Palimpsest imported {source}"
+msgstr "Palimpsest 匯入了 {source}"
+
+msgid "Palimpsest imported a skill"
+msgstr "Palimpsest 匯入了一個技能"
+
+msgid "Palimpsest initializes at <0>{projectDir}</0> — the parent of <1>{pickedRelative}</1> because it contains a <2>.git</2> folder (one .ps/ per git repo). <3>Content directory</3> defaults to <4>.</4> (the whole repo); type a sub-folder to narrow it."
+msgstr "Palimpsest 會在 <0>{projectDir}</0> 初始化——它是 <1>{pickedRelative}</1> 的上層目錄，因為裡面有 <2>.git</2> 資料夾（每個 git 儲存庫一個 .ps/）。<3>內容目錄</3>預設是 <4>.</4>（整個儲存庫）；輸入子資料夾可以縮小範圍。"
+
+msgid "Palimpsest installed {subject}"
+msgstr "Palimpsest 安裝了 {subject}"
+
+msgid "Palimpsest installed a skill"
+msgstr "Palimpsest 安裝了一個技能"
+
+msgid "Palimpsest integrations checked."
+msgstr "已檢查 Palimpsest 整合。"
+
+msgid "Palimpsest is set up at the repository root here, so the pack goes inside <0>{sanitized}</0> rather than at the top of the repository."
+msgstr "這裡的 Palimpsest 設定在存放庫根目錄，因此入門套件會放進 <0>{sanitized}</0>，而不是存放庫頂層。"
+
+msgid "Palimpsest is using this GitHub account."
+msgstr "Palimpsest 正在使用這個 GitHub 帳戶。"
+
+msgid "Palimpsest keeps retrying and shows them as soon as the file can be read."
+msgstr "Palimpsest 會持續重試，並在檔案可以讀取後立即顯示這些設定。"
+
+msgid "Palimpsest left this file alone because it could not parse it safely. Fix the file by hand, then try again."
+msgstr "Palimpsest 未修改此檔案，因為無法安全地解析它。請手動修正該檔案，然後再試一次。"
+
+msgid "Palimpsest listed the installed skills"
+msgstr "Palimpsest 列出了已安裝的技能"
+
+msgid "Palimpsest logs across projects. No project is open, so project server logs are not included."
+msgstr "跨專案的 Palimpsest 紀錄。目前未開啟任何專案，因此不包含專案伺服器紀錄。"
+
+msgid "Palimpsest logs, including activity across projects."
+msgstr "Palimpsest 紀錄，包括跨專案的活動。"
+
+msgid "Palimpsest looked at the link graph"
+msgstr "Palimpsest 查看了連結圖譜"
+
+msgid "Palimpsest looked up links for {subject}"
+msgstr "Palimpsest 查詢了 {subject} 的連結"
+
+msgid "Palimpsest looked up the authoring palette"
+msgstr "Palimpsest 查看了創作面板"
+
+msgid "Palimpsest maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
+msgstr "Palimpsest 在包含 Markdown 的每個資料夾中維護一個名為 index.md 的導航文件，每個資料夾按類型列出該資料夾的文件並連結到其子資料夾。當您的文件發生更改時，它會重寫這些文件，並且您自己編輯到其中的任何內容都會被替換。"
+
+msgid "Palimpsest moved {subject} to {destination}"
+msgstr "Palimpsest 將 {subject} 移動到 {destination}"
+
+msgid "Palimpsest moved a document"
+msgstr "Palimpsest 移動了一個文件"
+
+msgid "Palimpsest on GitHub"
+msgstr "GitHub 上的 Palimpsest"
+
+msgid "Palimpsest on this computer changed to a different build, but this tab is still running the old one."
+msgstr "這台電腦上的 Palimpsest 已換成另一個組建，但這個分頁仍在執行舊的組建。"
+
+msgid "Palimpsest on this computer is now v{serverVersion}, but this tab is still running v{tabVersion}."
+msgstr "這台電腦上的 Palimpsest 現在是 v{serverVersion}，但這個分頁仍在執行 v{tabVersion}。"
+
+msgid "Palimpsest opened the live preview"
+msgstr "Palimpsest 開啟了即時預覽"
+
+msgid "Palimpsest quit unexpectedly last time."
+msgstr "Palimpsest 上次非預期地結束了。"
+
+msgid "Palimpsest ran {command}"
+msgstr "Palimpsest 執行了 {command}"
+
+msgid "Palimpsest ran {tool}"
+msgstr "Palimpsest 執行了 {tool}"
+
+msgid "Palimpsest ran a command"
+msgstr "Palimpsest 執行了一個指令"
+
+msgid "Palimpsest read the edit history"
+msgstr "Palimpsest 查看了編輯歷史"
+
+msgid "Palimpsest read the history of {subject}"
+msgstr "Palimpsest 查看了 {subject} 的歷史"
+
+msgid "Palimpsest read the project settings"
+msgstr "Palimpsest 讀取了專案設定"
+
+msgid "Palimpsest read the setting {key}"
+msgstr "Palimpsest 讀取了設定 {key}"
+
+msgid "Palimpsest restored an earlier version"
+msgstr "Palimpsest 還原了較早的版本"
+
+msgid "Palimpsest restored an earlier version of {subject}"
+msgstr "Palimpsest 還原了 {subject} 的較早版本"
+
+msgid "Palimpsest rewrites these index.md files as documents change, so manual edits to them are replaced."
+msgstr "當文件變更時，Palimpsest 會重寫這些 index.md 文件，因此對它們的手動編輯將會被取代。"
+
+msgid "Palimpsest saved a checkpoint"
+msgstr "Palimpsest 儲存了一個檢查點"
+
+msgid "Palimpsest searched for {query}"
+msgstr "Palimpsest 搜尋了 {query}"
+
+msgid "Palimpsest searched the knowledge base"
+msgstr "Palimpsest 搜尋了知識庫"
+
+msgid "Palimpsest skill saved. Upload it in Claude Desktop, then click Cowork again."
+msgstr "已儲存 Palimpsest 技能。請在 Claude Desktop 中上傳，然後再次點選 Cowork。"
+
+msgid "Palimpsest stores its configuration and internal files inside a newly created <0>.ok</0> directory in your project root folder."
+msgstr "Palimpsest 會把設定和內部檔案放在你專案根資料夾中新建的 <0>.ok</0> 目錄裡。"
+
+msgid "Palimpsest tools are available in this thread."
+msgstr "此執行緒中已可使用 Palimpsest 工具。"
+
+msgid "Palimpsest tools are unavailable because the project folder is missing, inaccessible, or has changed. Check its location and permissions, then retry."
+msgstr "Palimpsest 工具無法使用，因為專案資料夾遺失、無法存取或已變更。請檢查其位置和權限，然後重試。"
+
+msgid "Palimpsest tools are unavailable: a file Palimpsest didn't write is already at {bridgePath}."
+msgstr "Palimpsest 工具無法使用：{bridgePath} 已存在一個並非 Palimpsest 寫入的檔案。"
+
+msgid "Palimpsest tools are unavailable: something is already at {bridgePath} but couldn't be read, so Palimpsest left it alone."
+msgstr "Palimpsest 工具無法使用：{bridgePath} 已有內容，但無法讀取，因此 Palimpsest 未做更動。"
+
+msgid "Palimpsest will be initialized at <0>{gitRoot}</0> — the parent of your new folder, because it contains a <1>.git</1> folder (one project per git repo)."
+msgstr "Palimpsest 會在 <0>{gitRoot}</0> 初始化——它是你新資料夾的上層目錄，因為裡面有 <1>.git</1> 資料夾（每個 git 儲存庫一個專案）。"
+
+msgid "Palimpsest will create commits and push them to your remote automatically. If you do not want automatic commits in your git history, you should not enable auto-sync."
+msgstr "Palimpsest 會自動建立提交並推送到你的遠端。如果你不希望 git 記錄中出現自動提交，就不該啟用自動同步。"
+
+msgid "Palimpsest wrote a document"
+msgstr "Palimpsest 寫入了一個文件"
+
+msgid "Palimpsest wrote to {subject}"
+msgstr "Palimpsest 寫入了 {subject}"
+
+msgid "Palimpsest's own copy of {0} is damaged and won't run. It can download a fresh copy of {1} {2} (about {3} MB from {4}) to replace it."
+msgstr "Palimpsest 自己的 {0} 副本已損壞，無法執行。它可以下載一份新的 {1} {2}（約 {3} MB，來自 {4}）來替換它。"
 
 msgid "Pan down"
 msgstr "向下平移"
@@ -7904,9 +7859,6 @@ msgstr "玩 Blob Run"
 msgid "Please choose Good or Not great."
 msgstr "請選「良好」或「不太好」。"
 
-msgid "Please enter a valid email address."
-msgstr "請輸入有效的電子郵件地址。"
-
 msgid "Please enter a valid email."
 msgstr "請輸入有效的電子郵件。"
 
@@ -8008,12 +7960,6 @@ msgstr "問題"
 
 msgid "Problems in {0}"
 msgstr "{0} 中的問題"
-
-msgid "Product updates"
-msgstr "產品動態"
-
-msgid "Product updates in your inbox."
-msgstr "把產品動態寄到你的信箱。"
 
 msgid "project"
 msgstr "專案"
@@ -9851,9 +9797,6 @@ msgstr "把選取的內容放入代理面板，隨時可以補充並傳送。"
 msgid "stale Git entry"
 msgstr "過期的 Git 項目"
 
-msgid "Star us on GitHub"
-msgstr "在 GitHub 上給我們一顆星"
-
 msgid "Start a bug report with a screenshot of the screen as it looks right now."
 msgstr "發起一份錯誤回報，並附上此刻畫面的螢幕擷圖。"
 
@@ -9920,9 +9863,6 @@ msgstr "狀態"
 msgid "Status"
 msgstr "狀態"
 
-msgid "Stay in the loop"
-msgstr "保持關注"
-
 msgid "Stays on this computer. Not committed to git."
 msgstr "留在這台電腦上。不會提交到 git。"
 
@@ -9988,15 +9928,6 @@ msgstr "子資料夾名稱"
 
 msgid "Subfolder under current folder"
 msgstr "目前資料夾底下的子資料夾"
-
-msgid "Subscribe"
-msgstr "訂閱"
-
-msgid "Subscribing..."
-msgstr "正在訂閱…"
-
-msgid "Subscriptions aren't available right now."
-msgstr "訂閱功能目前無法使用。"
 
 msgid "Suggestion menu navigation"
 msgstr "建議選單導覽"
@@ -10269,9 +10200,6 @@ msgstr "文字"
 msgid "Thanks for giving Palimpsest a try."
 msgstr "謝謝你試用 Palimpsest。"
 
-msgid "Thanks for subscribing. Watch your inbox for product updates."
-msgstr "謝謝訂閱。請留意你的信箱，我們會寄出產品動態。"
-
 msgid "Thanks for the feedback!"
 msgstr "謝謝你的意見回饋！"
 
@@ -10339,8 +10267,8 @@ msgstr "{editor} 的版本現在成為來源"
 msgid "The {targetNoun} could not be opened — try navigating to it manually."
 msgstr "無法開啟{targetNoun}——請試著手動前往。"
 
-msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs OpenKnowledge Format–conformant."
-msgstr "用這個範本建立的每份文件會得到的 <0>type</0>（例如 <1>research-note</1>）。讓新文件符合 Palimpsest Format。"
+msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs Open Knowledge Format–conformant."
+msgstr ""
 
 msgid "The agent is working"
 msgstr "代理正在工作"
@@ -10477,6 +10405,9 @@ msgstr "你的端點提供的模型 id。它的向量維度會自動偵測——
 msgid "the open agent"
 msgstr "已開啟的代理"
 
+msgid "The original text was deleted."
+msgstr "原始文字已被刪除。"
+
 msgid "The Palimpsest project is missing at this checkout path."
 msgstr "此簽出路徑缺少 Palimpsest 專案。"
 
@@ -10491,9 +10422,6 @@ msgstr "Palimpsest 伺服器回應逾時，變更可能已經生效。請讓代�
 
 msgid "The Palimpsest server took too long to answer. Ask the agent to try again."
 msgstr "Palimpsest 伺服器回應逾時。請讓代理重試。"
-
-msgid "The original text was deleted."
-msgstr "原始文字已被刪除。"
 
 msgid "The path can't leave the skill (no . or ..)"
 msgstr "路徑不能離開技能（不允許 . 或 ..）"
@@ -11071,9 +10999,6 @@ msgstr "無法讀取這個主題檔案"
 msgid "This theme file is too large"
 msgstr "這個主題檔案太大"
 
-msgid "This update is no longer ready to install."
-msgstr "此更新已不再可供安裝。"
-
 msgid "This usually means one of:"
 msgstr "這通常代表下列其中之一："
 
@@ -11452,10 +11377,6 @@ msgstr "未追蹤"
 msgid "Up to date"
 msgstr "已是最新"
 
-msgctxt "settings search keyword"
-msgid "update"
-msgstr "更新"
-
 msgid "Update"
 msgstr "更新"
 
@@ -11488,12 +11409,6 @@ msgstr "更新於 {updatedRelative}"
 
 msgid "updated folder properties"
 msgstr "已更新資料夾屬性"
-
-msgid "Updated to Version {version}"
-msgstr "已更新到版本 {version}"
-
-msgid "Updates and feedback"
-msgstr "更新與意見回饋"
 
 msgid "Updates flow in"
 msgstr "更新會自動流入"
@@ -11812,11 +11727,8 @@ msgstr "你分享的內容會寄給 Palimpsest 團隊。"
 msgid "What's included"
 msgstr "包含哪些內容"
 
-msgid "What's new"
-msgstr "新功能"
-
-msgid "When enabled, the agent opens or refreshes the preview after each edit. Disable if you manage your own preview window (OK Desktop, a browser tab on another display, etc.)."
-msgstr "開啟之後，代理每次編輯完都會開啟或重新整理預覽。如果你自己管理預覽視窗（OK 桌面版、另一台螢幕上的瀏覽器分頁等），可以把它關掉。"
+msgid "When enabled, the agent opens or refreshes the preview after each edit. Disable if you manage your own preview window (Palimpsest Desktop, a browser tab on another display, etc.)."
+msgstr ""
 
 msgid "When the agent runs its scheduled work."
 msgstr "代理執行排程工作的時間。"
@@ -12008,9 +11920,6 @@ msgstr "你推送的頻率高於檢查更新的頻率。如果其他人也在這
 
 msgid "You're signed out — sign in to resume syncing."
 msgstr "你已登出——請登入以繼續同步。"
-
-msgid "You're subscribed!"
-msgstr "訂閱成功！"
 
 msgid "you@company.com"
 msgstr "you@company.com"

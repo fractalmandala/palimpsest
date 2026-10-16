@@ -30,7 +30,7 @@ describe('shipped Agent Plugins conformance', () => {
       mcpServers?: Record<string, { type?: unknown; command?: unknown }>;
     };
     expect(mcp.$schema).toBe('https://agent-plugins.org/schemas/1.0.0/mcp.schema.json');
-    const server = mcp.mcpServers?.['palimpsest'];
+    const server = mcp.mcpServers?.palimpsest;
     expect(server?.type).toBe('stdio');
     expect(server?.command).toBe('npx');
     expect(existsSync(join(dir, '.claude-plugin', 'plugin.json'))).toBe(true);

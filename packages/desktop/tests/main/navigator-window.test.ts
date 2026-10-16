@@ -259,7 +259,7 @@ describe('createNavigatorWindow — pendingPayload dom-ready gate (US-004)', () 
     return {
       kind: 'launcher-miss',
       share: {
-        owner: 'inkeep',
+        owner: 'example',
         repo: 'playbooks',
         branch: 'main',
         path: 'docs/getting-started.md',
@@ -295,7 +295,7 @@ describe('createNavigatorWindow — pendingPayload dom-ready gate (US-004)', () 
     expect(shareCall?.[1]).toEqual({
       kind: 'launcher-miss',
       share: {
-        owner: 'inkeep',
+        owner: 'example',
         repo: 'playbooks',
         branch: 'main',
         path: 'docs/getting-started.md',
@@ -324,7 +324,7 @@ describe('createNavigatorWindow — pendingPayload dom-ready gate (US-004)', () 
     const payload: ShareNavigatorPayload = {
       kind: 'launcher-consent',
       share: {
-        owner: 'inkeep',
+        owner: 'example',
         repo: 'playbooks',
         branch: 'main',
         path: 'docs/getting-started.md',

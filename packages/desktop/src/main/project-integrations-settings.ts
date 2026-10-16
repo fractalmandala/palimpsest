@@ -1,9 +1,5 @@
 import { relative } from 'node:path';
-import type {
-  McpDeclineReason,
-  McpEntryClassification,
-  McpRemoveOutcome,
-} from '@palimpsest/cli';
+import type { McpDeclineReason, McpEntryClassification, McpRemoveOutcome } from '@palimpsest/cli';
 import { currentMcpServerName } from '@palimpsest/core';
 import type { IpcMain, IpcMainInvokeEvent } from 'electron';
 import type {

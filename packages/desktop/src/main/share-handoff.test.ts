@@ -155,7 +155,9 @@ describe('resolveContinueBase (dev override, loopback-pinned)', () => {
     ['not a url'],
     [''],
   ])('rejects non-loopback / malformed %s → falls back to production', (input) => {
-    expect(resolveContinueBase({ PS_CONTINUE_URL_BASE: input })).toBe('https://github.com/fractalmandala/palimpsest');
+    expect(resolveContinueBase({ PS_CONTINUE_URL_BASE: input })).toBe(
+      'https://github.com/fractalmandala/palimpsest',
+    );
   });
 });
 
@@ -335,7 +337,9 @@ describe('startFirstRunHandshake', () => {
       );
 
       expect(response.status).toBe(302);
-      expect(response.headers.get('location')).toBe('https://github.com/fractalmandala/palimpsest/continue/done');
+      expect(response.headers.get('location')).toBe(
+        'https://github.com/fractalmandala/palimpsest/continue/done',
+      );
       expect(await routedUrl).toBe(`https://github.com/fractalmandala/palimpsest/d/${token}`);
       expect(parsedResults).toEqual([
         {
@@ -390,7 +394,9 @@ describe('startFirstRunHandshake', () => {
 
   test('arms a loopback listener and opens the continue URL with the nonce', () => {
     const h = harness();
-    expect(h.opened).toEqual([`https://github.com/fractalmandala/palimpsest/continue?port=52431&nonce=${NONCE}`]);
+    expect(h.opened).toEqual([
+      `https://github.com/fractalmandala/palimpsest/continue?port=52431&nonce=${NONCE}`,
+    ]);
     expect(h.outcomes).toEqual([]);
   });
 

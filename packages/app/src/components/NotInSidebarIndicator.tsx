@@ -1,5 +1,5 @@
-import { humanFormat } from '@palimpsest/core/config/errors';
 import { useLingui } from '@lingui/react/macro';
+import { humanFormat } from '@palimpsest/core/config/errors';
 import { EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';

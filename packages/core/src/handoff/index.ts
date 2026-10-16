@@ -19,10 +19,10 @@ export {
   composeTerminalBareLaunchPrompt,
   composeThreadBareLaunchPrompt,
   type LintFixPromptInput,
+  type PromptTransport,
   PS_PROJECT_SKILL_POINTER,
   PS_TERMINAL_SURFACE_PREAMBLE,
   PS_THREAD_SURFACE_PREAMBLE,
-  type PromptTransport,
   TERMINAL_INLINE_PROMPT_BUDGET,
   withSkillPointer,
 } from './prompt-composer.ts';

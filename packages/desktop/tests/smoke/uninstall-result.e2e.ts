@@ -67,9 +67,7 @@ test.describe('isolated uninstall completion', () => {
         const page = await app.firstWindow();
         await expect(
           page.getByRole('heading', {
-            name: success
-              ? 'Se eliminaron los archivos de Palimpsest'
-              : 'La limpieza no terminó',
+            name: success ? 'Se eliminaron los archivos de Palimpsest' : 'La limpieza no terminó',
           }),
         ).toBeVisible();
         await expect(page.locator('html')).toHaveAttribute('lang', 'es');
@@ -164,9 +162,7 @@ test.describe('isolated uninstall completion', () => {
         const [code] = await exited;
         expect(code).toBe(exitCode);
         expect(existsSync(join(home, '.ps'))).toBe(false);
-        expect(existsSync(join(home, 'Library', 'Application Support', 'Palimpsest'))).toBe(
-          false,
-        );
+        expect(existsSync(join(home, 'Library', 'Application Support', 'Palimpsest'))).toBe(false);
         expect(readFileSync(note, 'utf8')).toBe('# Keep my notes');
       } finally {
         await closeOrRecord(child);
@@ -306,9 +302,7 @@ ${success ? `rm '${state}'` : 'exit 31'}
           [],
         );
         expect(existsSync(join(home, '.ps'))).toBe(false);
-        expect(existsSync(join(home, 'Library', 'Application Support', 'Palimpsest'))).toBe(
-          false,
-        );
+        expect(existsSync(join(home, 'Library', 'Application Support', 'Palimpsest'))).toBe(false);
       } finally {
         if (parent.exitCode === null && parent.signalCode === null) {
           const closed = once(parent, 'close');

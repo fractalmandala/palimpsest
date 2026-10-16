@@ -1,5 +1,5 @@
-import { incrementJsxRenderFailure } from '@palimpsest/core/metrics/parse-health';
 import { useLingui } from '@lingui/react/macro';
+import { incrementJsxRenderFailure } from '@palimpsest/core/metrics/parse-health';
 import { Search } from 'lucide-react';
 import type { ErrorInfo } from 'react';
 import { Button } from '@/components/ui/button';

@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import type {
   AttachmentPart,
   ThreadAuthTerminalLaunch,
@@ -9,7 +10,6 @@ import type {
   ThreadServerFrame,
 } from '@palimpsest/core/acp/thread-protocol';
 import { THREAD_REOPEN_OP_TIMEOUT_MS } from '@palimpsest/core/acp/thread-protocol';
-import { t } from '@lingui/core/macro';
 import { useSyncExternalStore } from 'react';
 import { toast } from 'sonner';
 import {

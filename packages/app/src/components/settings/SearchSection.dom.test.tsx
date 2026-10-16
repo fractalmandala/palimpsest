@@ -1,3 +1,4 @@
+import { i18n } from '@lingui/core';
 import {
   type Config,
   type ConfigBinding,
@@ -7,7 +8,6 @@ import {
   DEFAULT_EMBEDDINGS_MAX_BATCH_SIZE,
   type SemanticIndexStatus,
 } from '@palimpsest/core';
-import { i18n } from '@lingui/core';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';

@@ -14,7 +14,7 @@ icon: custom/Antigravity
   `ps init` wires up both.
 </McpInstall>
 
-`ps init` writes the Palimpsest server into `~/.gemini/config/mcp_config.json` under `mcpServers`, using the same resilient launcher every other editor gets — it finds `ok` whether you installed the desktop app or the npm CLI, so there's no PATH to configure.
+`ps init` writes the Palimpsest server into `~/.gemini/config/mcp_config.json` under `mcpServers`, using the same resilient launcher every other editor gets — it finds `ps` whether you installed the desktop app or the npm CLI, so there's no PATH to configure.
 
 <Callout type="info">
   Antigravity has **one shared, user-global MCP config** — `~/.gemini/config/mcp_config.json`, read by the IDE, the app, and `agy` alike (the `.gemini` directory is inherited from the Gemini CLI lineage, not `~/.antigravity`). There is no per-project MCP config; per project you can only choose which globally-registered servers an agent may use. So Palimpsest registers once, globally, the same way it does for Claude Desktop. Each OK tool call takes a `cwd` argument to target a specific knowledge base, so one registration serves every project you open.

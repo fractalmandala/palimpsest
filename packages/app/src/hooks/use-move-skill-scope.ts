@@ -1,5 +1,5 @@
-import type { SkillScope } from '@palimpsest/core/schemas/api';
 import { useLingui } from '@lingui/react/macro';
+import type { SkillScope } from '@palimpsest/core/schemas/api';
 import { toast } from 'sonner';
 import { useManagedArtifactRetarget } from '@/components/ManagedArtifactProperties';
 import { useDocumentContext } from '@/editor/DocumentContext';

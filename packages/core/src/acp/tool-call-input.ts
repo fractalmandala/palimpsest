@@ -1,9 +1,5 @@
 import { piToolNamespace } from '../constants/editors.ts';
-import {
-  MCP_SERVER_NAME,
-  PALIMPSEST_MCP_TOOLS,
-  type PalimpsestMcpTool,
-} from '../constants/mcp.ts';
+import { MCP_SERVER_NAME, PALIMPSEST_MCP_TOOLS, type PalimpsestMcpTool } from '../constants/mcp.ts';
 import { DESKTOP_PRODUCTS } from '../constants/product.ts';
 
 export function asRecord(value: unknown): Record<string, unknown> {
@@ -54,22 +50,27 @@ export type PalimpsestServerMatch = 'any' | 'known';
 
 const PALIMPSEST_TOOLS: ReadonlySet<string> = new Set(PALIMPSEST_MCP_TOOLS);
 
-const ANY_PALIMPSEST_SERVER = /^(?:open[-_ ]?knowledge|ok)(?:[-_][a-z]+)*$/;
+const ANY_PALIMPSEST_SERVER = /^(?:palimpsest|open[-_ ]?knowledge|ok|ps)(?:[-_][a-z]+)*$/;
 
 const KNOWN_SERVER_SUFFIXES = Object.values(DESKTOP_PRODUCTS)
   .map((product) => product.mcpServerName.slice(MCP_SERVER_NAME.length))
   .filter((suffix) => suffix !== '');
 
+const LEGACY_KNOWN_SERVERS = ['open-knowledge'] as const;
+
 const KNOWN_PALIMPSEST_SERVER = new RegExp(
-  `^open[-_ ]?knowledge(?:${KNOWN_SERVER_SUFFIXES.join('|')})?$`,
+  `^(?:palimpsest|${LEGACY_KNOWN_SERVERS.join('|')})(?:${KNOWN_SERVER_SUFFIXES.join('|')})?$`,
 );
 
-const PI_BRIDGE_NAMESPACES: ReadonlySet<string> = new Set(
-  Object.values(DESKTOP_PRODUCTS).map(piToolNamespace),
-);
+const LEGACY_PI_BRIDGE_NAMESPACES: readonly string[] = ['ok', 'ok-beta', 'ok-dev'];
+
+const PI_BRIDGE_NAMESPACES: ReadonlySet<string> = new Set([
+  ...Object.values(DESKTOP_PRODUCTS).map(piToolNamespace),
+  ...LEGACY_PI_BRIDGE_NAMESPACES,
+]);
 
 const PALIMPSEST_TITLE =
-  /^(mcp[^a-z0-9]+)?((?:open[-_ ]?knowledge|ok)(?:-[a-z]+)*)[^a-z0-9]+([a-z_]+)$/;
+  /^(mcp[^a-z0-9]+)?((?:palimpsest|open[-_ ]?knowledge|ok|ps)(?:-[a-z]+)*)[^a-z0-9]+([a-z_]+)$/;
 
 function isPalimpsestTool(candidate: string | null): candidate is PalimpsestMcpTool {
   return candidate !== null && PALIMPSEST_TOOLS.has(candidate);
@@ -79,8 +80,7 @@ export function identifyPalimpsestToolCall(
   call: ToolCallInput,
   servers: PalimpsestServerMatch = 'any',
 ): PalimpsestToolCall | null {
-  const serverPattern =
-    servers === 'known' ? KNOWN_PALIMPSEST_SERVER : ANY_PALIMPSEST_SERVER;
+  const serverPattern = servers === 'known' ? KNOWN_PALIMPSEST_SERVER : ANY_PALIMPSEST_SERVER;
   const inputServer = stringField(asRecord(call.rawInput), 'server')?.toLowerCase() ?? null;
   if (inputServer !== null && !serverPattern.test(inputServer)) return null;
 

@@ -19,14 +19,14 @@ Use the bug report or feature request form. The issues we can act on fastest:
 - **For a bug,** give steps that reproduce it, your version and platform, and any logs or screenshots.
 - **For a feature,** describe what you would see if it worked. That tells us when it is done.
 - **Point at the code if you found it.** A file, a function or a link to a line helps. Describe the fix in words.
-- **Don't paste a full patch.** Describe the fix in words. If you want to write it yourself, say so in the issue; once a maintainer accepts it (see [Pull requests](#pull-requests)), open a pull request so the change comes with the [Contributor License Agreement](./CLA.md).
+- **Don't paste a full patch.** Describe the fix in words. If you want to write it yourself, say so in the issue; once a maintainer accepts it (see [Pull requests](#pull-requests)), open a pull request (no contributor agreement is required for this fork).
 
 When a fix ships, we close your issue, and our release automation usually comments on it with the version the fix shipped in.
 
 ## How credit works
 
-- **Code contributors** are people whose pull requests we accept. The commit that lands credits you as a co-author, which makes you a contributor to this repository. Code contributions require the CLA.
-- **Issue authors** are credited on the issue itself, which stays linked to the problem you found and is closed when we fix it. Filing an issue does not make you a code contributor, and it does not require the CLA.
+- **Code contributors** are people whose pull requests we accept. The commit that lands credits you as a co-author, which makes you a contributor to this repository. Code contributions currently proceed by maintainer agreement on the issue.
+- **Issue authors** are credited on the issue itself, which stays linked to the problem you found and is closed when we fix it. Filing an issue does not make you a code contributor.
 
 ## Development setup
 
@@ -103,9 +103,7 @@ We still accept pull requests, on these terms:
 - **A pull request without an accepted issue may be closed without review.** If the idea is good, we track it as an issue and build it ourselves.
 - **You are responsible for every line.** AI-assisted code is fine when you understand it, have run it, and can answer questions about it. We close pull requests that read as unreviewed AI output.
 
-> **Fork note:** [CLA.md](./CLA.md) is still the upstream Inkeep agreement (grantee: Inkeep, Inc.) and is under review for the fork — do not sign it for Palimpsest contributions until the fork publishes its own contributor terms. Code contributions currently proceed by maintainer agreement on the issue.
-
-First-time contributors are asked to sign our [Contributor License Agreement](./CLA.md) — a bot comments a one-click signing link on your PR (Inkeep employees are exempt automatically). Please follow the checklist in our [Pull Request Template](./.github/PULL_REQUEST_TEMPLATE.md):
+Please follow the checklist in our [Pull Request Template](./.github/PULL_REQUEST_TEMPLATE.md):
 
 - Keep PRs focused and small enough to review.
 - Add tests — or a clear manual-verification note — for behavior changes.

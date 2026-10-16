@@ -1,5 +1,5 @@
-import type { PropDef } from '@palimpsest/core/registry/types';
 import { plural, t } from '@lingui/core/macro';
+import type { PropDef } from '@palimpsest/core/registry/types';
 
 export function formatContainerAriaLabel(
   componentLabel: string,

@@ -248,45 +248,11 @@ export interface PsHeadBranchInfo {
   readonly detached: boolean;
 }
 
-export interface PsUpdateDownloadedInfo {
-  readonly version: string | null;
-}
-
-export interface PsUpdateRelaunchingInfo {
-  readonly version: string;
-}
-
-export interface PsUpdateFetchingLatestInfo {
-  readonly version: string;
-}
-
-export interface PsUpdateRelaunchFailedInfo {
-  readonly version: string;
-  readonly message?: string;
-  readonly downloadUrl?: string;
-  readonly dismissPending?: boolean;
-  readonly reason?: 'no-longer-pending';
-}
-
-export interface PsWhatsNewInfo {
-  readonly version: string;
-  readonly releaseUrl: string;
-}
-
-export interface PsUpdateStuckHintInfo {
-  readonly downloadUrl: string;
-}
-
-export interface PsUpdateManualCheckInfo {
-  readonly phase: 'started' | 'settled';
-}
-
 export interface PsAboutInfo {
   readonly productName: string;
   readonly version: string;
   readonly releasesUrl: string;
   readonly releaseNotesUrl: string;
-  readonly updateChecks: 'available' | 'unavailable';
 }
 
 export type ShareTarget =
@@ -366,7 +332,6 @@ export interface PsStateSnapshot {
     readonly maxSupported: number;
   } | null;
   readonly about?: PsAboutInfo;
-  readonly updateMode?: PsUpdateMode;
 }
 
 export type PsMcpWiringEditorId = EditorId;
@@ -811,11 +776,9 @@ export type PsMenuDispatchCommand =
   | 'open-folder-dialog'
   | 'clear-recent-projects'
   | 'open-settings'
-  | 'check-for-updates'
   | 'reconfigure-mcp-wiring'
   | 'open-github'
   | 'open-docs'
-  | 'open-discord'
   | 'toggle-spell-check';
 
 export type PsMenuDispatchRequest =
@@ -891,7 +854,6 @@ export interface PsMenuRendererSnapshot {
   readonly recentProjects: ReadonlyArray<{ readonly path: string; readonly name: string }>;
   readonly spellCheckEnabled: boolean;
   readonly showDevToolsMenu: boolean;
-  readonly canCheckForUpdates: boolean;
   readonly canReconfigureMcpWiring: boolean;
   readonly activeTarget: PsEditorActiveTargetSnapshot;
   readonly viewMenuState: PsEditorViewMenuStateSnapshot;
@@ -1163,14 +1125,6 @@ export interface PsDesktopBridge {
 
   onProjectSwitched(cb: (next: PsDesktopConfig) => void): PsUnsubscribe;
   onMenuAction(cb: (action: PsMenuAction, origin: PsMenuActionOrigin) => void): PsUnsubscribe;
-  onUpdateDownloaded(cb: (info: PsUpdateDownloadedInfo) => void): PsUnsubscribe;
-  onUpdateRelaunching(cb: (info: PsUpdateRelaunchingInfo) => void): PsUnsubscribe;
-  onUpdateFetchingLatest(cb: (info: PsUpdateFetchingLatestInfo) => void): PsUnsubscribe;
-  onUpdateRelaunchFailed(cb: (info: PsUpdateRelaunchFailedInfo) => void): PsUnsubscribe;
-  onWhatsNew(cb: (info: PsWhatsNewInfo) => void): PsUnsubscribe;
-  onWhatsNewDismissed(cb: (info: { readonly version: string }) => void): PsUnsubscribe;
-  onUpdateStuckHint(cb: (info: PsUpdateStuckHintInfo) => void): PsUnsubscribe;
-  onUpdateManualCheck(cb: (info: PsUpdateManualCheckInfo) => void): PsUnsubscribe;
   onDeepLink(cb: (evt: PsDeepLinkPayload) => void): PsUnsubscribe;
   onShareReceived(cb: (payload: PsShareReceivedPayload) => void): PsUnsubscribe;
 
@@ -1380,14 +1334,6 @@ export interface PsDesktopBridge {
           message?: string;
         }
     >;
-  };
-
-  update: {
-    relaunchNow(): Promise<void>;
-    checkNow(): Promise<void>;
-    dismissWhatsNew(version: string): Promise<void>;
-    dismissDownloaded(version: string): Promise<void>;
-    setMode(mode: PsUpdateMode): Promise<void>;
   };
 
   state: {

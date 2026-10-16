@@ -14,7 +14,7 @@ After `ps init` writes the config, open LM Studio's **Program** tab and enable t
 
 Palimpsest Beta registers as `palimpsest-beta` instead; see [Beta uses its own entry](/docs/reference/what-palimpsest-writes#beta-uses-its-own-entry).
 
-`ps init` writes the Palimpsest server into LM Studio's `mcp.json`, using the same resilient launcher every other editor gets — it finds `ok` whether you installed the desktop app or the npm CLI, so there's no PATH to configure. LM Studio follows Cursor's `mcp.json` notation, so the entry lands under a top-level `mcpServers` map.
+`ps init` writes the Palimpsest server into LM Studio's `mcp.json`, using the same resilient launcher every other editor gets — it finds `ps` whether you installed the desktop app or the npm CLI, so there's no PATH to configure. LM Studio follows Cursor's `mcp.json` notation, so the entry lands under a top-level `mcpServers` map.
 
 <Callout type="info">
   **The config is user-global — one registration serves every project.** LM Studio has no

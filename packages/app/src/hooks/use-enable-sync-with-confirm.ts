@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import {
   resolveLocalAutoSyncMode,
   type StoredSyncActiveMode,
@@ -6,7 +7,6 @@ import {
   type SyncMode,
 } from '@palimpsest/core/config/auto-sync-mode';
 import { humanFormat } from '@palimpsest/core/config/errors';
-import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useConfigContext } from '@/lib/config-provider';

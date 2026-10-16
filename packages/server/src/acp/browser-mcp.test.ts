@@ -931,7 +931,7 @@ describe('browser folders', () => {
     expect(existsSync(join(second.npm, '.npmrc'))).toBe(false);
     expect(existsSync(join(second.npm, 'node_modules'))).toBe(false);
     expect(JSON.parse(readFileSync(join(second.npm, 'package.json'), 'utf8'))).toEqual({
-      name: 'openknowledge-agent-browser',
+      name: 'palimpsest-agent-browser',
       version: '0.0.0',
       private: true,
     });

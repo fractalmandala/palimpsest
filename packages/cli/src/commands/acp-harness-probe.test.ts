@@ -40,10 +40,10 @@ describe('probeOwnManagedEditorMcpEntry', () => {
     const cwd = tmp();
     const home = tmp();
     writeJson(join(cwd, '.mcp.json'), {
-      mcpServers: { 'palimpsest': publishedEntry() },
+      mcpServers: { palimpsest: publishedEntry() },
     });
     writeJson(join(home, '.claude.json'), {
-      mcpServers: { 'palimpsest': publishedEntry() },
+      mcpServers: { palimpsest: publishedEntry() },
     });
     const hit = probeOwnManagedEditorMcpEntry('claude', cwd, home);
     expect(hit).toEqual({
@@ -57,7 +57,7 @@ describe('probeOwnManagedEditorMcpEntry', () => {
     const cwd = tmp();
     const home = tmp();
     writeJson(join(home, '.claude.json'), {
-      mcpServers: { 'palimpsest': publishedEntry() },
+      mcpServers: { palimpsest: publishedEntry() },
     });
     const hit = probeOwnManagedEditorMcpEntry('claude', cwd, home);
     expect(hit).toEqual({
@@ -73,12 +73,12 @@ describe('probeOwnManagedEditorMcpEntry', () => {
     expect(probeOwnManagedEditorMcpEntry('claude', cwd, home)).toBeNull();
 
     writeJson(join(cwd, '.mcp.json'), {
-      mcpServers: { 'palimpsest': { command: 'evil', args: [] } },
+      mcpServers: { palimpsest: { command: 'evil', args: [] } },
     });
     expect(probeOwnManagedEditorMcpEntry('claude', cwd, home)).toBeNull();
 
     writeJson(join(cwd, '.mcp.json'), {
-      mcpServers: { 'palimpsest': { command: '/bin/sh', args: ['-l', '-c', 'rm -rf /'] } },
+      mcpServers: { palimpsest: { command: '/bin/sh', args: ['-l', '-c', 'rm -rf /'] } },
     });
     expect(probeOwnManagedEditorMcpEntry('claude', cwd, home)).toBeNull();
 
@@ -90,7 +90,7 @@ describe('probeOwnManagedEditorMcpEntry', () => {
     const cwd = tmp();
     const home = tmp();
     writeJson(join(cwd, '.mcp.json'), {
-      mcpServers: { 'palimpsest': { ...publishedEntry(), env: { X: '1' } } },
+      mcpServers: { palimpsest: { ...publishedEntry(), env: { X: '1' } } },
     });
     expect(probeOwnManagedEditorMcpEntry('claude', cwd, home)?.scope).toBe('project');
   });
@@ -103,7 +103,7 @@ describe('probeOwnManagedEditorMcpEntry', () => {
       join(cwd, '.codex', 'config.toml'),
       stringifyToml({
         mcp_servers: {
-          'palimpsest': {
+          palimpsest: {
             ...publishedEntry(),
             tools: { exec: { approval_mode: 'approve' } },
           },
@@ -123,7 +123,7 @@ describe('probeOwnManagedEditorMcpEntry', () => {
     mkdirSync(join(cwd, '.codex'), { recursive: true });
     writeFileSync(
       join(cwd, '.codex', 'config.toml'),
-      stringifyToml({ mcp_servers: { 'palimpsest': publishedEntry() } }),
+      stringifyToml({ mcp_servers: { palimpsest: publishedEntry() } }),
     );
     expect(probeOwnManagedEditorMcpEntry('codex', cwd, home)).toEqual({
       editorId: 'codex',
@@ -135,7 +135,7 @@ describe('probeOwnManagedEditorMcpEntry', () => {
     mkdirSync(join(home, '.codex'), { recursive: true });
     writeFileSync(
       join(home, '.codex', 'config.toml'),
-      stringifyToml({ mcp_servers: { 'palimpsest': publishedEntry() } }),
+      stringifyToml({ mcp_servers: { palimpsest: publishedEntry() } }),
     );
     expect(probeOwnManagedEditorMcpEntry('codex', cwd2, home)).toEqual({
       editorId: 'codex',
@@ -148,7 +148,7 @@ describe('probeOwnManagedEditorMcpEntry', () => {
     const cwd = tmp();
     const home = tmp();
     writeJson(join(cwd, '.cursor', 'mcp.json'), {
-      mcpServers: { 'palimpsest': publishedEntry() },
+      mcpServers: { palimpsest: publishedEntry() },
     });
     expect(probeOwnManagedEditorMcpEntry('cursor', cwd, home)?.scope).toBe('project');
   });
@@ -158,7 +158,7 @@ describe('probeOwnManagedEditorMcpEntry', () => {
     const home = tmp();
     writeJson(join(cwd, '.mcp.json'), {
       mcpServers: {
-        'palimpsest': { command: '/bin/sh', args: ['-l', '-c', '# ps-mcp-v2\nexec foo mcp'] },
+        palimpsest: { command: '/bin/sh', args: ['-l', '-c', '# ps-mcp-v2\nexec foo mcp'] },
       },
     });
     expect(probeOwnManagedEditorMcpEntry('claude', cwd, home)?.scope).toBe('project');
@@ -168,7 +168,7 @@ describe('probeOwnManagedEditorMcpEntry', () => {
     const cwd = tmp();
     const home = tmp();
     writeJson(join(cwd, '.mcp.json'), {
-      mcpServers: { 'palimpsest': { ...publishedEntry(), enabled: false } },
+      mcpServers: { palimpsest: { ...publishedEntry(), enabled: false } },
     });
     expect(probeOwnManagedEditorMcpEntry('claude', cwd, home)).toBeNull();
   });
@@ -177,7 +177,7 @@ describe('probeOwnManagedEditorMcpEntry', () => {
     const cwd = tmp();
     const home = tmp();
     writeJson(join(cwd, 'opencode.json'), {
-      mcp: { 'palimpsest': openCodePublished() },
+      mcp: { palimpsest: openCodePublished() },
     });
     expect(probeOwnManagedEditorMcpEntry('opencode', cwd, home)).toEqual({
       editorId: 'opencode',
@@ -186,12 +186,12 @@ describe('probeOwnManagedEditorMcpEntry', () => {
     });
 
     writeJson(join(cwd, 'opencode.json'), {
-      mcp: { 'palimpsest': { ...openCodePublished(), enabled: false } },
+      mcp: { palimpsest: { ...openCodePublished(), enabled: false } },
     });
     expect(probeOwnManagedEditorMcpEntry('opencode', cwd, home)).toBeNull();
 
     writeJson(join(cwd, 'opencode.json'), {
-      mcp: { 'palimpsest': publishedEntry() },
+      mcp: { palimpsest: publishedEntry() },
     });
     expect(probeOwnManagedEditorMcpEntry('opencode', cwd, home)).toBeNull();
   });

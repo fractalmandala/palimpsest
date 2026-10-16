@@ -1,7 +1,7 @@
-import type { SkillScope } from '@palimpsest/core/schemas/api';
-import type { SkillSearchResult } from '@palimpsest/core/skills-catalog/schema';
 import { msg } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
+import type { SkillScope } from '@palimpsest/core/schemas/api';
+import type { SkillSearchResult } from '@palimpsest/core/skills-catalog/schema';
 import { Search } from 'lucide-react';
 import { type ComponentProps, useEffect, useState } from 'react';
 import { SkillDirectoryGrid } from '@/components/SkillDirectoryGrid';

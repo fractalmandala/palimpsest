@@ -1,11 +1,7 @@
 import type { AwarenessUser } from '@palimpsest/core/types/awareness';
 import type { Identity } from '@palimpsest/core/types/identity';
 import type { Principal } from '@palimpsest/core/types/principal';
-import {
-  colorFromSeed,
-  formatPresenceLabel,
-  HUMAN_COLORS,
-} from '@palimpsest/core/utils/identity';
+import { colorFromSeed, formatPresenceLabel, HUMAN_COLORS } from '@palimpsest/core/utils/identity';
 
 type AwarenessUserPayload = AwarenessUser & { type: 'human' };
 

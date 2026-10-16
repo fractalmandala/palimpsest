@@ -1,3 +1,4 @@
+import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import type {
   PsBugReportCrashDetectedEvent,
   PsBugReportScreenshot,
@@ -10,7 +11,6 @@ import {
   isBugReportCrashDumpEntry,
 } from '@palimpsest/core/logger-types';
 import { formatRelativeAge } from '@palimpsest/core/utils/relative-time';
-import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import {
   AlertCircleIcon,
   ArchiveIcon,
@@ -313,7 +313,7 @@ function ReportBugDialog({
       <DialogContent className="gap-2 sm:max-w-[46.25rem]" onPaste={attachmentIntake.onPaste}>
         {phase.step === 'compose' && (
           <>
-            {/* oxlint-disable-next-line ok/no-physical-direction-utility -- Matches the shared dialog close button's physical right-2 position, including RTL. */}
+            {/* oxlint-disable-next-line ps/no-physical-direction-utility -- Matches the shared dialog close button's physical right-2 position, including RTL. */}
             <DialogHeader className="gap-2 pr-6">
               <DialogTitle>
                 <Trans>Report a bug</Trans>
@@ -436,7 +436,7 @@ function ReportBugDialog({
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-5xl">
-                      {/* oxlint-disable-next-line ok/no-physical-direction-utility -- Matches the shared dialog close button's physical right-2 position, including RTL. */}
+                      {/* oxlint-disable-next-line ps/no-physical-direction-utility -- Matches the shared dialog close button's physical right-2 position, including RTL. */}
                       <DialogHeader className="pr-6">
                         <DialogTitle>
                           <Trans>Screenshot preview</Trans>
@@ -568,17 +568,17 @@ function ReportBugDialog({
                           )}
                           {desktopPlatform === 'win32' && (
                             <Trans>
-                              It also adds the crash and hang records Windows logged for
-                              Palimpsest in the past week, without file paths, and the times of
-                              every shutdown, restart, power loss, and low-memory warning on this
-                              computer in that week, whatever caused them.
+                              It also adds the crash and hang records Windows logged for Palimpsest
+                              in the past week, without file paths, and the times of every shutdown,
+                              restart, power loss, and low-memory warning on this computer in that
+                              week, whatever caused them.
                             </Trans>
                           )}{' '}
                           {isMacOS && (
                             <Trans>
-                              It also adds the crash reports macOS recorded for Palimpsest and
-                              its helper processes, never another app's report, though ours do name
-                              the processes they were running alongside. Each one carries machine
+                              It also adds the crash reports macOS recorded for Palimpsest and its
+                              helper processes, never another app's report, though ours do name the
+                              processes they were running alongside. Each one carries machine
                               details macOS puts in every report: your account uid, the Mac model,
                               and the name of the process that launched the app. On a managed
                               machine, that launching process can be internal tooling. The

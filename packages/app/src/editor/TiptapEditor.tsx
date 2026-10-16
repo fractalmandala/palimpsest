@@ -1,4 +1,5 @@
 import type { HocuspocusProvider } from '@hocuspocus/provider';
+import { t } from '@lingui/core/macro';
 import {
   evictStaleEntries,
   FLASH_DEBOUNCE_MS,
@@ -10,7 +11,6 @@ import { MarkdownManager } from '@palimpsest/core/markdown';
 import type { AgentFlashEntry } from '@palimpsest/core/types/awareness';
 import { deriveIconColor } from '@palimpsest/core/utils/identity';
 import { randomUUID } from '@palimpsest/core/utils/random-uuid';
-import { t } from '@lingui/core/macro';
 import { type AnyExtension, Editor, type EditorOptions, Extension, isMacOS } from '@tiptap/core';
 import Collaboration from '@tiptap/extension-collaboration';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -1284,7 +1284,7 @@ const TiptapEditorChrome: FC<TiptapEditorChromeProps> = ({
       {}
       <div ref={portalSlotRef} style={{ display: 'contents' }} />
       {createPortal(
-        // oxlint-disable-next-line ok/no-unportaled-editor-content -- canonical portaled site — H6 fix per PRECEDENTS.md #44
+        // oxlint-disable-next-line ps/no-unportaled-editor-content -- canonical portaled site — H6 fix per PRECEDENTS.md #44
         <EditorContent
           key={editorContentRevision}
           editor={editor}

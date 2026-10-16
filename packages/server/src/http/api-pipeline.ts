@@ -1,9 +1,4 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import {
-  CLIENT_SURFACE_ATTRIBUTE,
-  CLIENT_VERSION_HEADER,
-  readClientSurface,
-} from '@palimpsest/core';
 import { context, propagation, SpanKind, SpanStatusCode } from '@opentelemetry/api';
 import {
   ATTR_HTTP_REQUEST_METHOD,
@@ -13,6 +8,11 @@ import {
   ATTR_URL_SCHEME,
   ATTR_USER_AGENT_ORIGINAL,
 } from '@opentelemetry/semantic-conventions';
+import {
+  CLIENT_SURFACE_ATTRIBUTE,
+  CLIENT_VERSION_HEADER,
+  readClientSurface,
+} from '@palimpsest/core';
 import { recordEmbedProbe } from '../embed-probe.ts';
 import {
   admitRequestOrigin,

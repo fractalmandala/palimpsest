@@ -1,12 +1,9 @@
 import { mkdirSync } from 'node:fs';
 import { join } from 'node:path';
-import {
-  AUDIT_EMPTY_SCOPE_WARNING,
-  RE_LINT_FAILED_WARNING_PREFIX,
-} from '@palimpsest/core';
 import { normalizeObjectSchema } from '@modelcontextprotocol/sdk/server/zod-compat.js';
 import { toJsonSchemaCompat } from '@modelcontextprotocol/sdk/server/zod-json-schema-compat.js';
 import { AjvJsonSchemaValidator } from '@modelcontextprotocol/sdk/validation/ajv';
+import { AUDIT_EMPTY_SCOPE_WARNING, RE_LINT_FAILED_WARNING_PREFIX } from '@palimpsest/core';
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest';
 import { createTempDirFactory } from '../../../../../test-support/temp-dir.test-helper.ts';
 import { type Config, ConfigSchema } from '../../config/schema.ts';

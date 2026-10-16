@@ -1,5 +1,5 @@
-import type { CreateScenario, InstallState } from '@palimpsest/core';
 import * as actualLinguiMacro from '@lingui/react/macro';
+import type { CreateScenario, InstallState } from '@palimpsest/core';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { type ReactNode, type Ref, useImperativeHandle, useRef } from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';

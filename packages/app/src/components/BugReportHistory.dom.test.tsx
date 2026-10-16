@@ -1,5 +1,5 @@
-import type { PsBugReportListRow, PsBugReportSendResult } from '@palimpsest/core';
 import * as actualLinguiMacro from '@lingui/react/macro';
+import type { PsBugReportListRow, PsBugReportSendResult } from '@palimpsest/core';
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
@@ -240,7 +240,9 @@ describe('BugReportHistoryList', () => {
       send: async () => ({
         ok: false as const,
         reason: 'email-draft' as const,
-        fallback: { mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=x' },
+        fallback: {
+          mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=x',
+        },
       }),
     });
 
@@ -426,7 +428,9 @@ describe('BugReportHistoryList', () => {
     expect(followUps).toHaveLength(1);
 
     await userEvent.click(followUps[0]);
-    expect(log.opened).toEqual(['mailto:https://github.com/fractalmandala/palimpsest/issues?subject=Bug%20report%20OK-77']);
+    expect(log.opened).toEqual([
+      'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=Bug%20report%20OK-77',
+    ]);
   });
 
   test('renders an error state when the bridge is absent', async () => {
@@ -473,7 +477,9 @@ describe('report row titles', () => {
 
     await userEvent.click(await screen.findByLabelText('Email support about this report'));
 
-    expect(log.opened).toEqual(['mailto:https://github.com/fractalmandala/palimpsest/issues?subject=Bug%20report%20OK-54']);
+    expect(log.opened).toEqual([
+      'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=Bug%20report%20OK-54',
+    ]);
   });
 });
 
@@ -687,7 +693,9 @@ describe('BugReportPreviousReports', () => {
     await userEvent.click(await screen.findByRole('button', { name: /Previous reports/ }));
     await userEvent.click(await screen.findByLabelText('Email support about this report'));
 
-    expect(log.opened).toEqual(['mailto:https://github.com/fractalmandala/palimpsest/issues?subject=Bug%20report%20OK-31']);
+    expect(log.opened).toEqual([
+      'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=Bug%20report%20OK-31',
+    ]);
   });
 
   test('the disclosure renders the same titled list rows as the standalone pane', async () => {

@@ -1,3 +1,5 @@
+import { plural } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import {
   type AgentId,
   type ApplyIntent,
@@ -18,8 +20,6 @@ import {
 } from '@palimpsest/core/agent-registry';
 import { EDITOR_LABELS } from '@palimpsest/core/constants/editors';
 import { TERMINAL_CLI_IDS } from '@palimpsest/core/handoff';
-import { plural } from '@lingui/core/macro';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { Folder, Info, Monitor, Sparkles, TriangleAlert, X } from 'lucide-react';
 import { type ReactNode, useEffect, useId, useRef, useState } from 'react';
 import { AgentBrandIcon } from '@/components/AgentIconCluster';
@@ -521,9 +521,7 @@ function PartControl({
           info={
             disabled
               ? blockedReason()
-              : (foreignInfo ?? (
-                  <Trans>Adds a global Palimpsest MCP entry for this agent.</Trans>
-                ))
+              : (foreignInfo ?? <Trans>Adds a global Palimpsest MCP entry for this agent.</Trans>)
           }
         />
       );
@@ -533,9 +531,7 @@ function PartControl({
           {...common}
           title={titles[part]}
           description={
-            guidance ?? (
-              <Trans>Help your agents discover and use Palimpsest in any project.</Trans>
-            )
+            guidance ?? <Trans>Help your agents discover and use Palimpsest in any project.</Trans>
           }
           info={
             disabled ? (
@@ -1149,8 +1145,8 @@ function SharedRemovalNote({ choice }: { choice: SharedRemovalChoice }) {
     return (
       <div role="status" className="rounded-md border bg-muted/50 p-3 text-sm">
         <Trans>
-          This setup is shared with {peers}, and Palimpsest cannot change it from here. Unlink
-          the folder in Skills Studio first.
+          This setup is shared with {peers}, and Palimpsest cannot change it from here. Unlink the
+          folder in Skills Studio first.
         </Trans>
       </div>
     );
@@ -1243,9 +1239,7 @@ export function RemoveConnectionDialog({
                 className="size-5 text-muted-foreground"
               />
             ) : null}
-            {connection
-              ? t`Remove Palimpsest from ${connection.label}?`
-              : t`Remove Palimpsest?`}
+            {connection ? t`Remove Palimpsest from ${connection.label}?` : t`Remove Palimpsest?`}
           </AlertDialogTitle>
           <AlertDialogDescription>
             <Trans>

@@ -106,7 +106,7 @@ function viteCacheDirsOf(label: string): string[] {
 describe('an owned server whose launch fails', () => {
   test('a worker whose owned server fails to start, and whose cleanup then fails too, is told both failures and the dev server log tail', async () => {
     const scratch = scratchWithOwnTmpdir();
-    faults.removal.add(`ok-${LABEL}-`);
+    faults.removal.add(`ps-${LABEL}-`);
     const supervisor = new WorkerServerSupervisor({
       psRoot: WORKTREE,
       launch: (_slot, workerServerEnv) =>
@@ -133,7 +133,7 @@ describe('an owned server whose launch fails', () => {
     );
 
     const leftBehind = readdirSync(scratch.tmp);
-    expect(leftBehind).toEqual([expect.stringMatching(new RegExp(`^ok-${LABEL}-`))]);
+    expect(leftBehind).toEqual([expect.stringMatching(new RegExp(`^ps-${LABEL}-`))]);
     const contentDir = join(scratch.tmp, leftBehind[0] ?? '');
     expect(viteCacheDirsOf(LABEL)).toEqual([]);
     expect(offered).toEqual([

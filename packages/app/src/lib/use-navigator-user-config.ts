@@ -1,9 +1,6 @@
 import type { ConfigBinding } from '@palimpsest/core/config/bind-config-doc';
 import type { Config } from '@palimpsest/core/config/schema';
-import {
-  CC1_CONTRACT_VERSION,
-  CONFIG_DOC_NAME_USER,
-} from '@palimpsest/core/constants/cc1';
+import { CC1_CONTRACT_VERSION, CONFIG_DOC_NAME_USER } from '@palimpsest/core/constants/cc1';
 import { CC1_CHANNEL_CONFIG_VALIDATION_REJECTED } from '@palimpsest/core/schemas/cc1';
 import { useEffect, useState } from 'react';
 import type { ConfigContextValue } from './config-context';

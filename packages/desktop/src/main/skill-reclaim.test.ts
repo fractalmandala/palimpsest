@@ -168,9 +168,9 @@ describe('reconcileUserGlobalSkillBundles', () => {
       deps,
     });
     expect(r.status).toBe('done');
-    expect(
-      existsSync(join(home, '.agents', 'skills', 'palimpsest-discovery', 'SKILL.md')),
-    ).toBe(true);
+    expect(existsSync(join(home, '.agents', 'skills', 'palimpsest-discovery', 'SKILL.md'))).toBe(
+      true,
+    );
   });
 
   test('launch repair does not create an absent .agents host', async () => {
@@ -223,9 +223,7 @@ describe('reconcileUserGlobalSkillBundles', () => {
       deps,
     });
 
-    expect(deps.decisionWrites).toEqual([
-      { bundleName: 'palimpsest-discovery', enabled: true },
-    ]);
+    expect(deps.decisionWrites).toEqual([{ bundleName: 'palimpsest-discovery', enabled: true }]);
     expect(existsSync(join(home, '.agents'))).toBe(false);
   });
 
@@ -238,7 +236,7 @@ describe('reconcileUserGlobalSkillBundles', () => {
       ...makeDeps({ bundle, version: '1.0.0' }),
       userGlobalBundles: [
         { id: 'discovery', name: 'palimpsest-discovery' },
-        { id: 'write-skill', name: 'open-knowledge-write-skill' },
+        { id: 'write-skill', name: 'palimpsest-write-skill' },
       ],
     };
     const r = await reconcileUserGlobalSkillBundles({
@@ -249,7 +247,7 @@ describe('reconcileUserGlobalSkillBundles', () => {
       deps,
     });
     expect(r.status).toBe('done');
-    for (const name of ['palimpsest-discovery', 'open-knowledge-write-skill']) {
+    for (const name of ['palimpsest-discovery', 'palimpsest-write-skill']) {
       expect(existsSync(join(home, '.agents', 'skills', name, 'SKILL.md'))).toBe(true);
       expect(existsSync(join(home, '.claude', 'skills', name, 'SKILL.md'))).toBe(true);
     }
@@ -301,9 +299,9 @@ describe('reconcileUserGlobalSkillBundles', () => {
       expect(claude?.status).toBe('written');
       expect(cursor?.status).toBe('skipped-host-absent');
     }
-    expect(
-      existsSync(join(home, '.claude', 'skills', 'palimpsest-discovery', 'SKILL.md')),
-    ).toBe(true);
+    expect(existsSync(join(home, '.claude', 'skills', 'palimpsest-discovery', 'SKILL.md'))).toBe(
+      true,
+    );
     expect(existsSync(join(home, '.cursor', 'skills', 'palimpsest-discovery'))).toBe(false);
   });
 
@@ -383,9 +381,9 @@ describe('reconcileUserGlobalSkillBundles', () => {
     expect(r.status).toBe('done');
     for (const hostDir of legacyHosts) {
       expect(existsSync(join(home, hostDir, 'skills', 'palimpsest'))).toBe(false);
-      expect(
-        existsSync(join(home, hostDir, 'skills', 'palimpsest-discovery', 'SKILL.md')),
-      ).toBe(true);
+      expect(existsSync(join(home, hostDir, 'skills', 'palimpsest-discovery', 'SKILL.md'))).toBe(
+        true,
+      );
     }
   });
 
@@ -428,10 +426,10 @@ describe('reconcileUserGlobalSkillBundles', () => {
       ...makeDeps({ bundle, version: '4.5.6' }),
       userGlobalBundles: [
         { id: 'discovery', name: 'palimpsest-discovery' },
-        { id: 'write-skill', name: 'open-knowledge-write-skill' },
+        { id: 'write-skill', name: 'palimpsest-write-skill' },
       ],
     };
-    const failingBundleDir = 'open-knowledge-write-skill';
+    const failingBundleDir = 'palimpsest-write-skill';
     const r = await reconcileUserGlobalSkillBundles({
       home,
       isPackaged: true,
@@ -463,9 +461,9 @@ describe('reconcileUserGlobalSkillBundles', () => {
     });
 
     expect(r.status).toBe('done');
-    expect(
-      existsSync(join(home, '.claude', 'skills', 'palimpsest-discovery', 'SKILL.md')),
-    ).toBe(true);
+    expect(existsSync(join(home, '.claude', 'skills', 'palimpsest-discovery', 'SKILL.md'))).toBe(
+      true,
+    );
     const writeSkillEvents = deps.events.filter((e) => e.bundle === 'write-skill');
     expect(writeSkillEvents).toHaveLength(1);
     expect(writeSkillEvents[0]?.outcome).toBe('failed');
@@ -588,16 +586,14 @@ describe('reconcileUserGlobalSkillBundles — per-bundle opt-in gate', () => {
     });
     expect(r.status).toBe('done');
     expect(existsSync(join(home, ...DISCOVERY_DIR, 'SKILL.md'))).toBe(true);
-    expect(deps.decisionWrites).toEqual([
-      { bundleName: 'palimpsest-discovery', enabled: true },
-    ]);
+    expect(deps.decisionWrites).toEqual([{ bundleName: 'palimpsest-discovery', enabled: true }]);
     expect(deps.removals).toEqual([]);
   });
 
   test('mixed decision: declined bundle is removed while the enabled bundle installs', async () => {
     const home = makeHome();
     {
-      const dir = join(home, '.agents', 'skills', 'open-knowledge-write-skill');
+      const dir = join(home, '.agents', 'skills', 'palimpsest-write-skill');
       mkdirSync(dir, { recursive: true });
       writeFileSync(join(dir, 'SKILL.md'), 'preexisting');
     }
@@ -607,12 +603,12 @@ describe('reconcileUserGlobalSkillBundles — per-bundle opt-in gate', () => {
         version: '1.0.0',
         bundleDecision: {
           'palimpsest-discovery': true,
-          'open-knowledge-write-skill': false,
+          'palimpsest-write-skill': false,
         },
       }),
       userGlobalBundles: [
         { id: 'discovery', name: 'palimpsest-discovery' },
-        { id: 'write-skill', name: 'open-knowledge-write-skill' },
+        { id: 'write-skill', name: 'palimpsest-write-skill' },
       ],
     };
     const r = await reconcileUserGlobalSkillBundles({
@@ -631,7 +627,7 @@ describe('reconcileUserGlobalSkillBundles — per-bundle opt-in gate', () => {
 
   test('a launch that installs nothing new reports nothing', async () => {
     const home = makeHome();
-    for (const name of ['palimpsest-discovery', 'open-knowledge-write-skill']) {
+    for (const name of ['palimpsest-discovery', 'palimpsest-write-skill']) {
       const dir = join(home, '.agents', 'skills', name);
       mkdirSync(dir, { recursive: true });
       writeFileSync(join(dir, 'SKILL.md'), 'preexisting');
@@ -640,7 +636,7 @@ describe('reconcileUserGlobalSkillBundles — per-bundle opt-in gate', () => {
       ...makeDeps({ bundle: setupBundle(), version: '1.0.0' }),
       userGlobalBundles: [
         { id: 'discovery', name: 'palimpsest-discovery' },
-        { id: 'write-skill', name: 'open-knowledge-write-skill' },
+        { id: 'write-skill', name: 'palimpsest-write-skill' },
       ],
     };
 

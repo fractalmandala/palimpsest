@@ -126,15 +126,14 @@ describe('per-channel MCP registration', () => {
   it('beta writes its own key and chain, leaving the stable entry byte-for-byte', () => {
     writeClaude();
     const stableEntry = JSON.stringify(
-      JSON.parse(readFileSync(EDITOR_TARGETS.claude.configPath('', home), 'utf-8')).mcpServers[
-        'palimpsest'
-      ],
+      JSON.parse(readFileSync(EDITOR_TARGETS.claude.configPath('', home), 'utf-8')).mcpServers
+        .palimpsest,
     );
 
     vi.stubEnv('PS_CHANNEL', 'beta');
     const servers = writeClaude();
 
-    expect(JSON.stringify(servers['palimpsest'])).toBe(stableEntry);
+    expect(JSON.stringify(servers.palimpsest)).toBe(stableEntry);
     const beta = servers['palimpsest-beta'] as { args: string[] };
     expect(beta.args[2]).toMatch(/^# ps-mcp-beta-v2\n/);
     expect(beta.args[2]).toContain('/Applications/Palimpsest Beta.app/');
@@ -153,7 +152,7 @@ describe('per-channel MCP registration', () => {
     const servers = writeClaude();
 
     expect(JSON.stringify(servers['palimpsest-beta'])).toBe(betaEntry);
-    expect((servers['palimpsest'] as { args: string[] }).args[2]).toBe(STABLE_UNIX_CHAIN);
+    expect((servers.palimpsest as { args: string[] }).args[2]).toBe(STABLE_UNIX_CHAIN);
   });
 
   it('stable chains are pinned byte-for-byte to the shipped launcher', () => {
@@ -198,12 +197,12 @@ describe('per-channel MCP registration', () => {
     mkdirSync(dirname(path), { recursive: true });
     writeFileSync(
       path,
-      JSON.stringify({ mcpServers: { 'palimpsest': { command: 'custom' } } }),
+      JSON.stringify({ mcpServers: { palimpsest: { command: 'custom' } } }),
       'utf-8',
     );
     vi.stubEnv('PS_CHANNEL', 'beta');
     const servers = writeClaude();
-    expect(servers['palimpsest']).toEqual({ command: 'custom' });
+    expect(servers.palimpsest).toEqual({ command: 'custom' });
     expect(servers['palimpsest-beta']).toBeDefined();
   });
 

@@ -1,6 +1,6 @@
 import { join } from 'node:path';
-import { MENU_LABELS, NATIVE_MENU_LABELS } from '@palimpsest/core';
 import { generateMessageId } from '@lingui/message-utils/generateMessageId';
+import { MENU_LABELS, NATIVE_MENU_LABELS } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import {
   createMenuTranslator,
@@ -119,9 +119,7 @@ describe('translateEnglish', () => {
   });
 
   test('substitutes named placeholders and leaves unknown ones alone', () => {
-    expect(translateEnglish('Quit {appName}', { appName: 'Palimpsest' })).toBe(
-      'Quit Palimpsest',
-    );
+    expect(translateEnglish('Quit {appName}', { appName: 'Palimpsest' })).toBe('Quit Palimpsest');
     expect(translateEnglish('Look Up "{word}"', { other: 'x' })).toBe('Look Up "{word}"');
   });
 

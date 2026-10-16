@@ -1,3 +1,4 @@
+import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import type { ConfigBinding } from '@palimpsest/core/config/bind-config-doc';
 import { humanFormat } from '@palimpsest/core/config/errors';
 import type { ConfigPatch } from '@palimpsest/core/config/schema';
@@ -17,7 +18,6 @@ import {
   type PsfRuleId,
   summarizeAppliesTo,
 } from '@palimpsest/core/markdown/lint';
-import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import {
   ArrowUpRight,
   CircleAlert,
@@ -627,8 +627,8 @@ export function PsfPluginSection() {
             {}
             <p className="text-sm text-muted-foreground">
               <Trans>
-                Palimpsest maintains a navigation file named index.md in every folder that
-                contains Markdown, each listing that folder's documents by type and linking to its
+                Palimpsest maintains a navigation file named index.md in every folder that contains
+                Markdown, each listing that folder's documents by type and linking to its
                 subfolders. It rewrites these files as your documents change, and anything you edit
                 into them yourself is replaced.
               </Trans>
@@ -677,8 +677,8 @@ export function PsfPluginSection() {
               </DialogTitle>
               <DialogDescription className="text-inherit">
                 <Trans>
-                  Palimpsest creates and maintains a navigation file named index.md in every
-                  folder that contains Markdown.
+                  Palimpsest creates and maintains a navigation file named index.md in every folder
+                  that contains Markdown.
                 </Trans>
               </DialogDescription>
             </DialogHeader>
@@ -694,8 +694,8 @@ export function PsfPluginSection() {
                   title={<Trans>Generated files</Trans>}
                   body={
                     <Trans>
-                      Palimpsest rewrites these index.md files as documents change, so manual
-                      edits to them are replaced.
+                      Palimpsest rewrites these index.md files as documents change, so manual edits
+                      to them are replaced.
                     </Trans>
                   }
                 />
@@ -724,8 +724,7 @@ export function PsfPluginSection() {
                   title={<Trans>Turning it off</Trans>}
                   body={
                     <Trans>
-                      The index files stay in place. Palimpsest removes only the Git rule it
-                      added.
+                      The index files stay in place. Palimpsest removes only the Git rule it added.
                     </Trans>
                   }
                 />
@@ -847,8 +846,8 @@ function GeneratedIndexSettingsNotice({
         {issue !== null && requestedEnabled === false ? (
           issue === 'git-conflict' ? (
             <Trans>
-              Turning off index maintenance failed because the Palimpsest section of
-              .gitattributes was edited or is incomplete. Remove that section, then try again.
+              Turning off index maintenance failed because the Palimpsest section of .gitattributes
+              was edited or is incomplete. Remove that section, then try again.
             </Trans>
           ) : issue === 'config-write' ? (
             <Trans>
@@ -857,13 +856,13 @@ function GeneratedIndexSettingsNotice({
             </Trans>
           ) : issue === 'connection' ? (
             <Trans>
-              Turning off index maintenance failed because Palimpsest could not reach the
-              project server. Try again when the project reconnects.
+              Turning off index maintenance failed because Palimpsest could not reach the project
+              server. Try again when the project reconnects.
             </Trans>
           ) : (
             <Trans>
-              Turning off index maintenance failed because Palimpsest could not update the Git
-              merge rule. Check Git and .gitattributes, then try again.
+              Turning off index maintenance failed because Palimpsest could not update the Git merge
+              rule. Check Git and .gitattributes, then try again.
             </Trans>
           )
         ) : issue === 'connection' && requestedEnabled === null ? (
@@ -883,13 +882,13 @@ function GeneratedIndexSettingsNotice({
           </Trans>
         ) : effectiveIssue === 'connection' ? (
           <Trans>
-            Index maintenance stayed off because Palimpsest could not reach the project server.
-            Try again when the project reconnects.
+            Index maintenance stayed off because Palimpsest could not reach the project server. Try
+            again when the project reconnects.
           </Trans>
         ) : (
           <Trans>
-            Index maintenance is paused because Palimpsest could not confirm the required Git
-            merge rule. Check Git and .gitattributes, then try again.
+            Index maintenance is paused because Palimpsest could not confirm the required Git merge
+            rule. Check Git and .gitattributes, then try again.
           </Trans>
         )}
       </p>

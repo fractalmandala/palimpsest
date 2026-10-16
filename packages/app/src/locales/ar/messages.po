@@ -1079,9 +1079,6 @@ msgstr "حول"
 msgid "About {appName}"
 msgstr "حول {appName}"
 
-msgid "About & updates"
-msgstr "حول التطبيق والتحديثات"
-
 msgid "Above"
 msgstr "أعلى"
 
@@ -1737,12 +1734,6 @@ msgstr "تلقائي"
 msgid "Automatic picks a free port each start. Choose a fixed port to keep the same address across restarts."
 msgstr "يختار الوضع التلقائي منفذًا متاحًا في كل بدء تشغيل. اختر منفذًا ثابتًا للاحتفاظ بالعنوان نفسه عبر عمليات إعادة التشغيل."
 
-msgid "Automatic updates"
-msgstr "التحديثات التلقائية"
-
-msgid "Automatic updates are not available right now."
-msgstr "التحديثات التلقائية غير متاحة حاليًا."
-
 msgid "Available"
 msgstr "متاح"
 
@@ -2037,14 +2028,8 @@ msgstr "سجل الدردشة"
 msgid "Chat name"
 msgstr "اسم المحادثة"
 
-msgid "Check for updates"
-msgstr "التحقق من التحديثات"
-
 msgid "Check for updates every"
 msgstr "التحقق من التحديثات كل"
-
-msgid "Check for updates…"
-msgstr "التحقق من التحديثات…"
 
 msgid "Check out remote branch"
 msgstr "سحب فرع بعيد"
@@ -2078,9 +2063,6 @@ msgstr "يجري التحقق من التحديثات"
 
 msgid "Checking for updates on GitHub"
 msgstr "يجري التحقق من التحديثات على GitHub"
-
-msgid "Checking for updates…"
-msgstr "يجري التحقق من التحديثات…"
 
 msgid "Checking GitHub connection..."
 msgstr "يجري التحقق من الاتصال بـ GitHub..."
@@ -3202,9 +3184,6 @@ msgstr "تعذّر حفظ المفتاح — يرجى المحاولة مرة أ
 msgid "Couldn't save the resolution for {filePath}."
 msgstr "تعذّر حفظ الحل لـ {filePath}."
 
-msgid "Couldn't save this setting. Try again."
-msgstr "تعذّر حفظ هذا الإعداد. حاول مرة أخرى."
-
 msgid "Couldn't save your theme preference."
 msgstr "تعذّر حفظ تفضيل السمة لديك."
 
@@ -3777,9 +3756,6 @@ msgstr "انقر نقرًا مزدوجًا للتحرير"
 msgid "Download {0}"
 msgstr "تنزيل {0}"
 
-msgid "Download and install updates automatically"
-msgstr "تنزيل التحديثات وتثبيتها تلقائيًا"
-
 msgid "Download app"
 msgstr "تنزيل التطبيق"
 
@@ -4026,8 +4002,8 @@ msgstr "تضمينات"
 msgid "Embeddings API key"
 msgstr "مفتاح API للتضمينات"
 
-msgid "Embeddings are computed only when a search runs and are cached locally under <0>.ok/local</0>."
-msgstr "تُحسب التضمينات فقط عند تشغيل بحث وتُخزَّن محليًا تحت <0>.ok/local</0>."
+msgid "Embeddings are computed only when a search runs and are cached locally under <0>.ps/local</0>."
+msgstr ""
 
 msgid "Emoji"
 msgstr "رموز تعبيرية"
@@ -4552,6 +4528,9 @@ msgstr "فشل رفع الملف"
 msgid "Fast"
 msgstr "سريع"
 
+msgid "Feedback"
+msgstr ""
+
 msgid "Feedback isn't available right now. Please try again later."
 msgstr "الملاحظات غير متاحة الآن. يرجى المحاولة لاحقًا."
 
@@ -4748,15 +4727,6 @@ msgstr "لا يمكن إرفاق المجلدات والملفات الفارغ�
 msgid "Follow the agent's edits"
 msgstr "تابع تعديلات الوكيل"
 
-msgid "Follow us on"
-msgstr "تابعنا على"
-
-msgid "Follow us on social media"
-msgstr "تابعنا على وسائل التواصل الاجتماعي"
-
-msgid "Follow us on X"
-msgstr "تابعنا على X"
-
 msgid "Following the agent's edits"
 msgstr "يجري متابعة تعديلات الوكيل"
 
@@ -4831,9 +4801,6 @@ msgstr "احصل على {displayName}"
 
 msgid "Get Claude Code"
 msgstr "احصل على Claude Code"
-
-msgid "Get product updates in your inbox."
-msgstr "احصل على تحديثات المنتج في بريدك."
 
 msgid "Get set up"
 msgstr "ابدأ الإعداد"
@@ -5551,8 +5518,8 @@ msgid "Install skill"
 msgstr "مهارة التثبيت"
 
 #. Checkbox that installs the user-global discovery skill bundle
-msgid "Install the <0>open-knowledge-discovery</0> skill"
-msgstr "تثبيت مهارة <0>open-knowledge-discovery</0>"
+msgid "Install the <0>palimpsest-discovery</0> skill"
+msgstr ""
 
 msgid "Install the gh CLI"
 msgstr "ثبّت واجهة gh السطرية"
@@ -5676,9 +5643,6 @@ msgstr "مائل"
 
 msgid "Item {0}"
 msgstr "العنصر {0}"
-
-msgid "Join us on Discord"
-msgstr "انضم إلينا على Discord"
 
 msgid "Jump to last tab"
 msgstr "الانتقال إلى آخر تبويب"
@@ -5969,11 +5933,11 @@ msgstr "يجري تحميل عناوين {pageTarget}"
 msgid "Loading image"
 msgstr "يجري تحميل الصورة"
 
-msgid "Loading Palimpsest skills"
-msgstr "يجري تحميل مهارات Palimpsest"
-
 msgid "Loading pages"
 msgstr "يجري تحميل الصفحات"
+
+msgid "Loading Palimpsest skills"
+msgstr "يجري تحميل مهارات Palimpsest"
 
 msgid "Loading paths…"
 msgstr "يجري تحميل المسارات…"
@@ -6306,11 +6270,11 @@ msgstr "نقل الكتلة"
 msgid "Move down"
 msgstr "تحريك لأسفل"
 
-msgid "Move Palimpsest.app to the Trash"
-msgstr "انقل Palimpsest.app إلى سلة المهملات"
-
 msgid "Move or rename this file inside the skill — the path stays under references/ or scripts/."
 msgstr "انقل هذا الملف أو أعد تسميته داخل المهارة — يبقى المسار تحت references/ أو scripts/."
+
+msgid "Move Palimpsest.app to the Trash"
+msgstr "انقل Palimpsest.app إلى سلة المهملات"
 
 msgid "Move succeeded but the sidebar may be out of date — refresh to resync"
 msgstr "نجح النقل لكن الشريط الجانبي قد يكون قديمًا — حدّث لإعادة المزامنة"
@@ -6425,9 +6389,6 @@ msgstr "يجري التفكّر…"
 
 msgid "my-feature"
 msgstr "my-feature"
-
-msgid "my@email.com"
-msgstr "my@email.com"
 
 msgid "name"
 msgstr "الاسم"
@@ -7043,9 +7004,6 @@ msgstr "غير متصل"
 msgid "OK can't move these, so they go when {pick} does."
 msgstr "لا يستطيع OK نقل هذه العناصر، لذا تختفي مع {pick}."
 
-msgid "OK Desktop"
-msgstr "OK Desktop"
-
 msgid "OK last set this folder to {0} — something outside OK changed it since. The state shown is what's on disk now; your next Symlink/Unlink wins."
 msgstr "ضبط OK هذا المجلد آخر مرة على {0} — وقد غيّره شيء خارج OK منذ ذلك الحين. الحالة المعروضة هي ما على القرص الآن؛ وعملية الربط أو فك الربط التالية لديك هي التي تسود."
 
@@ -7242,36 +7200,6 @@ msgstr "الفتح في شجرة عمل"
 msgid "Open it there"
 msgstr "افتحه هناك"
 
-msgid "Palimpsest could not reach the project server to check index maintenance. The status updates when the project reconnects."
-msgstr "تعذر على Palimpsest الوصول إلى خادم المشروع للتحقق من صيانة الفهرس. سيتم تحديث الحالة عند إعادة اتصال المشروع."
-
-msgid "Palimpsest creates and maintains a navigation file named index.md in every folder that contains Markdown."
-msgstr "يقوم Palimpsest بإنشاء ملف تنقل يسمى index.md والحفاظ عليه في كل مجلد يحتوي على Markdown."
-
-msgid "OpenKnowledge Format guidance"
-msgstr "Palimpsest Format التوجيه"
-
-msgid "Palimpsest maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
-msgstr "يحتفظ Palimpsest بملف تنقل يسمى index.md في كل مجلد يحتوي على Markdown، حيث يسرد كل منها مستندات هذا المجلد حسب النوع ويرتبط بمجلداته الفرعية. فهو يعيد كتابة هذه الملفات مع تغير مستنداتك، ويتم استبدال أي شيء تقوم بتحريره فيها بنفسك."
-
-msgid "Palimpsest rewrites these index.md files as documents change, so manual edits to them are replaced."
-msgstr "يقوم Palimpsest بإعادة كتابة ملفات index.md هذه مع تغير المستندات، لذلك يتم استبدال التعديلات اليدوية عليها."
-
-msgid "Palimpsest tools are available in this thread."
-msgstr "أدوات Palimpsest متاحة في هذه السلسلة."
-
-msgid "Palimpsest tools are unavailable because the project folder is missing, inaccessible, or has changed. Check its location and permissions, then retry."
-msgstr "أدوات Palimpsest غير متاحة لأن مجلد المشروع مفقود أو يتعذر الوصول إليه أو تغيّر. تحقق من موقعه وأذوناته، ثم أعد المحاولة."
-
-msgid "Palimpsest tools are unavailable: a file Palimpsest didn't write is already at {bridgePath}."
-msgstr "أدوات Palimpsest غير متاحة: يوجد بالفعل في {bridgePath} ملف لم تكتبه Palimpsest."
-
-msgid "Palimpsest tools are unavailable: something is already at {bridgePath} but couldn't be read, so Palimpsest left it alone."
-msgstr "أدوات Palimpsest غير متاحة: يوجد بالفعل شيء في {bridgePath} لكن تعذّرت قراءته، لذا تركته Palimpsest كما هو."
-
-msgid "Palimpsest's own copy of {0} is damaged and won't run. It can download a fresh copy of {1} {2} (about {3} MB from {4}) to replace it."
-msgstr "نسخة {0} الخاصة بـ Palimpsest تالفة ولا تعمل. يستطيع تنزيل نسخة جديدة من {1} {2} (نحو {3} ميغابايت من {4}) لاستبدالها."
-
 msgid "Open link"
 msgstr "فتح الرابط"
 
@@ -7380,194 +7308,8 @@ msgstr "يجري فتح شجرة العمل"
 msgid "Opening..."
 msgstr "يجري الفتح..."
 
-msgid "Palimpsest"
-msgstr "Palimpsest"
-
-msgid "Palimpsest can't sign in to GitHub for this project."
-msgstr "لا يمكن لـ Palimpsest تسجيل الدخول إلى GitHub لهذا المشروع."
-
-msgid "Palimpsest checked {subject}"
-msgstr "تحقق Palimpsest من {subject}"
-
-msgid "Palimpsest checked the project"
-msgstr "تحقق Palimpsest من المشروع"
-
-msgid "Palimpsest checks for and downloads updates in the background."
-msgstr "يتحقق Palimpsest من وجود تحديثات وينزّلها في الخلفية."
-
-msgid "Palimpsest could not find this agent on this machine."
-msgstr "لم يتمكن Palimpsest من العثور على هذا الوكيل على هذا الجهاز."
-
-msgid "Palimpsest couldn't finish setting up this project. The worktree was created but not opened."
-msgstr "تعذر على Palimpsest إكمال إعداد هذا المشروع. تم إنشاء شجرة العمل ولكن لم يتم فتحها."
-
-msgid "Palimpsest couldn't read terminal.shell in .ps/local/config.yml. Using an available Windows shell instead."
-msgstr "تعذّر على Palimpsest قراءة terminal.shell في .ps/local/config.yml. سيتم استخدام صدفة Windows متاحة بدلًا منها."
-
-msgid "Palimpsest couldn't write launch settings under .ps/local/terminal because the folder is not safely contained in this project. Check that it is a real folder inside the project, not a link. Claude will ask you to approve Palimpsest."
-msgstr "تعذّر على Palimpsest كتابة إعدادات التشغيل ضمن .ps/local/terminal لأن المجلد غير موجود بأمان داخل هذا المشروع. تحقّق من أنه مجلد حقيقي داخل المشروع وليس رابطًا. سيطلب منك Claude الموافقة على Palimpsest."
-
-msgid "Palimpsest couldn't write launch settings under .ps/local/terminal this time. Check that the folder is writable. Claude will ask you to approve Palimpsest."
-msgstr "تعذّر على Palimpsest كتابة إعدادات التشغيل ضمن .ps/local/terminal هذه المرة. تحقّق من أن المجلد قابل للكتابة. سيطلب منك Claude الموافقة على Palimpsest."
-
-msgid "Palimpsest created a share link"
-msgstr "أنشأ Palimpsest رابط مشاركة"
-
-msgid "Palimpsest created a share link for {subject}"
-msgstr "أنشأ Palimpsest رابط مشاركة لـ {subject}"
-
-msgid "Palimpsest deleted {subject}"
-msgstr "حذف Palimpsest {subject}"
-
-msgid "Palimpsest deleted a document"
-msgstr "حذف Palimpsest مستندًا"
-
-msgid "Palimpsest discovery skill"
-msgstr "مهارة اكتشاف Palimpsest"
-
-msgid "Palimpsest does not recognize this entry, and cannot safely replace it in this file's format."
-msgstr "لا يتعرّف Palimpsest على هذا الإدخال، ولا يمكنه استبداله بأمان في تنسيق هذا الملف."
-
-msgid "Palimpsest does not recognize this entry. Turning it on replaces it."
-msgstr "لا يتعرّف Palimpsest على هذا الإدخال. تشغيله سيستبدله."
-
-msgid "Palimpsest doesn't check for or download updates on its own. Check for updates still works when you want a newer version."
-msgstr "لا يتحقق Palimpsest من وجود تحديثات ولا ينزّلها من تلقاء نفسه. يظل زر «التحقق من التحديثات» متاحًا عندما تريد إصدارًا أحدث."
-
-msgid "Palimpsest edited {subject}"
-msgstr "عدّل Palimpsest {subject}"
-
-msgid "Palimpsest edited a document"
-msgstr "عدّل Palimpsest مستندًا"
-
-msgid "Palimpsest files were removed"
-msgstr "تمت إزالة ملفات Palimpsest"
-
-msgid "Palimpsest has no credential stored for this host. Add a token in Settings, or let git use the credentials it already has."
-msgstr "لا يملك Palimpsest أي بيانات اعتماد مخزّنة لهذا المضيف. أضف رمزًا في الإعدادات، أو دع git يستخدم بيانات الاعتماد الموجودة لديه بالفعل."
-
-msgid "Palimpsest imported {source}"
-msgstr "استورد Palimpsest {source}"
-
-msgid "Palimpsest imported a skill"
-msgstr "استورد Palimpsest مهارة"
-
-msgid "Palimpsest initializes at <0>{projectDir}</0> — the parent of <1>{pickedRelative}</1> because it contains a <2>.git</2> folder (one .ps/ per git repo). <3>Content directory</3> defaults to <4>.</4> (the whole repo); type a sub-folder to narrow it."
-msgstr "يُهيَّأ Palimpsest في <0>{projectDir}</0> — وهو أب <1>{pickedRelative}</1> لأنه يحتوي على مجلد <2>.git</2> (مجلد .ps/ واحد لكل مستودع git). يكون <3>مجلد المحتوى</3> افتراضيًا <4>.</4> (المستودع بأكمله)؛ اكتب مجلدًا فرعيًا لتضييقه."
-
-msgid "Palimpsest installed {subject}"
-msgstr "ثبّت Palimpsest {subject}"
-
-msgid "Palimpsest installed a skill"
-msgstr "ثبّت Palimpsest مهارة"
-
-msgid "Palimpsest integrations checked."
-msgstr "تم فحص تكاملات Palimpsest."
-
-msgid "Palimpsest is set up at the repository root here, so the pack goes inside <0>{sanitized}</0> rather than at the top of the repository."
-msgstr "تم إعداد Palimpsest في جذر المستودع هنا، لذا تُوضع الحزمة داخل <0>{sanitized}</0> بدلاً من أعلى المستودع."
-
-msgid "Palimpsest is using this GitHub account."
-msgstr "يستخدم Palimpsest حساب GitHub هذا."
-
-msgid "Palimpsest keeps retrying and shows them as soon as the file can be read."
-msgstr "يواصل Palimpsest إعادة المحاولة وسيعرضها بمجرد أن تصبح قراءة الملف ممكنة."
-
-msgid "Palimpsest left this file alone because it could not parse it safely. Fix the file by hand, then try again."
-msgstr "لم يغيّر Palimpsest هذا الملف لأنه لم يتمكن من تحليله بأمان. أصلح الملف يدويًا ثم أعد المحاولة."
-
-msgid "Palimpsest listed the installed skills"
-msgstr "عرض Palimpsest المهارات المثبّتة"
-
-msgid "Palimpsest logs across projects. No project is open, so project server logs are not included."
-msgstr "سجلات Palimpsest عبر المشاريع. لا يوجد مشروع مفتوح، لذا لا تُضمَّن سجلات خادم المشروع."
-
-msgid "Palimpsest logs, including activity across projects."
-msgstr "سجلات Palimpsest، بما في ذلك النشاط عبر المشاريع."
-
-msgid "Palimpsest looked at the link graph"
-msgstr "اطّلع Palimpsest على رسم الروابط"
-
-msgid "Palimpsest looked up links for {subject}"
-msgstr "بحث Palimpsest عن روابط {subject}"
-
-msgid "Palimpsest looked up the authoring palette"
-msgstr "اطّلع Palimpsest على لوحة التأليف"
-
-msgid "Palimpsest moved {subject} to {destination}"
-msgstr "نقل Palimpsest {subject} إلى {destination}"
-
-msgid "Palimpsest moved a document"
-msgstr "نقل Palimpsest مستندًا"
-
-msgid "Palimpsest on GitHub"
-msgstr "Palimpsest على GitHub"
-
-msgid "Palimpsest on this computer changed to a different build, but this tab is still running the old one."
-msgstr "تغيّر Palimpsest على هذا الكمبيوتر إلى نسخة مختلفة، لكن هذا التبويب لا يزال يشغّل النسخة القديمة."
-
-msgid "Palimpsest on this computer is now v{serverVersion}, but this tab is still running v{tabVersion}."
-msgstr "أصبح Palimpsest على هذا الكمبيوتر بالإصدار v{serverVersion}، لكن هذا التبويب لا يزال يشغّل v{tabVersion}."
-
-msgid "Palimpsest opened the live preview"
-msgstr "فتح Palimpsest المعاينة المباشرة"
-
-msgid "Palimpsest quit unexpectedly last time."
-msgstr "أُغلق Palimpsest على نحو غير متوقع في المرة السابقة."
-
-msgid "Palimpsest ran {command}"
-msgstr "شغّل Palimpsest {command}"
-
-msgid "Palimpsest ran {tool}"
-msgstr "شغّل Palimpsest {tool}"
-
-msgid "Palimpsest ran a command"
-msgstr "شغّل Palimpsest أمرًا"
-
-msgid "Palimpsest read the edit history"
-msgstr "قرأ Palimpsest سجل التعديلات"
-
-msgid "Palimpsest read the history of {subject}"
-msgstr "قرأ Palimpsest سجل {subject}"
-
-msgid "Palimpsest read the project settings"
-msgstr "قرأ Palimpsest إعدادات المشروع"
-
-msgid "Palimpsest read the setting {key}"
-msgstr "قرأ Palimpsest الإعداد {key}"
-
-msgid "Palimpsest restored an earlier version"
-msgstr "استعاد Palimpsest نسخة سابقة"
-
-msgid "Palimpsest restored an earlier version of {subject}"
-msgstr "استعاد Palimpsest نسخة سابقة من {subject}"
-
-msgid "Palimpsest saved a checkpoint"
-msgstr "حفظ Palimpsest نقطة تحقق"
-
-msgid "Palimpsest searched for {query}"
-msgstr "بحث Palimpsest عن {query}"
-
-msgid "Palimpsest searched the knowledge base"
-msgstr "بحث Palimpsest في قاعدة المعرفة"
-
-msgid "Palimpsest skill saved. Upload it in Claude Desktop, then click Cowork again."
-msgstr "تم حفظ مهارة Palimpsest. ارفعها في Claude Desktop، ثم انقر على Cowork مرة أخرى."
-
-msgid "Palimpsest stores its configuration and internal files inside a newly created <0>.ok</0> directory in your project root folder."
-msgstr "يخزّن Palimpsest إعداداته وملفاته الداخلية داخل مجلد <0>.ok</0> يُنشأ حديثًا في مجلد جذر مشروعك."
-
-msgid "Palimpsest will be initialized at <0>{gitRoot}</0> — the parent of your new folder, because it contains a <1>.git</1> folder (one project per git repo)."
-msgstr "سيُهيَّأ Palimpsest في <0>{gitRoot}</0> — وهو أب مجلدك الجديد، لأنه يحتوي على مجلد <1>.git</1> (مشروع واحد لكل مستودع git)."
-
-msgid "Palimpsest will create commits and push them to your remote automatically. If you do not want automatic commits in your git history, you should not enable auto-sync."
-msgstr "سينشئ Palimpsest إيداعات ويدفعها إلى مستودعك البعيد تلقائيًا. إن كنت لا تريد إيداعات تلقائية في سجل git لديك، فلا تفعّل المزامنة التلقائية."
-
-msgid "Palimpsest wrote a document"
-msgstr "كتب Palimpsest مستندًا"
-
-msgid "Palimpsest wrote to {subject}"
-msgstr "كتب Palimpsest في {subject}"
+msgid "OpenKnowledge Format guidance"
+msgstr "Palimpsest Format التوجيه"
 
 msgid "Opens a folder picker to choose where to clone the repository."
 msgstr "يفتح منتقي مجلدات لاختيار مكان استنساخ المستودع."
@@ -7704,6 +7446,219 @@ msgstr "تُضمَّن الصفحات أول مرة يحتاجها فيها بح
 
 msgid "Pages indexed: {semanticIndexedCount} of {semanticTotalCount}."
 msgstr "الصفحات المفهرسة: {semanticIndexedCount} من {semanticTotalCount}."
+
+msgid "Palimpsest"
+msgstr "Palimpsest"
+
+msgid "Palimpsest can't sign in to GitHub for this project."
+msgstr "لا يمكن لـ Palimpsest تسجيل الدخول إلى GitHub لهذا المشروع."
+
+msgid "Palimpsest checked {subject}"
+msgstr "تحقق Palimpsest من {subject}"
+
+msgid "Palimpsest checked the project"
+msgstr "تحقق Palimpsest من المشروع"
+
+msgid "Palimpsest could not find this agent on this machine."
+msgstr "لم يتمكن Palimpsest من العثور على هذا الوكيل على هذا الجهاز."
+
+msgid "Palimpsest could not reach the project server to check index maintenance. The status updates when the project reconnects."
+msgstr "تعذر على Palimpsest الوصول إلى خادم المشروع للتحقق من صيانة الفهرس. سيتم تحديث الحالة عند إعادة اتصال المشروع."
+
+msgid "Palimpsest couldn't finish setting up this project. The worktree was created but not opened."
+msgstr "تعذر على Palimpsest إكمال إعداد هذا المشروع. تم إنشاء شجرة العمل ولكن لم يتم فتحها."
+
+msgid "Palimpsest couldn't read terminal.shell in .ps/local/config.yml. Using an available Windows shell instead."
+msgstr "تعذّر على Palimpsest قراءة terminal.shell في .ps/local/config.yml. سيتم استخدام صدفة Windows متاحة بدلًا منها."
+
+msgid "Palimpsest couldn't write launch settings under .ps/local/terminal because the folder is not safely contained in this project. Check that it is a real folder inside the project, not a link. Claude will ask you to approve Palimpsest."
+msgstr "تعذّر على Palimpsest كتابة إعدادات التشغيل ضمن .ps/local/terminal لأن المجلد غير موجود بأمان داخل هذا المشروع. تحقّق من أنه مجلد حقيقي داخل المشروع وليس رابطًا. سيطلب منك Claude الموافقة على Palimpsest."
+
+msgid "Palimpsest couldn't write launch settings under .ps/local/terminal this time. Check that the folder is writable. Claude will ask you to approve Palimpsest."
+msgstr "تعذّر على Palimpsest كتابة إعدادات التشغيل ضمن .ps/local/terminal هذه المرة. تحقّق من أن المجلد قابل للكتابة. سيطلب منك Claude الموافقة على Palimpsest."
+
+msgid "Palimpsest created a share link"
+msgstr "أنشأ Palimpsest رابط مشاركة"
+
+msgid "Palimpsest created a share link for {subject}"
+msgstr "أنشأ Palimpsest رابط مشاركة لـ {subject}"
+
+msgid "Palimpsest creates and maintains a navigation file named index.md in every folder that contains Markdown."
+msgstr "يقوم Palimpsest بإنشاء ملف تنقل يسمى index.md والحفاظ عليه في كل مجلد يحتوي على Markdown."
+
+msgid "Palimpsest deleted {subject}"
+msgstr "حذف Palimpsest {subject}"
+
+msgid "Palimpsest deleted a document"
+msgstr "حذف Palimpsest مستندًا"
+
+msgid "Palimpsest Desktop"
+msgstr ""
+
+msgid "Palimpsest discovery skill"
+msgstr "مهارة اكتشاف Palimpsest"
+
+msgid "Palimpsest does not recognize this entry, and cannot safely replace it in this file's format."
+msgstr "لا يتعرّف Palimpsest على هذا الإدخال، ولا يمكنه استبداله بأمان في تنسيق هذا الملف."
+
+msgid "Palimpsest does not recognize this entry. Turning it on replaces it."
+msgstr "لا يتعرّف Palimpsest على هذا الإدخال. تشغيله سيستبدله."
+
+msgid "Palimpsest edited {subject}"
+msgstr "عدّل Palimpsest {subject}"
+
+msgid "Palimpsest edited a document"
+msgstr "عدّل Palimpsest مستندًا"
+
+msgid "Palimpsest files were removed"
+msgstr "تمت إزالة ملفات Palimpsest"
+
+msgid "Palimpsest has no credential stored for this host. Add a token in Settings, or let git use the credentials it already has."
+msgstr "لا يملك Palimpsest أي بيانات اعتماد مخزّنة لهذا المضيف. أضف رمزًا في الإعدادات، أو دع git يستخدم بيانات الاعتماد الموجودة لديه بالفعل."
+
+msgid "Palimpsest imported {source}"
+msgstr "استورد Palimpsest {source}"
+
+msgid "Palimpsest imported a skill"
+msgstr "استورد Palimpsest مهارة"
+
+msgid "Palimpsest initializes at <0>{projectDir}</0> — the parent of <1>{pickedRelative}</1> because it contains a <2>.git</2> folder (one .ps/ per git repo). <3>Content directory</3> defaults to <4>.</4> (the whole repo); type a sub-folder to narrow it."
+msgstr "يُهيَّأ Palimpsest في <0>{projectDir}</0> — وهو أب <1>{pickedRelative}</1> لأنه يحتوي على مجلد <2>.git</2> (مجلد .ps/ واحد لكل مستودع git). يكون <3>مجلد المحتوى</3> افتراضيًا <4>.</4> (المستودع بأكمله)؛ اكتب مجلدًا فرعيًا لتضييقه."
+
+msgid "Palimpsest installed {subject}"
+msgstr "ثبّت Palimpsest {subject}"
+
+msgid "Palimpsest installed a skill"
+msgstr "ثبّت Palimpsest مهارة"
+
+msgid "Palimpsest integrations checked."
+msgstr "تم فحص تكاملات Palimpsest."
+
+msgid "Palimpsest is set up at the repository root here, so the pack goes inside <0>{sanitized}</0> rather than at the top of the repository."
+msgstr "تم إعداد Palimpsest في جذر المستودع هنا، لذا تُوضع الحزمة داخل <0>{sanitized}</0> بدلاً من أعلى المستودع."
+
+msgid "Palimpsest is using this GitHub account."
+msgstr "يستخدم Palimpsest حساب GitHub هذا."
+
+msgid "Palimpsest keeps retrying and shows them as soon as the file can be read."
+msgstr "يواصل Palimpsest إعادة المحاولة وسيعرضها بمجرد أن تصبح قراءة الملف ممكنة."
+
+msgid "Palimpsest left this file alone because it could not parse it safely. Fix the file by hand, then try again."
+msgstr "لم يغيّر Palimpsest هذا الملف لأنه لم يتمكن من تحليله بأمان. أصلح الملف يدويًا ثم أعد المحاولة."
+
+msgid "Palimpsest listed the installed skills"
+msgstr "عرض Palimpsest المهارات المثبّتة"
+
+msgid "Palimpsest logs across projects. No project is open, so project server logs are not included."
+msgstr "سجلات Palimpsest عبر المشاريع. لا يوجد مشروع مفتوح، لذا لا تُضمَّن سجلات خادم المشروع."
+
+msgid "Palimpsest logs, including activity across projects."
+msgstr "سجلات Palimpsest، بما في ذلك النشاط عبر المشاريع."
+
+msgid "Palimpsest looked at the link graph"
+msgstr "اطّلع Palimpsest على رسم الروابط"
+
+msgid "Palimpsest looked up links for {subject}"
+msgstr "بحث Palimpsest عن روابط {subject}"
+
+msgid "Palimpsest looked up the authoring palette"
+msgstr "اطّلع Palimpsest على لوحة التأليف"
+
+msgid "Palimpsest maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
+msgstr "يحتفظ Palimpsest بملف تنقل يسمى index.md في كل مجلد يحتوي على Markdown، حيث يسرد كل منها مستندات هذا المجلد حسب النوع ويرتبط بمجلداته الفرعية. فهو يعيد كتابة هذه الملفات مع تغير مستنداتك، ويتم استبدال أي شيء تقوم بتحريره فيها بنفسك."
+
+msgid "Palimpsest moved {subject} to {destination}"
+msgstr "نقل Palimpsest {subject} إلى {destination}"
+
+msgid "Palimpsest moved a document"
+msgstr "نقل Palimpsest مستندًا"
+
+msgid "Palimpsest on GitHub"
+msgstr "Palimpsest على GitHub"
+
+msgid "Palimpsest on this computer changed to a different build, but this tab is still running the old one."
+msgstr "تغيّر Palimpsest على هذا الكمبيوتر إلى نسخة مختلفة، لكن هذا التبويب لا يزال يشغّل النسخة القديمة."
+
+msgid "Palimpsest on this computer is now v{serverVersion}, but this tab is still running v{tabVersion}."
+msgstr "أصبح Palimpsest على هذا الكمبيوتر بالإصدار v{serverVersion}، لكن هذا التبويب لا يزال يشغّل v{tabVersion}."
+
+msgid "Palimpsest opened the live preview"
+msgstr "فتح Palimpsest المعاينة المباشرة"
+
+msgid "Palimpsest quit unexpectedly last time."
+msgstr "أُغلق Palimpsest على نحو غير متوقع في المرة السابقة."
+
+msgid "Palimpsest ran {command}"
+msgstr "شغّل Palimpsest {command}"
+
+msgid "Palimpsest ran {tool}"
+msgstr "شغّل Palimpsest {tool}"
+
+msgid "Palimpsest ran a command"
+msgstr "شغّل Palimpsest أمرًا"
+
+msgid "Palimpsest read the edit history"
+msgstr "قرأ Palimpsest سجل التعديلات"
+
+msgid "Palimpsest read the history of {subject}"
+msgstr "قرأ Palimpsest سجل {subject}"
+
+msgid "Palimpsest read the project settings"
+msgstr "قرأ Palimpsest إعدادات المشروع"
+
+msgid "Palimpsest read the setting {key}"
+msgstr "قرأ Palimpsest الإعداد {key}"
+
+msgid "Palimpsest restored an earlier version"
+msgstr "استعاد Palimpsest نسخة سابقة"
+
+msgid "Palimpsest restored an earlier version of {subject}"
+msgstr "استعاد Palimpsest نسخة سابقة من {subject}"
+
+msgid "Palimpsest rewrites these index.md files as documents change, so manual edits to them are replaced."
+msgstr "يقوم Palimpsest بإعادة كتابة ملفات index.md هذه مع تغير المستندات، لذلك يتم استبدال التعديلات اليدوية عليها."
+
+msgid "Palimpsest saved a checkpoint"
+msgstr "حفظ Palimpsest نقطة تحقق"
+
+msgid "Palimpsest searched for {query}"
+msgstr "بحث Palimpsest عن {query}"
+
+msgid "Palimpsest searched the knowledge base"
+msgstr "بحث Palimpsest في قاعدة المعرفة"
+
+msgid "Palimpsest skill saved. Upload it in Claude Desktop, then click Cowork again."
+msgstr "تم حفظ مهارة Palimpsest. ارفعها في Claude Desktop، ثم انقر على Cowork مرة أخرى."
+
+msgid "Palimpsest stores its configuration and internal files inside a newly created <0>.ok</0> directory in your project root folder."
+msgstr "يخزّن Palimpsest إعداداته وملفاته الداخلية داخل مجلد <0>.ok</0> يُنشأ حديثًا في مجلد جذر مشروعك."
+
+msgid "Palimpsest tools are available in this thread."
+msgstr "أدوات Palimpsest متاحة في هذه السلسلة."
+
+msgid "Palimpsest tools are unavailable because the project folder is missing, inaccessible, or has changed. Check its location and permissions, then retry."
+msgstr "أدوات Palimpsest غير متاحة لأن مجلد المشروع مفقود أو يتعذر الوصول إليه أو تغيّر. تحقق من موقعه وأذوناته، ثم أعد المحاولة."
+
+msgid "Palimpsest tools are unavailable: a file Palimpsest didn't write is already at {bridgePath}."
+msgstr "أدوات Palimpsest غير متاحة: يوجد بالفعل في {bridgePath} ملف لم تكتبه Palimpsest."
+
+msgid "Palimpsest tools are unavailable: something is already at {bridgePath} but couldn't be read, so Palimpsest left it alone."
+msgstr "أدوات Palimpsest غير متاحة: يوجد بالفعل شيء في {bridgePath} لكن تعذّرت قراءته، لذا تركته Palimpsest كما هو."
+
+msgid "Palimpsest will be initialized at <0>{gitRoot}</0> — the parent of your new folder, because it contains a <1>.git</1> folder (one project per git repo)."
+msgstr "سيُهيَّأ Palimpsest في <0>{gitRoot}</0> — وهو أب مجلدك الجديد، لأنه يحتوي على مجلد <1>.git</1> (مشروع واحد لكل مستودع git)."
+
+msgid "Palimpsest will create commits and push them to your remote automatically. If you do not want automatic commits in your git history, you should not enable auto-sync."
+msgstr "سينشئ Palimpsest إيداعات ويدفعها إلى مستودعك البعيد تلقائيًا. إن كنت لا تريد إيداعات تلقائية في سجل git لديك، فلا تفعّل المزامنة التلقائية."
+
+msgid "Palimpsest wrote a document"
+msgstr "كتب Palimpsest مستندًا"
+
+msgid "Palimpsest wrote to {subject}"
+msgstr "كتب Palimpsest في {subject}"
+
+msgid "Palimpsest's own copy of {0} is damaged and won't run. It can download a fresh copy of {1} {2} (about {3} MB from {4}) to replace it."
+msgstr "نسخة {0} الخاصة بـ Palimpsest تالفة ولا تعمل. يستطيع تنزيل نسخة جديدة من {1} {2} (نحو {3} ميغابايت من {4}) لاستبدالها."
 
 msgid "Pan down"
 msgstr "تحريك لأسفل"
@@ -7904,9 +7859,6 @@ msgstr "العب Blob Run"
 msgid "Please choose Good or Not great."
 msgstr "يرجى اختيار «جيد» أو «ليس رائعًا»."
 
-msgid "Please enter a valid email address."
-msgstr "يرجى إدخال عنوان بريد إلكتروني صالح."
-
 msgid "Please enter a valid email."
 msgstr "يرجى إدخال بريد إلكتروني صالح."
 
@@ -8008,12 +7960,6 @@ msgstr "المشكلات"
 
 msgid "Problems in {0}"
 msgstr "مشكلات في {0}"
-
-msgid "Product updates"
-msgstr "تحديثات المنتج"
-
-msgid "Product updates in your inbox."
-msgstr "تحديثات المنتج في بريدك."
 
 msgid "project"
 msgstr "مشروع"
@@ -9851,9 +9797,6 @@ msgstr "تجهيز المقطع المحدد في لوحة الوكلاء، جا
 msgid "stale Git entry"
 msgstr "إدخال Git قديم"
 
-msgid "Star us on GitHub"
-msgstr "امنحنا نجمة على GitHub"
-
 msgid "Start a bug report with a screenshot of the screen as it looks right now."
 msgstr "ابدأ تقرير علة مع لقطة شاشة كما تبدو في هذه اللحظة."
 
@@ -9920,9 +9863,6 @@ msgstr "الحالة"
 msgid "Status"
 msgstr "الحالة"
 
-msgid "Stay in the loop"
-msgstr "ابقَ على اطلاع"
-
 msgid "Stays on this computer. Not committed to git."
 msgstr "يبقى على هذا الجهاز. غير مُودَع في git."
 
@@ -9988,15 +9928,6 @@ msgstr "اسم المجلد الفرعي"
 
 msgid "Subfolder under current folder"
 msgstr "مجلد فرعي تحت المجلد الحالي"
-
-msgid "Subscribe"
-msgstr "اشتراك"
-
-msgid "Subscribing..."
-msgstr "يجري الاشتراك..."
-
-msgid "Subscriptions aren't available right now."
-msgstr "الاشتراكات غير متاحة الآن."
 
 msgid "Suggestion menu navigation"
 msgstr "التنقل في قائمة الاقتراحات"
@@ -10269,9 +10200,6 @@ msgstr "نص"
 msgid "Thanks for giving Palimpsest a try."
 msgstr "شكرًا لتجربتك Palimpsest."
 
-msgid "Thanks for subscribing. Watch your inbox for product updates."
-msgstr "شكرًا لاشتراكك. راقب بريدك لتحديثات المنتج."
-
 msgid "Thanks for the feedback!"
 msgstr "شكرًا على ملاحظاتك!"
 
@@ -10339,8 +10267,8 @@ msgstr "أصبحت نسخة {editor} هي المصدر"
 msgid "The {targetNoun} could not be opened — try navigating to it manually."
 msgstr "تعذّر فتح {targetNoun} — حاول الانتقال إليه يدويًا."
 
-msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs OpenKnowledge Format–conformant."
-msgstr "الـ <0>type</0> الذي يحصل عليه كل مستند يُنشأ من هذا القالب (مثل <1>research-note</1>). يبقي المستندات الجديدة متوافقة مع Palimpsest Format."
+msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs Open Knowledge Format–conformant."
+msgstr ""
 
 msgid "The agent is working"
 msgstr "الوكيل يعمل"
@@ -10477,6 +10405,9 @@ msgstr "معرّف النموذج الذي تخدمه نقطة نهايتك. ي�
 msgid "the open agent"
 msgstr "الوكيل المفتوح"
 
+msgid "The original text was deleted."
+msgstr "تم حذف النص الأصلي."
+
 msgid "The Palimpsest project is missing at this checkout path."
 msgstr "مشروع Palimpsest مفقود في مسار نسخة العمل هذه."
 
@@ -10491,9 +10422,6 @@ msgstr "استغرق خادم Palimpsest وقتا طويلا للرد، وربم
 
 msgid "The Palimpsest server took too long to answer. Ask the agent to try again."
 msgstr "استغرق خادم Palimpsest وقتا طويلا للرد. اطلب من الوكيل المحاولة مرة أخرى."
-
-msgid "The original text was deleted."
-msgstr "تم حذف النص الأصلي."
 
 msgid "The path can't leave the skill (no . or ..)"
 msgstr "لا يمكن للمسار مغادرة المهارة (بدون . أو ..)"
@@ -11071,9 +10999,6 @@ msgstr "تعذّرت قراءة ملف السمة هذا"
 msgid "This theme file is too large"
 msgstr "ملف السمة هذا كبير جدًا"
 
-msgid "This update is no longer ready to install."
-msgstr "لم يعد هذا التحديث جاهزًا للتثبيت."
-
 msgid "This usually means one of:"
 msgstr "يعني هذا عادةً أحد الأمور التالية:"
 
@@ -11452,10 +11377,6 @@ msgstr "غير متتبَّع"
 msgid "Up to date"
 msgstr "محدَّث"
 
-msgctxt "settings search keyword"
-msgid "update"
-msgstr "تحديث"
-
 msgid "Update"
 msgstr "تحديث"
 
@@ -11488,12 +11409,6 @@ msgstr "تم التحديث {updatedRelative}"
 
 msgid "updated folder properties"
 msgstr "حدّث خصائص المجلد"
-
-msgid "Updated to Version {version}"
-msgstr "حُدِّث إلى الإصدار {version}"
-
-msgid "Updates and feedback"
-msgstr "التحديثات والملاحظات"
 
 msgid "Updates flow in"
 msgstr "تتدفق التحديثات إلى الداخل"
@@ -11812,11 +11727,8 @@ msgstr "ما تشاركه يُرسل إلى فريق Palimpsest."
 msgid "What's included"
 msgstr "ما الذي يتم تضمينه"
 
-msgid "What's new"
-msgstr "ما الجديد"
-
-msgid "When enabled, the agent opens or refreshes the preview after each edit. Disable if you manage your own preview window (OK Desktop, a browser tab on another display, etc.)."
-msgstr "عند التفعيل، يفتح الوكيل المعاينة أو يحدّثها بعد كل تعديل. عطّله إن كنت تدير نافذة معاينتك بنفسك (OK Desktop، أو تبويب متصفح على شاشة أخرى، وما إلى ذلك)."
+msgid "When enabled, the agent opens or refreshes the preview after each edit. Disable if you manage your own preview window (Palimpsest Desktop, a browser tab on another display, etc.)."
+msgstr ""
 
 msgid "When the agent runs its scheduled work."
 msgstr "متى ينفّذ الوكيل عمله المجدول."
@@ -12008,9 +11920,6 @@ msgstr "أنت تدفع تعديلاتك أكثر مما تتحقق من الت�
 
 msgid "You're signed out — sign in to resume syncing."
 msgstr "أنت خارج تسجيل الدخول — سجّل الدخول لاستئناف المزامنة."
-
-msgid "You're subscribed!"
-msgstr "تم اشتراكك!"
 
 msgid "you@company.com"
 msgstr "you@company.com"

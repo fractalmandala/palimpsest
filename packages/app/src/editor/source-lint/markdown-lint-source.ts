@@ -1,10 +1,6 @@
 import { type Action, type Diagnostic, linter, lintGutter } from '@codemirror/lint';
 import type { Extension, Text } from '@codemirror/state';
-import type {
-  LintDiagnostic,
-  LinterConfig,
-  LintPosition,
-} from '@palimpsest/core/markdown/lint';
+import type { LintDiagnostic, LinterConfig, LintPosition } from '@palimpsest/core/markdown/lint';
 import { lintDocument } from '@palimpsest/core/markdown/lint';
 
 export function createMarkdownLintExtension(config: LinterConfig, docName?: string): Extension {

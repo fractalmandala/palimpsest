@@ -87,7 +87,7 @@ describe('createTerminalWindow', () => {
     expect(args?.additionalArguments).toContain('--ok-mode=terminal');
     expect(args?.additionalArguments).toContain('--ok-collab-url=ws://localhost:5200/collab');
     expect(args?.additionalArguments).toContain('--ok-api-origin=http://localhost:5200');
-    expect(args?.additionalArguments).toContain('--ok-project-path=/Users/me/project');
+    expect(args?.additionalArguments).toContain('--ps-project-path=/Users/me/project');
     expect(args?.additionalArguments).toContain('--ok-app-version=1.2.3');
   });
 
@@ -121,7 +121,7 @@ describe('createTerminalWindow', () => {
     const args = h.createWindow.mock.calls[0]?.[0];
     expect(args?.additionalArguments).toContain('--ok-collab-url=');
     expect(args?.additionalArguments).toContain('--ok-api-origin=');
-    expect(args?.additionalArguments).toContain('--ok-project-path=');
+    expect(args?.additionalArguments).toContain('--ps-project-path=');
     expect(args?.title).toBe('Palimpsest Terminal');
     expect(getTerminalWindowContext(70_002)?.projectRoot).toBeNull();
   });

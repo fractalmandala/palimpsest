@@ -1,8 +1,4 @@
-import type {
-  GitStatusCode,
-  GitWorktreeEntry,
-  GitWorktreeOpenTarget,
-} from '@palimpsest/core';
+import type { GitStatusCode, GitWorktreeEntry, GitWorktreeOpenTarget } from '@palimpsest/core';
 import { GIT_STATUS_CODES } from '@palimpsest/core';
 import type { SimpleGit } from 'simple-git';
 import { createGitInstance } from './git-handle.ts';

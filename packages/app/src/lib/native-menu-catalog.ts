@@ -1,6 +1,6 @@
-import type { NativeMenuLabelKey } from '@palimpsest/core/constants/native-menu-labels';
 import type { MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import type { NativeMenuLabelKey } from '@palimpsest/core/constants/native-menu-labels';
 
 export const NATIVE_MENU_MESSAGES = {
   roleAbout: msg`About {appName}`,

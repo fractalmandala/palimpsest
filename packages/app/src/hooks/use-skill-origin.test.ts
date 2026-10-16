@@ -53,7 +53,7 @@ describe('skillOriginUrl', () => {
       skillOriginUrl(
         {
           source: 'fractalmandala/palimpsest-skills',
-          publisher: 'inkeep',
+          publisher: 'example',
           skill: 'palimpsest-discovery',
           importedAt: '2026-07-30T12:00:00.000Z',
         },
@@ -95,12 +95,12 @@ describe('skillAutoUpdateEnabled', () => {
 
   test('requires explicit opt-in for remote sources', () => {
     expect(skillAutoUpdateEnabled(origin('fractalmandala/palimpsest-skills'))).toBe(false);
-    expect(skillAutoUpdateEnabled(origin('https://github.com/fractalmandala/palimpsest-skills'))).toBe(
-      false,
-    );
-    expect(skillAutoUpdateEnabled(origin('git@github.com:fractalmandala/palimpsest-skills.git'))).toBe(
-      false,
-    );
+    expect(
+      skillAutoUpdateEnabled(origin('https://github.com/fractalmandala/palimpsest-skills')),
+    ).toBe(false);
+    expect(
+      skillAutoUpdateEnabled(origin('git@github.com:fractalmandala/palimpsest-skills.git')),
+    ).toBe(false);
     expect(skillAutoUpdateEnabled(origin('fractalmandala/palimpsest-skills', true))).toBe(true);
   });
 

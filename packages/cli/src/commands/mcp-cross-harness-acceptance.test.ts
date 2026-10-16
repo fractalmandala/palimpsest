@@ -167,8 +167,8 @@ describe('cross-harness FR1 acceptance matrix', () => {
       const afterData = parseFor(c.id, after);
       const key = EDITOR_TARGETS[c.id].topLevelKey;
       const container = afterData[key] as Record<string, unknown>;
-      expect(container['palimpsest']).toEqual(c.expectedEntry);
-      delete container['palimpsest'];
+      expect(container.palimpsest).toEqual(c.expectedEntry);
+      delete container.palimpsest;
       expect(afterData).toEqual(beforeData);
 
       expect(readdirSync(dir).some((n) => n.includes('.broken-'))).toBe(false);
@@ -191,7 +191,7 @@ describe('cross-harness FR1 acceptance matrix', () => {
 
     const parsed = parseFor('codex', after);
     expect(parsed.mcp_servers.other).toEqual({ command: 'node' });
-    expect(parsed.mcp_servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(parsed.mcp_servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 
   it('claude: preserves a leading BOM on a JSON harness', () => {
@@ -205,9 +205,9 @@ describe('cross-harness FR1 acceptance matrix', () => {
     const after = readFileSync(configPath, 'utf-8');
     expect(after.charCodeAt(0)).toBe(0xfeff);
     expect(after).toContain('// keep me');
-    expect(
-      (parseFor('claude', after).mcpServers as Record<string, unknown>)['palimpsest'],
-    ).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect((parseFor('claude', after).mcpServers as Record<string, unknown>).palimpsest).toEqual(
+      PUBLISHED_CHAIN_ENTRY,
+    );
   });
 });
 
@@ -253,7 +253,7 @@ describe('surgical-text-splice counterfactual guard', () => {
     if (engine.backend !== 'native') throw new Error('native addon required');
     const parsed = engine.parseToObject(after) as { mcp_servers: Record<string, unknown> };
     expect(after).not.toContain('STALE');
-    expect(parsed.mcp_servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(parsed.mcp_servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
     expect(parsed.mcp_servers.linear).toEqual({ command: 'linear-cmd' });
   });
 
@@ -281,7 +281,7 @@ describe('surgical-text-splice counterfactual guard', () => {
     expect(parsed.profile).toEqual({ name: 'default' });
     expect(parsed.mcp_servers.linear).toEqual({ command: 'linear-cmd', args: ['--stdio'] });
     expect(parsed.mcp_servers.github).toEqual({ command: 'gh-cmd' });
-    expect(parsed.mcp_servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(parsed.mcp_servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 });
 

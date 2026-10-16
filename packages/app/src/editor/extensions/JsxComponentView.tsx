@@ -4,6 +4,7 @@
  * NodeViewContent is always rendered rather than hidden (precedent #30).
  */
 
+import { Trans, useLingui } from '@lingui/react/macro';
 import { commentLeafText } from '@palimpsest/core/comments/leaf-text';
 import {
   incrementJsxActionAborted,
@@ -17,7 +18,6 @@ import {
   incrementJsxStuckDeleteFailed,
   type JsxNodeAction,
 } from '@palimpsest/core/metrics/parse-health';
-import { Trans, useLingui } from '@lingui/react/macro';
 import type { NodeViewProps } from '@tiptap/core';
 import { NodeViewContent, NodeViewWrapper } from '@tiptap/react';
 import {

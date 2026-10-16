@@ -167,11 +167,15 @@ describe('groupReimportNamesBySource', () => {
   it('reports names with no recorded upstream instead of fetching for them', () => {
     const grouped = groupReimportNamesBySource(['one', 'authored-here'], entryFor);
     expect(grouped.unrecorded).toEqual(['authored-here']);
-    expect(grouped.bySource).toEqual([{ source: 'fractalmandala/palimpsest-skills', names: ['one'] }]);
+    expect(grouped.bySource).toEqual([
+      { source: 'fractalmandala/palimpsest-skills', names: ['one'] },
+    ]);
   });
 
   it('de-duplicates a repeated name', () => {
     const grouped = groupReimportNamesBySource(['one', 'one'], entryFor);
-    expect(grouped.bySource).toEqual([{ source: 'fractalmandala/palimpsest-skills', names: ['one'] }]);
+    expect(grouped.bySource).toEqual([
+      { source: 'fractalmandala/palimpsest-skills', names: ['one'] },
+    ]);
   });
 });

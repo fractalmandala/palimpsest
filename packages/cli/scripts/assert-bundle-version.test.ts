@@ -30,10 +30,7 @@ function scratch(): string {
 
 function cliPackage(version: string, chunks: Record<string, string>): string {
   const dir = scratch();
-  writeFileSync(
-    join(dir, 'package.json'),
-    JSON.stringify({ name: '@palimpsest/cli', version }),
-  );
+  writeFileSync(join(dir, 'package.json'), JSON.stringify({ name: '@palimpsest/cli', version }));
   mkdirSync(join(dir, BUNDLE_DIR), { recursive: true });
   for (const [path, source] of Object.entries(chunks)) {
     const file = join(dir, BUNDLE_DIR, path);

@@ -50,15 +50,8 @@ import type {
   PsServerVersionDriftInfo,
   PsShareReceivedPayload,
   PsThemeSource,
-  PsUpdateDownloadedInfo,
-  PsUpdateFetchingLatestInfo,
-  PsUpdateManualCheckInfo,
-  PsUpdateRelaunchFailedInfo,
-  PsUpdateRelaunchingInfo,
-  PsUpdateStuckHintInfo,
   PsUserConfigPatchResult,
   PsUserConfigSnapshot,
-  PsWhatsNewInfo,
 } from '../shared/bridge-contract.ts';
 import {
   DISPLAY_LOCK_CRASH_KEY,
@@ -68,8 +61,6 @@ import type {
   AgentIntegrationsApplyResult,
   IntegrationsSetResult,
   IntegrationsStatus,
-  PsUpdateDispatchRequest,
-  PsUpdateDispatchResult,
   ProjectIntegrationsSetResult,
   ProjectIntegrationsStatus,
 } from '../shared/ipc-channels.ts';
@@ -87,20 +78,12 @@ import {
   resolvePsDesktopMode,
   resolvePsThemePreference,
   THEME_PREFERENCE_ARG_NAME,
-} from '../shared/ok-desktop-argv.ts';
+} from '../shared/ps-desktop-argv.ts';
 import { isUninstallPreload } from '../shared/uninstall-preload-arg.ts';
 import { createSlidesBridge } from './slides-bridge.ts';
 import { createUninstallBridge } from './uninstall.ts';
 
 const invoke = createInvoker(ipcRenderer);
-
-async function dispatchUpdate(request: PsUpdateDispatchRequest): Promise<PsUpdateDispatchResult> {
-  const result = await invoke('ps:update:dispatch', request);
-  if (result.kind !== request.kind) {
-    throw new Error(`ps:update:dispatch: expected ${request.kind}, got ${result.kind}`);
-  }
-  return result;
-}
 
 function isDockStateIpcTeardown(error: unknown): boolean {
   if (!(error instanceof Error)) return false;
@@ -145,7 +128,7 @@ function createIpcEventStream<E extends { type: string }>(
     }
   };
 
-  // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
+  // oxlint-disable-next-line ps/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
   ipcRenderer.on(eventChannel, listener);
   listenerAttached = true;
 
@@ -266,7 +249,7 @@ function readConfigFromArgv(): PsDesktopConfig {
  * reads the live binding rather than as a field on the frozen config.
  */
 let screenReaderActive = parseArg('screen-reader-active') === '1';
-// oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
+// oxlint-disable-next-line ps/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
 ipcRenderer.on('ps:accessibility:changed', (_event, info: { screenReaderActive: boolean }) => {
   screenReaderActive = info.screenReaderActive === true;
 });
@@ -331,7 +314,7 @@ function deliverMenuAction(dispatch: PsMenuActionDispatch): void {
 
 const bufferedMenuActions: PsMenuActionDispatch[] = [];
 
-// oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
+// oxlint-disable-next-line ps/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
 ipcRenderer.on('ps:menu-action', (_event, dispatch: PsMenuActionDispatch) => {
   if (menuActionListeners.size > 0) {
     deliverMenuAction(dispatch);
@@ -359,7 +342,7 @@ const bridge: PsDesktopBridge = {
      * function registered, so the wrapper — not `cb` — is what both calls use.
      */
     const listener = (_event: IpcRendererEvent, next: PsDesktopConfig) => cb(next);
-    // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
+    // oxlint-disable-next-line ps/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
     ipcRenderer.on('ps:project:switched', listener);
     return () => ipcRenderer.removeListener('ps:project:switched', listener);
   },
@@ -382,93 +365,53 @@ const bridge: PsDesktopBridge = {
     };
   },
 
-  onUpdateDownloaded(cb: (info: PsUpdateDownloadedInfo) => void) {
-    const listener = (_event: IpcRendererEvent, info: PsUpdateDownloadedInfo) => cb(info);
-    // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-    ipcRenderer.on('ps:update:downloaded', listener);
-    return () => ipcRenderer.removeListener('ps:update:downloaded', listener);
-  },
 
-  onUpdateRelaunching(cb: (info: PsUpdateRelaunchingInfo) => void) {
-    const listener = (_event: IpcRendererEvent, info: PsUpdateRelaunchingInfo) => cb(info);
-    // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-    ipcRenderer.on('ps:update:relaunching', listener);
-    return () => ipcRenderer.removeListener('ps:update:relaunching', listener);
-  },
 
-  onUpdateFetchingLatest(cb: (info: PsUpdateFetchingLatestInfo) => void) {
-    const listener = (_event: IpcRendererEvent, info: PsUpdateFetchingLatestInfo) => cb(info);
-    // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-    ipcRenderer.on('ps:update:fetching-latest', listener);
-    return () => ipcRenderer.removeListener('ps:update:fetching-latest', listener);
-  },
 
-  onUpdateRelaunchFailed(cb: (info: PsUpdateRelaunchFailedInfo) => void) {
-    const listener = (_event: IpcRendererEvent, info: PsUpdateRelaunchFailedInfo) => cb(info);
-    // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-    ipcRenderer.on('ps:update:relaunch-failed', listener);
-    return () => ipcRenderer.removeListener('ps:update:relaunch-failed', listener);
-  },
 
-  onWhatsNew(cb: (info: PsWhatsNewInfo) => void) {
-    const listener = (_event: IpcRendererEvent, info: PsWhatsNewInfo) => cb(info);
-    // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-    ipcRenderer.on('ps:update:whats-new', listener);
-    return () => ipcRenderer.removeListener('ps:update:whats-new', listener);
-  },
 
-  onWhatsNewDismissed(cb: (info: { version: string }) => void) {
-    const listener = (_event: IpcRendererEvent, info: { version: string }) => cb(info);
-    // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-    ipcRenderer.on('ps:update:whats-new-dismissed', listener);
-    return () => ipcRenderer.removeListener('ps:update:whats-new-dismissed', listener);
-  },
 
-  onUpdateStuckHint(cb: (info: PsUpdateStuckHintInfo) => void) {
-    const listener = (_event: IpcRendererEvent, info: PsUpdateStuckHintInfo) => cb(info);
-    // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-    ipcRenderer.on('ps:update:stuck-hint', listener);
-    return () => ipcRenderer.removeListener('ps:update:stuck-hint', listener);
-  },
 
-  onUpdateManualCheck(cb: (info: PsUpdateManualCheckInfo) => void) {
-    const listener = (_event: IpcRendererEvent, info: PsUpdateManualCheckInfo) => cb(info);
-    // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
-    ipcRenderer.on('ps:update:manual-check', listener);
-    return () => ipcRenderer.removeListener('ps:update:manual-check', listener);
-  },
+
+
+
+
+
+
+
+
 
   onDeepLink(cb: (evt: PsDeepLinkPayload) => void) {
     const listener = (_event: IpcRendererEvent, evt: PsDeepLinkPayload) => cb(evt);
-    // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
+    // oxlint-disable-next-line ps/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
     ipcRenderer.on('ps:deep-link', listener);
     return () => ipcRenderer.removeListener('ps:deep-link', listener);
   },
 
   onShareReceived(cb: (payload: PsShareReceivedPayload) => void) {
     const listener = (_event: IpcRendererEvent, payload: PsShareReceivedPayload) => cb(payload);
-    // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
+    // oxlint-disable-next-line ps/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
     ipcRenderer.on('ps:share:received', listener);
     return () => ipcRenderer.removeListener('ps:share:received', listener);
   },
 
   onServerVersionDrift(cb: (info: PsServerVersionDriftInfo) => void) {
     const listener = (_event: IpcRendererEvent, info: PsServerVersionDriftInfo) => cb(info);
-    // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
+    // oxlint-disable-next-line ps/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
     ipcRenderer.on('ps:server-version-drift', listener);
     return () => ipcRenderer.removeListener('ps:server-version-drift', listener);
   },
 
   onServerRestarted(cb: (info: PsServerRestartedInfo) => void) {
     const listener = (_event: IpcRendererEvent, info: PsServerRestartedInfo) => cb(info);
-    // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
+    // oxlint-disable-next-line ps/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
     ipcRenderer.on('ps:server-restarted', listener);
     return () => ipcRenderer.removeListener('ps:server-restarted', listener);
   },
 
   onRecentRemovedMissing(cb: (info: PsRecentRemovedMissingInfo) => void) {
     const listener = (_event: IpcRendererEvent, info: PsRecentRemovedMissingInfo) => cb(info);
-    // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
+    // oxlint-disable-next-line ps/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
     ipcRenderer.on('ps:project:recent-removed-missing', listener);
     return () => ipcRenderer.removeListener('ps:project:recent-removed-missing', listener);
   },
@@ -492,7 +435,7 @@ const bridge: PsDesktopBridge = {
       }) as Promise<PsUserConfigPatchResult>,
     onChanged(cb: (snapshot: PsUserConfigSnapshot) => void) {
       const listener = (_event: IpcRendererEvent, snapshot: PsUserConfigSnapshot) => cb(snapshot);
-      // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
+      // oxlint-disable-next-line ps/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
       ipcRenderer.on('ps:user-config:changed', listener);
       invoke('ps:user-config:dispatch', { kind: 'subscribe' }).catch((err: unknown) => {
         console.warn(
@@ -649,7 +592,7 @@ const bridge: PsDesktopBridge = {
     onCrashDetected(cb: (event: PsBugReportCrashDetectedEvent) => void) {
       const listener = (_event: IpcRendererEvent, event: PsBugReportCrashDetectedEvent) =>
         cb(event);
-      // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
+      // oxlint-disable-next-line ps/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
       ipcRenderer.on('ps:bug-report:crash-detected', listener);
       return () => ipcRenderer.removeListener('ps:bug-report:crash-detected', listener);
     },
@@ -692,7 +635,7 @@ const bridge: PsDesktopBridge = {
       }) as Promise<PsNoteWindowMainActionResult>,
     onMainAction(cb: (action: PsNoteWindowMainAction) => void) {
       const listener = (_event: IpcRendererEvent, action: PsNoteWindowMainAction) => cb(action);
-      // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
+      // oxlint-disable-next-line ps/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
       ipcRenderer.on('ps:note-window:main-action', listener);
       return () => ipcRenderer.removeListener('ps:note-window:main-action', listener);
     },
@@ -709,27 +652,6 @@ const bridge: PsDesktopBridge = {
     buildAndOpen: (opts) => invoke('ps:skill:build-and-open', opts),
   },
 
-  update: {
-    relaunchNow: async () => {
-      await dispatchUpdate({ kind: 'relaunch-now' });
-    },
-    checkNow: async () => {
-      await dispatchUpdate({ kind: 'check-now' });
-    },
-    dismissWhatsNew: async (version: string) => {
-      await dispatchUpdate({ kind: 'whats-new-dismiss', version });
-    },
-    dismissDownloaded: async (version: string) => {
-      await dispatchUpdate({ kind: 'downloaded-dismiss', version });
-    },
-    setMode: async (mode) => {
-      const result = await dispatchUpdate({ kind: 'set-mode', mode });
-      if (result.kind === 'set-mode' && !result.ok) {
-        throw new Error(`ps:update:dispatch: set-mode refused (${result.reason})`);
-      }
-    },
-  },
-
   state: {
     query: () => invoke('ps:state:query'),
     resetIncompatible: () => invoke('ps:state:reset-incompatible'),
@@ -738,7 +660,7 @@ const bridge: PsDesktopBridge = {
   mcpWiring: {
     onShow(cb: (payload: PsMcpWiringShowPayload) => void) {
       const listener = (_event: IpcRendererEvent, payload: PsMcpWiringShowPayload) => cb(payload);
-      // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
+      // oxlint-disable-next-line ps/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
       ipcRenderer.on('ps:mcp-wiring:show', listener);
       return () => ipcRenderer.removeListener('ps:mcp-wiring:show', listener);
     },
@@ -814,7 +736,7 @@ const bridge: PsDesktopBridge = {
   onboarding: {
     onShow(cb: (payload: PsOnboardingShowPayload) => void) {
       const listener = (_event: IpcRendererEvent, payload: PsOnboardingShowPayload) => cb(payload);
-      // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
+      // oxlint-disable-next-line ps/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
       ipcRenderer.on('ps:onboarding:show', listener);
       return () => ipcRenderer.removeListener('ps:onboarding:show', listener);
     },
@@ -826,7 +748,7 @@ const bridge: PsDesktopBridge = {
     probeContent: (request) => invoke('ps:onboarding:probe-content', request),
     onToast(cb: (payload: PsOnboardingToastPayload) => void) {
       const listener = (_event: IpcRendererEvent, payload: PsOnboardingToastPayload) => cb(payload);
-      // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
+      // oxlint-disable-next-line ps/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
       ipcRenderer.on('ps:onboarding:toast', listener);
       return () => ipcRenderer.removeListener('ps:onboarding:toast', listener);
     },
@@ -873,13 +795,13 @@ const bridge: PsDesktopBridge = {
   sidebar: {
     expandAll(cb: () => void) {
       const listener = (_event: IpcRendererEvent) => cb();
-      // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
+      // oxlint-disable-next-line ps/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
       ipcRenderer.on('ps:sidebar:expand-all', listener);
       return () => ipcRenderer.removeListener('ps:sidebar:expand-all', listener);
     },
     collapseAll(cb: () => void) {
       const listener = (_event: IpcRendererEvent) => cb();
-      // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
+      // oxlint-disable-next-line ps/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
       ipcRenderer.on('ps:sidebar:collapse-all', listener);
       return () => ipcRenderer.removeListener('ps:sidebar:collapse-all', listener);
     },
@@ -933,19 +855,19 @@ const bridge: PsDesktopBridge = {
     },
     onData(cb) {
       const listener = (_event: IpcRendererEvent, msg: PsPtyData) => cb(msg);
-      // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
+      // oxlint-disable-next-line ps/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
       ipcRenderer.on('ps:pty:data', listener);
       return () => ipcRenderer.removeListener('ps:pty:data', listener);
     },
     onExit(cb) {
       const listener = (_event: IpcRendererEvent, msg: PsPtyExit) => cb(msg);
-      // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
+      // oxlint-disable-next-line ps/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
       ipcRenderer.on('ps:pty:exit', listener);
       return () => ipcRenderer.removeListener('ps:pty:exit', listener);
     },
     onNotice(cb) {
       const listener = (_event: IpcRendererEvent, msg: PsPtyNotice) => cb(msg);
-      // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
+      // oxlint-disable-next-line ps/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
       ipcRenderer.on('ps:pty:notice', listener);
       return () => ipcRenderer.removeListener('ps:pty:notice', listener);
     },
@@ -959,7 +881,7 @@ const bridge: PsDesktopBridge = {
     onScreenReaderChanged(cb) {
       const listener = (_event: IpcRendererEvent, info: { screenReaderActive: boolean }) =>
         cb(info.screenReaderActive === true);
-      // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
+      // oxlint-disable-next-line ps/no-loosely-typed-webcontents-ipc -- preload-side subscription wrapper (precedent #14)
       ipcRenderer.on('ps:accessibility:changed', listener);
       return () => ipcRenderer.removeListener('ps:accessibility:changed', listener);
     },

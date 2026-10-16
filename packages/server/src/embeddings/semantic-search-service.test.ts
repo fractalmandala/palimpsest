@@ -1,10 +1,7 @@
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import {
-  createWorkspaceSearchDocument,
-  type WorkspaceSearchDocument,
-} from '@palimpsest/core';
+import { createWorkspaceSearchDocument, type WorkspaceSearchDocument } from '@palimpsest/core';
 import { describe, expect, test, vi } from 'vitest';
 import { getLogger } from '../logger.ts';
 import { CHUNK_CONFIG_ID } from './chunking.ts';

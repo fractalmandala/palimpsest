@@ -1,5 +1,5 @@
-import type { TerminalPlacement } from '@palimpsest/core/terminal-layout';
 import { useLingui } from '@lingui/react/macro';
+import type { TerminalPlacement } from '@palimpsest/core/terminal-layout';
 import { useTheme } from 'next-themes';
 import {
   type ReactNode,

@@ -11,8 +11,8 @@ import {
   formatCheckpointBodyLine,
   formatCheckpointSubject,
   formatImportSubject,
-  formatPsActor,
   formatParkSubject,
+  formatPsActor,
   formatReconcileSubject,
   formatRenameSubject,
   formatRollbackSubject,
@@ -55,7 +55,7 @@ describe('parseContributors', () => {
   });
 
   test('parses a single valid contributor line', () => {
-    const body = '\nok-contributors: {"id":"agent-abc","name":"Claude","docs":["articles/foo"]}';
+    const body = '\nps-contributors: {"id":"agent-abc","name":"Claude","docs":["articles/foo"]}';
     const result = parseContributors(body);
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({ id: 'agent-abc', name: 'Claude', docs: ['articles/foo'] });
@@ -75,7 +75,7 @@ describe('parseContributors', () => {
   });
 
   test('parses versioned format (v:1)', () => {
-    const body = '\nok-contributors: {"v":1,"id":"agent-x","name":"X","docs":["d"]}';
+    const body = '\nps-contributors: {"v":1,"id":"agent-x","name":"X","docs":["d"]}';
     const result = parseContributors(body);
     expect(result).toHaveLength(1);
     expect(result[0].v).toBe(1);
@@ -83,59 +83,59 @@ describe('parseContributors', () => {
 
   test('parses colorSeed field when present', () => {
     const body =
-      '\nok-contributors: {"id":"agent-a","name":"A","colorSeed":"my-seed","docs":["x"]}';
+      '\nps-contributors: {"id":"agent-a","name":"A","colorSeed":"my-seed","docs":["x"]}';
     const result = parseContributors(body);
     expect(result).toHaveLength(1);
     expect(result[0]?.colorSeed).toBe('my-seed');
   });
 
   test('silently skips malformed JSON', () => {
-    const body = '\nok-contributors: {not valid json}';
+    const body = '\nps-contributors: {not valid json}';
     expect(parseContributors(body)).toEqual([]);
   });
 
   test('skips entry missing id field', () => {
-    const body = '\nok-contributors: {"name":"Claude","docs":["x"]}';
+    const body = '\nps-contributors: {"name":"Claude","docs":["x"]}';
     expect(parseContributors(body)).toEqual([]);
   });
 
   test('skips entry missing name field', () => {
-    const body = '\nok-contributors: {"id":"agent-a","docs":["x"]}';
+    const body = '\nps-contributors: {"id":"agent-a","docs":["x"]}';
     expect(parseContributors(body)).toEqual([]);
   });
 
   test('skips entry missing docs field', () => {
-    const body = '\nok-contributors: {"id":"agent-a","name":"A"}';
+    const body = '\nps-contributors: {"id":"agent-a","name":"A"}';
     expect(parseContributors(body)).toEqual([]);
   });
 
   test('skips entry where docs is not an array (type guard)', () => {
-    const body = '\nok-contributors: {"id":"agent-a","name":"A","docs":"not-an-array"}';
+    const body = '\nps-contributors: {"id":"agent-a","name":"A","docs":"not-an-array"}';
     expect(parseContributors(body)).toEqual([]);
   });
 
   test('skips entry where id is not a string (type guard)', () => {
-    const body = '\nok-contributors: {"id":123,"name":"A","docs":["x"]}';
+    const body = '\nps-contributors: {"id":123,"name":"A","docs":["x"]}';
     expect(parseContributors(body)).toEqual([]);
   });
 
   test('skips entry where name is not a string (type guard)', () => {
-    const body = '\nok-contributors: {"id":"agent-a","name":null,"docs":["x"]}';
+    const body = '\nps-contributors: {"id":"agent-a","name":null,"docs":["x"]}';
     expect(parseContributors(body)).toEqual([]);
   });
 
   test('skips entry where colorSeed is not a string', () => {
-    const body = '\nok-contributors: {"id":"agent-a","name":"A","colorSeed":123,"docs":["x"]}';
+    const body = '\nps-contributors: {"id":"agent-a","name":"A","colorSeed":123,"docs":["x"]}';
     expect(parseContributors(body)).toEqual([]);
   });
 
   test('skips entry where docs contains non-string elements', () => {
-    const body = '\nok-contributors: {"id":"agent-a","name":"A","docs":["a",1,"b"]}';
+    const body = '\nps-contributors: {"id":"agent-a","name":"A","docs":["a",1,"b"]}';
     expect(parseContributors(body)).toEqual([]);
   });
 
   test('legacy commit (no summaries field) parses with summaries undefined', () => {
-    const body = '\nok-contributors: {"id":"agent-a","name":"Claude","docs":["foo.md"]}';
+    const body = '\nps-contributors: {"id":"agent-a","name":"Claude","docs":["foo.md"]}';
     const result = parseContributors(body);
     expect(result).toHaveLength(1);
     expect(result[0]?.summaries).toBeUndefined();
@@ -143,7 +143,7 @@ describe('parseContributors', () => {
 
   test('parses summaries when present as empty array', () => {
     const body =
-      '\nok-contributors: {"id":"agent-a","name":"Claude","docs":["foo.md"],"summaries":[]}';
+      '\nps-contributors: {"id":"agent-a","name":"Claude","docs":["foo.md"],"summaries":[]}';
     const result = parseContributors(body);
     expect(result).toHaveLength(1);
     expect(result[0]?.summaries).toEqual([]);
@@ -151,7 +151,7 @@ describe('parseContributors', () => {
 
   test('parses summaries when present as populated array', () => {
     const body =
-      '\nok-contributors: {"id":"agent-a","name":"Claude","docs":["foo.md"],"summaries":["Fixed typo","Added example"]}';
+      '\nps-contributors: {"id":"agent-a","name":"Claude","docs":["foo.md"],"summaries":["Fixed typo","Added example"]}';
     const result = parseContributors(body);
     expect(result).toHaveLength(1);
     expect(result[0]?.summaries).toEqual(['Fixed typo', 'Added example']);
@@ -159,7 +159,7 @@ describe('parseContributors', () => {
 
   test('D27 divergence: summaries not an array → drop field, contributor still parses', () => {
     const body =
-      '\nok-contributors: {"id":"agent-a","name":"Claude","docs":["foo.md"],"summaries":"not-an-array"}';
+      '\nps-contributors: {"id":"agent-a","name":"Claude","docs":["foo.md"],"summaries":"not-an-array"}';
     const result = parseContributors(body);
     expect(result).toHaveLength(1);
     expect(result[0]?.id).toBe('agent-a');
@@ -170,7 +170,7 @@ describe('parseContributors', () => {
 
   test('D27 divergence: summaries contains non-string element → drop field, contributor still parses', () => {
     const body =
-      '\nok-contributors: {"id":"agent-a","name":"Claude","docs":["foo.md"],"summaries":["ok",42,"also-ok"]}';
+      '\nps-contributors: {"id":"agent-a","name":"Claude","docs":["foo.md"],"summaries":["ok",42,"also-ok"]}';
     const result = parseContributors(body);
     expect(result).toHaveLength(1);
     expect(result[0]?.id).toBe('agent-a');
@@ -204,9 +204,15 @@ describe('parseWriterId (D34 taxonomy)', () => {
     expect(p.isAgent).toBe(null);
   });
 
-  test('"openknowledge-service" → classified-openknowledge-service, isAgent null', () => {
+  test('"palimpsest-service" → classified-palimpsest-service, isAgent null', () => {
+    const p = parseWriterId('palimpsest-service');
+    expect(p.classification).toBe('classified-palimpsest-service');
+    expect(p.isAgent).toBe(null);
+  });
+
+  test('legacy "openknowledge-service" still reads as classified-palimpsest-service', () => {
     const p = parseWriterId('openknowledge-service');
-    expect(p.classification).toBe('classified-openknowledge-service');
+    expect(p.classification).toBe('classified-palimpsest-service');
     expect(p.isAgent).toBe(null);
   });
 
@@ -216,9 +222,9 @@ describe('parseWriterId (D34 taxonomy)', () => {
     expect(p.isAgent).toBe(null);
   });
 
-  test('"ps-generator" → classified-ok-generator, isAgent null', () => {
+  test('"ps-generator" → classified-ps-generator, isAgent null', () => {
     const p = parseWriterId(PS_GENERATOR_WRITER_ID);
-    expect(p.classification).toBe('classified-ok-generator');
+    expect(p.classification).toBe('classified-ps-generator');
     expect(p.isAgent).toBe(null);
   });
 
@@ -247,7 +253,7 @@ describe('parseWriterId (D34 taxonomy)', () => {
     expect(p.isAgent).toBe(null);
   });
 
-  test('legacy "server" → unknown (D34: replaced by openknowledge-service)', () => {
+  test('legacy "server" → unknown (D34: replaced by palimpsest-service)', () => {
     const p = parseWriterId('server');
     expect(p.classification).toBe('unknown');
     expect(p.isAgent).toBe(null);
@@ -335,10 +341,10 @@ describe('resolveGitDir', () => {
 });
 
 describe('resolveShadowDir', () => {
-  test('main worktree: returns <projectRoot>/.git/ok bit-identical to legacy', () => {
+  test('main worktree: returns <projectRoot>/.git/ps', () => {
     const project = resolve(tmp, 'project');
     mkdirSync(resolve(project, '.git'), { recursive: true });
-    expect(resolveShadowDir(project)).toBe(resolve(project, '.git/ok'));
+    expect(resolveShadowDir(project)).toBe(resolve(project, '.git/ps'));
   });
 
   test('linked worktree: appends ok to the resolved gitdir', () => {
@@ -471,10 +477,10 @@ describe('resolveShadowDir', () => {
     expect(e.message).toContain(`(${causeCode})`);
   });
 
-  test('falls through to legacy <projectRoot>/.git/ok when .git is truly absent', () => {
+  test('falls back to <projectRoot>/.git/ps when .git is truly absent', () => {
     const project = resolve(tmp, 'no-git');
     mkdirSync(project, { recursive: true });
-    expect(resolveShadowDir(project)).toBe(resolve(project, '.git/ok'));
+    expect(resolveShadowDir(project)).toBe(resolve(project, '.git/ps'));
   });
 
   test('does not throw on a healthy .git file pointing at an existing populated admin dir', () => {
@@ -487,15 +493,15 @@ describe('resolveShadowDir', () => {
     expect(() => resolveShadowDir(project)).not.toThrow();
   });
 
-  test('subfolder of repo with directory .git at ancestor: shadow lives under ancestor with ok-<slug>', () => {
+  test('subfolder of repo with directory .git at ancestor: shadow lives under ancestor with ps-<slug>', () => {
     const repo = resolve(tmp, 'repo');
     const sub = resolve(repo, 'docs');
     mkdirSync(resolve(repo, '.git'), { recursive: true });
     mkdirSync(sub, { recursive: true });
-    expect(resolveShadowDir(sub)).toBe(resolve(repo, '.git/ok-docs'));
+    expect(resolveShadowDir(sub)).toBe(resolve(repo, '.git/ps-docs'));
   });
 
-  test('subfolder of repo with pointer-file .git at ancestor: shadow lives under linked admin dir with ok-<slug>', () => {
+  test('subfolder of repo with pointer-file .git at ancestor: shadow lives under linked admin dir with ps-<slug>', () => {
     const repo = resolve(tmp, 'wt-repo');
     const sub = resolve(repo, 'docs');
     const adminDir = resolve(tmp, 'real-git/worktrees/wt-repo');
@@ -512,7 +518,7 @@ describe('resolveShadowDir', () => {
     const sub = resolve(repo, 'docs');
     mkdirSync(resolve(repo, '.git'), { recursive: true });
     mkdirSync(resolve(sub, '.git'), { recursive: true });
-    expect(resolveShadowDir(sub)).toBe(resolve(sub, '.git/ok'));
+    expect(resolveShadowDir(sub)).toBe(resolve(sub, '.git/ps'));
   });
 
   test('deeply nested subfolder: slug derives from path from ancestor down', () => {
@@ -520,7 +526,7 @@ describe('resolveShadowDir', () => {
     const sub = resolve(repo, 'packages/app');
     mkdirSync(resolve(repo, '.git'), { recursive: true });
     mkdirSync(sub, { recursive: true });
-    expect(resolveShadowDir(sub)).toBe(resolve(repo, '.git/ok-packages-app'));
+    expect(resolveShadowDir(sub)).toBe(resolve(repo, '.git/ps-packages-app'));
   });
 
   test('two subfolders of the same repo get distinct shadow dirs (no ref collision)', () => {
@@ -531,8 +537,8 @@ describe('resolveShadowDir', () => {
     mkdirSync(subA, { recursive: true });
     mkdirSync(subB, { recursive: true });
     expect(resolveShadowDir(subA)).not.toBe(resolveShadowDir(subB));
-    expect(resolveShadowDir(subA)).toBe(resolve(repo, '.git/ok-sub-a'));
-    expect(resolveShadowDir(subB)).toBe(resolve(repo, '.git/ok-sub-b'));
+    expect(resolveShadowDir(subA)).toBe(resolve(repo, '.git/ps-sub-a'));
+    expect(resolveShadowDir(subB)).toBe(resolve(repo, '.git/ps-sub-b'));
   });
 
   test('long sub-paths trigger slug truncation and two paths with same long prefix get distinct shadows', () => {
@@ -546,10 +552,10 @@ describe('resolveShadowDir', () => {
     const shadowA = resolveShadowDir(subA);
     const shadowB = resolveShadowDir(subB);
     expect(shadowA).not.toBe(shadowB);
-    expect(shadowA.startsWith(resolve(repo, '.git/ok-'))).toBe(true);
-    expect(shadowB.startsWith(resolve(repo, '.git/ok-'))).toBe(true);
-    const slugA = shadowA.slice(resolve(repo, '.git/ok-').length);
-    const slugB = shadowB.slice(resolve(repo, '.git/ok-').length);
+    expect(shadowA.startsWith(resolve(repo, '.git/ps-'))).toBe(true);
+    expect(shadowB.startsWith(resolve(repo, '.git/ps-'))).toBe(true);
+    const slugA = shadowA.slice(resolve(repo, '.git/ps-').length);
+    const slugB = shadowB.slice(resolve(repo, '.git/ps-').length);
     expect(slugA.length).toBeLessThanOrEqual(64);
     expect(slugB.length).toBeLessThanOrEqual(64);
   });
@@ -557,13 +563,13 @@ describe('resolveShadowDir', () => {
   test('walk-up still legacy-fallthroughs when no ancestor .git is found within bound', () => {
     const project = resolve(tmp, 'orphan/deep/nest');
     mkdirSync(project, { recursive: true });
-    expect(resolveShadowDir(project)).toBe(resolve(project, '.git/ok'));
+    expect(resolveShadowDir(project)).toBe(resolve(project, '.git/ps'));
   });
 });
 describe('resolveShadowDir sub-path keys are injective', () => {
   function legacyShadowName(rel: string): string {
     const flat = rel.split('/').join('-');
-    return `ok-${flat.replace(/[^A-Za-z0-9._-]/g, '_').replace(/^\.+/, '_')}`;
+    return `ps-${flat.replace(/[^A-Za-z0-9._-]/g, '_').replace(/^\.+/, '_')}`;
   }
 
   function fakeShadow(dir: string, worktree: string): void {
@@ -589,7 +595,7 @@ describe('resolveShadowDir sub-path keys are injective', () => {
     expect(a).not.toBe(b);
     for (const dir of [a, b]) {
       expect(dirname(dir)).toBe(resolve(repo, '.git'));
-      expect(basename(dir)).toMatch(/^ok-[A-Za-z0-9._-]{1,64}$/);
+      expect(basename(dir)).toMatch(/^ps-[A-Za-z0-9._-]{1,64}$/);
     }
   });
 
@@ -604,10 +610,10 @@ describe('resolveShadowDir sub-path keys are injective', () => {
   test('ASCII-safe sub-paths keep the exact key they had before', () => {
     const repo = makeRepo('my-notes_v2.0', 'public/palimpsest');
     expect(resolveShadowDir(resolve(repo, 'my-notes_v2.0'))).toBe(
-      resolve(repo, '.git/ok-my-notes_v2.0'),
+      resolve(repo, '.git/ps-my-notes_v2.0'),
     );
     expect(resolveShadowDir(resolve(repo, 'public/palimpsest'))).toBe(
-      resolve(repo, '.git/ok-public-palimpsest'),
+      resolve(repo, '.git/ps-public-palimpsest'),
     );
   });
 
@@ -658,17 +664,17 @@ describe('resolveShadowDir sub-path keys are injective', () => {
 
   test('a separator and a hyphen no longer share a dir once the hyphenated one owns it', () => {
     const repo = makeRepo('a-b', 'a/b');
-    const shared = resolve(repo, '.git/ok-a-b');
+    const shared = resolve(repo, '.git/ps-a-b');
     fakeShadow(shared, resolve(repo, 'a-b'));
     expect(resolveShadowDir(resolve(repo, 'a-b'))).toBe(shared);
     const nested = resolveShadowDir(resolve(repo, 'a/b'));
     expect(nested).not.toBe(shared);
-    expect(basename(nested)).toMatch(/^ok-[A-Za-z0-9._-]{1,64}$/);
+    expect(basename(nested)).toMatch(/^ps-[A-Za-z0-9._-]{1,64}$/);
   });
 
   test('a project that moved off a foreign-owned dir keeps its own dir after the owner leaves', () => {
     const repo = makeRepo('a-b', 'a/b');
-    const shared = resolve(repo, '.git/ok-a-b');
+    const shared = resolve(repo, '.git/ps-a-b');
     fakeShadow(shared, resolve(repo, 'a-b'));
     const own = resolveShadowDir(resolve(repo, 'a/b'));
     fakeShadow(own, resolve(repo, 'a/b'));
@@ -689,11 +695,11 @@ describe('getShadowRepoPath', () => {
     expect(getShadowRepoPath(tmp)).toBe(null);
   });
 
-  test('always resolves to <projectRoot>/.git/ok/', () => {
+  test('always resolves to <projectRoot>/.git/ps/', () => {
     const project = resolve(tmp, 'project');
-    mkdirSync(resolve(project, '.git/ok'), { recursive: true });
-    writeFileSync(resolve(project, '.git/ok/HEAD'), 'ref: refs/heads/main\n');
-    expect(getShadowRepoPath(project)).toBe(resolve(project, '.git/ok'));
+    mkdirSync(resolve(project, '.git/ps'), { recursive: true });
+    writeFileSync(resolve(project, '.git/ps/HEAD'), 'ref: refs/heads/main\n');
+    expect(getShadowRepoPath(project)).toBe(resolve(project, '.git/ps'));
   });
 
   test('never returns legacy .git/palimpsest/ path (single-mode layout)', () => {
@@ -710,9 +716,9 @@ describe('getShadowRepoPath', () => {
     expect(getShadowRepoPath(project)).toBe(null);
   });
 
-  test('returns null when .git/ok exists but HEAD is missing', () => {
+  test('returns null when .git/ps exists but HEAD is missing', () => {
     const project = resolve(tmp, 'project');
-    mkdirSync(resolve(project, '.git/ok'), { recursive: true });
+    mkdirSync(resolve(project, '.git/ps'), { recursive: true });
     expect(getShadowRepoPath(project)).toBe(null);
   });
 
@@ -846,7 +852,7 @@ describe('parseCheckpoint / formatCheckpointBodyLine (bridge-correctness SPEC §
 
   test('producer-guard-loss with a non-string construct is rejected (unknown-shape fallback)', () => {
     const body =
-      'checkpoint: X\n\nok-checkpoint-v1: {"kind":"producer-guard-loss","metadata":{"construct":5}}';
+      'checkpoint: X\n\nps-checkpoint-v1: {"kind":"producer-guard-loss","metadata":{"construct":5}}';
     expect(parseCheckpoint(body)).toBe(null);
   });
 
@@ -871,18 +877,18 @@ describe('parseCheckpoint / formatCheckpointBodyLine (bridge-correctness SPEC §
   });
 
   test('returns null for malformed JSON', () => {
-    expect(parseCheckpoint('\nok-checkpoint-v1: {not json')).toBe(null);
+    expect(parseCheckpoint('\nps-checkpoint-v1: {not json')).toBe(null);
   });
 
   test('returns null for unknown kind', () => {
-    expect(parseCheckpoint('\nok-checkpoint-v1: {"kind":"something-else","metadata":{}}')).toBe(
+    expect(parseCheckpoint('\nps-checkpoint-v1: {"kind":"something-else","metadata":{}}')).toBe(
       null,
     );
   });
 
   test('returns null when metadata shape does not match kind', () => {
     expect(
-      parseCheckpoint('\nok-checkpoint-v1: {"kind":"bridge-merge-loss","metadata":{"other":"x"}}'),
+      parseCheckpoint('\nps-checkpoint-v1: {"kind":"bridge-merge-loss","metadata":{"other":"x"}}'),
     ).toBe(null);
   });
 
@@ -921,19 +927,19 @@ describe('parseCheckpoint / formatCheckpointBodyLine (bridge-correctness SPEC §
   test('auto-consolidation: malformed metadata returns null (foldedRefs/trigger required)', () => {
     expect(
       parseCheckpoint(
-        '\nok-checkpoint-v1: {"kind":"auto-consolidation","metadata":{"foldedRefs":3}}',
+        '\nps-checkpoint-v1: {"kind":"auto-consolidation","metadata":{"foldedRefs":3}}',
       ),
     ).toBe(null);
     expect(
       parseCheckpoint(
-        '\nok-checkpoint-v1: {"kind":"auto-consolidation","metadata":{"trigger":"boot"}}',
+        '\nps-checkpoint-v1: {"kind":"auto-consolidation","metadata":{"trigger":"boot"}}',
       ),
     ).toBe(null);
   });
 
   test('auto-consolidation: trigger parses as a bare string (forward-compat with new triggers)', () => {
     const parsed = parseCheckpoint(
-      '\nok-checkpoint-v1: {"kind":"auto-consolidation","metadata":{"foldedRefs":1,"trigger":"some-future-trigger"}}',
+      '\nps-checkpoint-v1: {"kind":"auto-consolidation","metadata":{"foldedRefs":1,"trigger":"some-future-trigger"}}',
     );
     expect(parsed?.kind).toBe('auto-consolidation');
     if (parsed?.kind === 'auto-consolidation') {
@@ -1119,8 +1125,15 @@ describe('PsActorEntry writer_id field + derivation back-compat', () => {
     expect(parsed?.writer_id).toBe('git-upstream');
   });
 
-  test('parsePsActor falls back to openknowledge-service for unknown classified display_name', () => {
+  test('parsePsActor falls back to palimpsest-service for unknown classified display_name', () => {
     const line = 'ps-actor: {"v":1,"display_name":"Palimpsest (service)","docs":[]}';
+    const parsed = parsePsActor(line);
+    expect(parsed?.writer_id).toBe('palimpsest-service');
+  });
+
+  test('parsePsActor reads a legacy openknowledge-service writer_id as-is', () => {
+    const line =
+      'ps-actor: {"v":1,"writer_id":"openknowledge-service","principal":null,"display_name":"Palimpsest (service)","docs":[]}';
     const parsed = parsePsActor(line);
     expect(parsed?.writer_id).toBe('openknowledge-service');
   });
@@ -1347,6 +1360,22 @@ describe('PsActorEntry previous_paths field (timeline rename-history mitigation)
     expect(actors).toHaveLength(2);
     expect(actors[0]?.previous_paths).toEqual([{ from: 'articles/x', to: 'essays/x' }]);
     expect(actors[1]?.previous_paths).toEqual([{ from: 'articles/y', to: 'essays/y' }]);
+  });
+
+  test('legacy ok- frontmatter prefixes still parse (upstream vaults stay readable)', () => {
+    expect(
+      parseContributors('\nok-contributors: {"id":"agent-a","name":"A","docs":["x"]}'),
+    ).toEqual([expect.objectContaining({ id: 'agent-a' })]);
+    expect(
+      parsePsActor(
+        '\nok-actor: {"v":1,"writer_id":"openknowledge-service","display_name":"Palimpsest (service)","docs":[]}',
+      )?.writer_id,
+    ).toBe('openknowledge-service');
+    expect(
+      parseCheckpoint(
+        '\nok-checkpoint-v1: {"kind":"bridge-merge-loss","metadata":{"lostSubstrings":["x"]}}',
+      )?.kind,
+    ).toBe('bridge-merge-loss');
   });
 
   test('byte-identity: format(parse(legacyBody)) === legacyBody for a corpus of pre-spec lines', () => {

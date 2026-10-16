@@ -21,9 +21,7 @@ describe('resolveInstanceLabel', () => {
   });
 
   test('unwraps the dev PS_INSTANCE sibling-dir form to the bare name', () => {
-    expect(resolveInstanceLabel('/Users/me/Library/Application Support/Palimpsest (a)')).toBe(
-      'a',
-    );
+    expect(resolveInstanceLabel('/Users/me/Library/Application Support/Palimpsest (a)')).toBe('a');
     expect(resolveInstanceLabel('/data/Palimpsest (feature-x)')).toBe('feature-x');
   });
 

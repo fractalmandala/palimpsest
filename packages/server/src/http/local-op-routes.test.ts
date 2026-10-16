@@ -17,7 +17,7 @@ import { createLocalOpRoutes, resumeSyncOnAuthEvent } from './local-op-routes.ts
 
 const LOCAL_OP_PATHS = [
   '/api/local-op/clone',
-  '/api/local-op/ok-init',
+  '/api/local-op/ps-init',
   '/api/local-op/auth/login',
   '/api/local-op/auth/status',
   '/api/local-op/auth/pat',

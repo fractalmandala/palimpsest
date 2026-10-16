@@ -86,9 +86,7 @@ function reqUrl(url: string, headers: Record<string, string> = {}): Request {
 
 describe('attribution', () => {
   test('captures utm_content from our own CTA links', () => {
-    const a = attribution(
-      reqUrl('https://example.com/download/stable?utm_content=landing-hero'),
-    );
+    const a = attribution(reqUrl('https://example.com/download/stable?utm_content=landing-hero'));
     expect(a.utm_content).toBe('landing-hero');
   });
 
@@ -127,18 +125,12 @@ describe('attribution', () => {
   });
 
   test('missing or unparseable referer: no referrer properties', () => {
-    expect(
-      attribution(reqUrl('https://example.com/download/stable')).referrer,
-    ).toBeUndefined();
-    const a = attribution(
-      reqUrl('https://example.com/download/stable', { referer: 'not a url' }),
-    );
+    expect(attribution(reqUrl('https://example.com/download/stable')).referrer).toBeUndefined();
+    const a = attribution(reqUrl('https://example.com/download/stable', { referer: 'not a url' }));
     expect(a.referrer).toBeUndefined();
     expect(a.referrer_path).toBeUndefined();
   });
 
-  // FORK: no first-party site host is configured (see isOwnSiteHostname), so
-  // every referrer is treated as external: hostname only, never a path.
   test('external referrer: hostname only, path suppressed even with a query string', () => {
     const a = attribution(
       reqUrl('https://example.com/download/stable', {

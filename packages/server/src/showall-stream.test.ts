@@ -547,7 +547,7 @@ describe('streamShowAllEntries — symlinked directories', () => {
 
 describe('streamShowAllEntries — showOk reveal', () => {
   function makePsFixture(): string {
-    const dir = realpathSync(makeTempDir('ps-showall-showok-'));
+    const dir = realpathSync(makeTempDir('ps-showall-showps-'));
     writeFileSync(join(dir, 'note.md'), '# note\n');
     mkdirSync(join(dir, '.ps', 'templates'), { recursive: true });
     writeFileSync(join(dir, '.ps', 'config.yml'), 'content:\n  dir: .\n');

@@ -82,7 +82,7 @@ describe('surgical JSON MCP write', () => {
       const parsed = parseConfig(after);
       const servers = parsed.mcpServers as Record<string, unknown>;
       expect(servers['existing-server']).toEqual({ command: 'node', args: ['./srv.js'] });
-      expect(servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+      expect(servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
       expect(parsed.otherTopKey).toBe(42);
     });
   }
@@ -111,13 +111,11 @@ describe('surgical JSON MCP write', () => {
     expect(result.action).toBe('written');
 
     const after = readFileSync(configPath, 'utf-8');
-    expect(indentOfKeyLine(after, 'palimpsest')).toBe(
-      indentOfKeyLine(after, 'existing-server'),
-    );
+    expect(indentOfKeyLine(after, 'palimpsest')).toBe(indentOfKeyLine(after, 'existing-server'));
     expect(indentOfKeyLine(after, 'palimpsest')).toBe('        ');
     const servers = parseConfig(after).mcpServers as Record<string, unknown>;
     expect(servers['existing-server']).toEqual({ command: 'node' });
-    expect(servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 
   it('matches a tab-indented config (does not force spaces on our entry)', () => {
@@ -131,13 +129,11 @@ describe('surgical JSON MCP write', () => {
     expect(result.action).toBe('written');
 
     const after = readFileSync(configPath, 'utf-8');
-    expect(indentOfKeyLine(after, 'palimpsest')).toBe(
-      indentOfKeyLine(after, 'existing-server'),
-    );
+    expect(indentOfKeyLine(after, 'palimpsest')).toBe(indentOfKeyLine(after, 'existing-server'));
     expect(indentOfKeyLine(after, 'palimpsest')).toBe('\t\t');
     expect(after).toContain('\t\t"existing-server"');
     const servers = parseConfig(after).mcpServers as Record<string, unknown>;
-    expect(servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 
   it.skipIf(process.platform === 'win32')(
@@ -170,7 +166,7 @@ describe('surgical JSON MCP write', () => {
     expect(after.charCodeAt(0)).toBe(0xfeff);
     expect(after).toContain('// keep me');
     const parsed = parseConfig(after);
-    expect((parsed.mcpServers as Record<string, unknown>)['palimpsest']).toEqual(
+    expect((parsed.mcpServers as Record<string, unknown>).palimpsest).toEqual(
       PUBLISHED_CHAIN_ENTRY,
     );
   });
@@ -190,7 +186,7 @@ describe('surgical JSON MCP write', () => {
 
     const servers = parseConfig(after).mcpServers as Record<string, unknown>;
     expect(servers['existing-server']).toEqual({ command: 'node', args: ['./srv.js'] });
-    expect(servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 
   it('opencode: inserts the array-command entry under `mcp`, preserving comments + siblings', () => {
@@ -212,7 +208,7 @@ describe('surgical JSON MCP write', () => {
     const parsed = parseConfig(after);
     const mcp = parsed.mcp as Record<string, unknown>;
     expect(mcp.other).toEqual({ type: 'local', enabled: true, command: ['node', 'x.js'] });
-    expect(mcp['palimpsest']).toEqual(OPENCODE_ENTRY);
+    expect(mcp.palimpsest).toEqual(OPENCODE_ENTRY);
   });
 
   it('openclaw: inserts the nested entry under `mcp.servers`, preserving comments + siblings', () => {
@@ -237,7 +233,7 @@ describe('surgical JSON MCP write', () => {
     const parsed = parseConfig(after);
     const mcp = parsed.mcp as Record<string, Record<string, unknown>>;
     expect(mcp.servers.other).toEqual({ command: 'node', args: ['x.js'] });
-    expect(mcp.servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(mcp.servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
     expect(parsed.gateway).toEqual({ port: 8080 });
   });
 
@@ -249,7 +245,7 @@ describe('surgical JSON MCP write', () => {
       string,
       Record<string, unknown>
     >;
-    expect(mcp.servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(mcp.servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 
   it('openclaw: classify reads our nested entry back, and is no-entry when `servers` is absent', () => {
@@ -297,7 +293,7 @@ describe('surgical JSON MCP write', () => {
       Record<string, unknown>
     >;
     expect(mcp.servers.keep).toEqual({ command: 'node', args: ['keep.js'] });
-    expect(mcp.servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(mcp.servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 
   it('updating an existing entry rewrites only our slot, leaving siblings intact', () => {
@@ -319,7 +315,7 @@ describe('surgical JSON MCP write', () => {
     expect(after).toContain('// header');
     const servers = parseConfig(after).mcpServers as Record<string, unknown>;
     expect(servers['existing-server']).toEqual({ command: 'node', args: ['./srv.js'] });
-    expect(servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 
   it('updates the launch keys, drops env, and preserves every unknown entry field', () => {
@@ -345,9 +341,8 @@ describe('surgical JSON MCP write', () => {
     expect(write('cursor', configPath).action).toBe('overwritten');
 
     const after = readFileSync(configPath, 'utf-8');
-    const entry = (parseConfig(after).mcpServers as Record<string, Record<string, unknown>>)[
-      'palimpsest'
-    ];
+    const entry = (parseConfig(after).mcpServers as Record<string, Record<string, unknown>>)
+      .palimpsest;
     expect(entry).toEqual({
       ...PUBLISHED_CHAIN_ENTRY,
       startup_timeout_ms: 45000,
@@ -381,7 +376,7 @@ describe('surgical JSON MCP write', () => {
 
     const entry = (
       parseConfig(readFileSync(configPath, 'utf-8')).mcp as Record<string, Record<string, unknown>>
-    )['palimpsest'];
+    ).palimpsest;
     expect(entry).toEqual({
       ...OPENCODE_ENTRY,
       enabled: false,
@@ -458,7 +453,7 @@ describe('surgical JSON MCP write', () => {
       string,
       unknown
     >;
-    expect(servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 });
 
@@ -504,7 +499,7 @@ describe('a foreign entry under OK server name', () => {
 
     write('claude', configPath);
 
-    expect(serversAt(configPath)['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(serversAt(configPath).palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 
   it('leaves every other server, key and comment untouched', () => {
@@ -530,7 +525,7 @@ describe('a foreign entry under OK server name', () => {
 
     write('claude', configPath);
 
-    expect(serversAt(configPath)['palimpsest']).toEqual({
+    expect(serversAt(configPath).palimpsest).toEqual({
       ...PUBLISHED_CHAIN_ENTRY,
       cwd: '/srv/notes',
     });
@@ -546,7 +541,7 @@ describe('a foreign entry under OK server name', () => {
     });
 
     expect(result.action).toBe('overwritten');
-    expect(serversAt(configPath)['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(serversAt(configPath).palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
     expect(serversAt(configPath).linear).toEqual({ command: 'npx', args: ['-y', 'linear-mcp'] });
     expect(readFileSync(configPath, 'utf-8')).toContain('// my own servers — do not touch');
   });
@@ -646,7 +641,7 @@ describe('prune-only JSON write', () => {
         {
           mcpServers: {
             other: { command: 'node' },
-            'palimpsest': {
+            palimpsest: {
               command: '/bin/sh',
               args: ['-l', '-c', '# ps-mcp-v99\nfuture launcher body'],
               cwd: '/srv/notes',
@@ -662,7 +657,7 @@ describe('prune-only JSON write', () => {
     expect(prune(configPath).action).toBe('overwritten');
 
     const servers = parseJsonc(readFileSync(configPath, 'utf-8')).mcpServers;
-    expect(servers['palimpsest']).toEqual({
+    expect(servers.palimpsest).toEqual({
       command: '/bin/sh',
       args: ['-l', '-c', '# ps-mcp-v99\nfuture launcher body'],
       cwd: '/srv/notes',

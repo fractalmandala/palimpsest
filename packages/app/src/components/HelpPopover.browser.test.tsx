@@ -1,5 +1,5 @@
-import { FALLBACK_LOCALE } from '@palimpsest/core/i18n/resolve-locale';
 import type { Messages } from '@lingui/core';
+import { FALLBACK_LOCALE } from '@palimpsest/core/i18n/resolve-locale';
 import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, test, vi } from 'vitest';

@@ -14,7 +14,7 @@ After `ps init` writes the config, restart Hermes (or run `/reload-mcp` in-sessi
 
 </McpInstall>
 
-`ps init` writes the Palimpsest server into `~/.hermes/config.yaml` under `mcp_servers`, using the same resilient launcher every other editor gets — it finds `ok` whether you installed the desktop app or the npm CLI, so there's no PATH to configure. Hermes keeps its whole config (models, tool filters, other MCP servers) in that one YAML file, so OK edits only its own `palimpsest` entry and leaves the rest — your comments included — in place.
+`ps init` writes the Palimpsest server into `~/.hermes/config.yaml` under `mcp_servers`, using the same resilient launcher every other editor gets — it finds `ps` whether you installed the desktop app or the npm CLI, so there's no PATH to configure. Hermes keeps its whole config (models, tool filters, other MCP servers) in that one YAML file, so Palimpsest edits only its own `palimpsest` entry and leaves the rest — your comments included — in place.
 
 Palimpsest Beta registers as `palimpsest-beta` instead; see [Beta uses its own entry](/docs/reference/what-palimpsest-writes#beta-uses-its-own-entry).
 

@@ -1,4 +1,5 @@
 import { resolve } from 'node:path';
+import password from '@inquirer/password';
 import {
   checkEmbeddingsBaseUrl,
   classifySemanticProviderError,
@@ -20,7 +21,6 @@ import {
   readServerLock,
   resolveLockDir,
 } from '@palimpsest/server';
-import password from '@inquirer/password';
 import { Command } from 'commander';
 import {
   createEmbeddingsSecretStore,

@@ -1,3 +1,4 @@
+import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import {
   displayCategoryForRule,
   findRuleConfigEntry,
@@ -9,7 +10,6 @@ import {
   type RuleCatalogEntry,
   type RuleDisplayCategory,
 } from '@palimpsest/core/markdown/lint';
-import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { ArrowUpRight, ChevronRight, Info, RotateCcw } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';

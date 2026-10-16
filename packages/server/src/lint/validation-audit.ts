@@ -26,8 +26,8 @@ import { toPosix } from '../path-utils.ts';
 import { AuditSupersededError, auditProject, auditScopeWarning, resolveScope } from './audit.ts';
 import type { AuditCache } from './audit-cache.ts';
 import type { AuditScope } from './audit-scope.ts';
-import { createPsfProjectValidator } from './psf-project-validator.ts';
 import { physicalScopeLinks } from './physical-scope-links.ts';
+import { createPsfProjectValidator } from './psf-project-validator.ts';
 
 type DeadLinksResult = Awaited<ReturnType<DerivedDocumentIndexApiPort['getDeadLinks']>>;
 type LocalTargetsResult = Awaited<

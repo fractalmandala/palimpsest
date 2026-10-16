@@ -138,9 +138,7 @@ describe('ensureCliOnPath — consent gate (rc files are never written without a
     const result = await ensureCliOnPath(baseOpts(h, { executablePath: newExe }));
     expect(result.status).toBe('installed');
     if (result.status === 'installed') expect(result.summary).toContain('~/.bash_profile');
-    expect(readFileSync(join(h, '.bash_profile'), 'utf8')).toContain(
-      '# >>> palimpsest cli >>>',
-    );
+    expect(readFileSync(join(h, '.bash_profile'), 'utf8')).toContain('# >>> palimpsest cli >>>');
   });
 
   test('grandfather via healthy fast-path: pre-consent marker + healthy block ⇒ consent stamped, no rc write', async () => {
@@ -359,9 +357,7 @@ describe('ensureCliOnPath', () => {
       }),
     );
     expect(result.status).toBe('installed');
-    expect(readFileSync(join(h, '.bash_profile'), 'utf8')).toContain(
-      '# >>> palimpsest cli >>>',
-    );
+    expect(readFileSync(join(h, '.bash_profile'), 'utf8')).toContain('# >>> palimpsest cli >>>');
     expect(existsSync(join(h, '.zshrc'))).toBe(false);
     expect(existsSync(join(h, '.config', 'fish', 'conf.d', 'palimpsest.fish'))).toBe(false);
   });

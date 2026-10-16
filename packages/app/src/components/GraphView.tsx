@@ -1,8 +1,5 @@
-import {
-  LinkGraphSuccessSchema,
-  ProblemDetailsSchema,
-} from '@palimpsest/core/schemas/api';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { LinkGraphSuccessSchema, ProblemDetailsSchema } from '@palimpsest/core/schemas/api';
 import { useTheme } from 'next-themes';
 import { useEffect, useRef, useState } from 'react';
 import ForceGraph2D, {

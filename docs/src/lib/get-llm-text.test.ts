@@ -33,11 +33,11 @@ describe('getLLMText', () => {
   test('renders title + URL header, description, then the serialized body', async () => {
     const md = await getLLMText(fakePage());
     expect(md).toBe(
-      `# Overview (https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/overview.mdx)
+      `# Overview (https://github.com/fractalmandala/palimpsest/docs/get-started/overview)
 
 What Palimpsest is.
 
-Read the [quickstart](https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/quickstart.mdx).
+Read the [quickstart](https://github.com/fractalmandala/palimpsest/docs/get-started/quickstart).
 
 > **Heads up**
 >
@@ -48,7 +48,7 @@ Read the [quickstart](https://github.com/fractalmandala/palimpsest/blob/main/doc
   test('heads the document with the absolute human URL, not the site-relative one', async () => {
     const md = await getLLMText(fakePage({}, '/docs/reference/components/callout'));
     expect(md.split('\n')[0]).toBe(
-      '# Overview (https://github.com/fractalmandala/palimpsest/blob/main/docs/content/reference/components/callout.mdx)',
+      '# Overview (https://github.com/fractalmandala/palimpsest/docs/reference/components/callout)',
     );
   });
 
@@ -74,21 +74,23 @@ Read the [quickstart](https://github.com/fractalmandala/palimpsest/blob/main/doc
   test('neutralises raw HTML a title names in passing', async () => {
     const md = await getLLMText(fakePage({ title: 'The <details> element' }));
     expect(md.split('\n')[0]).toBe(
-      '# The \\<details> element (https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/overview.mdx)',
+      '# The \\<details> element (https://github.com/fractalmandala/palimpsest/docs/get-started/overview)',
     );
   });
 
   test('keeps a multi-line title on the heading line', async () => {
     const md = await getLLMText(fakePage({ title: 'Folded\n\ntitle' }));
     expect(md.split('\n')[0]).toBe(
-      '# Folded title (https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/overview.mdx)',
+      '# Folded title (https://github.com/fractalmandala/palimpsest/docs/get-started/overview)',
     );
   });
 
   test('tolerates a missing description without emitting "undefined"', async () => {
     const md = await getLLMText(fakePage({ description: undefined }));
     expect(md).not.toContain('undefined');
-    expect(md).toContain('# Overview (https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/overview.mdx)');
+    expect(md).toContain(
+      '# Overview (https://github.com/fractalmandala/palimpsest/docs/get-started/overview)',
+    );
   });
 
   test('fails loudly on a component with no registry disposition', async () => {

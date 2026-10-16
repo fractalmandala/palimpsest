@@ -1,7 +1,4 @@
-import type {
-  ShareConstructUrlErrorCode,
-  ShareConstructUrlResponse,
-} from '@palimpsest/core';
+import type { ShareConstructUrlErrorCode, ShareConstructUrlResponse } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import {
   mapShareErrorToToast,

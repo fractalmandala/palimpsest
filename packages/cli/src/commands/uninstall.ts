@@ -2,6 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join, resolve } from 'node:path';
+import checkbox from '@inquirer/checkbox';
 import {
   currentCliCommandName,
   DESKTOP_PRODUCTS,
@@ -9,7 +10,6 @@ import {
   desktopWindowsInstallDirNames,
 } from '@palimpsest/core';
 import { findEnclosingProjectRoot, withHiddenWindowsConsole } from '@palimpsest/server';
-import checkbox from '@inquirer/checkbox';
 import { Command } from 'commander';
 import { PACKAGE_VERSION } from '../constants.ts';
 import { desktopUserDataDir, readDesktopRecentProjects } from '../integrations/desktop-state.ts';

@@ -1,5 +1,5 @@
-import { SKILL_NAME_REGEX, type SkillsListEntry } from '@palimpsest/core/schemas/api';
 import { Trans } from '@lingui/react/macro';
+import { SKILL_NAME_REGEX, type SkillsListEntry } from '@palimpsest/core/schemas/api';
 import { useEffect, useId, useState } from 'react';
 import { useRenameSkill } from '@/components/ManagedArtifactProperties';
 import { Button } from '@/components/ui/button';

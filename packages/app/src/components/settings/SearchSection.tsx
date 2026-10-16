@@ -1,5 +1,6 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
+// oxlint-disable ps/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
+import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import type { ConfigBinding } from '@palimpsest/core/config/bind-config-doc';
 import { humanFormat } from '@palimpsest/core/config/errors';
 import {
@@ -22,7 +23,6 @@ import {
   type LocalOpEmbeddingsTestResponse,
   type SemanticIndexStatus,
 } from '@palimpsest/core/schemas/api';
-import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { ChevronRight } from 'lucide-react';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -502,8 +502,8 @@ export function SearchSection({ transport }: { transport?: EmbeddingsKeyTranspor
             label={<Trans>Indexing request timeout (seconds)</Trans>}
             help={
               <Trans>
-                How long Palimpsest waits for each embedding request while indexing. Search
-                requests use a fixed 8-second timeout per attempt, unchanged by this setting.
+                How long Palimpsest waits for each embedding request while indexing. Search requests
+                use a fixed 8-second timeout per attempt, unchanged by this setting.
               </Trans>
             }
             configKey="docTimeoutMs"

@@ -1,6 +1,6 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { toDesktopAssetHref } from '@palimpsest/core/utils/asset-href';
 import { parsePdfAnchor } from '@palimpsest/core/utils/pdf-anchor';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { Check, ChevronDown, PanelLeft, ZoomIn, ZoomOut } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { computeBaseScale, type PdfLayoutMode } from './pdf-layout.ts';

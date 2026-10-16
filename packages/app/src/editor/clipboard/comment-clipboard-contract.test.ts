@@ -7,7 +7,7 @@ import { createHandlePaste } from './handle-paste.ts';
 import { isMarkdown } from './is-markdown.ts';
 import { createClipboardHtmlSerializer, createClipboardTextSerializer } from './serialize.ts';
 
-const INTERNAL_MIME = 'application/x-openknowledge-markdown';
+const INTERNAL_MIME = 'application/x-palimpsest-markdown';
 
 const COMMENT_BYTE_PATTERNS = ['%%', '<!--', '&#x3C;!--', '&lt;!--', 'hidden note'];
 

@@ -68,13 +68,13 @@ test.describe('Skills Studio', () => {
     const intro = page.getByTestId('skills-studio-intro');
     await expect(intro).toBeVisible({ timeout: 10_000 });
     await expect(intro).toContainText('Skills teach your AI tools repeatable tasks');
-    await expect(intro).toContainText('open-knowledge-write-skill');
+    await expect(intro).toContainText('palimpsest-write-skill');
     await expect(intro).toContainText('How to write a new skill and install it.');
     await expect(intro).not.toContainText('palimpsest-discovery');
 
     await page.getByTestId('skills-studio-intro-install').click();
     await expect(intro).toBeHidden();
-    const installedPath = join(tmpHome, '.claude', 'skills', 'open-knowledge-write-skill');
+    const installedPath = join(tmpHome, '.claude', 'skills', 'palimpsest-write-skill');
     await expect(async () => {
       expect(existsSync(join(installedPath, 'SKILL.md'))).toBe(true);
     }).toPass({ timeout: 20_000 });

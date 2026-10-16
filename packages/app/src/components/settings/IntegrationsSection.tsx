@@ -1,5 +1,5 @@
-import { SHOW_INSTALL_SKILL } from '@palimpsest/core/constants/feature-flags';
 import { Trans } from '@lingui/react/macro';
+import { SHOW_INSTALL_SKILL } from '@palimpsest/core/constants/feature-flags';
 import { useState } from 'react';
 import { InstallInClaudeDesktopDialog } from '@/components/InstallInClaudeDesktopDialog';
 import { Button } from '@/components/ui/button';

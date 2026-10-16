@@ -306,7 +306,7 @@ describe('stopServerForRemoval', () => {
           '-e',
           "process.send('ready'); setInterval(() => {}, 1000)",
           '--',
-          `--ok-lock-dir-b64=${Buffer.from(dir).toString('base64url')}`,
+          `--ps-lock-dir-b64=${Buffer.from(dir).toString('base64url')}`,
         ],
         { stdio: ['ignore', 'ignore', 'ignore', 'ipc'] },
       );

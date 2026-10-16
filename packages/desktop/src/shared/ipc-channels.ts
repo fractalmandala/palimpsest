@@ -69,7 +69,6 @@ import type {
   PsTerminalDockStateUpdate,
   PsTerminalDockStateWriteResult,
   PsThemeSource,
-  PsUpdateMode,
   PsUserConfigPatchResult,
   PsUserConfigSnapshot,
   PsSeedApplyOptions as SeedApplyOptions,
@@ -373,24 +372,6 @@ interface DialogOpenFolderOpts {
   readonly defaultPath?: string;
 }
 
-export type PsUpdateDispatchRequest =
-  | { readonly kind: 'relaunch-now' }
-  | { readonly kind: 'check-now' }
-  | { readonly kind: 'whats-new-dismiss'; readonly version: string }
-  | { readonly kind: 'downloaded-dismiss'; readonly version: string }
-  | { readonly kind: 'set-mode'; readonly mode: PsUpdateMode };
-
-export type PsUpdateSetModeFailure = 'unrecognized-mode' | 'persist-failed';
-
-export type PsUpdateDispatchResult =
-  | { readonly kind: 'relaunch-now' }
-  | { readonly kind: 'check-now' }
-  | { readonly kind: 'whats-new-dismiss' }
-  | { readonly kind: 'downloaded-dismiss' }
-  | { readonly kind: 'set-mode'; readonly ok: true; readonly mode: PsUpdateMode }
-  | { readonly kind: 'set-mode'; readonly ok: false; readonly reason: PsUpdateSetModeFailure }
-  | { readonly kind: 'unknown'; readonly ok: false; readonly reason: 'unrecognized-kind' };
-
 export type UserConfigDispatchRequest =
   | { kind: 'set-language-preference'; preference: LanguagePreference }
   | { kind: 'read' }
@@ -572,10 +553,6 @@ export interface RequestChannels {
       | { ok: true; outcome: 'created' | 'focused' }
       | { ok: false; reason: 'no-project' | 'invalid-request' }
       | PsNoteWindowMainActionResult;
-  };
-  'ps:update:dispatch': {
-    args: [request: PsUpdateDispatchRequest];
-    result: PsUpdateDispatchResult;
   };
   'ps:state:query': { args: []; result: Required<PsStateSnapshot> };
   'ps:state:reset-incompatible': { args: []; result: undefined };

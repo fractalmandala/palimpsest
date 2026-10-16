@@ -1,8 +1,4 @@
-import {
-  type SkillsListEntry,
-  skillFileLiveDocName,
-  skillLiveDocName,
-} from '@palimpsest/core';
+import { type SkillsListEntry, skillFileLiveDocName, skillLiveDocName } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { skillFileTabId, skillPreviewTabId } from '@/editor/editor-tabs';
 import {

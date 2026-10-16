@@ -809,7 +809,7 @@ const copilot = defineAgent({
       evidence: [
         observed(
           'copilot CLI 1.0.80',
-          'The CLI does read a workspace `.mcp.json`, but nobody has observed the ACP adapter loading the managed entry inside a session. Claiming it would stand our injection down on an unverified read and risk a thread with no OK tools, so the claim stays unmade and OK keeps injecting.',
+          'The CLI does read a workspace `.mcp.json`, but nobody has observed the ACP adapter loading the managed entry inside a session. Claiming it would stand our injection down on an unverified read and risk a thread with no Palimpsest tools, so the claim stays unmade and OK keeps injecting.',
         ),
       ],
       verifiedAgainst: { version: '1.0.80', observedAt: '2026-08-20' },

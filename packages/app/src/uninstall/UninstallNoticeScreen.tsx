@@ -1,8 +1,8 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import type {
   UninstallNoticeChecklistItem,
   UninstallNoticeScreen as UninstallNoticeSpec,
 } from '@palimpsest/core/uninstall-bridge';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { Check } from 'lucide-react';
 import { useEffect, useId, useRef } from 'react';
 import { Button } from '@/components/ui/button';

@@ -1,4 +1,5 @@
 import { createInterface } from 'node:readline/promises';
+import select from '@inquirer/select';
 import {
   hasUninstallFeedbackContent,
   postUninstallFeedback,
@@ -8,7 +9,6 @@ import {
   type UninstallFeedbackResult,
   type UninstallFeedbackSubmission,
 } from '@palimpsest/core';
-import select from '@inquirer/select';
 import { accent, dim } from '../ui/colors.ts';
 
 type ReasonChoice = UninstallFeedbackReason | null;

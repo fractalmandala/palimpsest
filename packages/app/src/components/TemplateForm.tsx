@@ -1,14 +1,11 @@
-import {
-  stripFrontmatter,
-  unwrapFrontmatterFences,
-} from '@palimpsest/core/extensions/frontmatter';
+import { t } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { stripFrontmatter, unwrapFrontmatterFences } from '@palimpsest/core/extensions/frontmatter';
 import {
   canonicalTemplateName,
   TEMPLATE_NAME_REGEX,
   templateRenameTarget,
 } from '@palimpsest/core/schemas/api';
-import { t } from '@lingui/core/macro';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { X } from 'lucide-react';
 import { useId, useState } from 'react';
 import { toast } from 'sonner';

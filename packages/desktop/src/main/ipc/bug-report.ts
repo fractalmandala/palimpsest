@@ -1001,7 +1001,7 @@ async function uploadImageAsset(
 
 function bugReportMintEndpoint(base: URL, metadata: BugReportWireMetadata) {
   return (image: ImageAssetUpload): ImageMintEndpoint => ({
-    url: new URL('/api/bug-report', base),
+    url: new URL(`${base.href.replace(/\/+$/, '')}/api/bug-report`),
     body: {
       filename: image.filename,
       sizeBytes: image.bytes.byteLength,
@@ -1013,7 +1013,7 @@ function bugReportMintEndpoint(base: URL, metadata: BugReportWireMetadata) {
 
 function feedbackAttachmentMintEndpoint(base: URL) {
   return (image: ImageAssetUpload): ImageMintEndpoint => ({
-    url: new URL('/api/feedback/attachment', base),
+    url: new URL(`${base.href.replace(/\/+$/, '')}/api/feedback/attachment`),
     body: {
       filename: image.filename,
       sizeBytes: image.bytes.byteLength,
@@ -1065,7 +1065,7 @@ async function uploadBugReport(
     return { ok: false, reason: 'zip-unreadable', cause: err };
   }
   let step: BugReportSendStep = 'mint';
-  const mintUrl = new URL('/api/bug-report', base);
+  const mintUrl = new URL(`${base.href.replace(/\/+$/, '')}/api/bug-report`);
   let stepTarget: URL | string = mintUrl;
   let stepStartedAt = Date.now();
   try {
@@ -1176,7 +1176,7 @@ async function uploadBugReport(
     }
 
     step = 'complete';
-    stepTarget = new URL('/api/bug-report/complete', base);
+    stepTarget = new URL(`${base.href.replace(/\/+$/, '')}/api/bug-report/complete`);
     stepStartedAt = Date.now();
     const completeRes = await fetch(stepTarget, {
       method: 'POST',

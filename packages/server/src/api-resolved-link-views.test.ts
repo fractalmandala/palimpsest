@@ -1,6 +1,8 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import {
   BacklinkCountsSuccessSchema,
   BacklinksSuccessSchema,
@@ -10,8 +12,6 @@ import {
   OrphansSuccessSchema,
   SuggestLinksSuccessSchema,
 } from '@palimpsest/core';
-import { Client } from '@modelcontextprotocol/sdk/client/index.js';
-import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
 import { expect, test } from 'vitest';
 import type { BootedServer } from './boot.ts';
 import { bootCompositionRig } from './composition-rig.test-helper.ts';

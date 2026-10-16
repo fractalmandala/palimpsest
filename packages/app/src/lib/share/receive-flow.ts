@@ -1,8 +1,8 @@
+import { t } from '@lingui/core/macro';
 import {
   canonicalGitHubRemoteUrl as _canonicalGitHubRemoteUrl,
   type ExpectedShareRepo,
 } from '@palimpsest/core/sharing';
-import { t } from '@lingui/core/macro';
 import type {
   CheckTargetExistsResult,
   PsShareReceivedPayload,

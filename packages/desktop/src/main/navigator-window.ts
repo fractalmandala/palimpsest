@@ -5,7 +5,7 @@ import { registerPendingDelivery } from '../shared/ipc-send.ts';
 import {
   LANGUAGE_PREFERENCE_ARG_NAME,
   THEME_PREFERENCE_ARG_NAME,
-} from '../shared/ok-desktop-argv.ts';
+} from '../shared/ps-desktop-argv.ts';
 import { type BootHeartbeatDeps, startBootHeartbeat } from './boot-heartbeat.ts';
 import type { DesktopLogger } from './desktop-logger.ts';
 import type { ShowGateRegistry } from './show-gate.ts';
@@ -67,7 +67,7 @@ export function createNavigatorWindow(deps: NavigatorDeps): BrowserWindowLike {
       `--ok-app-version=${deps.appVersion}`,
       '--ok-collab-url=',
       '--ok-api-origin=',
-      '--ok-project-path=',
+      '--ps-project-path=',
       '--ok-project-name=Project Navigator',
       `--ok-${LANGUAGE_PREFERENCE_ARG_NAME}=${deps.languagePreference}`,
       `--ok-${THEME_PREFERENCE_ARG_NAME}=${deps.themePreference}`,

@@ -1,7 +1,6 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { BASE16_SLOTS, type Base16Scheme } from '@palimpsest/core';
 import { metrics } from '@opentelemetry/api';
 import {
   AggregationTemporality,
@@ -9,6 +8,7 @@ import {
   MeterProvider,
   PeriodicExportingMetricReader,
 } from '@opentelemetry/sdk-metrics';
+import { BASE16_SLOTS, type Base16Scheme } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import { savedThemesDir, scanSavedThemes } from './saved-themes-store.ts';
 import { __resetSavedThemesTelemetryForTests } from './saved-themes-telemetry.ts';

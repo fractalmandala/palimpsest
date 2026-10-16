@@ -4,10 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Readable } from 'node:stream';
 import { Hocuspocus } from '@hocuspocus/server';
-import {
-  DEFAULT_LINKS_VALIDATION,
-  DEFAULT_SUPPRESS_LOG_LINK_ADVISORIES,
-} from '@palimpsest/core';
+import { DEFAULT_LINKS_VALIDATION, DEFAULT_SUPPRESS_LOG_LINK_ADVISORIES } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import {
   AGENT_WRITE_ORIGIN,

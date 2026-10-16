@@ -55,7 +55,7 @@ function writeStaleSkillFiles(destDir: string, marker: string): void {
 
 const PS_WIRED_MCP_JSON = JSON.stringify({
   mcpServers: {
-    'palimpsest': { command: '/bin/sh', args: ['-l', '-c', '# ps-mcp-v1\nexec ps mcp'] },
+    palimpsest: { command: '/bin/sh', args: ['-l', '-c', '# ps-mcp-v1\nexec ps mcp'] },
   },
 });
 
@@ -232,7 +232,7 @@ describe('repairSkills — project sweep create-if-wired gate', () => {
   const UNWIRED_MCP_JSON = JSON.stringify({ mcpServers: { other: { command: 'node' } } });
   const PS_WIRED_MCP_JSON_WIN = JSON.stringify({
     mcpServers: {
-      'palimpsest': {
+      palimpsest: {
         command: 'powershell',
         args: ['-NoProfile', '-NonInteractive', '-Command', '# ps-mcp-win-v1\nexit 127'],
       },
@@ -480,7 +480,7 @@ describe('repairSkills — user sweep version gate (AC-B1, AC-B2, AC-B3, AC-B4)'
   });
 
   it('AC-B1: skips user sweep when recorded version equals bundled version', async () => {
-    for (const name of ['palimpsest-discovery', 'open-knowledge-write-skill']) {
+    for (const name of ['palimpsest-discovery', 'palimpsest-write-skill']) {
       const dir = join(scratch.home, '.agents', 'skills', name);
       mkdirSync(dir, { recursive: true });
       writeFileSync(join(dir, 'SKILL.md'), 'preexisting');
@@ -518,7 +518,7 @@ describe('repairSkills — user sweep version gate (AC-B1, AC-B2, AC-B3, AC-B4)'
   });
 
   it('D4/G2 cross-actor stomp: a declined bundle is removed and never re-installed by the sweep', async () => {
-    for (const name of ['palimpsest-discovery', 'open-knowledge-write-skill']) {
+    for (const name of ['palimpsest-discovery', 'palimpsest-write-skill']) {
       const dir = join(scratch.home, '.agents', 'skills', name);
       mkdirSync(dir, { recursive: true });
       writeFileSync(join(dir, 'SKILL.md'), 'preexisting');
@@ -549,7 +549,7 @@ describe('repairSkills — user sweep version gate (AC-B1, AC-B2, AC-B3, AC-B4)'
 
   it('mixed decision: the declined bundle is removed while the enabled bundle still installs', async () => {
     {
-      const dir = join(scratch.home, '.agents', 'skills', 'open-knowledge-write-skill');
+      const dir = join(scratch.home, '.agents', 'skills', 'palimpsest-write-skill');
       mkdirSync(dir, { recursive: true });
       writeFileSync(join(dir, 'SKILL.md'), 'preexisting');
     }
@@ -566,7 +566,7 @@ describe('repairSkills — user sweep version gate (AC-B1, AC-B2, AC-B3, AC-B4)'
       writtenVersions: written,
       removals,
     });
-    deps.readBundleDecision = async (_home, name) => name !== 'open-knowledge-write-skill';
+    deps.readBundleDecision = async (_home, name) => name !== 'palimpsest-write-skill';
 
     const result = await repairSkills({
       projectDir: scratch.project,
@@ -793,7 +793,7 @@ describe('repairSkills — user sweep version gate (AC-B1, AC-B2, AC-B3, AC-B4)'
   });
 
   it('recognizes current bundles installed only in a concrete Pi root', async () => {
-    for (const name of ['palimpsest-discovery', 'open-knowledge-write-skill']) {
+    for (const name of ['palimpsest-discovery', 'palimpsest-write-skill']) {
       const dir = join(scratch.home, '.pi', 'agent', 'skills', name);
       mkdirSync(dir, { recursive: true });
       writeFileSync(join(dir, 'SKILL.md'), '# existing');
@@ -1106,7 +1106,7 @@ describe('repairSkills — JSONL telemetry parity with Desktop', () => {
   });
 
   it('emits NO event on the version-current fast-path', async () => {
-    for (const name of ['palimpsest-discovery', 'open-knowledge-write-skill']) {
+    for (const name of ['palimpsest-discovery', 'palimpsest-write-skill']) {
       const dir = join(scratch.home, '.agents', 'skills', name);
       mkdirSync(dir, { recursive: true });
       writeFileSync(join(dir, 'SKILL.md'), 'preexisting');
@@ -1224,7 +1224,7 @@ describe('repairSkills — JSONL telemetry parity with Desktop', () => {
   it('a bundle that lands nowhere reports failed even when a sibling bundle succeeds', async () => {
     mkdirSync(join(scratch.home, '.claude'), { recursive: true });
     const realFs = await import('node:fs');
-    const failingBundleDir = 'open-knowledge-write-skill';
+    const failingBundleDir = 'palimpsest-write-skill';
     const customFs: RepairSkillsFsOps = {
       existsSync: (p) => realFs.existsSync(p),
       isDirectory: (p) => {
@@ -1868,7 +1868,7 @@ describe('repairSkills — project config that IS the global config is never swe
 
   const PS_WIRED_MCP_JSON = JSON.stringify({
     mcpServers: {
-      'palimpsest': {
+      palimpsest: {
         command: '/bin/sh',
         args: ['-l', '-c', '# ps-mcp-v2\nexit 127'],
       },
@@ -1964,7 +1964,7 @@ describe('repairSkills — project config that IS the global config is never swe
       openCodeGlobal,
       JSON.stringify({
         mcp: {
-          'palimpsest': {
+          palimpsest: {
             type: 'local',
             command: ['/bin/sh', '-l', '-c', '# ps-mcp-v2\nexit 127'],
           },

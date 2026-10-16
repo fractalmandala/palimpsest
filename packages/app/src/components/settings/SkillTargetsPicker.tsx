@@ -1,8 +1,8 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
+// oxlint-disable ps/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
+import { Trans, useLingui } from '@lingui/react/macro';
 import { AGENTS_SKILLS_ROOT } from '@palimpsest/core/constants/skills';
 import type { SkillFolderLinkPreview, SkillScope } from '@palimpsest/core/schemas/api';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { AgentBrandIcon, hostLabel } from '@/components/AgentIconCluster';

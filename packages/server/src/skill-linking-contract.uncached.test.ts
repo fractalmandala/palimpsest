@@ -2,8 +2,8 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, test } from 'vitest';
 
-const SKILL_PATH = join(import.meta.dir, '../assets/skills/project/SKILL.md');
-const LINKING_PATH = join(import.meta.dir, '../assets/skills/project/references/linking.md');
+const SKILL_PATH = join(import.meta.dir, '../../skills/project/SKILL.md');
+const LINKING_PATH = join(import.meta.dir, '../../skills/project/references/linking.md');
 const CORE_CONCEPTS_PATH = join(
   import.meta.dir,
   '../../../docs/content/reference/core-concepts.md',

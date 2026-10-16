@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
+import { IDLE_RESET_MS, RAGE_WINDOW_MS } from './ps-blob-logic';
 import { PsBlob } from './PsBlob';
-import { IDLE_RESET_MS, RAGE_WINDOW_MS } from './ok-blob-logic';
 
 describe('PsBlob onRage', () => {
   afterEach(() => cleanup());

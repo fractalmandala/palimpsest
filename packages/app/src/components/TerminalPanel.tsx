@@ -1,5 +1,6 @@
 import '@xterm/xterm/css/xterm.css';
 
+import { useLingui } from '@lingui/react/macro';
 import {
   assertNeverPtyAdoptReason,
   assertNeverPtyCreateReason,
@@ -18,7 +19,6 @@ import {
   type TerminalLaunchCommand,
   type WindowsShellFamily,
 } from '@palimpsest/core/handoff';
-import { useLingui } from '@lingui/react/macro';
 import { FitAddon } from '@xterm/addon-fit';
 import { Unicode11Addon } from '@xterm/addon-unicode11';
 import { WebLinksAddon } from '@xterm/addon-web-links';

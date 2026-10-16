@@ -242,7 +242,7 @@ describe('buildMcpServers × probeHarnessManagedMcpEntry', () => {
     expect(calls).toBe(0);
   });
 
-  test('always injects for Cursor, even when its config carries Palimpsest's entry', async () => {
+  test("always injects for Cursor, even when its config carries Palimpsest's entry", async () => {
     let calls = 0;
     const m = makeManager(() => {
       calls += 1;
@@ -316,7 +316,7 @@ describe.skipIf(process.platform === 'win32')('buildMcpServers × agentBrowserTo
   const unavailable = async (m: BuildMcpServersSeam, id = 'claude-acp') =>
     (await m.buildMcpServers(record('registry', id), LAUNCH, HTTP_INIT)).browserUnavailable;
 
-  test('adds the browser after OK tools, relayed through the node beside the resolved npx, from its own folder', async () => {
+  test('adds the browser after Palimpsest tools, relayed through the node beside the resolved npx, from its own folder', async () => {
     const localDir = tmp();
     const globalDir = tmp();
     const npx = fakeNpx();
@@ -368,7 +368,7 @@ describe.skipIf(process.platform === 'win32')('buildMcpServers × agentBrowserTo
     expect(browser?.args[4]).toBe(resolveOnPath('npx', path));
   });
 
-  test('adds the browser even when the harness already loads OK tools', async () => {
+  test('adds the browser even when the harness already loads Palimpsest tools', async () => {
     const npx = fakeNpx();
     const m = makeManager(() => hit, undefined, undefined, {
       enabled: () => true,
@@ -547,7 +547,7 @@ describe.skipIf(process.platform === 'win32')('buildMcpServers × agentBrowserTo
     expect(await unavailable(m)).toBeNull();
   });
 
-  test('a failure preparing the browser still starts the chat with OK tools', async () => {
+  test('a failure preparing the browser still starts the chat with Palimpsest tools', async () => {
     const globalDir = tmp();
     writeFileSync(join(globalDir, 'agent-browser'), 'not a folder');
     const npx = fakeNpx();

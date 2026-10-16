@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import {
   AUDIO_EXTENSIONS,
   DEFAULT_DEDUP_UI,
@@ -15,7 +16,6 @@ import {
 import { extensionOf } from '@palimpsest/core/utils/extension';
 import { formatFileSize } from '@palimpsest/core/utils/file-size';
 import { randomUUID } from '@palimpsest/core/utils/random-uuid';
-import { t } from '@lingui/core/macro';
 import type { Editor } from '@tiptap/core';
 import { NodeSelection, Plugin, PluginKey } from '@tiptap/pm/state';
 import { Decoration, DecorationSet } from '@tiptap/pm/view';

@@ -1,4 +1,3 @@
-import { CLIENT_SURFACE_ATTRIBUTE } from '@palimpsest/core/client-version';
 import { trace } from '@opentelemetry/api';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
@@ -9,6 +8,7 @@ import { resourceFromAttributes } from '@opentelemetry/resources';
 import { BatchSpanProcessor, WebTracerProvider } from '@opentelemetry/sdk-trace-web';
 import { ATTR_SERVICE_NAME, ATTR_SERVICE_VERSION } from '@opentelemetry/semantic-conventions';
 import { ATTR_DEPLOYMENT_ENVIRONMENT_NAME } from '@opentelemetry/semantic-conventions/incubating';
+import { CLIENT_SURFACE_ATTRIBUTE } from '@palimpsest/core/client-version';
 import { CLIENT_SURFACE } from '@/lib/client-version';
 
 const TRACER_NAME = 'palimpsest-app';

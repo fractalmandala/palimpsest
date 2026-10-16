@@ -622,7 +622,7 @@ describe('TerminalPanel "Open in terminal" launch (baked into the PTY spawn)', (
     expect(screen.queryByTestId('terminal-cli-unverified-banner')).toBeNull();
   });
 
-  test('bakes a BARE claude command (no pre-approval) when claude is present but OK tools need a rewire', async () => {
+  test('bakes a BARE claude command (no pre-approval) when claude is present but Palimpsest tools need a rewire', async () => {
     const { bridge, terminal } = makeBridge({ claude: 'present' });
     render(<TerminalPanel bridge={bridge} launch={{ prompt: 'hi', cli: 'claude', nonce: 1 }} />);
 
@@ -690,7 +690,7 @@ describe('TerminalPanel "Open in terminal" launch (baked into the PTY spawn)', (
     expect(launchInputWrites(terminal.input)).toEqual([]);
   });
 
-  test("codex auto-approves OK tools (-c approve) when Palimpsest's server is configured in codex", async () => {
+  test("codex auto-approves Palimpsest tools (-c approve) when Palimpsest's server is configured in codex", async () => {
     const { bridge, terminal } = makeBridge(WIRED, CODEX_OK_CONFIGURED);
     render(<TerminalPanel bridge={bridge} launch={{ prompt: 'hi', cli: 'codex', nonce: 1 }} />);
 
@@ -717,10 +717,7 @@ describe('TerminalPanel "Open in terminal" launch (baked into the PTY spawn)', (
     const settings = JSON.parse(String(bakedLaunchArgs(beta.terminal.create)[1])) as {
       permissions: { allow: string[] };
     };
-    expect(settings.permissions.allow).toEqual([
-      'mcp__palimpsest-beta',
-      'Bash(ps-beta open:*)',
-    ]);
+    expect(settings.permissions.allow).toEqual(['mcp__palimpsest-beta', 'Bash(ps-beta open:*)']);
     cleanup();
 
     const unnamed = makeBridge(WIRED, ON_PATH, 'darwin', null);
@@ -930,7 +927,7 @@ describe('the two --settings halves are gated independently, across all four MCP
     return bakedArgv(terminal.create);
   }
 
-  test('global-only: OK tools are auto-approved, and no project server trust is claimed', async () => {
+  test('global-only: Palimpsest tools are auto-approved, and no project server trust is claimed', async () => {
     const baked = await bakeClaudeLaunch(WIRED_GLOBAL_ONLY);
     expect(baked).toEqual(['claude', ...CLAUDE_AUTO_ONLY, 'hi']);
     expect(String(baked)).not.toContain('enabledMcpjsonServers');

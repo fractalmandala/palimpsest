@@ -1,10 +1,7 @@
 import { existsSync, mkdirSync, mkdtempSync, readdirSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import {
-  buildPosixCliLaunch,
-  type TerminalLaunchCommand,
-} from '@palimpsest/core/handoff';
+import { buildPosixCliLaunch, type TerminalLaunchCommand } from '@palimpsest/core/handoff';
 import { afterEach, describe, expect, test } from 'vitest';
 import { buildShellArgs } from '../../src/utility/pty-host.ts';
 import { capturedTails, spawnSyncBounded } from '../support/bounded-sync-spawn.test-helper.ts';

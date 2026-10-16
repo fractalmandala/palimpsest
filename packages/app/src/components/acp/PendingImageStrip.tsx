@@ -1,5 +1,5 @@
-import type { AttachmentPart } from '@palimpsest/core/acp/thread-protocol';
 import { useLingui } from '@lingui/react/macro';
+import type { AttachmentPart } from '@palimpsest/core/acp/thread-protocol';
 import { X } from 'lucide-react';
 import { createContext, type ReactNode, use } from 'react';
 import { Button } from '@/components/ui/button';

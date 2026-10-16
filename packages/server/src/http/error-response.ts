@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import type { ServerResponse } from 'node:http';
+import type { Counter } from '@opentelemetry/api';
 import {
   type ProblemDetails,
   ProblemDetailsSchema,
@@ -8,7 +9,6 @@ import {
   StreamingProblemEventSchema,
   stripPathspecMagic,
 } from '@palimpsest/core';
-import type { Counter } from '@opentelemetry/api';
 import { PrivateStateSymlinkError, SymlinkEscapeError } from '../fs-safety.ts';
 import { getLogger } from '../logger.ts';
 import { NestedProjectScopeError } from '../project-content-scope.ts';

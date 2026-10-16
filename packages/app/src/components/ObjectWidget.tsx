@@ -1,4 +1,4 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
+// oxlint-disable ps/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
 import {
   closestCenter,
@@ -14,6 +14,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
+import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import {
   type FrontmatterType,
   type FrontmatterValue,
@@ -21,7 +22,6 @@ import {
   inferType,
   RESERVED_FRONTMATTER_KEY,
 } from '@palimpsest/core/frontmatter/schema';
-import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { ChevronRight, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { PropertyCommentButton } from '@/comments/PropertyCommentButton';

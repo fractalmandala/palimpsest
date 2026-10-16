@@ -69,13 +69,17 @@ function seedHome(home: string): void {
   );
   write(join(home, 'Library', 'Application Support', 'Palimpsest', 'path-install.json'), '{}');
   write(
-    join(home, 'Library', 'Application Support', 'Palimpsest', 'state.json'),
+    join(home, 'Library', 'Application Support', 'OpenKnowledge', 'state.json'),
     JSON.stringify({ theirData: true }),
+  );
+  write(
+    join(home, 'Library', 'Application Support', 'Open Knowledge', 'state.json'),
+    JSON.stringify({ recentProjects: [] }),
   );
   write(join(home, 'Library', 'Caches', DESKTOP_UPDATER_CACHE_DIR_NAME, 'pending.zip'), 'x');
   write(join(home, '.agents', 'skills', 'palimpsest-discovery', 'SKILL.md'), '# d\n');
   write(join(home, '.claude', 'skills', 'palimpsest-discovery', 'SKILL.md'), '# d\n');
-  write(join(home, '.agents', 'skills', 'open-knowledge-write-skill', 'SKILL.md'), '# w\n');
+  write(join(home, '.agents', 'skills', 'palimpsest-write-skill', 'SKILL.md'), '# w\n');
   write(join(home, '.agents', 'skills', 'someone-elses-skill', 'SKILL.md'), '# theirs\n');
   write(
     join(home, '.claude.json'),
@@ -156,7 +160,8 @@ describe('buildUninstallPlan ordering', () => {
       env: {},
       expected: [
         '/Users/x/Library/Application Support/Palimpsest',
-        '/Users/x/Library/Application Support/Palimpsest',
+        '/Users/x/Library/Application Support/OpenKnowledge',
+        '/Users/x/Library/Application Support/Open Knowledge',
         `/Users/x/Library/Caches/${DESKTOP_UPDATER_CACHE_DIR_NAME}`,
       ],
     },
@@ -185,7 +190,7 @@ describe('buildUninstallPlan ordering', () => {
     expect(paths).toEqual(expected);
     expect(
       applicationData.filter((op) => op.kind === 'remove-path' && op.requireOurState),
-    ).toHaveLength(platform === 'darwin' ? 1 : 0);
+    ).toHaveLength(platform === 'darwin' ? 2 : 0);
   });
 
   test('renders Linux desktop cleanup paths in human and JSON plans', () => {
@@ -414,14 +419,17 @@ describe('runRemoval — uninstall end to end', () => {
       expect(existsSync(join(home, '.ps', 'skills', 'my-note-skill', 'SKILL.md'))).toBe(true);
 
       expect(existsSync(join(home, 'Library', 'Application Support', 'Palimpsest'))).toBe(false);
-      expect(existsSync(join(home, 'Library', 'Application Support', 'Palimpsest'))).toBe(true);
+      expect(existsSync(join(home, 'Library', 'Application Support', 'OpenKnowledge'))).toBe(true);
+      expect(existsSync(join(home, 'Library', 'Application Support', 'Open Knowledge'))).toBe(
+        false,
+      );
       expect(existsSync(join(home, 'Library', 'Caches', DESKTOP_UPDATER_CACHE_DIR_NAME))).toBe(
         false,
       );
 
       expect(existsSync(join(home, '.agents', 'skills', 'palimpsest-discovery'))).toBe(false);
       expect(existsSync(join(home, '.claude', 'skills', 'palimpsest-discovery'))).toBe(false);
-      expect(existsSync(join(home, '.agents', 'skills', 'open-knowledge-write-skill'))).toBe(false);
+      expect(existsSync(join(home, '.agents', 'skills', 'palimpsest-write-skill'))).toBe(false);
       expect(existsSync(join(home, '.agents', 'skills', 'someone-elses-skill'))).toBe(true);
 
       const claudeCfg = JSON.parse(readFileSync(join(home, '.claude.json'), 'utf-8'));
@@ -432,9 +440,7 @@ describe('runRemoval — uninstall end to end', () => {
       expect(zshrc).toContain('export EDITOR=vim');
       expect(zshrc).toContain("alias ll='ls -la'");
       expect(zshrc).not.toContain('palimpsest cli');
-      expect(existsSync(join(home, '.config', 'fish', 'conf.d', 'palimpsest.fish'))).toBe(
-        false,
-      );
+      expect(existsSync(join(home, '.config', 'fish', 'conf.d', 'palimpsest.fish'))).toBe(false);
 
       expect(existsSync(join(home, '.local', 'bin', 'ps'))).toBe(false);
     } finally {
@@ -1182,7 +1188,7 @@ describe('safe uninstall cleanup', () => {
     }
   });
 
-  test('keeps remaining shared editor exclude rules while removing OK-only and absent artifact rules', async () => {
+  test('keeps remaining shared editor exclude rules while removing Palimpsest-only and absent artifact rules', async () => {
     const home = mkdtempSync(join(tmpdir(), 'ps-removal-excludes-'));
     const project = join(home, 'project');
     try {
@@ -1201,7 +1207,7 @@ describe('safe uninstall cleanup', () => {
       const exclude = join(project, '.git', 'info', 'exclude');
       write(
         exclude,
-        '# personal rules\r\n/.mcp.json\r\n.cursor/mcp.json\r\n.claude/launch.json\r\n.codex/config.toml\r\n.ok/\r\n.psignore\r\nprivate.env\r\n',
+        '# personal rules\r\n/.mcp.json\r\n.cursor/mcp.json\r\n.claude/launch.json\r\n.codex/config.toml\r\n.ps/\r\n.psignore\r\nprivate.env\r\n',
       );
       await runRemoval({ scope: 'deinit', ops: deinitOps(project, home) }, stubDeps());
       expect(readFileSync(exclude, 'utf-8')).toBe(
@@ -1295,10 +1301,7 @@ describe('shell configuration symlinks', () => {
       try {
         const target = join(home, 'dotfiles', 'zshrc');
         const rcFile = join(home, '.zshrc');
-        write(
-          target,
-          `${before}# >>> palimpsest cli >>>\nmanaged\n# <<< palimpsest cli <<<\n`,
-        );
+        write(target, `${before}# >>> palimpsest cli >>>\nmanaged\n# <<< palimpsest cli <<<\n`);
         chmodSync(target, 0o600);
         symlinkSync(target, rcFile);
         const outcome = await runRemoval(
@@ -1387,9 +1390,7 @@ describe('uninstall owns only its own channel', () => {
       expect(globalOp).not.toHaveProperty('preserve');
       const paths = planPaths(plan.ops);
       expect(paths).toContain(join(home, 'Library', 'Application Support', 'Palimpsest Beta'));
-      expect(paths).toContain(
-        join(home, 'Library', 'Caches', 'palimpsest-beta-desktop-updater'),
-      );
+      expect(paths).toContain(join(home, 'Library', 'Caches', 'palimpsest-beta-desktop-updater'));
       expect(
         paths.filter(
           (p) =>

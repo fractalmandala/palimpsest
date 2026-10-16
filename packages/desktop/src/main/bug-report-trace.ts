@@ -1,4 +1,3 @@
-import { getTracer } from '@palimpsest/server';
 import {
   type Context,
   propagation,
@@ -7,6 +6,7 @@ import {
   SpanStatusCode,
   trace,
 } from '@opentelemetry/api';
+import { getTracer } from '@palimpsest/server';
 import { getLogger } from './desktop-logger.ts';
 
 type BugReportSendOutcome = 'sent' | 'email-drafted' | 'upload-failed' | 'send-in-flight';

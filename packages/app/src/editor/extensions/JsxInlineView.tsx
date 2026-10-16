@@ -1,5 +1,5 @@
-import { incrementJsxRenderFailure } from '@palimpsest/core/metrics/parse-health';
 import { Trans } from '@lingui/react/macro';
+import { incrementJsxRenderFailure } from '@palimpsest/core/metrics/parse-health';
 import type { NodeViewProps } from '@tiptap/core';
 import { NodeSelection, TextSelection } from '@tiptap/pm/state';
 import { NodeViewContent, NodeViewWrapper } from '@tiptap/react';

@@ -1,10 +1,10 @@
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   collectFootnoteIdentifiers,
   findFootnoteDefinitionInsertPos,
   nextFootnoteIdentifier,
 } from '@palimpsest/core/extensions/footnote-reference';
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
 import type { EditorState } from '@tiptap/pm/state';
 import type { ChainedCommands, Editor } from '@tiptap/react';
 import {

@@ -275,14 +275,6 @@ export async function installHandoffMocks(page: Page, cfg: HandoffMockConfig): P
         },
         onProjectSwitched: () => () => {},
         onMenuAction: () => () => {},
-        onUpdateDownloaded: () => () => {},
-        onUpdateRelaunching: () => () => {},
-        onUpdateFetchingLatest: () => () => {},
-        onUpdateRelaunchFailed: () => () => {},
-        onWhatsNew: () => () => {},
-        onWhatsNewDismissed: () => () => {},
-        onUpdateStuckHint: () => () => {},
-        onUpdateManualCheck: () => () => {},
         onDeepLink: () => () => {},
         onShareReceived: () => () => {},
         onServerVersionDrift: () => () => {},
@@ -407,13 +399,6 @@ export async function installHandoffMocks(page: Page, cfg: HandoffMockConfig): P
         skill: {
           detectClaudeDesktop: async () => false,
           buildAndOpen: async () => ({ ok: false, reason: 'build-failed', message: 'test mock' }),
-        },
-        update: {
-          relaunchNow: async () => {},
-          checkNow: async () => {},
-          dismissWhatsNew: async () => {},
-          dismissDownloaded: async () => {},
-          setMode: async () => {},
         },
         state: {
           query: async () => ({

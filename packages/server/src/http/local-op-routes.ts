@@ -25,9 +25,9 @@ import {
   LocalOpEmbeddingsTestResponseSchema,
   LocalOpPsInitRequestSchema,
   LocalOpPsInitResponseSchema,
+  type ProblemType,
   PsCliCommand,
   psUserHomeDisplayPath,
-  type ProblemType,
 } from '@palimpsest/core';
 import { resolveGitDirDetailed } from '@palimpsest/core/shadow-repo-layout';
 import {
@@ -143,7 +143,7 @@ export function createLocalOpRoutes(
   const resolveGhBinaryPath = createGhBinaryPathResolver(subprocessLifetime);
 
   const LOCAL_OP_CLONE_KEY = '/api/local-op/clone';
-  const LOCAL_OP_OK_INIT_KEY = '/api/local-op/ok-init';
+  const LOCAL_OP_OK_INIT_KEY = '/api/local-op/ps-init';
   const LOCAL_OP_TIMEOUT_MS = 10 * 60 * 1000;
   const LOCAL_OP_OPEN_TIMEOUT_MS = 45_000;
   const LOCAL_OP_STDERR_ONLY_OPTIONS: { stdio: ['ignore', 'ignore', 'pipe'] } = {
@@ -382,7 +382,7 @@ export function createLocalOpRoutes(
     return spawnAndAwaitServer();
   }
 
-  const HANDLE_LOCAL_OP_OK_INIT = 'local-op-ok-init';
+  const HANDLE_LOCAL_OP_OK_INIT = 'local-op-ps-init';
   const handleLocalOpPsInit = withValidation(
     LocalOpPsInitRequestSchema,
     async (_req, res, body) => {
@@ -1576,7 +1576,7 @@ export function createLocalOpRoutes(
 
   const routes = {
     '/api/local-op/clone': handleLocalOpClone,
-    '/api/local-op/ok-init': handleLocalOpPsInit,
+    '/api/local-op/ps-init': handleLocalOpPsInit,
     '/api/local-op/auth/login': handleLocalOpAuthLogin,
     '/api/local-op/auth/status': handleLocalOpAuthStatus,
     '/api/local-op/auth/pat': handleLocalOpAuthPat,

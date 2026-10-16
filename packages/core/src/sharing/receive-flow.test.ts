@@ -11,7 +11,7 @@ import {
 describe('canonicalGitHubRemoteUrl', () => {
   test('emits https github.git form for plain owner/repo', () => {
     expect(
-      canonicalGitHubRemoteUrl({ host: 'github.com', owner: 'inkeep', repo: 'palimpsest' }),
+      canonicalGitHubRemoteUrl({ host: 'github.com', owner: 'fractalmandala', repo: 'palimpsest' }),
     ).toBe('https://github.com/fractalmandala/palimpsest.git');
   });
 
@@ -29,7 +29,7 @@ describe('canonicalGitHubRemoteUrl', () => {
 });
 
 describe('findRecentProjectsForRepo', () => {
-  const expected = { host: 'github.com', owner: 'inkeep', repo: 'palimpsest' };
+  const expected = { host: 'github.com', owner: 'fractalmandala', repo: 'palimpsest' };
 
   function recent(overrides: Partial<RecentProjectEntry> = {}): RecentProjectEntry {
     return {
@@ -61,7 +61,7 @@ describe('findRecentProjectsForRepo', () => {
   test('matches case-insensitively on owner and repo segments', () => {
     const r = recent({
       path: '/x',
-      gitRemoteUrl: 'https://github.com/Example/Palimpsest.git',
+      gitRemoteUrl: 'https://github.com/Fractalmandala/Palimpsest.git',
     });
     expect(findRecentProjectsForRepo([r], expected).map((m) => m.path)).toEqual(['/x']);
   });

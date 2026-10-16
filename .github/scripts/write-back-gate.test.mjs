@@ -23,7 +23,7 @@ describe('attachment classification', () => {
     const c = classifyAttachment(GH_ISSUE);
     expect(c.kind).toBe('repliable-origin');
     expect(c.channel).toBe('github-issue');
-    expect(c).toMatchObject({ owner: 'inkeep', repo: 'palimpsest', number: 769 });
+    expect(c).toMatchObject({ owner: 'example', repo: 'palimpsest', number: 769 });
   });
 
   test('a Discord thread permalink is a repliable origin carrying the thread id', () => {
@@ -479,10 +479,10 @@ describe('origin remit', () => {
   const issue = (owner, repo) => ({ channel: 'github-issue', owner, repo });
 
   test('an issue in this repo is repliable and one anywhere else is not', () => {
-    expect(isOriginRepliableFrom(issue('inkeep', 'palimpsest'), 'fractalmandala/palimpsest')).toBe(
+    expect(isOriginRepliableFrom(issue('example', 'palimpsest'), 'fractalmandala/palimpsest')).toBe(
       true,
     );
-    expect(isOriginRepliableFrom(issue('inkeep', 'agents'), 'fractalmandala/palimpsest')).toBe(false);
+    expect(isOriginRepliableFrom(issue('example', 'agents'), 'fractalmandala/palimpsest')).toBe(false);
     expect(isOriginRepliableFrom(issue('someone', 'fork'), 'fractalmandala/palimpsest')).toBe(false);
   });
 
@@ -494,7 +494,7 @@ describe('origin remit', () => {
 
   test('a Discord thread is repliable regardless of repo, and an unknown repo makes nothing repliable', () => {
     expect(isOriginRepliableFrom({ channel: 'discord-thread', threadId: '1' }, '')).toBe(true);
-    expect(isOriginRepliableFrom(issue('inkeep', 'palimpsest'), '')).toBe(false);
+    expect(isOriginRepliableFrom(issue('example', 'palimpsest'), '')).toBe(false);
     expect(isOriginRepliableFrom(undefined, 'fractalmandala/palimpsest')).toBe(false);
   });
 });

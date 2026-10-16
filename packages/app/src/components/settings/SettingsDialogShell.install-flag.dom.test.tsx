@@ -71,11 +71,7 @@ describe('SettingsDialogShell install-skill feature gate', () => {
     expect(screen.getByTestId('settings-sidebar-item-preferences')).toBeTruthy();
     expect(screen.queryByTestId('settings-sidebar-item-claude-desktop')).toBeNull();
     expect(
-      servedCore.readersOf(
-        '@palimpsest/core/constants/feature-flags',
-        'SHOW_INSTALL_SKILL',
-        since,
-      ),
+      servedCore.readersOf('@palimpsest/core/constants/feature-flags', 'SHOW_INSTALL_SKILL', since),
     ).toEqual(['components/settings/SettingsDialogShell.tsx']);
   });
 });

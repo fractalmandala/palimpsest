@@ -171,7 +171,7 @@ describe('enumerateInstalledSkills', () => {
     const eng = packs.find((p) => p.name === 'eng');
     expect(eng?.version).toBe('2.0.0');
     expect(eng?.description).toBe('Eng skills');
-    expect(eng?.author).toEqual({ name: 'Inkeep' });
+    expect(eng?.author).toEqual({ name: 'Example' });
     expect(eng?.skills).toEqual(['alpha', 'malformed', 'shared-skill']);
     expect(eng?.hostCompatibility).toEqual(['claude']);
 

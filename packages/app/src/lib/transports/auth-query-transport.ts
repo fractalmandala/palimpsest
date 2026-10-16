@@ -1,5 +1,5 @@
-import { type ProblemDetails, ProblemDetailsSchema } from '@palimpsest/core/schemas/api';
 import { t } from '@lingui/core/macro';
+import { type ProblemDetails, ProblemDetailsSchema } from '@palimpsest/core/schemas/api';
 import { z } from 'zod';
 import type {
   PsDesktopBridge,

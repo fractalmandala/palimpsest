@@ -260,12 +260,10 @@ export function createVariantPostTransaction(
 }
 
 export function createLocalEntitlements(source: string): string {
-  return replaceRequired(
-    source,
-    /\n\s*<key>com\.apple\.developer\.associated-domains<\/key>\s*<array>[\s\S]*?<\/array>/,
-    '',
-    'the associated-domains entitlement in build/entitlements.mac.plist',
-  );
+  const pattern =
+    /\n\s*<key>com\.apple\.developer\.associated-domains<\/key>\s*<array>[\s\S]*?<\/array>/;
+  if (!pattern.test(source)) return source;
+  return source.replace(pattern, '');
 }
 
 export function createVariantHelperInfo(source: string, variantName: DesktopVariantName): string {

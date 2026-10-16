@@ -42,7 +42,7 @@ describe('surgical YAML MCP write', () => {
     expect(result.action).toBe('written');
 
     const parsed = parseYaml(readFileSync(configPath, 'utf-8'));
-    expect(parsed.mcp_servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(parsed.mcp_servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 
   it('inserts only our entry, preserving comments, siblings, and key order', () => {
@@ -75,7 +75,7 @@ describe('surgical YAML MCP write', () => {
       command: 'npx',
       args: ['-y', '@modelcontextprotocol/server-github'],
     });
-    expect(parsed.mcp_servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(parsed.mcp_servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 
   it('creates the mcp_servers map when the file has none, keeping the prefix', () => {
@@ -87,7 +87,7 @@ describe('surgical YAML MCP write', () => {
     const after = readFileSync(configPath, 'utf-8');
     expect(after).toContain('# my config');
     expect(after).toContain('model: hermes-4');
-    expect(parseYaml(after).mcp_servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(parseYaml(after).mcp_servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 
   it('handles an empty `mcp_servers:` scalar (null) without throwing', () => {
@@ -98,7 +98,7 @@ describe('surgical YAML MCP write', () => {
     expect(result.action).toBe('written');
     const parsed = parseYaml(readFileSync(configPath, 'utf-8'));
     expect(parsed.model).toBe('hermes-4');
-    expect(parsed.mcp_servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(parsed.mcp_servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 
   it('labels an existing OK entry update as overwritten', () => {
@@ -107,7 +107,7 @@ describe('surgical YAML MCP write', () => {
 
     const result = writeHermes(configPath);
     expect(result.action).toBe('overwritten');
-    expect(parseYaml(readFileSync(configPath, 'utf-8')).mcp_servers['palimpsest']).toEqual(
+    expect(parseYaml(readFileSync(configPath, 'utf-8')).mcp_servers.palimpsest).toEqual(
       PUBLISHED_CHAIN_ENTRY,
     );
   });
@@ -140,7 +140,7 @@ describe('surgical YAML MCP write', () => {
     expect(writeHermes(configPath).action).toBe('overwritten');
 
     const after = readFileSync(configPath, 'utf-8');
-    const entry = parseYaml(after).mcp_servers['palimpsest'];
+    const entry = parseYaml(after).mcp_servers.palimpsest;
     expect(entry).toEqual({
       ...PUBLISHED_CHAIN_ENTRY,
       startup_timeout_ms: 45000,
@@ -172,7 +172,7 @@ describe('surgical YAML MCP write', () => {
     const after = readFileSync(configPath, 'utf-8');
     expect(after.charCodeAt(0)).toBe(0xfeff);
     expect(after).toContain('# bom config');
-    expect(parseYaml(after).mcp_servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(parseYaml(after).mcp_servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 
   it('preserves CRLF line endings elsewhere', () => {
@@ -186,7 +186,7 @@ describe('surgical YAML MCP write', () => {
     const after = readFileSync(configPath, 'utf-8');
     expect(after.replace(/\r\n/g, '')).not.toContain('\n');
     expect(after).toContain('# crlf config');
-    expect(parseYaml(after).mcp_servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(parseYaml(after).mcp_servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 
   it.skipIf(process.platform === 'win32')(
@@ -230,7 +230,7 @@ describe('surgical YAML MCP write', () => {
     expect(outcome.kind).toBe('removed');
 
     const parsed = parseYaml(readFileSync(configPath, 'utf-8'));
-    expect(parsed.mcp_servers['palimpsest']).toBeUndefined();
+    expect(parsed.mcp_servers.palimpsest).toBeUndefined();
     expect(parsed.mcp_servers.github).toEqual({
       command: 'npx',
       args: ['-y', '@modelcontextprotocol/server-github'],
@@ -247,7 +247,7 @@ describe('surgical YAML MCP write', () => {
 
     const outcome = removeOwnMcpEntry(hermesTargetForFile(configPath), '', undefined, configPath);
     expect(outcome.kind).toBe('left-foreign');
-    expect(parseYaml(readFileSync(configPath, 'utf-8')).mcp_servers['palimpsest']).toEqual({
+    expect(parseYaml(readFileSync(configPath, 'utf-8')).mcp_servers.palimpsest).toEqual({
       command: 'not-ok',
       args: ['evil'],
     });
@@ -288,7 +288,7 @@ describe('surgical YAML MCP write when the caller asks for a replacement', () =>
     expect(writeHermesReplacing(configPath).action).toBe('overwritten');
 
     const parsed = parseYaml(readFileSync(configPath, 'utf-8'));
-    expect(parsed.mcp_servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(parsed.mcp_servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
     expect(parsed.mcp_servers.github).toEqual({ command: 'npx' });
   });
 
@@ -313,7 +313,7 @@ describe('surgical YAML MCP write when the caller asks for a replacement', () =>
     expect(writeHermes(configPath).action).toBe('overwritten');
 
     const parsed = parseYaml(readFileSync(configPath, 'utf-8'));
-    expect(parsed.mcp_servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(parsed.mcp_servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
     expect(parsed.mcp_servers.github).toEqual({ command: 'npx' });
   });
 
@@ -352,7 +352,7 @@ describe('surgical YAML MCP write when the caller asks for a replacement', () =>
     const after = readFileSync(configPath, 'utf-8');
     expect(after).toContain('# keep this note');
     expect(after).not.toContain('NODE_OPTIONS');
-    expect(parseYaml(after).mcp_servers['palimpsest']).toEqual({
+    expect(parseYaml(after).mcp_servers.palimpsest).toEqual({
       command: '/bin/sh',
       args: ['-l', '-c', '# ps-mcp-v99\nfuture launcher body'],
       cwd: '/srv/notes',

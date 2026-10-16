@@ -39,7 +39,7 @@ export function createTerminalWindow(deps: CreateTerminalWindowDeps): TerminalBr
       `--ok-app-version=${deps.appVersion}`,
       `--ok-collab-url=${project?.collabUrl ?? ''}`,
       `--ok-api-origin=${project?.apiOrigin ?? ''}`,
-      `--ok-project-path=${project?.projectPath ?? ''}`,
+      `--ps-project-path=${project?.projectPath ?? ''}`,
       `--ok-project-name=${project?.projectName ?? GENERIC_TITLE}`,
     ],
     title,

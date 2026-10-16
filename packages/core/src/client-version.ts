@@ -10,9 +10,9 @@ export const CLIENT_SURFACE_ATTRIBUTE = 'ps.client.surface';
 export const CLIENT_RUNTIME_VERSION_FALLBACK = '0.0.0-unknown';
 
 export const CLIENT_VERSION_HEADER = {
-  protocol: 'x-ok-client-protocol',
-  runtime: 'x-ok-client-runtime',
-  kind: 'x-ok-client-kind',
+  protocol: 'x-ps-client-protocol',
+  runtime: 'x-ps-client-runtime',
+  kind: 'x-ps-client-kind',
 } as const;
 
 export interface ClientVersionInput {

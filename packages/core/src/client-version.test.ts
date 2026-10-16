@@ -95,22 +95,22 @@ describe('client-version v1 wire contract', () => {
     expect(PROTOCOL_VERSION).toBeGreaterThan(0);
   });
 
-  test('header names are the locked lowercase x-ok-client-* set', () => {
+  test('header names are the locked lowercase x-ps-client-* set', () => {
     expect(CLIENT_VERSION_HEADER).toEqual({
-      protocol: 'x-ok-client-protocol',
-      runtime: 'x-ok-client-runtime',
-      kind: 'x-ok-client-kind',
+      protocol: 'x-ps-client-protocol',
+      runtime: 'x-ps-client-runtime',
+      kind: 'x-ps-client-kind',
     });
   });
 
   test('clientVersionHeaders stringifies protocol and carries runtime + kind', () => {
     const headers = clientVersionHeaders({ kind: 'cli', runtimeVersion: '0.8.1' });
     expect(headers).toEqual({
-      'x-ok-client-protocol': String(PROTOCOL_VERSION),
-      'x-ok-client-runtime': '0.8.1',
-      'x-ok-client-kind': 'cli',
+      'x-ps-client-protocol': String(PROTOCOL_VERSION),
+      'x-ps-client-runtime': '0.8.1',
+      'x-ps-client-kind': 'cli',
     });
-    expect(typeof headers['x-ok-client-protocol']).toBe('string');
+    expect(typeof headers['x-ps-client-protocol']).toBe('string');
   });
 
   test('clientVersionTokenFields keeps protocol as a JSON number', () => {

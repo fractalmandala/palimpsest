@@ -410,7 +410,7 @@ jobs:
           # on another Mac) can filter by prefix without inspecting the
           # DMG signature. Unsigned DMGs can run locally after `xattr -cr`
           # but must never be shipped as if they were a release build.
-          name: open-knowledge-${{ env.PS_DESKTOP_VARIANT }}-macos-${{ steps.signmode.outputs.mode }}-${{ github.sha }}
+          name: palimpsest-${{ env.PS_DESKTOP_VARIANT }}-macos-${{ steps.signmode.outputs.mode }}-${{ github.sha }}
           path: |
             packages/desktop/dist-desktop/*.dmg
             packages/desktop/dist-desktop/*.dmg.blockmap

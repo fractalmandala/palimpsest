@@ -1,8 +1,5 @@
-import type {
-  PullOutcome,
-  ShareTargetStatusResponse,
-} from '@palimpsest/core/schemas/api';
 import { Trans, useLingui } from '@lingui/react/macro';
+import type { PullOutcome, ShareTargetStatusResponse } from '@palimpsest/core/schemas/api';
 import {
   ArrowDownToLine,
   FilePen,

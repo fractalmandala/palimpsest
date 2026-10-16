@@ -1,10 +1,10 @@
+import { useLingui } from '@lingui/react/macro';
 import {
   createWorkspaceSearchCorpus,
   createWorkspaceSearchDocument,
   searchWorkspaceCorpus,
   type WorkspaceSearchCorpus,
 } from '@palimpsest/core/search/workspace-search';
-import { useLingui } from '@lingui/react/macro';
 import type { ReactNode } from 'react';
 import { useEffect, useId, useRef, useState } from 'react';
 import { useOptionalPageList } from '@/components/PageListContext';

@@ -13,6 +13,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import type { HocuspocusProvider } from '@hocuspocus/provider';
+import { Trans, useLingui } from '@lingui/react/macro';
 import {
   bindFrontmatterDoc,
   type FrontmatterBinding,
@@ -29,7 +30,6 @@ import {
   inferType,
   isFrontmatterValueEmpty,
 } from '@palimpsest/core/frontmatter/schema';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { AlertTriangle, Plus } from 'lucide-react';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { CommentedDocProvider } from '@/comments/CommentedDocContext';

@@ -42,18 +42,14 @@ describe('identifyPalimpsestToolCall', () => {
   });
 
   test('a call to another server or another tool is not an OK call', () => {
-    expect(
-      identifyPalimpsestToolCall({ title: 'mcp__github__search', rawInput: {} }),
-    ).toBeNull();
+    expect(identifyPalimpsestToolCall({ title: 'mcp__github__search', rawInput: {} })).toBeNull();
     expect(
       identifyPalimpsestToolCall({
         title: 'mcp.palimpsest.edit',
         rawInput: { server: 'github', tool: 'edit' },
       }),
     ).toBeNull();
-    expect(
-      identifyPalimpsestToolCall({ title: 'Bash', rawInput: { command: 'ls' } }),
-    ).toBeNull();
+    expect(identifyPalimpsestToolCall({ title: 'Bash', rawInput: { command: 'ls' } })).toBeNull();
     expect(identifyPalimpsestToolCall({ title: null, rawInput: undefined })).toBeNull();
   });
 

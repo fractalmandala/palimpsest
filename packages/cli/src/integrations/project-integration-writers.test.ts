@@ -59,7 +59,7 @@ describe('mcpConfigWriter', () => {
     writeFileSync(
       cursorMcp,
       JSON.stringify({
-        mcpServers: { 'palimpsest': { command: 'old', args: ['mcp'] } },
+        mcpServers: { palimpsest: { command: 'old', args: ['mcp'] } },
       }),
     );
 
@@ -68,9 +68,9 @@ describe('mcpConfigWriter', () => {
     expect(outcome.action).toBe('overwritten');
     expect(outcome.path).toBe(cursorMcp);
     const written = JSON.parse(readFileSync(cursorMcp, 'utf-8'));
-    expect(written.mcpServers['palimpsest'].command).toBe('/bin/sh');
-    expect(written.mcpServers['palimpsest'].args.slice(0, 2)).toEqual(['-l', '-c']);
-    expect(written.mcpServers['palimpsest'].args[2]).toContain('# ps-mcp-v2');
+    expect(written.mcpServers.palimpsest.command).toBe('/bin/sh');
+    expect(written.mcpServers.palimpsest.args.slice(0, 2)).toEqual(['-l', '-c']);
+    expect(written.mcpServers.palimpsest.args[2]).toContain('# ps-mcp-v2');
   });
 
   test('reports "skipped-unsupported" for an editor without projectConfigPath', () => {
@@ -169,7 +169,7 @@ describe('projectSkillWriter', () => {
     writeFileSync(
       join(copilotHome, 'mcp-config.json'),
       JSON.stringify({
-        mcpServers: { 'palimpsest': OWN_MCP_ENTRY },
+        mcpServers: { palimpsest: OWN_MCP_ENTRY },
       }),
     );
 
@@ -187,7 +187,7 @@ describe('projectSkillWriter', () => {
     writeFileSync(
       join(copilotHome, 'mcp-config.json'),
       `${JSON.stringify({
-        mcpServers: { 'palimpsest': { command: 'custom-ok', args: ['mcp'] } },
+        mcpServers: { palimpsest: { command: 'custom-ok', args: ['mcp'] } },
       })}${' '.repeat(10 * 1024 * 1024)}`,
     );
 
@@ -206,7 +206,7 @@ describe('projectSkillWriter', () => {
       writeFileSync(
         join(projectDir, '.mcp.json'),
         JSON.stringify({
-          mcpServers: { 'palimpsest': buildManagedServerEntry({ mode: 'dev' }) },
+          mcpServers: { palimpsest: buildManagedServerEntry({ mode: 'dev' }) },
         }),
       );
 
@@ -225,7 +225,7 @@ describe('projectSkillWriter', () => {
       join(projectDir, '.mcp.json'),
       JSON.stringify({
         mcpServers: {
-          'palimpsest': {
+          palimpsest: {
             command: 'npx',
             args: ['-y', '@palimpsest/cli@latest', 'mcp'],
           },
@@ -244,7 +244,7 @@ describe('projectSkillWriter', () => {
     writeFileSync(
       join(projectDir, '.mcp.json'),
       JSON.stringify({
-        mcpServers: { 'palimpsest': { ...OWN_MCP_ENTRY, enabled: false } },
+        mcpServers: { palimpsest: { ...OWN_MCP_ENTRY, enabled: false } },
       }),
     );
 
@@ -259,7 +259,7 @@ describe('projectSkillWriter', () => {
     writeFileSync(
       join(projectDir, '.mcp.json'),
       JSON.stringify({
-        mcpServers: { 'palimpsest': { command: 'curl', args: ['https://example.invalid'] } },
+        mcpServers: { palimpsest: { command: 'curl', args: ['https://example.invalid'] } },
       }),
     );
 
@@ -275,7 +275,7 @@ describe('projectSkillWriter', () => {
     writeFileSync(
       join(projectDir, '.mcp.json'),
       JSON.stringify({
-        mcpServers: { 'palimpsest': OWN_MCP_ENTRY },
+        mcpServers: { palimpsest: OWN_MCP_ENTRY },
       }),
     );
 
@@ -389,17 +389,11 @@ describe('applyProjectIntegrations', () => {
     ]);
 
     expect(existsSync(join(projectDir, '.mcp.json'))).toBe(true);
-    expect(existsSync(join(projectDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
-      true,
-    );
+    expect(existsSync(join(projectDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(true);
     expect(existsSync(join(projectDir, '.cursor', 'mcp.json'))).toBe(true);
-    expect(existsSync(join(projectDir, '.cursor', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
-      true,
-    );
+    expect(existsSync(join(projectDir, '.cursor', 'skills', 'palimpsest', 'SKILL.md'))).toBe(true);
     expect(existsSync(join(projectDir, '.codex', 'config.toml'))).toBe(true);
-    expect(existsSync(join(projectDir, '.codex', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
-      true,
-    );
+    expect(existsSync(join(projectDir, '.codex', 'skills', 'palimpsest', 'SKILL.md'))).toBe(true);
   });
 
   test('returns an empty array for an empty editorIds selection', () => {
@@ -461,7 +455,7 @@ describe('applyProjectIntegrations', () => {
       const mcpOutcome = outcomes.find((o) => o.integration === 'mcp-config');
       expect(mcpOutcome?.action).toBe('written');
       const written = JSON.parse(readFileSync(join(projectDir, '.mcp.json'), 'utf-8'));
-      expect(written.mcpServers['palimpsest'].command).toBe('node');
+      expect(written.mcpServers.palimpsest.command).toBe('node');
     } finally {
       process.argv[1] = originalArgv1;
     }

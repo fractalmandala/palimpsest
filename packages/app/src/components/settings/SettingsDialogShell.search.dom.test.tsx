@@ -302,11 +302,7 @@ describe('settings dialog search', () => {
     });
     expect(screen.queryByTestId('settings-search-result-rule:MD009')).toBeNull();
     expect(
-      servedCore.readersOf(
-        '@palimpsest/core/markdown/lint',
-        'MARKDOWNLINT_RULE_CATALOG',
-        since,
-      ),
+      servedCore.readersOf('@palimpsest/core/markdown/lint', 'MARKDOWNLINT_RULE_CATALOG', since),
     ).toEqual(['components/settings/settings-search-index.ts']);
   });
 

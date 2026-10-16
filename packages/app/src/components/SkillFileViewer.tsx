@@ -1,5 +1,5 @@
-import type { SkillScope } from '@palimpsest/core/schemas/api';
 import { useLingui } from '@lingui/react/macro';
+import type { SkillScope } from '@palimpsest/core/schemas/api';
 import { Eye } from 'lucide-react';
 import { useRef } from 'react';
 import { ProseFindBar } from '@/components/ProseFindBar';

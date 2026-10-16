@@ -174,9 +174,7 @@ describe('buildDocPathResolver', () => {
       workspace: windowsWorkspace,
       pages: new Set(['reports/foo/REPORT']),
     });
-    expect(resolve?.('.\\public\\palimpsest\\reports\\foo\\REPORT.md')).toBe(
-      'reports/foo/REPORT',
-    );
+    expect(resolve?.('.\\public\\palimpsest\\reports\\foo\\REPORT.md')).toBe('reports/foo/REPORT');
   });
 
   test('dot-segment paths link when they are in the tracked page set (.changeset/, .github/, …)', () => {
@@ -194,9 +192,9 @@ describe('buildDocPathResolver', () => {
       workspace: windowsWorkspace,
       pages: new Set(['reports/foo/REPORT']),
     });
-    expect(
-      resolve?.('C:\\Users\\abraham\\repo\\public\\palimpsest\\reports\\foo\\REPORT.md'),
-    ).toBe('reports/foo/REPORT');
+    expect(resolve?.('C:\\Users\\abraham\\repo\\public\\palimpsest\\reports\\foo\\REPORT.md')).toBe(
+      'reports/foo/REPORT',
+    );
   });
 });
 

@@ -54,19 +54,19 @@ function bundledSkillCandidates(
     }
   }
   if (runsFromSource(moduleUrl)) {
-    candidates.push(fileURLToPath(new URL(`../assets/skills/${which}`, moduleUrl)));
+    candidates.push(fileURLToPath(new URL(`../../skills/${which}`, moduleUrl)));
     return candidates;
   }
   candidates.push(fileURLToPath(new URL(`../dist/assets/skills/${which}`, moduleUrl)));
-  candidates.push(fileURLToPath(new URL(`../assets/skills/${which}`, moduleUrl)));
+  candidates.push(fileURLToPath(new URL(`../../skills/${which}`, moduleUrl)));
   candidates.push(fileURLToPath(new URL(`./assets/skills/${which}`, moduleUrl)));
   return candidates;
 }
 
 function missingBundleMessage(which: string, moduleUrl: string, candidates: string[]): string {
   const remedy = runsFromSource(moduleUrl)
-    ? 'Running from source, only the source assets are read, so the bundle name is unknown or its directory under packages/server/assets/skills is missing.'
-    : 'This usually means the package build did not copy packages/server/assets into dist/assets. Run `pnpm run build` in the package that ships the skills before publishing.';
+    ? 'Running from source, only the source assets are read, so the bundle name is unknown or its directory under skills/ is missing.'
+    : 'This usually means the package build did not copy skills/ into dist/assets. Run `pnpm run build` in the package that ships the skills before publishing.';
   return `Bundled skill asset directory not found for bundle '${which}'. Tried: ${candidates.join(', ')}. ${remedy}`;
 }
 
@@ -162,7 +162,7 @@ export async function validateSkillZip(
   if (!new RegExp(`^name:\\s+${expectedName}$`, 'm').test(skillMd.slice(0, 1500))) {
     throw new Error(
       `SKILL.md frontmatter \`name:\` does not match '${expectedName}'. ` +
-        `Check packages/server/assets/skills/${bundle}/SKILL.md frontmatter.`,
+        `Check skills/${bundle}/SKILL.md frontmatter.`,
     );
   }
 

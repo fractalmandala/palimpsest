@@ -1,5 +1,5 @@
-import type { AttachmentPart } from '@palimpsest/core/acp/thread-protocol';
 import { t } from '@lingui/core/macro';
+import type { AttachmentPart } from '@palimpsest/core/acp/thread-protocol';
 import { type Editor, Extension, mergeAttributes, Node } from '@tiptap/core';
 import Placeholder from '@tiptap/extension-placeholder';
 import { history, redo, undo } from '@tiptap/pm/history';

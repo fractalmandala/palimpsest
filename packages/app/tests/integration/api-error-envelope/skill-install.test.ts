@@ -88,8 +88,8 @@ describe('skill install-projection lifecycle', () => {
   });
 
   test('install refuses the reserved palimpsest* prefix → 400', async () => {
-    expect((await putSkill('open-knowledge-mine')).status).toBe(200);
-    const res = await installSkill({ name: 'open-knowledge-mine', targets: ['claude'] });
+    expect((await putSkill('palimpsest-mine')).status).toBe(200);
+    const res = await installSkill({ name: 'palimpsest-mine', targets: ['claude'] });
     expect(res.status).toBe(400);
     const parsed = ProblemDetailsSchema.safeParse(await res.json());
     expect(parsed.success && parsed.data.title.includes('reserved')).toBe(true);

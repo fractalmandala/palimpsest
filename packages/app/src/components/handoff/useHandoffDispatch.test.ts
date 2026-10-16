@@ -315,9 +315,7 @@ describe('runHandoffDispatch — autoOpen=false honors the user preference', () 
     const [payload] = (deps.dispatchHandoff as ReturnType<typeof vi.fn>).mock.calls[0] as [
       HandoffPayload,
     ];
-    expect(payload.prompt).toBe(
-      withSkillPointer("Let's work on this project using Palimpsest."),
-    );
+    expect(payload.prompt).toBe(withSkillPointer("Let's work on this project using Palimpsest."));
     expect(payload.prompt).not.toContain('Open the OK editor');
   });
 });
@@ -707,7 +705,7 @@ describe('buildSkillHandoffInput + selectScopedPrompt — skill scope (author-wi
     });
     if (!input) throw new Error('expected a non-null skill input');
     expect(selectScopedPrompt(input, 'claude-code', true, 'url')).toBe(
-      'Use your open-knowledge-write-skill skill to author the project Palimpsest skill `commit-helper`. Edit it with the Palimpsest tools. Open the OK editor in web view.',
+      'Use your palimpsest-write-skill skill to author the project Palimpsest skill `commit-helper`. Edit it with the Palimpsest tools. Open the OK editor in web view.',
     );
   });
 });
@@ -1179,9 +1177,7 @@ describe('selectScopedPrompt — template selection across autoOpen modes', () =
 
   test('create scope with empty createDescription routes to the create composer, NOT empty-space', async () => {
     const { selectScopedPrompt } = await import('./useHandoffDispatch');
-    const { composeCreatePrompt, composeEmptySpacePrompt } = await import(
-      '@palimpsest/core'
-    );
+    const { composeCreatePrompt, composeEmptySpacePrompt } = await import('@palimpsest/core');
     const out = selectScopedPrompt(
       {
         docContext: null,
@@ -1636,7 +1632,7 @@ describe('composeTerminalLaunchPrompt — docked-terminal bare launch is load + 
     );
     const claudeOut = composeTerminalLaunchPrompt(input, 'claude');
     expect(claudeOut).toContain('`my-skill`');
-    expect(claudeOut).toContain('open-knowledge-write-skill');
+    expect(claudeOut).toContain('palimpsest-write-skill');
     expect(claudeOut).not.toContain('Then stop.');
   });
 

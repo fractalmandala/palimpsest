@@ -5,6 +5,7 @@
  */
 
 import type { HocuspocusProvider } from '@hocuspocus/provider';
+import { useLingui } from '@lingui/react/macro';
 import {
   bindFrontmatterDoc,
   type FrontmatterBinding,
@@ -12,7 +13,6 @@ import {
   readFmKeys,
   readFmRegionWithError,
 } from '@palimpsest/core/bridge';
-import { useLingui } from '@lingui/react/macro';
 import { useEffect, useRef, useState } from 'react';
 import {
   focalYToObjectPosition,

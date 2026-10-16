@@ -31,7 +31,7 @@ describe('validateLocalFolderForShare', () => {
 
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
     });
     expect(result).toEqual({
@@ -47,7 +47,7 @@ describe('validateLocalFolderForShare', () => {
 
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
     });
     expect(result).toEqual({
@@ -63,7 +63,7 @@ describe('validateLocalFolderForShare', () => {
 
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
     });
     expect(result).toEqual({
@@ -117,16 +117,16 @@ describe('validateLocalFolderForShare', () => {
   test('owner / repo comparison is case-insensitive', async () => {
     const folder = resolve(tmpDir, 'repo');
     mkdirSync(folder);
-    seedRepo(folder, 'https://github.com/Inkeep/Palimpsest.git');
+    seedRepo(folder, 'https://github.com/Fractalmandala/Palimpsest.git');
 
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
     });
     expect(result.kind).toBe('ok');
     if (result.kind === 'ok') {
-      expect(result.gitRemoteUrl).toBe('https://github.com/Inkeep/Palimpsest.git');
+      expect(result.gitRemoteUrl).toBe('https://github.com/Fractalmandala/Palimpsest.git');
     }
   });
 
@@ -136,7 +136,7 @@ describe('validateLocalFolderForShare', () => {
 
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
     });
     expect(result).toEqual({ kind: 'not-git' });
@@ -147,7 +147,7 @@ describe('validateLocalFolderForShare', () => {
 
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
     });
     expect(result).toEqual({ kind: 'not-git' });
@@ -159,7 +159,7 @@ describe('validateLocalFolderForShare', () => {
 
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
     });
     expect(result).toEqual({ kind: 'not-git' });
@@ -172,7 +172,7 @@ describe('validateLocalFolderForShare', () => {
 
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
     });
     expect(result).toEqual({ kind: 'no-origin' });
@@ -184,7 +184,7 @@ describe('validateLocalFolderForShare', () => {
     seedRepo(folder, '""');
 
     const result = await validateLocalFolderForShare(folder, {
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
     });
     expect(result).toEqual({ kind: 'no-origin' });
@@ -205,7 +205,7 @@ describe('validateLocalFolderForShare', () => {
 
     const result = await validateLocalFolderForShare(worktreeFolder, {
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
     });
     expect(result).toEqual({
@@ -231,7 +231,7 @@ describe('validateLocalFolderForShare', () => {
 
     const result = await validateLocalFolderForShare(worktreeFolder, {
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
     });
     expect(result).toEqual({
@@ -247,7 +247,7 @@ describe('validateLocalFolderForShare', () => {
 
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
     });
     expect(result).toEqual({ kind: 'not-git' });
@@ -260,7 +260,7 @@ describe('validateLocalFolderForShare', () => {
 
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
     });
     expect(result).toEqual({ kind: 'not-git' });
@@ -273,7 +273,7 @@ describe('validateLocalFolderForShare', () => {
 
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
     });
     expect(result).toEqual({ kind: 'non-github' });
@@ -286,7 +286,7 @@ describe('validateLocalFolderForShare', () => {
 
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
     });
     expect(result).toEqual({ kind: 'non-github' });
@@ -299,7 +299,7 @@ describe('validateLocalFolderForShare', () => {
 
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
     });
     expect(result).toEqual({
@@ -316,7 +316,7 @@ describe('validateLocalFolderForShare', () => {
 
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
     });
     expect(result).toEqual({
@@ -338,7 +338,7 @@ describe('validateLocalFolderForShare', () => {
 
     const result = await validateLocalFolderForShare(picked, {
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
     });
     expect(result).toEqual({ kind: 'symlink-escape' });
@@ -359,7 +359,7 @@ describe('validateLocalFolderForShare', () => {
 
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
     });
     expect(result).toEqual({ kind: 'symlink-escape' });
@@ -375,7 +375,7 @@ describe('validateLocalFolderForShare', () => {
 
     const result = await validateLocalFolderForShare(linkFolder, {
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
     });
     expect(result.kind).toBe('ok');
@@ -397,7 +397,7 @@ describe('validateLocalFolderForShare', () => {
 
     const result = await validateLocalFolderForShare(folder, {
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
     });
     expect(result).toEqual({

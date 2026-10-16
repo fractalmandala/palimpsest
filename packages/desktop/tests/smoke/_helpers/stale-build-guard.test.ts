@@ -186,9 +186,7 @@ describe('the real CHECKS list, not an injected one', () => {
     });
     const cli = verdict.missing.find((m) => m.name.includes('CLI'));
     expect(cli?.out).toMatch(/cli[/\\]dist[/\\]index\.mjs$/);
-    const cliExecutable = verdict.missing.find(
-      (m) => m.name === '@palimpsest/cli CLI executable',
-    );
+    const cliExecutable = verdict.missing.find((m) => m.name === '@palimpsest/cli CLI executable');
     expect(cliExecutable?.out).toMatch(/cli[/\\]dist[/\\]cli\.mjs$/);
     expect(verdict.missing.map((m) => m.name)).toEqual([
       'main dispatcher',

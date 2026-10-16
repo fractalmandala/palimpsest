@@ -1,7 +1,7 @@
+import { t } from '@lingui/core/macro';
 import type { GuidanceRef } from '@palimpsest/core/agent-registry';
 import { EDITOR_LABELS } from '@palimpsest/core/constants/editors';
 import { DESKTOP_PRODUCTS } from '@palimpsest/core/constants/product';
-import { t } from '@lingui/core/macro';
 
 function desktopMcpServerName(): string | null {
   return (typeof window === 'undefined' ? null : window.psDesktop?.mcpServerName) || null;

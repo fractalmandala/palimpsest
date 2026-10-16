@@ -303,9 +303,9 @@ describe('the user-global discovery bundle', () => {
     ]);
 
     expect(actionFor(report, 'cursor/skill/user/skill-bundle-copy')?.action).toBe('written');
-    expect(
-      existsSync(join(home, '.cursor', 'skills', 'palimpsest-discovery', 'SKILL.md')),
-    ).toBe(true);
+    expect(existsSync(join(home, '.cursor', 'skills', 'palimpsest-discovery', 'SKILL.md'))).toBe(
+      true,
+    );
     expect(readFileSync(claudeSkillMd, 'utf8')).toBe(claudeBytesBefore);
   });
 
@@ -354,9 +354,9 @@ describe('the user-global discovery bundle', () => {
 
     expect(actionFor(report, 'cursor/skill/user/skill-bundle-copy')?.action).toBe('removed');
     expect(existsSync(join(home, '.cursor', 'skills', 'palimpsest-discovery'))).toBe(false);
-    expect(
-      existsSync(join(home, '.claude', 'skills', 'palimpsest-discovery', 'SKILL.md')),
-    ).toBe(true);
+    expect(existsSync(join(home, '.claude', 'skills', 'palimpsest-discovery', 'SKILL.md'))).toBe(
+      true,
+    );
   });
 
   it('refuses a removal that would follow a shared root into the peer, and names the peer', async () => {
@@ -373,9 +373,9 @@ describe('the user-global discovery bundle', () => {
     expect(actionFor(report, 'codex/skill/user/skill-bundle-copy')).toBeUndefined();
     const conflict = report.conflicts.find((entry) => entry.kind === 'unresolved-shared-copy');
     expect(conflict?.agentIds).toEqual(['codex', 'claude']);
-    expect(
-      existsSync(join(home, '.claude', 'skills', 'palimpsest-discovery', 'SKILL.md')),
-    ).toBe(true);
+    expect(existsSync(join(home, '.claude', 'skills', 'palimpsest-discovery', 'SKILL.md'))).toBe(
+      true,
+    );
   });
 
   it('removes through a shared root once the batch removes the peer too', async () => {
@@ -391,8 +391,8 @@ describe('the user-global discovery bundle', () => {
     ]);
 
     expect(report.conflicts).toEqual([]);
-    expect(
-      existsSync(join(home, '.claude', 'skills', 'palimpsest-discovery', 'SKILL.md')),
-    ).toBe(false);
+    expect(existsSync(join(home, '.claude', 'skills', 'palimpsest-discovery', 'SKILL.md'))).toBe(
+      false,
+    );
   });
 });

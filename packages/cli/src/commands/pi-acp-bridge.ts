@@ -10,10 +10,7 @@ import {
 } from 'node:fs';
 import { homedir } from 'node:os';
 import { basename, dirname, join, resolve } from 'node:path';
-import type {
-  PiBridgeWriteAction,
-  PiTrustWriteAction,
-} from '@palimpsest/core/acp/thread-protocol';
+import type { PiBridgeWriteAction, PiTrustWriteAction } from '@palimpsest/core/acp/thread-protocol';
 import { atomicWriteFileSync, psUserHomeDir } from '@palimpsest/core/server';
 import { buildPiExtensionSource, isOwnPiManagedFileEntry } from '../integrations/pi-extension.ts';
 import {

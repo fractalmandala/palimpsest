@@ -11,11 +11,7 @@ import {
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import {
-  PS_DIR,
-  PS_MACHINE_LOCAL_ROOT_DIRS,
-  PS_MACHINE_LOCAL_ROOT_FILES,
-} from '@palimpsest/core';
+import { PS_DIR, PS_MACHINE_LOCAL_ROOT_DIRS, PS_MACHINE_LOCAL_ROOT_FILES } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
   buildConfigYmlContent,

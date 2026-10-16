@@ -1,5 +1,5 @@
-import { getTracer, initTelemetry } from '@palimpsest/server';
 import { type Context, context, propagation, type Span, trace } from '@opentelemetry/api';
+import { getTracer, initTelemetry } from '@palimpsest/server';
 import { getLogger } from './desktop-logger.ts';
 
 let rootSpan: Span | undefined;

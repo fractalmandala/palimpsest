@@ -1,10 +1,5 @@
-import {
-  AGENT_REGISTRY,
-  EDITOR_LABELS,
-  GUIDANCE_KEYS,
-  guidanceId,
-} from '@palimpsest/core';
 import type { Messages } from '@lingui/core';
+import { AGENT_REGISTRY, EDITOR_LABELS, GUIDANCE_KEYS, guidanceId } from '@palimpsest/core';
 import { describe, expect, test, vi } from 'vitest';
 import { followupHintText } from '@/lib/agent-followup-hint';
 import { guidanceText, troubleshootingText } from '@/lib/agent-guidance-copy';

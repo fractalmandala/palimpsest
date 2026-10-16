@@ -1,8 +1,4 @@
-import {
-  DEFAULT_LINTER_CONFIG,
-  type LinterConfig,
-  lintDocument,
-} from '@palimpsest/core';
+import { DEFAULT_LINTER_CONFIG, type LinterConfig, lintDocument } from '@palimpsest/core';
 import { cleanup, render, screen } from '@testing-library/react';
 import { useEffect, useState } from 'react';
 import { afterEach, describe, expect, test } from 'vitest';

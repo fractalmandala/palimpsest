@@ -1,5 +1,8 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
+// oxlint-disable ps/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
+import type { MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react/macro';
 import type { ConfigBinding } from '@palimpsest/core/config/bind-config-doc';
 import {
   BASE16_SLOT_ROLES,
@@ -10,9 +13,6 @@ import {
   base16ToYaml,
   parseBase16Scheme,
 } from '@palimpsest/core/theme/base16';
-import type { MessageDescriptor } from '@lingui/core';
-import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react/macro';
 import { ArrowUpRight } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { type ClipboardEvent, useEffect, useLayoutEffect, useRef, useState } from 'react';

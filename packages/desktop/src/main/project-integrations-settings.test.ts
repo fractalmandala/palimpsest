@@ -87,8 +87,7 @@ function makeCli(overrides: CliOverrides = {}): ProjectIntegrationsCliSurface & 
       description: 'Teaches coding agents in this project.',
       size: { alwaysOn: 140, onTrigger: 1495, onDemand: 0 },
     }),
-    entryLocator: (id) =>
-      id === 'codex' ? '[mcp_servers.palimpsest]' : 'mcpServers.palimpsest',
+    entryLocator: (id) => (id === 'codex' ? '[mcp_servers.palimpsest]' : 'mcpServers.palimpsest'),
     classifyExistingProjectMcpConfig: (id) =>
       overrides.classifications?.[id] ?? ({ kind: 'no-entry' } as McpEntryClassification),
     isOwnEntry: (entry) => entry === OWN_ENTRY,

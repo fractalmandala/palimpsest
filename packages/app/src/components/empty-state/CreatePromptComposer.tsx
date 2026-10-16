@@ -1,10 +1,10 @@
+import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import {
   type HandoffTarget,
   type TargetData,
   TERMINAL_CLIS,
   type TerminalCli,
 } from '@palimpsest/core/handoff';
-import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { ArrowUpRight, Check, ChevronDown, SlidersHorizontal, Sparkles } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';

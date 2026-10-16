@@ -19,7 +19,7 @@ describe('docs page markdown alternate link', () => {
     } as never);
 
     expect(meta.alternates?.types).toMatchObject({
-      'text/markdown': 'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/overview.mdx',
+      'text/markdown': 'https://github.com/fractalmandala/palimpsest/docs/get-started/overview.md',
     });
   });
 
@@ -29,7 +29,7 @@ describe('docs page markdown alternate link', () => {
     } as never);
     const advertised = String(meta.alternates?.types?.['text/markdown']);
 
-    expect(new URL(advertised).pathname).toBe(`${overviewPage.url}.md`);
+    expect(advertised).toBe(`https://github.com/fractalmandala/palimpsest${overviewPage.url}.md`);
   });
 
   test('a page with no markdown producer advertises no markdown twin', async () => {

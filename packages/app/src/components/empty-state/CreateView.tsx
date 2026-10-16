@@ -1,9 +1,6 @@
-import type {
-  TemplatesListEntry,
-  TemplatesListSuccess,
-} from '@palimpsest/core/schemas/api';
 import { plural } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
+import type { TemplatesListEntry, TemplatesListSuccess } from '@palimpsest/core/schemas/api';
 import { ArrowRightIcon, Info, Plus } from 'lucide-react';
 import { CopyablePromptList } from '@/components/empty-state/CopyablePromptList';
 import { CreatePromptComposer } from '@/components/empty-state/CreatePromptComposer';

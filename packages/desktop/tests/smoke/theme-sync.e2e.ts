@@ -168,7 +168,7 @@ test.describe('chrome-modernization theme-sync smoke', () => {
       const themeAppliedCalls: Array<{ opts: unknown; at: number }> = [];
       g.__okThemeAppliedCalls = themeAppliedCalls;
       ipcMain.removeHandler('ps:theme:applied');
-      // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- E2E test scaffolding — installs mock IPC handler inside the Electron process under test
+      // oxlint-disable-next-line ps/no-loosely-typed-webcontents-ipc -- E2E test scaffolding — installs mock IPC handler inside the Electron process under test
       ipcMain.handle('ps:theme:applied', async (_event, opts) => {
         themeAppliedCalls.push({ opts, at: Date.now() });
         return undefined;
@@ -176,7 +176,7 @@ test.describe('chrome-modernization theme-sync smoke', () => {
 
       ipcMain.removeHandler('ps:theme:set-source');
       let alreadyThrew = false;
-      // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- E2E test scaffolding — installs mock IPC handler inside the Electron process under test
+      // oxlint-disable-next-line ps/no-loosely-typed-webcontents-ipc -- E2E test scaffolding — installs mock IPC handler inside the Electron process under test
       ipcMain.handle('ps:theme:set-source', async (_e, _args) => {
         if (!alreadyThrew) {
           alreadyThrew = true;

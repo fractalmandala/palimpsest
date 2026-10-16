@@ -1,6 +1,6 @@
-import type { WorktreeCreateResult } from '@palimpsest/core/git/worktree-selector-model';
 import type { MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import type { WorktreeCreateResult } from '@palimpsest/core/git/worktree-selector-model';
 
 type WorktreeCreateFailure = Extract<WorktreeCreateResult, { readonly ok: false }>;
 type WorktreeCreateErrorInput =

@@ -1,5 +1,5 @@
-import type { SkillsListEntry } from '@palimpsest/core/schemas/api';
 import { useLingui } from '@lingui/react/macro';
+import type { SkillsListEntry } from '@palimpsest/core/schemas/api';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { DeleteConfirmationDialog } from '@/components/DeleteConfirmationDialog';

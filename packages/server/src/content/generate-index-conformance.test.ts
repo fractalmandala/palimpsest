@@ -1,8 +1,4 @@
-import {
-  DEFAULT_LINTER_CONFIG,
-  type LinterConfig,
-  lintDocument,
-} from '@palimpsest/core';
+import { DEFAULT_LINTER_CONFIG, type LinterConfig, lintDocument } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { computeBrokenOutboundLinks } from '../backlink-index.ts';
 import { buildIndexMarkdown, type IndexEntry } from './generate-index.ts';

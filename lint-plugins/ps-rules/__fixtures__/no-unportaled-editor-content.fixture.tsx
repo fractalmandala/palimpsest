@@ -42,7 +42,7 @@ export function Positive3() {
 //     itself matches the pattern.
 export function Negative1() {
   return createPortal(
-    // oxlint-disable-next-line ok/no-unportaled-editor-content -- canonical portaled site — H6 fix per PRECEDENTS.md #44
+    // oxlint-disable-next-line ps/no-unportaled-editor-content -- canonical portaled site — H6 fix per PRECEDENTS.md #44
     <EditorContent editor={editor} className="tiptap-editor-portal-content h-full" />,
     portalTarget,
   );

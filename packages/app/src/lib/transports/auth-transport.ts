@@ -1,5 +1,5 @@
-import { ProblemDetailsSchema } from '@palimpsest/core/schemas/api';
 import { t } from '@lingui/core/macro';
+import { ProblemDetailsSchema } from '@palimpsest/core/schemas/api';
 import { consumeAuthEventStream } from '@/components/auth-event-stream';
 import type { PsDesktopBridge, PsLocalOpAuthEvent } from '@/lib/desktop-bridge-types';
 import { httpAuthQueryTransport } from './auth-query-transport';

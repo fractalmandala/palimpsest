@@ -207,7 +207,7 @@ Each folder gets a `.ps/frontmatter.yml` (the agent reads it on every `exec` dir
 
 > Raw sources saved verbatim — the fetched text of URLs, extracted PDFs, and copied files, each with the original URL and access date in frontmatter. Produced by `ingest`. Immutable after capture; no analysis here (that goes in `research/`).
 
-Result: the agent learns each layer's discipline without a separate prompt or skills file. `research/` and `articles/` carry analogous descriptions. This is Karpathy's centralized `CLAUDE.md` schema, distributed per-folder, so schema lives closest to the agent action. Customize via `mcp__open-knowledge__edit` (with a `folder` target).
+Result: the agent learns each layer's discipline without a separate prompt or skills file. `research/` and `articles/` carry analogous descriptions. This is Karpathy's centralized `CLAUDE.md` schema, distributed per-folder, so schema lives closest to the agent action. Customize via `mcp__palimpsest__edit` (with a `folder` target).
 
 ## The consolidate step, deferred
 

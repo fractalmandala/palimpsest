@@ -1,10 +1,7 @@
 import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import type {
-  UninstallDispatchRequest,
-  UninstallDispatchResult,
-} from '@palimpsest/core';
+import type { UninstallDispatchRequest, UninstallDispatchResult } from '@palimpsest/core';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { runDesktopUninstallResultWindow } from '../../src/main/desktop-uninstall-result-window.ts';
 

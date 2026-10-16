@@ -29,7 +29,7 @@ describe('parseSkillsShPublisherPage', () => {
       id: `${OURS}/palimpsest-discovery`,
       source: OURS,
       installs: 478,
-      publisher: 'inkeep',
+      publisher: 'fractalmandala',
       description: '',
     });
   });
@@ -60,7 +60,7 @@ describe('parseSkillsShPublisherPage', () => {
         source: OURS,
         description: '',
         installs: 42,
-        publisher: 'inkeep',
+        publisher: 'fractalmandala',
       },
     ]);
   });

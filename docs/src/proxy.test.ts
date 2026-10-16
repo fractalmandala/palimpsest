@@ -7,8 +7,6 @@ function run(host: string, pathAndQuery: string) {
   return proxy(req);
 }
 
-// FORK: no canonical docs host exists, so the proxy performs no host
-// canonicalization — every host passes through to negotiation below.
 const HOST = 'example.com';
 const AASA = '/.well-known/apple-app-site-association';
 
@@ -121,7 +119,9 @@ describe('proxy: Accept negotiation', () => {
 
   test('negotiation applies on any host (no canonicalization to win)', () => {
     const res = proxy(
-      new NextRequest(`https://${HOST}/docs/overview`, { headers: { host: HOST, accept: MARKDOWN } }),
+      new NextRequest(`https://${HOST}/docs/overview`, {
+        headers: { host: HOST, accept: MARKDOWN },
+      }),
     );
     expect(res.status).toBe(200);
     expect(res.headers.get('location')).toBeNull();

@@ -1,10 +1,5 @@
-import type {
-  HandoffOutcome,
-  HandoffTarget,
-  HostSnapshot,
-  InstallState,
-} from '@palimpsest/core';
 import * as actualLinguiMacro from '@lingui/react/macro';
+import type { HandoffOutcome, HandoffTarget, HostSnapshot, InstallState } from '@palimpsest/core';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type ReactNode, useEffect, useRef, useState } from 'react';

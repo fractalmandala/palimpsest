@@ -87,7 +87,7 @@ describe('pickDefaultOwner', () => {
 
 describe('buildSamlSsoAuthorizeUrl', () => {
   test('builds the GitHub org-policies-applications URL', () => {
-    expect(buildSamlSsoAuthorizeUrl('inkeep')).toBe(
+    expect(buildSamlSsoAuthorizeUrl('example')).toBe(
       'https://github.com/orgs/inkeep/policies/applications',
     );
   });
@@ -101,7 +101,7 @@ describe('buildSamlSsoAuthorizeUrl', () => {
 
 describe('presentPublishError', () => {
   test('name-conflict routes to edit-name + interpolates owner/name', () => {
-    const r = presentPublishError('name-conflict', 'inkeep', 'demo');
+    const r = presentPublishError('name-conflict', 'example', 'demo');
     expect(r.next.kind).toBe('edit-name');
     expect(r.banner).toContain('inkeep/demo');
     expect(r.banner).toContain('already exists');
@@ -109,12 +109,12 @@ describe('presentPublishError', () => {
   });
 
   test('saml-sso surfaces the authorize URL', () => {
-    const r = presentPublishError('saml-sso', 'inkeep', 'demo');
+    const r = presentPublishError('saml-sso', 'example', 'demo');
     expect(r.next).toEqual({
       kind: 'authorize-org',
       authorizeUrl: 'https://github.com/orgs/inkeep/policies/applications',
     });
-    expect(r.banner).toContain('authorize Palimpsest for inkeep');
+    expect(r.banner).toContain('authorize Palimpsest for example');
   });
 
   test('push-failed routes to retry-push + interpolates owner/name', () => {
@@ -144,7 +144,7 @@ describe('fetchPublishOwners', () => {
         ok: true,
         owners: [
           { login: 'me', kind: 'user', avatarUrl: 'https://x/y.png' },
-          { login: 'inkeep', kind: 'org' },
+          { login: 'example', kind: 'org' },
         ],
       }),
     ) as unknown as typeof fetch;
@@ -193,7 +193,7 @@ describe('fetchPublishNameCheck', () => {
       return makeJsonResponse({ ok: true, available: true });
     }) as unknown as typeof fetch;
 
-    const res = await fetchPublishNameCheck('inkeep org', 'my repo', fakeFetch);
+    const res = await fetchPublishNameCheck('example org', 'my repo', fakeFetch);
     expect(capturedUrl).toBe('/api/share/publish/name-check?owner=inkeep%20org&name=my%20repo');
     expect(res).toEqual({ ok: true, available: true });
   });
@@ -203,7 +203,7 @@ describe('fetchPublishNameCheck', () => {
       makeJsonResponse({ ok: true, available: false }),
     ) as unknown as typeof fetch;
 
-    const res = await fetchPublishNameCheck('inkeep', 'taken', fakeFetch);
+    const res = await fetchPublishNameCheck('example', 'taken', fakeFetch);
     expect(res).toEqual({ ok: true, available: false });
   });
 

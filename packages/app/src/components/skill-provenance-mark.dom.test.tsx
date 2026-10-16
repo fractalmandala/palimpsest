@@ -39,8 +39,8 @@ const marks = (root: HTMLElement) => root.querySelectorAll('[data-ok-provenance-
 
 describe('applyProvenanceMarks', () => {
   test('a publisher mark renders the avatar at the leading edge, after the row icon', () => {
-    const root = host('PROJECT/open-knowledge-skills');
-    apply(root, () => ({ kind: 'publisher', login: 'inkeep', title: 'Published by inkeep' }));
+    const root = host('PROJECT/example-skills');
+    apply(root, () => ({ kind: 'publisher', login: 'example', title: 'Published by example' }));
 
     const mark = marks(root)[0];
     expect(mark).toBeTruthy();
@@ -71,7 +71,7 @@ describe('applyProvenanceMarks', () => {
 
   test('a changed publisher rebuilds the mark', () => {
     const root = host('PROJECT/x');
-    apply(root, () => ({ kind: 'publisher', login: 'inkeep', title: 'a' }));
+    apply(root, () => ({ kind: 'publisher', login: 'example', title: 'a' }));
     apply(root, () => ({ kind: 'publisher', login: 'anthropics', title: 'b' }));
     expect(marks(root)[0]?.querySelector('img')?.getAttribute('src')).toContain('anthropics.png');
   });
@@ -110,29 +110,31 @@ describe('applyProvenanceMarks', () => {
   });
 
   test('a mark WITH a destination is an anchor that opens out and names itself', () => {
-    const root = host('GLOBAL/open-knowledge-skills');
+    const root = host('GLOBAL/example-skills');
     apply(root, () => ({
       kind: 'publisher',
-      login: 'inkeep',
-      title: 'View inkeep on skills.sh',
+      login: 'example',
+      title: 'View example on skills.sh',
       href: 'https://www.skills.sh/fractalmandala/palimpsest-skills',
     }));
     const mark = marks(root)[0];
     expect(mark?.tagName).toBe('A');
-    expect(mark?.getAttribute('href')).toBe('https://www.skills.sh/fractalmandala/palimpsest-skills');
+    expect(mark?.getAttribute('href')).toBe(
+      'https://www.skills.sh/fractalmandala/palimpsest-skills',
+    );
     expect(mark?.getAttribute('rel')).toContain('noreferrer');
     expect(mark?.hasAttribute('aria-hidden')).toBe(false);
-    expect(mark?.getAttribute('aria-label')).toBe('View inkeep on skills.sh (opens in a new tab)');
+    expect(mark?.getAttribute('aria-label')).toBe('View example on skills.sh (opens in a new tab)');
   });
 
   test('gaining a destination swaps the span for an anchor rather than keeping it', () => {
     const root = host('GLOBAL/x');
-    apply(root, () => ({ kind: 'publisher', login: 'inkeep', title: 'Published by inkeep' }));
+    apply(root, () => ({ kind: 'publisher', login: 'example', title: 'Published by example' }));
     expect(marks(root)[0]?.tagName).toBe('SPAN');
     apply(root, () => ({
       kind: 'publisher',
-      login: 'inkeep',
-      title: 'View inkeep on skills.sh',
+      login: 'example',
+      title: 'View example on skills.sh',
       href: 'https://www.skills.sh/inkeep/x',
     }));
     expect(marks(root)).toHaveLength(1);

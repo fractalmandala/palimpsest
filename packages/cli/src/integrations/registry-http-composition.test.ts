@@ -155,13 +155,7 @@ describe('web apply through the CLI registry host', () => {
 
   test('the app helper installs the real user skill and records its decision', async () => {
     await bootWithAppFetch();
-    const skillPath = join(
-      temporaryHome,
-      '.claude',
-      'skills',
-      'palimpsest-discovery',
-      'SKILL.md',
-    );
+    const skillPath = join(temporaryHome, '.claude', 'skills', 'palimpsest-discovery', 'SKILL.md');
     const decisionPath = join(temporaryHome, '.ps', 'skill-state.yml');
 
     const result = await applyAgentConnectionIntents([

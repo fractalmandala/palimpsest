@@ -1,9 +1,9 @@
+import { useLingui } from '@lingui/react/macro';
 import type { SkillOrigin, SkillScope } from '@palimpsest/core/schemas/api';
 import {
   isLocalSkillSource,
   skillsShSkillLinks,
 } from '@palimpsest/core/skills-catalog/source-fields';
-import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useSkillUpdateAvailable } from '@/hooks/use-skill-update-available';

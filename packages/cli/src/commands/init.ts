@@ -2,6 +2,8 @@ import { existsSync, mkdirSync, readFileSync, realpathSync, statSync } from 'nod
 import { homedir } from 'node:os';
 import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 import { inspect } from 'node:util';
+import checkbox from '@inquirer/checkbox';
+import select from '@inquirer/select';
 import {
   CHECKOUT_CLI_COMMAND,
   currentCliCommandName,
@@ -15,11 +17,7 @@ import {
   SKILL_STATE_FILENAME,
 } from '@palimpsest/core';
 import { atomicWriteFileSync, withFileLockSync } from '@palimpsest/core/server';
-import type {
-  BundleId,
-  InstallUserSkillOptions,
-  InstallUserSkillResult,
-} from '@palimpsest/server';
+import type { BundleId, InstallUserSkillOptions, InstallUserSkillResult } from '@palimpsest/server';
 import {
   BUNDLE_SKILL_NAME,
   detectUserSkillHosts,
@@ -42,8 +40,6 @@ import {
   writeBundleDecision,
   writeRootGitignoreForNewRepo,
 } from '@palimpsest/server';
-import checkbox from '@inquirer/checkbox';
-import select from '@inquirer/select';
 import { Command, Option } from 'commander';
 import {
   applyEdits as applyJsoncEdits,
@@ -888,7 +884,7 @@ export function writeEditorMcpConfig(
       },
       {
         onWarn: (message, context) =>
-          process.stderr.write(`[ok] ${message} ${JSON.stringify(context)}\n`),
+          process.stderr.write(`[ps] ${message} ${JSON.stringify(context)}\n`),
       },
     );
   } catch (err) {
@@ -997,7 +993,7 @@ function writeManagedEditorFile(
       },
       {
         onWarn: (message, context) =>
-          process.stderr.write(`[ok] ${message} ${JSON.stringify(context)}\n`),
+          process.stderr.write(`[ps] ${message} ${JSON.stringify(context)}\n`),
       },
     );
   } catch (err) {
@@ -1180,10 +1176,10 @@ export async function runInit(options: InitCommandOptions = {}): Promise<InitCom
       ? resolveRequestedContentDir(options.contentDir, projectRoot, cwd)
       : resolution.defaultContentDir;
   if (resolution.ancestorPromoted) {
-    console.log(`[ok] Opened existing project at ${projectRoot}`);
+    console.log(`[ps] Opened existing project at ${projectRoot}`);
   } else if (resolution.gitRootPromoted && willScaffold && contentDirScope === '.') {
     process.stderr.write(
-      `${warning(`[ok] Content scope promoted to the git repo root: ${projectRoot}`)}\n` +
+      `${warning(`[ps] Content scope promoted to the git repo root: ${projectRoot}`)}\n` +
         `      Ran in ${promotedFromDir}/, but .ps/ lives at the git root (one .ps/ per git repo),\n` +
         `      so the whole repo is now the content scope. To narrow it, re-run with\n` +
         `      \`${currentCliCommandName()} init --content-dir .\`, or set content.dir: ${promotedFromDir} in ${PS_DIR}/config.yml.\n`,
@@ -1234,7 +1230,7 @@ export async function runInit(options: InitCommandOptions = {}): Promise<InitCom
       rootGitignoreCreated = writeRootGitignoreForNewRepo(projectRoot) === 'created';
     } catch (err) {
       console.warn(
-        `[ok] Skipping .gitignore seed at ${projectRoot}: ${err instanceof Error ? err.message : String(err)}`,
+        `[ps] Skipping .gitignore seed at ${projectRoot}: ${err instanceof Error ? err.message : String(err)}`,
       );
     }
   }
@@ -1242,12 +1238,12 @@ export async function runInit(options: InitCommandOptions = {}): Promise<InitCom
   try {
     if (removeProjectSkillGitignoreBlock(projectRoot) === 'removed') {
       console.warn(
-        '[ok] Removed the Palimpsest project-skill lines from .gitignore. The skill is ordinary project content now — commit it if your team wants it on clone.',
+        '[ps] Removed the Palimpsest project-skill lines from .gitignore. The skill is ordinary project content now — commit it if your team wants it on clone.',
       );
     }
   } catch (err) {
     console.warn(
-      `[ok] Skipping project-skill .gitignore cleanup at ${projectRoot}: ${err instanceof Error ? err.message : String(err)}`,
+      `[ps] Skipping project-skill .gitignore cleanup at ${projectRoot}: ${err instanceof Error ? err.message : String(err)}`,
     );
   }
 

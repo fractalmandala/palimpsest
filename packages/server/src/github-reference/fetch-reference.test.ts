@@ -10,7 +10,7 @@ import type { GitHubReferenceTarget } from './reference-target.ts';
 
 const PULL: GitHubReferenceTarget = {
   host: 'github.com',
-  owner: 'inkeep',
+  owner: 'example',
   repo: 'agents',
   number: 42,
   kind: 'pull',

@@ -1,7 +1,7 @@
 import type { HocuspocusProvider } from '@hocuspocus/provider';
-import { bindFrontmatterDoc } from '@palimpsest/core';
 import * as actualLinguiMacro from '@lingui/react/macro';
 import { type Tracer, trace } from '@opentelemetry/api';
+import { bindFrontmatterDoc } from '@palimpsest/core';
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';

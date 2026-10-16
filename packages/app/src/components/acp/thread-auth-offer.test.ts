@@ -1,7 +1,4 @@
-import type {
-  ThreadAuthMethod,
-  ThreadStatus,
-} from '@palimpsest/core/acp/thread-protocol';
+import type { ThreadAuthMethod, ThreadStatus } from '@palimpsest/core/acp/thread-protocol';
 import { describe, expect, test } from 'vitest';
 import {
   clickableAuthMethods,

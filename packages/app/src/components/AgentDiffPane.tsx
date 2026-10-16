@@ -1,7 +1,7 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
+// oxlint-disable ps/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
-import type { FrontmatterDelta } from '@palimpsest/core/frontmatter-diff';
 import { Plural, Trans, useLingui } from '@lingui/react/macro';
+import type { FrontmatterDelta } from '@palimpsest/core/frontmatter-diff';
 import { PanelRightClose, PanelRightOpen, X } from 'lucide-react';
 import { lazy, Suspense, useEffect, useEffectEvent, useRef, useState } from 'react';
 import { PropertyDiffBlock } from '@/components/PropertyDiffBlock';

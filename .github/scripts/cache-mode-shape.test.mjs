@@ -100,7 +100,7 @@ describe('credentialed jobs in public/palimpsest/.github/workflows declare the n
   test('no credentialed job touches an ps-pnpm-store- cache key', () => {
     for (const { label, job } of credentialed) {
       const storeSteps = (job.steps ?? []).filter((step) =>
-        /ok-pnpm-store-/.test(JSON.stringify(step.with ?? {})),
+        /ps-pnpm-store-/.test(JSON.stringify(step.with ?? {})),
       );
       expect(storeSteps, label).toEqual([]);
     }
@@ -602,7 +602,7 @@ describe('cache-mode sweep self-tests', () => {
     const real = (label) => allJobs.find((candidate) => candidate.label === label);
     const store = {
       uses: `actions/cache@${sha}`,
-      with: { path: '${{ env.STORE_PATH }}', key: 'Linux-ok-pnpm-store-k' },
+      with: { path: '${{ env.STORE_PATH }}', key: 'Linux-ps-pnpm-store-k' },
     };
     const release = real('release.yml#build');
     expect(
@@ -649,7 +649,7 @@ describe('cache-mode sweep self-tests', () => {
     const real = (label) => allJobs.find((candidate) => candidate.label === label);
     const store = {
       uses: `actions/cache@${sha}`,
-      with: { path: '${{ env.STORE_PATH }}', key: 'Linux-ok-pnpm-store-k' },
+      with: { path: '${{ env.STORE_PATH }}', key: 'Linux-ps-pnpm-store-k' },
     };
     const prepare = real('desktop-build-win-linux.yml#prepare');
     expect(

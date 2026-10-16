@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, test } from 'vitest';
 
-const skill = readFileSync(join(import.meta.dirname, '../assets/skills/project/SKILL.md'), 'utf8');
+const skill = readFileSync(join(import.meta.dirname, '../../skills/project/SKILL.md'), 'utf8');
 
 const safetyAnchors = [
   '## STOP — native tools on in-scope `.md` / `.mdx`',
@@ -61,7 +61,7 @@ const routingRules = [
     name: 'skill source routing',
     anchor: '5. **Authoring or improving a skill**',
     required: [
-      'STOP and invoke **`/open-knowledge-write-skill`**',
+      'STOP and invoke **`/palimpsest-write-skill`**',
       'Author through `write({ skill })`, never a document path',
       'Read/edit via `skills` and `edit({ skill })`',
       'Never hand-edit a non-source copy',

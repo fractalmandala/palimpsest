@@ -637,17 +637,6 @@ export const COMMAND_IDENTITIES: readonly CommandIdentity[] = [
     menu: [{ section: 'terminal', order: 3 }],
   },
   {
-    id: 'check-for-updates',
-    labelKey: 'checkForUpdates',
-    keywords: ['update', 'upgrade', 'version', 'check', 'app'],
-    availability: { host: 'desktop' },
-    palette: { group: 'app', visibility: 'search-only' },
-    menu: [
-      { section: 'app-updates', order: 0, platform: 'mac', ellipsis: true },
-      { section: 'help-updates', order: 0, platform: 'other', ellipsis: true },
-    ],
-  },
-  {
     id: 'set-up-integrations',
     labelKey: 'setUpIntegrations',
     keywords: ['integrations', 'mcp', 'setup', 'claude', 'configure'],
@@ -678,14 +667,6 @@ export const COMMAND_IDENTITIES: readonly CommandIdentity[] = [
     availability: {},
     palette: { group: 'app', visibility: 'search-only' },
     menu: [{ section: 'help-links', order: 1 }],
-  },
-  {
-    id: 'open-discord',
-    labelKey: 'joinDiscord',
-    keywords: ['discord', 'community', 'chat', 'support', 'join'],
-    availability: {},
-    palette: { group: 'app', visibility: 'search-only' },
-    menu: [{ section: 'help-links', order: 2 }],
   },
   {
     id: 'uninstall',

@@ -38,7 +38,10 @@ function call(
   headers: Record<string, string> = {},
 ): Promise<Response> {
   return GET(
-    new Request(`https://github.com/fractalmandala/palimpsest/updates/${channel}/${path.join('/')}`, { headers }),
+    new Request(
+      `https://github.com/fractalmandala/palimpsest/updates/${channel}/${path.join('/')}`,
+      { headers },
+    ),
     {
       params: Promise.resolve({ channel, path }),
     },
@@ -81,7 +84,7 @@ describe('GET /updates/[channel]/[...path]', () => {
   test('stable zip 302s to the tagged release and counts app_update_downloaded', async () => {
     _lastCapture = null;
     const file = 'Palimpsest-0.20.0-arm64-mac.zip';
-    const res = await call('stable', [file], { 'x-ok-from-version': '0.19.1' });
+    const res = await call('stable', [file], { 'x-ps-from-version': '0.19.1' });
     expect(res.status).toBe(302);
     expect(res.headers.get('location')).toBe(`${REL}/download/v0.20.0/${file}`);
     expect(res.headers.get('cache-control')).toBe('no-store');
@@ -105,10 +108,10 @@ describe('GET /updates/[channel]/[...path]', () => {
     expect(_lastCapture?.properties?.from_version).toBeUndefined();
   });
 
-  test('an ill-formed x-ok-from-version header is dropped, not forwarded to analytics', async () => {
+  test('an ill-formed x-ps-from-version header is dropped, not forwarded to analytics', async () => {
     _lastCapture = null;
     const file = 'Palimpsest-0.20.0-arm64-mac.zip';
-    const res = await call('stable', [file], { 'x-ok-from-version': '../etc; rm -rf' });
+    const res = await call('stable', [file], { 'x-ps-from-version': '../etc; rm -rf' });
     expect(res.status).toBe(302);
     expect(_lastCapture?.event).toBe('app_update_downloaded');
     expect(_lastCapture?.properties?.from_version).toBeUndefined();
@@ -151,9 +154,7 @@ describe('GET /updates/[channel]/[...path]', () => {
       404,
     );
     expect((await call('beta', ['Palimpsest-0.21.0-arm64-mac.zip'])).status).toBe(404);
-    expect((await call('beta', ['Palimpsest-Beta-0.21.0-beta.4-arm64-mac.zip'])).status).toBe(
-      404,
-    );
+    expect((await call('beta', ['Palimpsest-Beta-0.21.0-beta.4-arm64-mac.zip'])).status).toBe(404);
     expect((await call('beta', ['beta-product-mac.yml'])).status).toBe(404);
     expect((await call('beta-product', ['beta-mac.yml'])).status).toBe(404);
     expect((await call('beta-product', ['Palimpsest-0.21.0-beta.4-arm64-mac.zip'])).status).toBe(
@@ -240,7 +241,7 @@ describe('GET /updates/[channel]/[...path]', () => {
   test('Windows stable exe counts with artifact_type=exe and no to_version when the updater sends no header', async () => {
     _lastCapture = null;
     const file = 'Palimpsest-Setup-x64.exe';
-    const res = await call('stable', [file], { 'x-ok-from-version': '0.19.1' });
+    const res = await call('stable', [file], { 'x-ps-from-version': '0.19.1' });
     expect(res.status).toBe(302);
     expect(res.headers.get('location')).toBe(`${REL}/latest/download/${file}`);
     expect(_lastCapture?.event).toBe('app_update_downloaded');
@@ -254,18 +255,18 @@ describe('GET /updates/[channel]/[...path]', () => {
   test('a versionless stable installer takes to_version from the updater header', async () => {
     _lastCapture = null;
     const res = await call('stable', ['Palimpsest-Setup-arm64.exe'], {
-      'x-ok-from-version': '0.19.1',
-      'x-ok-to-version': '0.20.0',
+      'x-ps-from-version': '0.19.1',
+      'x-ps-to-version': '0.20.0',
     });
     expect(res.status).toBe(302);
     expect(_lastCapture?.properties?.to_version).toBe('0.20.0');
     expect(_lastCapture?.properties?.from_version).toBe('0.19.1');
   });
 
-  test('an ill-formed x-ok-to-version is dropped, not forwarded to analytics', async () => {
+  test('an ill-formed x-ps-to-version is dropped, not forwarded to analytics', async () => {
     _lastCapture = null;
     const res = await call('stable', ['Palimpsest-amd64.deb'], {
-      'x-ok-to-version': '0.20.0; DROP TABLE',
+      'x-ps-to-version': '0.20.0; DROP TABLE',
     });
     expect(res.status).toBe(302);
     expect(_lastCapture?.properties?.to_version).toBeUndefined();
@@ -274,12 +275,12 @@ describe('GET /updates/[channel]/[...path]', () => {
   test('server-derived versions outrank the header, which is only a client claim', async () => {
     _lastCapture = null;
     await call('stable', ['Palimpsest-0.20.0-arm64-mac.zip'], {
-      'x-ok-to-version': '9.9.9',
+      'x-ps-to-version': '9.9.9',
     });
     expect(_lastCapture?.properties?.to_version).toBe('0.20.0');
 
     _lastCapture = null;
-    await call('beta', ['Palimpsest-arm64.deb'], { 'x-ok-to-version': '9.9.9' });
+    await call('beta', ['Palimpsest-arm64.deb'], { 'x-ps-to-version': '9.9.9' });
     expect(_lastCapture?.properties?.to_version).toBe('0.20.0-beta.4');
   });
 

@@ -1,10 +1,7 @@
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import {
-  LocalOpEmbeddingsTestResponseSchema,
-  ProblemDetailsSchema,
-} from '@palimpsest/core';
+import { LocalOpEmbeddingsTestResponseSchema, ProblemDetailsSchema } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import {
   type FakeEmbeddingsServer,

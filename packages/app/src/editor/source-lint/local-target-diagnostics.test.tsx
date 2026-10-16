@@ -3,8 +3,8 @@
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { EditorState } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
-import type { ValidationDocResult } from '@palimpsest/core';
 import { GFM } from '@lezer/markdown';
+import type { ValidationDocResult } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import {
   resetLinkValidationPolicyForTest,

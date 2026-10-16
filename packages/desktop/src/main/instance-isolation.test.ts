@@ -35,9 +35,9 @@ describe('sanitizeInstanceName', () => {
 
 describe('deriveInstanceUserDataDir', () => {
   test('appends the sanitized name as a sibling directory suffix', () => {
-    expect(
-      deriveInstanceUserDataDir('/Users/me/Library/Application Support/Palimpsest', 'b'),
-    ).toBe('/Users/me/Library/Application Support/Palimpsest (b)');
+    expect(deriveInstanceUserDataDir('/Users/me/Library/Application Support/Palimpsest', 'b')).toBe(
+      '/Users/me/Library/Application Support/Palimpsest (b)',
+    );
   });
 
   test('uses the sanitized form of the name', () => {

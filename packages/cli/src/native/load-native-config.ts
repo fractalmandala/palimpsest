@@ -32,7 +32,7 @@ export function describeNativeFailure(context: string, err: unknown): string {
 
 export function debugNativeLoadFailure(context: string, err: unknown): void {
   if (!process.env.PS_DEBUG_NATIVE) return;
-  process.stderr.write(`[ok] native-config ${describeNativeFailure(context, err)}\n`);
+  process.stderr.write(`[ps] native-config ${describeNativeFailure(context, err)}\n`);
 }
 
 const BUNDLED_LOADER_SUBPATH = ['native', 'index.js'];

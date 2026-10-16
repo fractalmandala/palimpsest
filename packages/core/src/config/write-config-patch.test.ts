@@ -48,7 +48,7 @@ describe('writeConfigPatch — project scope', () => {
     expect(existsSync(projectConfigPath())).toBe(true);
     const onDisk = readFileSync(projectConfigPath(), 'utf-8');
     expect(onDisk).toMatch(
-      /^# yaml-language-server: \$schema=https:\/\/unpkg\.com\/@inkeep\/palimpsest@latest\/dist\/schemas\/v\d+\/config\.project\.schema\.json/,
+      /^# yaml-language-server: \$schema=https:\/\/unpkg\.com\/@palimpsest\/cli@latest\/dist\/schemas\/v\d+\/config\.project\.schema\.json/,
     );
     expect(onDisk).toContain('content:');
     expect(onDisk).toContain('dir: docs');
@@ -140,7 +140,7 @@ describe('writeConfigPatch — project-local scope', () => {
     expect(existsSync(projectLocalConfigPath())).toBe(true);
     const onDisk = readFileSync(projectLocalConfigPath(), 'utf-8');
     expect(onDisk).toMatch(
-      /^# yaml-language-server: \$schema=https:\/\/unpkg\.com\/@inkeep\/palimpsest@latest\/dist\/schemas\/v\d+\/config\.project-local\.schema\.json/,
+      /^# yaml-language-server: \$schema=https:\/\/unpkg\.com\/@palimpsest\/cli@latest\/dist\/schemas\/v\d+\/config\.project-local\.schema\.json/,
     );
     expect(onDisk).toContain('autoSync:');
     expect(onDisk).toContain('enabled: true');

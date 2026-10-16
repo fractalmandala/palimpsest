@@ -49,9 +49,7 @@ describe('the bus', () => {
     const seen = vi.fn();
     const unsubscribe = subscribeToTerminalCommandRequests(seen, target);
 
-    target.dispatchEvent(
-      new CustomEvent('palimpsest:terminal-command', { detail: 'npm publish' }),
-    );
+    target.dispatchEvent(new CustomEvent('palimpsest:terminal-command', { detail: 'npm publish' }));
 
     expect(seen).not.toHaveBeenCalled();
     unsubscribe();

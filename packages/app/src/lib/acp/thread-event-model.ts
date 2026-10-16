@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import {
   type CodexLegacyAgentIdentity,
   isCodexLegacyWarningUpdate,
@@ -11,7 +12,6 @@ import type {
   ThreadFailureDetail,
 } from '@palimpsest/core/acp/thread-protocol';
 import { shellCommandFromRawInput } from '@palimpsest/core/acp/tool-call-input';
-import { t } from '@lingui/core/macro';
 
 type RenderedMessage =
   | {

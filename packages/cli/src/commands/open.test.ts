@@ -147,9 +147,7 @@ describe('runOpen', () => {
     });
     const code = await runOpen('trip-log', { skill: true, project: '/p' }, deps);
     expect(code).toBe(0);
-    expect(opened).toEqual([
-      'palimpsest://open?project=%2Fp&doc=__skill__%2Fproject%2Ftrip-log',
-    ]);
+    expect(opened).toEqual(['palimpsest://open?project=%2Fp&doc=__skill__%2Fproject%2Ftrip-log']);
     expect(openedOptions).toEqual([{ desktopBundlePath: '/Applications/Palimpsest.app' }]);
   });
 

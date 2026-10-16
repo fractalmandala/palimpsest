@@ -430,7 +430,7 @@ describe('buildSplashViewModel — shell-injection guard', () => {
     expect(buildSplashViewModel(encodeV1(url)).kind).toBe('invalid');
   });
 
-  test('rejects `..` owner/repo segments (encoded) — no `ok clone ../..` rendering', () => {
+  test('rejects `..` owner/repo segments (encoded) — no `ps clone ../..` rendering', () => {
     const url = 'https://github.com/%2E%2E/%2E%2E/blob/main/readme.md';
     expect(buildSplashViewModel(encodeV1(url)).kind).toBe('invalid');
   });
@@ -458,7 +458,7 @@ describe('SPLASH_INSTALL_COMMAND', () => {
 });
 
 describe('buildCloneCommand', () => {
-  test('emits `ok clone <owner>/<repo> -b <branch>` using owner/repo shorthand', () => {
+  test('emits `ps clone <owner>/<repo> -b <branch>` using owner/repo shorthand', () => {
     expect(buildCloneCommand({ owner: 'inkeep', repo: 'playbooks', branch: 'main' })).toBe(
       'ps clone inkeep/playbooks -b main',
     );

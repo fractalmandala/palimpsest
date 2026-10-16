@@ -1,10 +1,6 @@
 import { spawn } from 'node:child_process';
 import { posix, win32 } from 'node:path';
-import {
-  envWithoutDevChannel,
-  type PsCliCommand,
-  type PsCliRefusal,
-} from '@palimpsest/core';
+import { envWithoutDevChannel, type PsCliCommand, type PsCliRefusal } from '@palimpsest/core';
 import { withHiddenWindowsConsole } from '../child-process-windows-hide.ts';
 import type { LocalOpSubprocessLifetime } from './subprocess-lifetime.ts';
 

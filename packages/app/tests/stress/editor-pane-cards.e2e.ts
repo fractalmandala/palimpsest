@@ -1,8 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import type {
-  ThreadClientFrame,
-  ThreadServerFrame,
-} from '@palimpsest/core/acp/thread-protocol';
+import type { ThreadClientFrame, ThreadServerFrame } from '@palimpsest/core/acp/thread-protocol';
 import type { Locator, Page, WebSocketRoute } from '@playwright/test';
 import { PANE_CARD_GAP_PX } from '../../src/components/ui/pane-card';
 import {

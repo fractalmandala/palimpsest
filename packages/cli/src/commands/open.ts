@@ -1,10 +1,6 @@
 import { statSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
-import {
-  currentCliCommandName,
-  MANAGED_ARTIFACT_SCOPES,
-  type SkillScope,
-} from '@palimpsest/core';
+import { currentCliCommandName, MANAGED_ARTIFACT_SCOPES, type SkillScope } from '@palimpsest/core';
 import {
   encodeDocName,
   encodeFolderRoute,

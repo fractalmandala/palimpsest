@@ -283,10 +283,10 @@ describe('WindowManager', () => {
       },
       message: '[window-manager] project server utility forked',
     });
-    const marker = env.forkUtilityArgs[0]?.find((arg) => arg.startsWith('--ok-lock-dir-b64='));
+    const marker = env.forkUtilityArgs[0]?.find((arg) => arg.startsWith('--ps-lock-dir-b64='));
     expect(marker).toBeDefined();
     expect(
-      Buffer.from(marker?.slice('--ok-lock-dir-b64='.length) ?? '', 'base64url').toString('utf8'),
+      Buffer.from(marker?.slice('--ps-lock-dir-b64='.length) ?? '', 'base64url').toString('utf8'),
     ).toBe('/tmp/test-project/.ps/local');
     const utility = env.utilities[0];
     if (!utility) throw new Error('utility not forked');
@@ -2618,7 +2618,7 @@ describe('WindowManager', () => {
 
       test('a still-running child frames its output as probably not the cause', async () => {
         enableSyncTimers();
-        const advisory = '[ok] Removed key at .ps/config.yml:5:19: appearance.sidebar.showAllFiles';
+        const advisory = '[ps] Removed key at .ps/config.yml:5:19: appearance.sidebar.showAllFiles';
         const projectPath = projectWithSpawnErrorLog(advisory);
         env.deps.readServerLock = () => null;
         env.deps.isProcessAlive = () => true;
@@ -4245,7 +4245,7 @@ describe('WindowManager — pendingShareBranchSwitch dom-ready gate (US-004)', (
       projectPath: '/tmp/share-branch-switch-spawn',
       pendingShareBranchSwitch: {
         share: {
-          owner: 'inkeep',
+          owner: 'example',
           repo: 'playbooks',
           branch: 'feature/x',
           path: 'docs/getting-started.md',
@@ -4276,7 +4276,7 @@ describe('WindowManager — pendingShareBranchSwitch dom-ready gate (US-004)', (
     expect(shareCall?.[1]).toEqual({
       kind: 'project-branch-switch',
       share: {
-        owner: 'inkeep',
+        owner: 'example',
         repo: 'playbooks',
         branch: 'feature/x',
         path: 'docs/getting-started.md',
@@ -4341,7 +4341,7 @@ describe('WindowManager — pendingShareBranchSwitch dom-ready gate (US-004)', (
       projectPath: '/tmp/attach-share-branch-switch',
       pendingShareBranchSwitch: {
         share: {
-          owner: 'inkeep',
+          owner: 'example',
           repo: 'attached-repo',
           branch: 'feat/x',
           path: 'notes.md',
@@ -4364,7 +4364,7 @@ describe('WindowManager — pendingShareBranchSwitch dom-ready gate (US-004)', (
     expect(shareCall?.[1]).toEqual({
       kind: 'project-branch-switch',
       share: {
-        owner: 'inkeep',
+        owner: 'example',
         repo: 'attached-repo',
         branch: 'feat/x',
         path: 'notes.md',

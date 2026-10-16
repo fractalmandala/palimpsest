@@ -17,11 +17,11 @@ import {
   formatCheckpointBodyLine,
   formatCheckpointSubject,
   formatImportSubject,
-  formatPsActor,
   formatParkSubject,
+  formatPsActor,
+  type ParsedCheckpoint,
   PS_GENERATOR_WRITER_ID,
   type PsActorEntry,
-  type ParsedCheckpoint,
   parseCheckpoint,
   parseWriterId,
   resolveShadowDir,
@@ -640,7 +640,7 @@ export const GIT_UPSTREAM_WRITER: WriterIdentity = {
 };
 
 export const SERVICE_WRITER: WriterIdentity = {
-  id: 'openknowledge-service',
+  id: 'palimpsest-service',
   name: SYSTEM_WRITER_DISPLAY_NAMES.service,
   email: 'service@palimpsest.local',
 };

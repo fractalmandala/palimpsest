@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import type { AttachmentPart } from '@palimpsest/core/acp/thread-protocol';
 import {
   type AssembleHandoffPromptInput,
@@ -19,16 +20,15 @@ import {
   type HandoffScope,
   type HandoffTarget,
   type InstallState,
+  type PromptTransport,
   PS_TERMINAL_SURFACE_PREAMBLE,
   PS_THREAD_SURFACE_PREAMBLE,
-  type PromptTransport,
   type TargetData,
   TERMINAL_CLIS,
   type TerminalCli,
   withSkillPointer,
 } from '@palimpsest/core/handoff';
 import type { SkillScope } from '@palimpsest/core/schemas/api';
-import { t } from '@lingui/core/macro';
 import { toast as sonnerToast } from 'sonner';
 import { useConfigContext } from '@/lib/config-context';
 import {

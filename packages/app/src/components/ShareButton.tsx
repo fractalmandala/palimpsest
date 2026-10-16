@@ -1,7 +1,7 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
+// oxlint-disable ps/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
-import type { ShareFreshness } from '@palimpsest/core/schemas/api';
 import { Trans, useLingui } from '@lingui/react/macro';
+import type { ShareFreshness } from '@palimpsest/core/schemas/api';
 import { CircleHelp, Share2 } from 'lucide-react';
 import { type Ref, useEffect, useId, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -18,7 +18,8 @@ import { runShareAction, type ShareTargetInput } from '@/lib/share/run-share-act
 import { cn } from '@/lib/utils';
 import { ShareFreshnessWarning, shareFreshnessRowVisible } from './ShareFreshnessWarning';
 
-const SHARE_DOCS_URL = 'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/features/share.mdx';
+const SHARE_DOCS_URL =
+  'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/features/share.mdx';
 const COPY_SHORTCUT = { mac: '⌘ C', windowsLinux: 'Ctrl C' };
 
 export interface ShareButtonProps {

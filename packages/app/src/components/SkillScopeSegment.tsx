@@ -1,5 +1,5 @@
-import type { SkillScope } from '@palimpsest/core/schemas/api';
 import { Trans } from '@lingui/react/macro';
+import type { SkillScope } from '@palimpsest/core/schemas/api';
 import { useId } from 'react';
 import {
   DropdownMenuLabel,

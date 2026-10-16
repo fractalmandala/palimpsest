@@ -875,9 +875,9 @@ describe('ConfigProvider — userSynced behavioral wiring (Tier-3)', () => {
 
     const readers = (specifier: string, member: string) =>
       servedCore.readersOf(specifier, member, since);
-    expect(
-      readers('@palimpsest/core/schemas/api', 'SavedThemesListSuccessSchema'),
-    ).toEqual(['lib/saved-themes-client.ts']);
+    expect(readers('@palimpsest/core/schemas/api', 'SavedThemesListSuccessSchema')).toEqual([
+      'lib/saved-themes-client.ts',
+    ]);
     for (const member of [
       'THEME_PLUGINS',
       'resolveColorThemeSelection',
@@ -951,11 +951,7 @@ describe('ConfigProvider — userSynced behavioral wiring (Tier-3)', () => {
     expect(setThemeCalls.at(-1)).toBe('dark');
     expect(document.getElementById(SAVED_THEME_STYLE_ID)).toBeNull();
     expect(
-      servedCore.readersOf(
-        '@palimpsest/core/theme/theme-plugins',
-        'THEME_PLUGINS',
-        since,
-      ),
+      servedCore.readersOf('@palimpsest/core/theme/theme-plugins', 'THEME_PLUGINS', since),
     ).toEqual(['lib/color-themes.ts']);
   });
 });

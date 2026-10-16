@@ -1,10 +1,10 @@
+import { useLingui } from '@lingui/react/macro';
 import {
   agentIdForTerminalCli,
   getAgentRecord,
   type HostSnapshot,
 } from '@palimpsest/core/agent-registry';
 import { TERMINAL_CLIS, type TerminalCli } from '@palimpsest/core/handoff';
-import { useLingui } from '@lingui/react/macro';
 import { TriangleAlert } from 'lucide-react';
 import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';

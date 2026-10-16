@@ -1,9 +1,9 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import {
   type ClassifiedLinkTarget,
   classifyMarkdownHref,
   isExternalHref,
 } from '@palimpsest/core/utils/link-targets';
-import { Trans, useLingui } from '@lingui/react/macro';
 import type { Editor } from '@tiptap/core';
 import { posToDOMRect } from '@tiptap/core';
 import { CircleAlert, File, FolderOpen, Globe, Pencil, Plus, Trash2 } from 'lucide-react';

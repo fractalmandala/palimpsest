@@ -1,4 +1,4 @@
-import { PS_GATED_TOOL_NAMES, PALIMPSEST_MCP_TOOLS } from '@palimpsest/core';
+import { PALIMPSEST_MCP_TOOLS, PS_GATED_TOOL_NAMES } from '@palimpsest/core';
 import { afterAll, describe, expect, test } from 'vitest';
 import { createTempDirFactory } from '../../../../../test-support/temp-dir.test-helper.ts';
 import { type Config, ConfigSchema } from '../../config/schema.ts';

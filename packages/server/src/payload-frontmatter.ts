@@ -1,8 +1,4 @@
-import {
-  parseFrontmatterYaml,
-  stripFrontmatter,
-  unwrapFrontmatterFences,
-} from '@palimpsest/core';
+import { parseFrontmatterYaml, stripFrontmatter, unwrapFrontmatterFences } from '@palimpsest/core';
 
 export function splitPayloadFrontmatter(markdown: string): {
   frontmatter: string;

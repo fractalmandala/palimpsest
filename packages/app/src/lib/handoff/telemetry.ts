@@ -1,8 +1,4 @@
-import type {
-  HandoffFailureReason,
-  HandoffScope,
-  HandoffTarget,
-} from '@palimpsest/core/handoff';
+import type { HandoffFailureReason, HandoffScope, HandoffTarget } from '@palimpsest/core/handoff';
 
 export type HandoffHost = 'electron' | 'web';
 

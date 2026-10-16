@@ -85,7 +85,7 @@ afterEach(() => {
 
 describe('process listing producers', () => {
   it.each(['Toybox', 'procps'])('discovers marked processes with %s ps', async (producer) => {
-    const command = `node --ok-lock-dir-b64=${Buffer.from(lockDir).toString('base64url')}`;
+    const command = `node --ps-lock-dir-b64=${Buffer.from(lockDir).toString('base64url')}`;
     provideOutput((program, args) => {
       if (program === 'pgrep') return { stdout: [`${fixturePid} ${command}\n`] };
       if (program !== 'ps') return emptyOutput(program);
@@ -102,8 +102,8 @@ describe('process listing producers', () => {
         producer === 'procps' || format.includes('args') || format.includes('cmdline');
       const control =
         producer === 'Toybox' && format.includes('args')
-          ? 'open-knowledge-server --fixture-control=notes'
-          : '/opt/open-knowledge-server --fixture-control=notes';
+          ? 'palimpsest-server --fixture-control=notes'
+          : '/opt/palimpsest-server --fixture-control=notes';
       return {
         stdout: [
           'PID COMMAND\n',
@@ -121,7 +121,7 @@ describe('process listing producers', () => {
 
   it('retains trailing command arguments with procps ps under a narrow display width', async () => {
     const displayWidth = 20;
-    const row = `${fixturePid} node /srv/fixture.cjs --ok-lock-dir-b64=${Buffer.from(lockDir).toString('base64url')}`;
+    const row = `${fixturePid} node /srv/fixture.cjs --ps-lock-dir-b64=${Buffer.from(lockDir).toString('base64url')}`;
     provideOutput((program, args) => {
       if (program !== 'ps') return emptyOutput(program);
       const format = args[args.indexOf('-o') + 1] ?? '';
@@ -170,7 +170,7 @@ describe('BusyBox process listing', () => {
     pid: 13579,
     comm: 'MainThread',
     exe: '/usr/local/bin/node',
-    cmdline: '/opt/open-knowledge-server /srv/fixture.cjs --fixture-control=notes',
+    cmdline: '/opt/palimpsest-server /srv/fixture.cjs --fixture-control=notes',
   };
 
   function argsColumn({ comm, cmdline }: BusyBoxProcess): string {
@@ -241,7 +241,7 @@ describe('BusyBox process listing', () => {
         pid: fixturePid,
         comm: 'MainThread',
         exe: '/usr/local/bin/node',
-        cmdline: `node /srv/fixture.cjs --ok-lock-dir-b64=${Buffer.from(lockDir).toString('base64url')}`,
+        cmdline: `node /srv/fixture.cjs --ps-lock-dir-b64=${Buffer.from(lockDir).toString('base64url')}`,
       };
       provideBusyBox([shell, ordinary, lookalike, marked], reject);
 
@@ -275,7 +275,7 @@ describe('process format failures', () => {
       if (program !== 'ps') return emptyOutput(program);
       if (args.includes('pid,cmdline'))
         return { stdout: ['PID CMDLINE\n'], status: 1, stderr: 'process table unreadable\n' };
-      return { stdout: ['PID ARGS\n13579 open-knowledge-server --fixture-control=notes\n'] };
+      return { stdout: ['PID ARGS\n13579 palimpsest-server --fixture-control=notes\n'] };
     });
 
     expect(await findPsProcessPids()).toEqual([]);
@@ -345,7 +345,7 @@ describe('process listing diagnostics', () => {
     spawn.mockImplementation(() =>
       fakeChildProcess({
         stdout: (async function* () {
-          yield `PID COMMAND\n${fixturePid} node --ok-project-path=${project}\n`;
+          yield `PID COMMAND\n${fixturePid} node --ps-project-path=${project}\n`;
           throw Object.assign(new Error('output read failed'), { code: 'EIO' });
         })(),
       }),

@@ -156,7 +156,7 @@ describe('CLI preAction project anchoring (cold spawn)', () => {
     const { exitCode, stdout, stderr } = spawnCli(['--cwd', sub, 'status', '--json']);
 
     expect(exitCode).toBe(0);
-    expect(stderr).toContain(`[ok] Using Palimpsest project at ${realpathSync(root)}`);
+    expect(stderr).toContain(`[ps] Using Palimpsest project at ${realpathSync(root)}`);
     const report = JSON.parse(stdout);
     expect(report).toHaveProperty('server');
   }, 30_000);
@@ -172,7 +172,7 @@ describe('CLI preAction project anchoring (cold spawn)', () => {
     const { exitCode, stdout, stderr } = spawnCli(['--cwd', sub, 'preview']);
 
     expect(exitCode).toBe(0);
-    expect(stderr).toContain(`[ok] Using Palimpsest project at ${realpathSync(root)}`);
+    expect(stderr).toContain(`[ps] Using Palimpsest project at ${realpathSync(root)}`);
     expect(stdout).toContain('hello.md');
   }, 30_000);
 
@@ -203,7 +203,7 @@ describe('CLI preAction project anchoring (cold spawn)', () => {
       const { exitCode, stdout, stderr } = spawnCli(['--cwd', sub, 'stop', './target']);
 
       expect(exitCode).toBe(0);
-      expect(stderr).toContain(`[ok] Using Palimpsest project at ${realpathSync(root)}`);
+      expect(stderr).toContain(`[ps] Using Palimpsest project at ${realpathSync(root)}`);
       expect(stdout).toContain(`Stopped: server (pid=${sleeper.pid}, port=4242)`);
     } finally {
       sleeper.kill();
@@ -219,7 +219,7 @@ describe('CLI preAction project anchoring (cold spawn)', () => {
     const { exitCode, stdout, stderr } = spawnCli(['--cwd', sub, 'mcp']);
 
     expect(exitCode).toBe(0);
-    expect(stderr).toContain(`[ok] Using Palimpsest project at ${realpathSync(root)}`);
+    expect(stderr).toContain(`[ps] Using Palimpsest project at ${realpathSync(root)}`);
     expect(stdout).toBe('');
   }, 30_000);
 

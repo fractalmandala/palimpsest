@@ -15,8 +15,8 @@ import {
 } from 'node:fs';
 import { appendFile, mkdir, rename, rm, writeFile } from 'node:fs/promises';
 import { basename, sep } from 'node:path';
-import type { AtomicWriteFsAdapter } from '@palimpsest/core/server';
 import type { Attributes } from '@opentelemetry/api';
+import type { AtomicWriteFsAdapter } from '@palimpsest/core/server';
 import { withSpan, withSpanSync } from './telemetry.ts';
 
 export function normalizeFsPath(p: string): string {

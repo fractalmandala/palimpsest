@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro';
 import type { SkillScope } from '@palimpsest/core/schemas/api';
 import type {
   PluginBundleMetadata,
@@ -5,7 +6,6 @@ import type {
   SkillDetail,
 } from '@palimpsest/core/skills-catalog/schema';
 import { skillsShSkillLinks } from '@palimpsest/core/skills-catalog/source-fields';
-import { Trans } from '@lingui/react/macro';
 import { ArrowUpRightIcon, ChevronDown } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { requestFilesSectionReveal } from '@/components/files-section-reveal-store';
@@ -203,8 +203,7 @@ export function SkillPreviewTab({ flavor, source, name, subtitle, level, path }:
     </Trans>
   ) : builtin ? (
     <Trans>
-      This is a preview of {boldName} — a built-in skill shipped with Palimpsest. It's
-      read-only.
+      This is a preview of {boldName} — a built-in skill shipped with Palimpsest. It's read-only.
     </Trans>
   ) : pluginInfo ? (
     <Trans>

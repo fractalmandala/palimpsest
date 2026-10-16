@@ -1,10 +1,10 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { EDITOR_LABELS } from '@palimpsest/core/constants/editors';
 import type {
   SkillInstallWarningCode,
   SkillScope,
   SkillsListEntry,
 } from '@palimpsest/core/schemas/api';
-import { Trans, useLingui } from '@lingui/react/macro';
 import {
   ArrowLeftRight,
   Copy,

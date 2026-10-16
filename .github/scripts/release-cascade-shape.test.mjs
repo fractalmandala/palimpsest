@@ -2886,7 +2886,7 @@ describe('the release App credential never shares a job with installed packages'
       test.each([
         ['a different version', { tarballs: [cli('0.82.0-beta.8')] }, '"version":"0.82.0-beta.8"'],
         ['a different package', { tarballs: [{ ...cli('0.82.0-beta.9'), name: '@palimpsest/core' }] }, '"name":"@palimpsest/core"'],
-        ['a publishConfig that redirects the registry', { tarballs: [cli('0.82.0-beta.9', { publishConfig: { access: 'public', '@inkeep:registry': 'https://registry.example.test/' } })] }, 'whose publishConfig may set access and nothing else'],
+        ['a publishConfig that redirects the registry', { tarballs: [cli('0.82.0-beta.9', { publishConfig: { access: 'public', '@example:registry': 'https://registry.example.test/' } })] }, 'whose publishConfig may set access and nothing else'],
         ['a publishConfig that turns provenance off', { tarballs: [cli('0.82.0-beta.9', { publishConfig: { access: 'public', provenance: false } })] }, 'whose publishConfig may set access and nothing else'],
         [
           'a second manifest that npm would read instead',

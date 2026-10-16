@@ -1,5 +1,8 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
+// oxlint-disable ps/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
+import type { MessageDescriptor } from '@lingui/core';
+import { msg, plural, t } from '@lingui/core/macro';
+import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { isSyncMode } from '@palimpsest/core/config/auto-sync-mode';
 import type {
   GitStatusCode,
@@ -9,9 +12,6 @@ import type {
   SyncErrorCode,
 } from '@palimpsest/core/schemas/api';
 import type { SyncPausedReason } from '@palimpsest/core/sync-paused-reason';
-import type { MessageDescriptor } from '@lingui/core';
-import { msg, plural, t } from '@lingui/core/macro';
-import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import {
   AlertTriangle,
   ArrowDown,

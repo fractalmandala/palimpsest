@@ -1,10 +1,10 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import type {
   SkillMoveFailureOutcome,
   SkillScope,
   SkillsListEntry,
 } from '@palimpsest/core/schemas/api';
 import type { CatalogSkill } from '@palimpsest/core/skills-catalog/schema';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { FILE_TREE_TAG_NAME, type FileTreeSortComparator } from '@pierre/trees';
 import { useFileTree } from '@pierre/trees/react';
 import {

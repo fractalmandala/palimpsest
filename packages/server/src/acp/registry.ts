@@ -1,11 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { arch, platform } from 'node:os';
 import { join } from 'node:path';
-import {
-  ACP_AGENT_EDITOR_ID_MAP,
-  ACP_FEATURED_AGENT_IDS,
-  type EditorId,
-} from '@palimpsest/core';
+import { ACP_AGENT_EDITOR_ID_MAP, ACP_FEATURED_AGENT_IDS, type EditorId } from '@palimpsest/core';
 import type { PinoLogger } from '../logger.ts';
 
 const ACP_REGISTRY_URL = 'https://cdn.agentclientprotocol.com/registry/v1/latest/registry.json';

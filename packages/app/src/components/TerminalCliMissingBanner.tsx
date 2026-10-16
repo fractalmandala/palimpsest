@@ -1,5 +1,5 @@
-import { TERMINAL_CLIS, type TerminalCli } from '@palimpsest/core/handoff';
 import { useLingui } from '@lingui/react/macro';
+import { TERMINAL_CLIS, type TerminalCli } from '@palimpsest/core/handoff';
 import { Button } from '@/components/ui/button';
 import type { PsDesktopBridge } from '@/lib/desktop-bridge-types';
 import { TerminalNoticeBanner } from './TerminalNoticeBanner';

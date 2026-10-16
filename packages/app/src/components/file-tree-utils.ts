@@ -1,10 +1,7 @@
 import { isManagedArtifactDocName } from '@palimpsest/core/constants/cc1';
 import type { InlineAssetMediaKind } from '@palimpsest/core/constants/upload';
 import type { DocumentListEntry } from '@palimpsest/core/schemas/api';
-import {
-  isHiddenDocName,
-  isProjectSkillBundlePath,
-} from '@palimpsest/core/util/doc-name';
+import { isHiddenDocName, isProjectSkillBundlePath } from '@palimpsest/core/util/doc-name';
 
 export interface DocumentEntry {
   kind: 'document';

@@ -2,7 +2,7 @@
 
 [Palimpsest](https://github.com/fractalmandala/palimpsest) is a local-first, agent-friendly Markdown knowledge base with a rich editor. It is available as a desktop app for **macOS, Windows, and Linux**, or as the same local web app served from your terminal.
 
-This package installs the cross-platform `ok` / `palimpsest` CLI and bundles the web app. Use it on Linux, Windows, macOS, an Intel Mac, or a server. The macOS desktop app currently requires Apple silicon, so Intel Mac users should use this CLI and the web app.
+This package installs the cross-platform `ps` / `palimpsest` CLI and bundles the web app. Use it on Linux, Windows, macOS, an Intel Mac, or a server. The macOS desktop app currently requires Apple silicon, so Intel Mac users should use this CLI and the web app.
 
 ## Install
 

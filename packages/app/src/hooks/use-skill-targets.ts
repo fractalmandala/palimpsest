@@ -1,10 +1,10 @@
+import { t } from '@lingui/core/macro';
 import {
   type SkillFolderLinkPreview,
   type SkillScope,
   type SkillTargetsGetSuccess,
   SkillTargetsGetSuccessSchema,
 } from '@palimpsest/core/schemas/api';
-import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { emitSkillsChanged } from '@/lib/documents-events';
 import { parseApiError } from '@/lib/parse-api-error';

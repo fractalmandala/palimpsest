@@ -87,7 +87,7 @@ launch_app() {
     "$executable" \
     "${flags[@]}" \
     'palimpsest://open?project=%2Ftmp%2Fok-smoke-project&doc=start' \
-    >/tmp/openknowledge-smoke.log 2>&1 &
+    >/tmp/palimpsest-smoke.log 2>&1 &
 }
 
 install_container_dependencies() {
@@ -166,14 +166,14 @@ inside_container() {
 
   if ! wait_for_debugger; then
     if [[ "$sandbox_mode" != auto ]]; then
-      tail -80 /tmp/openknowledge-smoke.log >&2 || true
+      tail -80 /tmp/palimpsest-smoke.log >&2 || true
       fail "installed app never exposed its debugging endpoint"
     fi
     printf '%s\n' 'Sandboxed launch did not start; retrying once with --no-sandbox.'
     stop_app
     launch_app "$(command -v palimpsest)" disable
     if ! wait_for_debugger; then
-      tail -80 /tmp/openknowledge-smoke.log >&2 || true
+      tail -80 /tmp/palimpsest-smoke.log >&2 || true
       fail "installed app did not start even with --no-sandbox"
     fi
   fi

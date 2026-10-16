@@ -1,9 +1,6 @@
-import {
-  getWikiLinkText,
-  normalizeNullableString,
-} from '@palimpsest/core/extensions/wiki-link';
-import { resolveWikiLinkTarget } from '@palimpsest/core/utils/wiki-link-resolve';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { getWikiLinkText, normalizeNullableString } from '@palimpsest/core/extensions/wiki-link';
+import { resolveWikiLinkTarget } from '@palimpsest/core/utils/wiki-link-resolve';
 import type { Editor } from '@tiptap/core';
 import { posToDOMRect } from '@tiptap/core';
 import {

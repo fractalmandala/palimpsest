@@ -1,38 +1,30 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
+// oxlint-disable ps/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
-import { getGitHubStars } from '@palimpsest/core/utils/github-stars';
 import type { MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { getGitHubStars } from '@palimpsest/core/utils/github-stars';
 import {
   BookOpen,
   Bug,
   CircleHelp,
   Download,
-  Mail,
-  Megaphone,
   MessageSquare,
-  RefreshCw,
   Star,
 } from 'lucide-react';
 import type { ComponentProps, FC, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { ReportBugDialog } from '@/components/ReportBugDialog';
-import { SubscribeForm } from '@/components/SubscribeForm';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import type { PsAboutInfo } from '@/lib/desktop-bridge-types';
 import { dispatchExternalLinkClick } from '@/lib/external-link';
 import { feedbackNudgeStore } from '@/lib/feedback-nudge-store';
-import { DISCORD_INVITE_URL, DOCS_URL, GITHUB_REPO_URL, X_PROFILE_URL } from '@/lib/social-links';
-import { subscribeCardStore } from '@/lib/subscribe-card-store';
+import { DOCS_URL, GITHUB_REPO_URL } from '@/lib/social-links';
 import { openAboutSettings } from '@/lib/use-settings-route';
 import { cn } from '@/lib/utils';
 import { FeedbackFormDialog } from './FeedbackFormDialog';
-import { DiscordIcon } from './icons/discord';
 import { GithubIcon } from './icons/github';
-import { XTwitterIcon } from './icons/x-twitter';
 
 interface ResourceLink {
   label: string | MessageDescriptor;
@@ -52,21 +44,20 @@ const sections: ResourceSection[] = [
     heading: msg`Resources`,
     links: [
       { label: msg`Docs`, href: DOCS_URL, icon: BookOpen },
-      { label: msg`Download app`, href: 'https://github.com/fractalmandala/palimpsest/download', icon: Download },
+      {
+        label: msg`Download app`,
+        href: 'https://github.com/fractalmandala/palimpsest/download',
+        icon: Download,
+      },
     ],
   },
   {
     key: 'community',
     heading: msg`Community`,
-    links: [
-      { label: 'GitHub', href: GITHUB_REPO_URL, icon: GithubIcon },
-      { label: 'X (Twitter)', href: X_PROFILE_URL, icon: XTwitterIcon },
-      { label: 'Discord', href: DISCORD_INVITE_URL, icon: DiscordIcon },
-    ],
+    links: [{ label: 'GitHub', href: GITHUB_REPO_URL, icon: GithubIcon }],
   },
 ];
 
-const WHATS_NEW_HREF = `${GITHUB_REPO_URL}/releases`;
 
 const rowClassName =
   'group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-azure-900/5 dark:hover:bg-white/20 hover:text-primary';
@@ -137,32 +128,13 @@ const SectionHeading: FC<{ children: ReactNode }> = ({ children }) => (
 export const HelpPopover: FC = () => {
   const { t } = useLingui();
   const [popoverOpen, setPopoverOpen] = useState(false);
-  const [subscribeOpen, setSubscribeOpen] = useState(false);
   const [reportBugOpen, setReportBugOpen] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [starCount, setStarCount] = useState<number | null>(null);
-  const [about, setAbout] = useState<PsAboutInfo | null>(null);
 
   const bridge = typeof window !== 'undefined' ? (window.psDesktop ?? null) : null;
   const hasDesktopBridge = bridge != null;
   const appVersion = bridge?.appVersion;
-  const whatsNewHref = about?.releasesUrl ?? WHATS_NEW_HREF;
-
-  useEffect(() => {
-    if (!popoverOpen || !bridge) return;
-    let cancelled = false;
-    bridge.state
-      .query()
-      .then((snapshot) => {
-        if (!cancelled && snapshot.about) setAbout(snapshot.about);
-      })
-      .catch((err: unknown) => {
-        console.warn('[help-popover] bridge.state.query() failed', err);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [popoverOpen, bridge]);
 
   useEffect(() => {
     if (!popoverOpen || starCount !== null) return;
@@ -179,7 +151,6 @@ export const HelpPopover: FC = () => {
         open={popoverOpen}
         onOpenChange={(open) => {
           setPopoverOpen(open);
-          if (!open) setSubscribeOpen(false);
         }}
       >
         <Tooltip>
@@ -253,54 +224,6 @@ export const HelpPopover: FC = () => {
             </div>
           ))}
 
-          <div className="mt-3">
-            <SectionHeading>
-              <Trans>Product updates</Trans>
-            </SectionHeading>
-            <nav aria-label={t`Product updates`}>
-              <ul className="space-y-0.5">
-                <ResourceLinkRow
-                  link={{ label: msg`What's new`, href: whatsNewHref, icon: Megaphone }}
-                />
-                {bridge && about?.updateChecks === 'available' ? (
-                  <ActionRow
-                    icon={RefreshCw}
-                    onSelect={() => {
-                      setPopoverOpen(false);
-                      bridge.update.checkNow().catch((err: unknown) => {
-                        console.warn('[help-popover] bridge.update.checkNow() failed', err);
-                      });
-                    }}
-                  >
-                    <Trans>Check for updates</Trans>
-                  </ActionRow>
-                ) : null}
-                <li>
-                  <Popover open={subscribeOpen} onOpenChange={setSubscribeOpen}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        className={cn(rowClassName, 'h-auto w-full justify-start font-normal')}
-                      >
-                        <Mail aria-hidden="true" className="size-4 shrink-0" />
-                        <Trans>Subscribe</Trans>
-                      </Button>
-                    </PopoverTrigger>
-                    {}
-                    <PopoverContent side="left" align="center" sideOffset={20} className="w-80">
-                      <SubscribeForm
-                        source="resources_menu"
-                        autoFocus
-                        onDismiss={() => setSubscribeOpen(false)}
-                        onSuccess={() => subscribeCardStore.markSubscribed()}
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </li>
-              </ul>
-            </nav>
-          </div>
-
           {appVersion ? (
             <div className="mt-3 border-t pt-2">
               <Button
@@ -317,7 +240,7 @@ export const HelpPopover: FC = () => {
               >
                 <span className="min-w-0 max-w-full truncate">v{appVersion}</span>{' '}
                 <span className="font-sans text-muted-foreground">
-                  <Trans>About & updates</Trans>
+                  <Trans>About</Trans>
                 </span>
               </Button>
             </div>

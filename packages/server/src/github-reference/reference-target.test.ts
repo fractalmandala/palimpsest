@@ -9,7 +9,7 @@ describe('parseGitHubReferenceUrl', () => {
       parseGitHubReferenceUrl('https://github.com/inkeep/agents/pull/42', NO_DECLARED),
     ).toEqual({
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'agents',
       number: 42,
       kind: 'pull',

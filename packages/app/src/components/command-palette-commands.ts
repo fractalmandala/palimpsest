@@ -1,3 +1,5 @@
+import type { MessageDescriptor } from '@lingui/core';
+import { msg, t } from '@lingui/core/macro';
 import {
   COMMAND_IDENTITIES,
   type CommandContext,
@@ -6,12 +8,9 @@ import {
 } from '@palimpsest/core/commands/command-identity';
 import { SHOW_INSTALL_SKILL } from '@palimpsest/core/constants/feature-flags';
 import {
-  PALIMPSEST_DISCORD_URL,
   PALIMPSEST_DOCS_URL,
   PALIMPSEST_GITHUB_URL,
 } from '@palimpsest/core/constants/menu-labels';
-import type { MessageDescriptor } from '@lingui/core';
-import { msg, t } from '@lingui/core/macro';
 import {
   Blocks,
   BookOpen,
@@ -38,7 +37,6 @@ import {
   PanelRight,
   Pencil,
   Plus,
-  RefreshCw,
   Settings,
   Sparkles,
   SpellCheck,
@@ -50,7 +48,6 @@ import {
 } from 'lucide-react';
 import type { ComponentType } from 'react';
 import { requestDocPanelTab } from '@/components/doc-panel-events';
-import { DiscordIcon } from '@/components/icons/discord';
 import { GithubIcon } from '@/components/icons/github';
 import type { ResolvedNavigationTarget } from '@/components/navigation-targets';
 import { PANE_ICON } from '@/components/pane-icons';
@@ -173,12 +170,10 @@ const PALETTE_COMMAND_LABELS = {
   collapseAll: msg`Collapse all`,
   newTerminal: msg`New Terminal`,
   killTerminal: msg`Kill Terminal`,
-  checkForUpdates: msg`Check for updates`,
   setUpIntegrations: msg`Set up Palimpsest integrations`,
   checkSpelling: msg`Check spelling while typing`,
   openOnGithub: msg`Palimpsest on GitHub`,
   openDocs: msg`Documentation`,
-  joinDiscord: msg`Join us on Discord`,
 } as const satisfies Record<string, MessageDescriptor>;
 
 export type PaletteLabelKey = keyof typeof PALETTE_COMMAND_LABELS;
@@ -255,12 +250,10 @@ const COMMAND_ICONS: Record<string, ComponentType<{ className?: string }>> = {
   'collapse-all-tree': FoldVertical,
   'new-terminal': SquareTerminal,
   'kill-terminal': SquareTerminal,
-  'check-for-updates': RefreshCw,
   'set-up-integrations': Blocks,
   'toggle-spell-check': SpellCheck,
   'open-github': GithubIcon,
   'open-docs': BookOpen,
-  'open-discord': DiscordIcon,
 };
 
 const COMMAND_DISPATCH: Record<string, (ctx: PaletteCommandContext) => void> = {
@@ -336,10 +329,6 @@ const COMMAND_DISPATCH: Record<string, (ctx: PaletteCommandContext) => void> = {
     ctx.closePalette();
     ctx.openFeedbackDialog();
   },
-  'check-for-updates': (ctx) =>
-    ctx.runAction(async () => {
-      await ctx.bridge?.update.checkNow();
-    }),
   'set-up-integrations': (ctx) =>
     ctx.runAction(async () => {
       await ctx.bridge?.mcpWiring.reconfigure();
@@ -350,7 +339,6 @@ const COMMAND_DISPATCH: Record<string, (ctx: PaletteCommandContext) => void> = {
     }),
   'open-github': (ctx) => ctx.openExternalUrl(PALIMPSEST_GITHUB_URL),
   'open-docs': (ctx) => ctx.openExternalUrl(PALIMPSEST_DOCS_URL),
-  'open-discord': (ctx) => ctx.openExternalUrl(PALIMPSEST_DISCORD_URL),
 };
 
 function paletteCoreContext(ctx: PaletteCommandContext): CommandContext {

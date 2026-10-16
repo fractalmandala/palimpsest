@@ -1,5 +1,5 @@
-import type { SkillFolderLinkPreview } from '@palimpsest/core/schemas/api';
 import { Trans, useLingui } from '@lingui/react/macro';
+import type { SkillFolderLinkPreview } from '@palimpsest/core/schemas/api';
 import { ArrowRight, Copy, Trash2, Unlink } from 'lucide-react';
 import {
   AlertDialog,

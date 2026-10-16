@@ -11,7 +11,7 @@ import {
 
 const REPO_ROOT = fileURLToPath(new URL('../../..', import.meta.url));
 const RULE = 'no-sentinel-signal-target';
-const CODE = `ok(${RULE})`;
+const CODE = `ps(${RULE})`;
 const FIXTURE = `lint-plugins/ps-rules/__fixtures__/${RULE}.fixture.tsx`;
 const README = 'lint-plugins/ps-rules/README.md';
 const DOCS = `${README}#${RULE}`;

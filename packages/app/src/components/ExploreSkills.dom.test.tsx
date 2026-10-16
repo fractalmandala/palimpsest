@@ -19,7 +19,7 @@ const fetchPublisherSkills = vi.fn(async () => ({
       source: 'fractalmandala/palimpsest-skills',
       description: '',
       installs: 21,
-      publisher: 'inkeep',
+      publisher: 'example',
     },
     {
       id: 'y',
@@ -27,7 +27,7 @@ const fetchPublisherSkills = vi.fn(async () => ({
       source: 'fractalmandala/palimpsest-skills',
       description: '',
       installs: 478,
-      publisher: 'inkeep',
+      publisher: 'example',
     },
   ],
   backend: 'skills.sh' as const,

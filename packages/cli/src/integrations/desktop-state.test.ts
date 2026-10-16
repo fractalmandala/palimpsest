@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, test } from 'vitest';
 import {
-  DESKTOP_LEGACY_PRODUCT_NAME,
+  DESKTOP_LEGACY_PRODUCT_NAMES,
   DESKTOP_PRODUCT_NAME,
   DESKTOP_UPDATER_CACHE_DIR_NAME,
   desktopUpdaterCacheDir,
@@ -45,15 +45,14 @@ describe('desktopUserDataDir', () => {
     ).toBe('C:\\Users\\x\\AppData\\Roaming\\Palimpsest');
   });
 
-  test('the legacy product name resolves the space-named macOS dir', () => {
-    expect(
-      desktopUserDataDir({
-        home: '/Users/x',
-        platformName: 'darwin',
-        productName: DESKTOP_LEGACY_PRODUCT_NAME,
-      }),
-    ).toBe('/Users/x/Library/Application Support/Palimpsest');
-    expect(DESKTOP_PRODUCT_NAME).not.toBe(DESKTOP_LEGACY_PRODUCT_NAME);
+  test('the legacy product names resolve the upstream macOS dirs', () => {
+    expect(DESKTOP_LEGACY_PRODUCT_NAMES).toEqual(['OpenKnowledge', 'Open Knowledge']);
+    for (const legacy of DESKTOP_LEGACY_PRODUCT_NAMES) {
+      expect(
+        desktopUserDataDir({ home: '/Users/x', platformName: 'darwin', productName: legacy }),
+      ).toBe(`/Users/x/Library/Application Support/${legacy}`);
+    }
+    expect(DESKTOP_LEGACY_PRODUCT_NAMES).not.toContain(DESKTOP_PRODUCT_NAME);
   });
 });
 

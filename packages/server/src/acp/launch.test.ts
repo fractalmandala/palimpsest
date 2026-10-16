@@ -1405,7 +1405,7 @@ describe('startup package policy classification', () => {
     const generic = 'No solution found when resolving tool dependencies';
     expect(packageAcquisitionFailure(uv, generic)).toBeNull();
     expect(
-      packageAcquisitionFailure(uv, `${generic}\nversions were filtered by ` + '`exclude-newer`'),
+      packageAcquisitionFailure(uv, `${generic}\nversions were filtered by \`exclude-newer\``),
     ).toMatchObject({ code: 'install-failed' });
   });
 });

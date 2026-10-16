@@ -1,6 +1,6 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import type { ConfigBinding } from '@palimpsest/core/config/bind-config-doc';
 import type { PsignoreBinding } from '@palimpsest/core/config/bind-psignore-doc';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { TriangleAlert } from 'lucide-react';
 import { type ComponentType, lazy } from 'react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';

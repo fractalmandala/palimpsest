@@ -4,7 +4,7 @@ const DAY_MS = 86_400_000;
 const ISSUE_URL =
   /^https:\/\/(?:github\.com\/inkeep\/[\w.-]+\/issues\/\d+|linear\.app\/inkeep\/issue\/[A-Z]+-\d+(?:\/[\w-]*)?)$/;
 export const ISSUE_URL_RULE =
-  'a GitHub issue URL in the inkeep organization or a Linear issue URL in the inkeep workspace';
+  'a GitHub issue URL in the example organization or a Linear issue URL in the example workspace';
 export const HORIZON_DAYS = 90;
 
 export function todayUtc(now = new Date()) {

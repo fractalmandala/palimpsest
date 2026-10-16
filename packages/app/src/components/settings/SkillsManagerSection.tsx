@@ -1,5 +1,5 @@
-import type { SkillScope } from '@palimpsest/core/schemas/api';
 import { Trans } from '@lingui/react/macro';
+import type { SkillScope } from '@palimpsest/core/schemas/api';
 import { SkillTargetsPicker } from '@/components/settings/SkillTargetsPicker';
 import { BuiltInSkillsSection } from './BuiltInSkillsSection';
 import { ProjectSkillSection } from './ProjectSkillSection';

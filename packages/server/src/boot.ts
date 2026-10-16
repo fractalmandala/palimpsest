@@ -2,6 +2,7 @@ import { existsSync, readdirSync, statSync } from 'node:fs';
 import type { Server as HttpServer } from 'node:http';
 import { homedir } from 'node:os';
 import { resolve } from 'node:path';
+import { context, propagation } from '@opentelemetry/api';
 import {
   ASSET_EXTENSIONS,
   currentCliCommandName,
@@ -20,7 +21,6 @@ import {
 } from '@palimpsest/core';
 import { psUserHomeDir } from '@palimpsest/core/server';
 import { resolveGitDirDetailed } from '@palimpsest/core/shadow-repo-layout';
-import { context, propagation } from '@opentelemetry/api';
 import sirv from 'sirv';
 import { readAgentBrowserTools, readAutoApprovePsTools } from './acp/permissions.ts';
 import {
@@ -54,7 +54,7 @@ import { resolveLocalSinkConfig } from './local-sink-resolver.ts';
 import { getLogger, loggerFactory, type PinoLogger } from './logger.ts';
 import { createMcpHttpHandler } from './mcp-http.ts';
 import { mountMcpAndApi, type ReadinessState } from './mcp-mount.ts';
-import { MissingPsConfigError } from './missing-ok-config-error.ts';
+import { MissingPsConfigError } from './missing-ps-config-error.ts';
 import { createProjectRuntime, type ProjectRuntime } from './project-runtime.ts';
 import {
   createServer,

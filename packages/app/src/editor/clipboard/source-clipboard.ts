@@ -6,12 +6,9 @@
 
 import type { Extension } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
-import { htmlToMdast, mdastToMarkdown } from '@palimpsest/core/markdown/html-to-mdast';
-import {
-  ChunkedInsertError,
-  chunkedYTextInsert,
-} from '@palimpsest/core/utils/chunked-insert';
 import { t } from '@lingui/core/macro';
+import { htmlToMdast, mdastToMarkdown } from '@palimpsest/core/markdown/html-to-mdast';
+import { ChunkedInsertError, chunkedYTextInsert } from '@palimpsest/core/utils/chunked-insert';
 import { toast } from 'sonner';
 import * as Y from 'yjs';
 import { requestPreviewTabPromotion } from '../preview-tab-promotion.ts';

@@ -791,8 +791,8 @@ describe('runMcpWiringOnFirstLaunch — skills consent leg', () => {
     },
     {
       id: 'write-skill',
-      name: 'open-knowledge-write-skill',
-      paths: ['~/.claude/skills/open-knowledge-write-skill'],
+      name: 'palimpsest-write-skill',
+      paths: ['~/.claude/skills/palimpsest-write-skill'],
     },
   ];
 

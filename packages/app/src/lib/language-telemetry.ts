@@ -1,5 +1,5 @@
-import type { LanguagePreference } from '@palimpsest/core/i18n/locales';
 import { trace } from '@opentelemetry/api';
+import type { LanguagePreference } from '@palimpsest/core/i18n/locales';
 
 const TRACER_NAME = 'palimpsest-app';
 

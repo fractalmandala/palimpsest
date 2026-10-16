@@ -8,8 +8,8 @@ import {
   desktopProductForCliCommand,
   envWithoutDevChannel,
   isDevChannel,
-  PsCliCommand,
   PACKAGED_DESKTOP_PRODUCT_NAMES,
+  PsCliCommand,
   resolveDesktopProductName,
   userHomeDisplayPath,
 } from './product.ts';
@@ -81,12 +81,12 @@ describe('resolveDesktopProductName', () => {
 
   it('retires the package names each channel shipped before, and only its own', () => {
     expect(DESKTOP_PRODUCTS.stable.retiredLinuxPackageNames).toEqual({
-      deb: ['openknowledge'],
-      rpm: ['Palimpsest', 'openknowledge'],
+      deb: [],
+      rpm: ['Palimpsest'],
     });
     expect(DESKTOP_PRODUCTS.beta.retiredLinuxPackageNames).toEqual({
-      deb: ['palimpsest-beta-desktop', 'openknowledge-beta'],
-      rpm: ['palimpsest-beta-desktop', 'openknowledge-beta'],
+      deb: ['palimpsest-beta-desktop'],
+      rpm: ['palimpsest-beta-desktop'],
     });
     const current = Object.values(DESKTOP_PRODUCTS).flatMap((p) => [
       p.linuxPackageNames.deb,
@@ -219,7 +219,7 @@ describe('envWithoutDevChannel', () => {
   });
 
   it('drops the dev channel under any key casing, as a Windows environment can carry it', () => {
-    expect(envWithoutDevChannel({ Path: 'C:\\Windows', ok_channel: ' Dev ' })).toEqual({
+    expect(envWithoutDevChannel({ Path: 'C:\\Windows', ps_channel: ' Dev ' })).toEqual({
       Path: 'C:\\Windows',
     });
   });

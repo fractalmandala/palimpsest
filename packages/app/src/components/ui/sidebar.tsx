@@ -1,5 +1,5 @@
-import { detectEmbeddedHostFromBrowser } from '@palimpsest/core/constants/embedded-host';
 import { useLingui } from '@lingui/react/macro';
+import { detectEmbeddedHostFromBrowser } from '@palimpsest/core/constants/embedded-host';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { PanelLeft, PanelLeftOpen } from 'lucide-react';
 import { Slot } from 'radix-ui';

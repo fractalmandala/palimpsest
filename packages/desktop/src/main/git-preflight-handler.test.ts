@@ -1,8 +1,4 @@
-import {
-  GitNotAvailableError,
-  GitTooOldError,
-  type InstallGuidance,
-} from '@palimpsest/server';
+import { GitNotAvailableError, GitTooOldError, type InstallGuidance } from '@palimpsest/server';
 import { describe, expect, test, vi } from 'vitest';
 import { ensureGitAvailable, type MessageBoxOptions } from './git-preflight-handler.ts';
 

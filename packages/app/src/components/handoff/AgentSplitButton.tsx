@@ -1,5 +1,5 @@
-import type { HandoffTarget, TargetData, TerminalCli } from '@palimpsest/core/handoff';
 import { Trans, useLingui } from '@lingui/react/macro';
+import type { HandoffTarget, TargetData, TerminalCli } from '@palimpsest/core/handoff';
 import { ArrowUpRight, Check, ChevronDown, SlidersHorizontal } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { RegisteredAgentIcon } from '@/components/acp/RegisteredAgentIcon';

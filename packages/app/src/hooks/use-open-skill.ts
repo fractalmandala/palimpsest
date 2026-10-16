@@ -1,5 +1,5 @@
-import type { SkillScope } from '@palimpsest/core/schemas/api';
 import { t } from '@lingui/core/macro';
+import type { SkillScope } from '@palimpsest/core/schemas/api';
 import { toast } from 'sonner';
 import { useDocumentContext } from '@/editor/DocumentContext';
 import { useSkills, whenSkillsListContains } from '@/hooks/use-skills';

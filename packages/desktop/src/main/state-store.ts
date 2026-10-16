@@ -1,9 +1,6 @@
 import { existsSync, mkdirSync, renameSync, unlinkSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import type {
-  PsTerminalRestartSnapshot,
-  PsUpdateMode,
-} from '@palimpsest/core/desktop-bridge';
+import type { PsTerminalRestartSnapshot, PsUpdateMode } from '@palimpsest/core/desktop-bridge';
 import { canonicalizeGitHubRemoteUrl } from './git-remote.ts';
 
 interface RecentProject {

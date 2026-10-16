@@ -80,7 +80,7 @@ export interface FolderTemplateRouteDeps {
     res: ServerResponse,
     label: 'path' | 'folder',
     handler: string,
-    components: 'ps' \| 'ps-and-templates',
+    components: 'ps' | 'ps-and-templates',
   ) => { folderRel: string; resolvedContentDir: string } | null;
   extractAgentIdentity: (body: Record<string, unknown>) => {
     agentId: string;

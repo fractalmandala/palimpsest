@@ -1075,9 +1075,6 @@ msgstr "Tentang"
 msgid "About {appName}"
 msgstr "Tentang {appName}"
 
-msgid "About & updates"
-msgstr "Tentang & pembaruan"
-
 msgid "Above"
 msgstr "Di atas"
 
@@ -1733,12 +1730,6 @@ msgstr "Otomatis"
 msgid "Automatic picks a free port each start. Choose a fixed port to keep the same address across restarts."
 msgstr "Otomatis memilih port bebas setiap kali dimulai. Pilih port tetap untuk mempertahankan alamat yang sama di seluruh mulai ulang."
 
-msgid "Automatic updates"
-msgstr "Pembaruan otomatis"
-
-msgid "Automatic updates are not available right now."
-msgstr "Pembaruan otomatis saat ini tidak tersedia."
-
 msgid "Available"
 msgstr "Tersedia"
 
@@ -2033,14 +2024,8 @@ msgstr "Riwayat chat"
 msgid "Chat name"
 msgstr "Nama obrolan"
 
-msgid "Check for updates"
-msgstr "Periksa pembaruan"
-
 msgid "Check for updates every"
 msgstr "Periksa pembaruan setiap"
-
-msgid "Check for updates…"
-msgstr "Periksa pembaruan…"
 
 msgid "Check out remote branch"
 msgstr "Ambil cabang remote"
@@ -2074,9 +2059,6 @@ msgstr "Memeriksa pembaruan"
 
 msgid "Checking for updates on GitHub"
 msgstr "Memeriksa pembaruan di GitHub"
-
-msgid "Checking for updates…"
-msgstr "Memeriksa pembaruan…"
 
 msgid "Checking GitHub connection..."
 msgstr "Memeriksa koneksi GitHub..."
@@ -3198,9 +3180,6 @@ msgstr "Kuncinya tidak bisa disimpan — silakan coba lagi."
 msgid "Couldn't save the resolution for {filePath}."
 msgstr "Penyelesaian untuk {filePath} tidak bisa disimpan."
 
-msgid "Couldn't save this setting. Try again."
-msgstr "Pengaturan ini tidak dapat disimpan. Coba lagi."
-
 msgid "Couldn't save your theme preference."
 msgstr "Tidak dapat menyimpan preferensi tema Anda."
 
@@ -3773,9 +3752,6 @@ msgstr "Klik dua kali untuk menyunting"
 msgid "Download {0}"
 msgstr "Unduh {0}"
 
-msgid "Download and install updates automatically"
-msgstr "Unduh dan pasang pembaruan secara otomatis"
-
 msgid "Download app"
 msgstr "Unduh aplikasi"
 
@@ -4022,8 +3998,8 @@ msgstr "embedding"
 msgid "Embeddings API key"
 msgstr "Kunci API embedding"
 
-msgid "Embeddings are computed only when a search runs and are cached locally under <0>.ok/local</0>."
-msgstr "Embedding hanya dihitung ketika sebuah pencarian berjalan dan disimpan dalam cache lokal di <0>.ok/local</0>."
+msgid "Embeddings are computed only when a search runs and are cached locally under <0>.ps/local</0>."
+msgstr ""
 
 msgid "Emoji"
 msgstr "Emoji"
@@ -4548,6 +4524,9 @@ msgstr "Gagal mengunggah berkas"
 msgid "Fast"
 msgstr "Cepat"
 
+msgid "Feedback"
+msgstr ""
+
 msgid "Feedback isn't available right now. Please try again later."
 msgstr "Masukan tidak tersedia saat ini. Silakan coba lagi nanti."
 
@@ -4744,15 +4723,6 @@ msgstr "Folder dan berkas kosong tidak bisa dilampirkan — lepaskan berkasnya l
 msgid "Follow the agent's edits"
 msgstr "Ikuti suntingan agen"
 
-msgid "Follow us on"
-msgstr "Ikuti kami di"
-
-msgid "Follow us on social media"
-msgstr "Ikuti kami di media sosial"
-
-msgid "Follow us on X"
-msgstr "Ikuti kami di X"
-
 msgid "Following the agent's edits"
 msgstr "Mengikuti suntingan agen"
 
@@ -4827,9 +4797,6 @@ msgstr "Dapatkan {displayName}"
 
 msgid "Get Claude Code"
 msgstr "Dapatkan Claude Code"
-
-msgid "Get product updates in your inbox."
-msgstr "Dapatkan kabar terbaru produk di kotak masuk Anda."
 
 msgid "Get set up"
 msgstr "Mulai siapkan"
@@ -5547,8 +5514,8 @@ msgid "Install skill"
 msgstr "Instal keterampilan"
 
 #. Checkbox that installs the user-global discovery skill bundle
-msgid "Install the <0>open-knowledge-discovery</0> skill"
-msgstr "Pasang skill <0>open-knowledge-discovery</0>"
+msgid "Install the <0>palimpsest-discovery</0> skill"
+msgstr ""
 
 msgid "Install the gh CLI"
 msgstr "Pasang CLI gh"
@@ -5672,9 +5639,6 @@ msgstr "Miring"
 
 msgid "Item {0}"
 msgstr "Item {0}"
-
-msgid "Join us on Discord"
-msgstr "Gabung dengan kami di Discord"
 
 msgid "Jump to last tab"
 msgstr "Lompat ke tab terakhir"
@@ -5965,11 +5929,11 @@ msgstr "Memuat judul untuk {pageTarget}"
 msgid "Loading image"
 msgstr "Memuat gambar"
 
-msgid "Loading Palimpsest skills"
-msgstr "Memuat keterampila Palimpsest"
-
 msgid "Loading pages"
 msgstr "Memuat halaman"
+
+msgid "Loading Palimpsest skills"
+msgstr "Memuat keterampila Palimpsest"
 
 msgid "Loading paths…"
 msgstr "Memuat jalur…"
@@ -6302,11 +6266,11 @@ msgstr "Pindahkan blok"
 msgid "Move down"
 msgstr "Turunkan"
 
-msgid "Move Palimpsest.app to the Trash"
-msgstr "Pindahka Palimpsest.app ke Tong Sampah"
-
 msgid "Move or rename this file inside the skill — the path stays under references/ or scripts/."
 msgstr "Pindahkan atau ganti nama berkas ini di dalam keterampilan — jalurnya tetap di bawah references/ atau scripts/."
+
+msgid "Move Palimpsest.app to the Trash"
+msgstr "Pindahka Palimpsest.app ke Tong Sampah"
 
 msgid "Move succeeded but the sidebar may be out of date — refresh to resync"
 msgstr "Pemindahan berhasil tetapi bilah sisi mungkin tidak mutakhir — segarkan untuk menyinkronkan ulang"
@@ -6421,9 +6385,6 @@ msgstr "Melamun…"
 
 msgid "my-feature"
 msgstr "fitur-saya"
-
-msgid "my@email.com"
-msgstr "saya@email.com"
 
 msgid "name"
 msgstr "nama"
@@ -7039,9 +7000,6 @@ msgstr "Luring"
 msgid "OK can't move these, so they go when {pick} does."
 msgstr "OK tidak bisa memindahkan ini, jadi ikut hilang bersama {pick}."
 
-msgid "OK Desktop"
-msgstr "OK Desktop"
-
 msgid "OK last set this folder to {0} — something outside OK changed it since. The state shown is what's on disk now; your next Symlink/Unlink wins."
 msgstr "Terakhir kali OK menyetel folder ini menjadi {0} — sesuatu di luar OK mengubahnya sejak itu. Keadaan yang ditampilkan adalah apa yang ada di disk sekarang; Symlink/Lepas tautan Anda berikutnya yang menang."
 
@@ -7238,36 +7196,6 @@ msgstr "Buka di worktree"
 msgid "Open it there"
 msgstr "Buka di sana"
 
-msgid "Palimpsest could not reach the project server to check index maintenance. The status updates when the project reconnects."
-msgstr "Palimpsest tidak dapat menjangkau server proyek untuk memeriksa pemeliharaan indeks. Status akan diperbarui saat proyek tersambung kembali."
-
-msgid "Palimpsest creates and maintains a navigation file named index.md in every folder that contains Markdown."
-msgstr "Palimpsest membuat dan memelihara file navigasi bernama index.md di setiap folder yang berisi Markdown."
-
-msgid "OpenKnowledge Format guidance"
-msgstr "Palimpsest Format bimbingan"
-
-msgid "Palimpsest maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
-msgstr "Palimpsest menyimpan file navigasi bernama index.md di setiap folder yang berisi Markdown, masing-masing mencantumkan dokumen folder tersebut berdasarkan jenis dan tautan ke subfoldernya. Itu menulis ulang file-file ini saat dokumen Anda berubah, dan apa pun yang Anda edit sendiri ke dalamnya akan diganti."
-
-msgid "Palimpsest rewrites these index.md files as documents change, so manual edits to them are replaced."
-msgstr "Palimpsest menulis ulang file index.md ini seiring perubahan dokumen, sehingga pengeditan manual pada file tersebut diganti."
-
-msgid "Palimpsest tools are available in this thread."
-msgstr "Alat Palimpsest tersedia di utas ini."
-
-msgid "Palimpsest tools are unavailable because the project folder is missing, inaccessible, or has changed. Check its location and permissions, then retry."
-msgstr "Alat Palimpsest tidak tersedia karena folder proyek tidak ada, tidak dapat diakses, atau telah berubah. Periksa lokasi dan izinnya, lalu coba lagi."
-
-msgid "Palimpsest tools are unavailable: a file Palimpsest didn't write is already at {bridgePath}."
-msgstr "Alat Palimpsest tidak tersedia: sudah ada berkas di {bridgePath} yang tidak ditulis Palimpsest."
-
-msgid "Palimpsest tools are unavailable: something is already at {bridgePath} but couldn't be read, so Palimpsest left it alone."
-msgstr "Alat Palimpsest tidak tersedia: sudah ada sesuatu di {bridgePath}, tetapi tidak dapat dibaca, jadi Palimpsest membiarkannya."
-
-msgid "Palimpsest's own copy of {0} is damaged and won't run. It can download a fresh copy of {1} {2} (about {3} MB from {4}) to replace it."
-msgstr "Salinan {0} milik Palimpsest sendiri rusak dan tidak bisa berjalan. Palimpsest dapat mengunduh salinan baru {1} {2} (sekitar {3} MB dari {4}) untuk menggantinya."
-
 msgid "Open link"
 msgstr "Buka tautan"
 
@@ -7376,194 +7304,8 @@ msgstr "Membuka worktree"
 msgid "Opening..."
 msgstr "Membuka..."
 
-msgid "Palimpsest"
-msgstr "Palimpsest"
-
-msgid "Palimpsest can't sign in to GitHub for this project."
-msgstr "Palimpsest tidak dapat masuk ke GitHub untuk proyek ini."
-
-msgid "Palimpsest checked {subject}"
-msgstr "Palimpsest memeriksa {subject}"
-
-msgid "Palimpsest checked the project"
-msgstr "Palimpsest memeriksa proyek"
-
-msgid "Palimpsest checks for and downloads updates in the background."
-msgstr "Palimpsest memeriksa dan mengunduh pembaruan di latar belakang."
-
-msgid "Palimpsest could not find this agent on this machine."
-msgstr "Palimpsest tidak menemukan agen ini di mesin ini."
-
-msgid "Palimpsest couldn't finish setting up this project. The worktree was created but not opened."
-msgstr "Palimpsest tidak dapat menyelesaikan penyiapan proyek ini. Worktree dibuat, tetapi tidak dibuka."
-
-msgid "Palimpsest couldn't read terminal.shell in .ps/local/config.yml. Using an available Windows shell instead."
-msgstr "Palimpsest tidak dapat membaca terminal.shell di .ps/local/config.yml. Shell Windows yang tersedia akan digunakan sebagai gantinya."
-
-msgid "Palimpsest couldn't write launch settings under .ps/local/terminal because the folder is not safely contained in this project. Check that it is a real folder inside the project, not a link. Claude will ask you to approve Palimpsest."
-msgstr "Palimpsest tidak dapat menulis pengaturan peluncuran di .ps/local/terminal karena folder tersebut tidak berada dengan aman di dalam proyek ini. Pastikan folder tersebut adalah folder nyata di dalam proyek, bukan tautan. Claude akan meminta Anda menyetujui Palimpsest."
-
-msgid "Palimpsest couldn't write launch settings under .ps/local/terminal this time. Check that the folder is writable. Claude will ask you to approve Palimpsest."
-msgstr "Palimpsest tidak dapat menulis pengaturan peluncuran di .ps/local/terminal kali ini. Pastikan folder tersebut dapat ditulisi. Claude akan meminta Anda menyetujui Palimpsest."
-
-msgid "Palimpsest created a share link"
-msgstr "Palimpsest membuat tautan berbagi"
-
-msgid "Palimpsest created a share link for {subject}"
-msgstr "Palimpsest membuat tautan berbagi untuk {subject}"
-
-msgid "Palimpsest deleted {subject}"
-msgstr "Palimpsest menghapus {subject}"
-
-msgid "Palimpsest deleted a document"
-msgstr "Palimpsest menghapus sebuah dokumen"
-
-msgid "Palimpsest discovery skill"
-msgstr "Keterampilan penemua Palimpsest"
-
-msgid "Palimpsest does not recognize this entry, and cannot safely replace it in this file's format."
-msgstr "Palimpsest tidak mengenali entri ini, dan tidak dapat menggantinya dengan aman dalam format file ini."
-
-msgid "Palimpsest does not recognize this entry. Turning it on replaces it."
-msgstr "Palimpsest tidak mengenali entri ini. Mengaktifkannya akan menggantinya."
-
-msgid "Palimpsest doesn't check for or download updates on its own. Check for updates still works when you want a newer version."
-msgstr "Palimpsest tidak memeriksa atau mengunduh pembaruan dengan sendirinya. Periksa pembaruan tetap berfungsi saat Anda menginginkan versi yang lebih baru."
-
-msgid "Palimpsest edited {subject}"
-msgstr "Palimpsest menyunting {subject}"
-
-msgid "Palimpsest edited a document"
-msgstr "Palimpsest menyunting sebuah dokumen"
-
-msgid "Palimpsest files were removed"
-msgstr "File Palimpsest telah dihapus"
-
-msgid "Palimpsest has no credential stored for this host. Add a token in Settings, or let git use the credentials it already has."
-msgstr "Palimpsest tidak menyimpan kredensial apa pun untuk host ini. Tambahkan token di Pengaturan, atau biarkan git memakai kredensial yang sudah dimilikinya."
-
-msgid "Palimpsest imported {source}"
-msgstr "Palimpsest mengimpor {source}"
-
-msgid "Palimpsest imported a skill"
-msgstr "Palimpsest mengimpor sebuah keterampilan"
-
-msgid "Palimpsest initializes at <0>{projectDir}</0> — the parent of <1>{pickedRelative}</1> because it contains a <2>.git</2> folder (one .ps/ per git repo). <3>Content directory</3> defaults to <4>.</4> (the whole repo); type a sub-folder to narrow it."
-msgstr "Palimpsest diinisialisasi di <0>{projectDir}</0> — folder induk dari <1>{pickedRelative}</1>, karena folder itu memuat folder <2>.git</2> (satu .ps/ per repo git). <3>Direktori konten</3> secara bawaan adalah <4>.</4> (seluruh repo); ketik sebuah subfolder untuk mempersempitnya."
-
-msgid "Palimpsest installed {subject}"
-msgstr "Palimpsest memasang {subject}"
-
-msgid "Palimpsest installed a skill"
-msgstr "Palimpsest memasang sebuah keterampilan"
-
-msgid "Palimpsest integrations checked."
-msgstr "Integrasi Palimpsest telah diperiksa."
-
-msgid "Palimpsest is set up at the repository root here, so the pack goes inside <0>{sanitized}</0> rather than at the top of the repository."
-msgstr "Di sini Palimpsest disiapkan di root repositori, jadi paket ditempatkan di dalam <0>{sanitized}</0> alih-alih di puncak repositori."
-
-msgid "Palimpsest is using this GitHub account."
-msgstr "Palimpsest memakai akun GitHub ini."
-
-msgid "Palimpsest keeps retrying and shows them as soon as the file can be read."
-msgstr "Palimpsest terus mencoba lagi dan akan menampilkannya segera setelah berkas dapat dibaca."
-
-msgid "Palimpsest left this file alone because it could not parse it safely. Fix the file by hand, then try again."
-msgstr "Palimpsest tidak mengubah file ini karena tidak dapat mengurainya dengan aman. Perbaiki file secara manual, lalu coba lagi."
-
-msgid "Palimpsest listed the installed skills"
-msgstr "Palimpsest menampilkan daftar keterampilan yang terpasang"
-
-msgid "Palimpsest logs across projects. No project is open, so project server logs are not included."
-msgstr "Log Palimpsest lintas proyek. Tidak ada proyek yang terbuka, jadi log server proyek tidak disertakan."
-
-msgid "Palimpsest logs, including activity across projects."
-msgstr "Log Palimpsest, termasuk aktivitas lintas proyek."
-
-msgid "Palimpsest looked at the link graph"
-msgstr "Palimpsest melihat grafik tautan"
-
-msgid "Palimpsest looked up links for {subject}"
-msgstr "Palimpsest mencari tautan untuk {subject}"
-
-msgid "Palimpsest looked up the authoring palette"
-msgstr "Palimpsest membuka palet penulisan"
-
-msgid "Palimpsest moved {subject} to {destination}"
-msgstr "Palimpsest memindahkan {subject} ke {destination}"
-
-msgid "Palimpsest moved a document"
-msgstr "Palimpsest memindahkan sebuah dokumen"
-
-msgid "Palimpsest on GitHub"
-msgstr "Palimpsest di GitHub"
-
-msgid "Palimpsest on this computer changed to a different build, but this tab is still running the old one."
-msgstr "Palimpsest di komputer ini berganti ke build lain, tetapi tab ini masih menjalankan yang lama."
-
-msgid "Palimpsest on this computer is now v{serverVersion}, but this tab is still running v{tabVersion}."
-msgstr "Palimpsest di komputer ini sekarang v{serverVersion}, tetapi tab ini masih menjalankan v{tabVersion}."
-
-msgid "Palimpsest opened the live preview"
-msgstr "Palimpsest membuka pratinjau langsung"
-
-msgid "Palimpsest quit unexpectedly last time."
-msgstr "Palimpsest berhenti tak terduga terakhir kali."
-
-msgid "Palimpsest ran {command}"
-msgstr "Palimpsest menjalankan {command}"
-
-msgid "Palimpsest ran {tool}"
-msgstr "Palimpsest menjalankan {tool}"
-
-msgid "Palimpsest ran a command"
-msgstr "Palimpsest menjalankan sebuah perintah"
-
-msgid "Palimpsest read the edit history"
-msgstr "Palimpsest membaca riwayat penyuntingan"
-
-msgid "Palimpsest read the history of {subject}"
-msgstr "Palimpsest membaca riwayat {subject}"
-
-msgid "Palimpsest read the project settings"
-msgstr "Palimpsest membaca pengaturan proyek"
-
-msgid "Palimpsest read the setting {key}"
-msgstr "Palimpsest membaca pengaturan {key}"
-
-msgid "Palimpsest restored an earlier version"
-msgstr "Palimpsest memulihkan versi sebelumnya"
-
-msgid "Palimpsest restored an earlier version of {subject}"
-msgstr "Palimpsest memulihkan versi sebelumnya dari {subject}"
-
-msgid "Palimpsest saved a checkpoint"
-msgstr "Palimpsest menyimpan titik pemeriksaan"
-
-msgid "Palimpsest searched for {query}"
-msgstr "Palimpsest mencari {query}"
-
-msgid "Palimpsest searched the knowledge base"
-msgstr "Palimpsest mencari di basis pengetahuan"
-
-msgid "Palimpsest skill saved. Upload it in Claude Desktop, then click Cowork again."
-msgstr "Keterampila Palimpsest disimpan. Unggah di Claude Desktop, lalu klik Cowork lagi."
-
-msgid "Palimpsest stores its configuration and internal files inside a newly created <0>.ok</0> directory in your project root folder."
-msgstr "Palimpsest menyimpan konfigurasi dan berkas internalnya di dalam direktori <0>.ok</0> yang baru dibuat di folder akar proyek Anda."
-
-msgid "Palimpsest will be initialized at <0>{gitRoot}</0> — the parent of your new folder, because it contains a <1>.git</1> folder (one project per git repo)."
-msgstr "Palimpsest akan diinisialisasi di <0>{gitRoot}</0> — folder induk dari folder baru Anda, karena folder itu memuat folder <1>.git</1> (satu proyek per repo git)."
-
-msgid "Palimpsest will create commits and push them to your remote automatically. If you do not want automatic commits in your git history, you should not enable auto-sync."
-msgstr "Palimpsest akan membuat commit dan mengirimkannya ke remote Anda secara otomatis. Jika Anda tidak ingin commit otomatis di riwayat git Anda, sebaiknya jangan aktifkan sinkronisasi otomatis."
-
-msgid "Palimpsest wrote a document"
-msgstr "Palimpsest menulis sebuah dokumen"
-
-msgid "Palimpsest wrote to {subject}"
-msgstr "Palimpsest menulis ke {subject}"
+msgid "OpenKnowledge Format guidance"
+msgstr "Palimpsest Format bimbingan"
 
 msgid "Opens a folder picker to choose where to clone the repository."
 msgstr "Membuka pemilih folder untuk memilih tempat mengkloning repositorinya."
@@ -7700,6 +7442,219 @@ msgstr "Halaman di-embed pertama kali ketika sebuah pencarian membutuhkannya."
 
 msgid "Pages indexed: {semanticIndexedCount} of {semanticTotalCount}."
 msgstr "Halaman terindeks: {semanticIndexedCount} dari {semanticTotalCount}."
+
+msgid "Palimpsest"
+msgstr "Palimpsest"
+
+msgid "Palimpsest can't sign in to GitHub for this project."
+msgstr "Palimpsest tidak dapat masuk ke GitHub untuk proyek ini."
+
+msgid "Palimpsest checked {subject}"
+msgstr "Palimpsest memeriksa {subject}"
+
+msgid "Palimpsest checked the project"
+msgstr "Palimpsest memeriksa proyek"
+
+msgid "Palimpsest could not find this agent on this machine."
+msgstr "Palimpsest tidak menemukan agen ini di mesin ini."
+
+msgid "Palimpsest could not reach the project server to check index maintenance. The status updates when the project reconnects."
+msgstr "Palimpsest tidak dapat menjangkau server proyek untuk memeriksa pemeliharaan indeks. Status akan diperbarui saat proyek tersambung kembali."
+
+msgid "Palimpsest couldn't finish setting up this project. The worktree was created but not opened."
+msgstr "Palimpsest tidak dapat menyelesaikan penyiapan proyek ini. Worktree dibuat, tetapi tidak dibuka."
+
+msgid "Palimpsest couldn't read terminal.shell in .ps/local/config.yml. Using an available Windows shell instead."
+msgstr "Palimpsest tidak dapat membaca terminal.shell di .ps/local/config.yml. Shell Windows yang tersedia akan digunakan sebagai gantinya."
+
+msgid "Palimpsest couldn't write launch settings under .ps/local/terminal because the folder is not safely contained in this project. Check that it is a real folder inside the project, not a link. Claude will ask you to approve Palimpsest."
+msgstr "Palimpsest tidak dapat menulis pengaturan peluncuran di .ps/local/terminal karena folder tersebut tidak berada dengan aman di dalam proyek ini. Pastikan folder tersebut adalah folder nyata di dalam proyek, bukan tautan. Claude akan meminta Anda menyetujui Palimpsest."
+
+msgid "Palimpsest couldn't write launch settings under .ps/local/terminal this time. Check that the folder is writable. Claude will ask you to approve Palimpsest."
+msgstr "Palimpsest tidak dapat menulis pengaturan peluncuran di .ps/local/terminal kali ini. Pastikan folder tersebut dapat ditulisi. Claude akan meminta Anda menyetujui Palimpsest."
+
+msgid "Palimpsest created a share link"
+msgstr "Palimpsest membuat tautan berbagi"
+
+msgid "Palimpsest created a share link for {subject}"
+msgstr "Palimpsest membuat tautan berbagi untuk {subject}"
+
+msgid "Palimpsest creates and maintains a navigation file named index.md in every folder that contains Markdown."
+msgstr "Palimpsest membuat dan memelihara file navigasi bernama index.md di setiap folder yang berisi Markdown."
+
+msgid "Palimpsest deleted {subject}"
+msgstr "Palimpsest menghapus {subject}"
+
+msgid "Palimpsest deleted a document"
+msgstr "Palimpsest menghapus sebuah dokumen"
+
+msgid "Palimpsest Desktop"
+msgstr ""
+
+msgid "Palimpsest discovery skill"
+msgstr "Keterampilan penemua Palimpsest"
+
+msgid "Palimpsest does not recognize this entry, and cannot safely replace it in this file's format."
+msgstr "Palimpsest tidak mengenali entri ini, dan tidak dapat menggantinya dengan aman dalam format file ini."
+
+msgid "Palimpsest does not recognize this entry. Turning it on replaces it."
+msgstr "Palimpsest tidak mengenali entri ini. Mengaktifkannya akan menggantinya."
+
+msgid "Palimpsest edited {subject}"
+msgstr "Palimpsest menyunting {subject}"
+
+msgid "Palimpsest edited a document"
+msgstr "Palimpsest menyunting sebuah dokumen"
+
+msgid "Palimpsest files were removed"
+msgstr "File Palimpsest telah dihapus"
+
+msgid "Palimpsest has no credential stored for this host. Add a token in Settings, or let git use the credentials it already has."
+msgstr "Palimpsest tidak menyimpan kredensial apa pun untuk host ini. Tambahkan token di Pengaturan, atau biarkan git memakai kredensial yang sudah dimilikinya."
+
+msgid "Palimpsest imported {source}"
+msgstr "Palimpsest mengimpor {source}"
+
+msgid "Palimpsest imported a skill"
+msgstr "Palimpsest mengimpor sebuah keterampilan"
+
+msgid "Palimpsest initializes at <0>{projectDir}</0> — the parent of <1>{pickedRelative}</1> because it contains a <2>.git</2> folder (one .ps/ per git repo). <3>Content directory</3> defaults to <4>.</4> (the whole repo); type a sub-folder to narrow it."
+msgstr "Palimpsest diinisialisasi di <0>{projectDir}</0> — folder induk dari <1>{pickedRelative}</1>, karena folder itu memuat folder <2>.git</2> (satu .ps/ per repo git). <3>Direktori konten</3> secara bawaan adalah <4>.</4> (seluruh repo); ketik sebuah subfolder untuk mempersempitnya."
+
+msgid "Palimpsest installed {subject}"
+msgstr "Palimpsest memasang {subject}"
+
+msgid "Palimpsest installed a skill"
+msgstr "Palimpsest memasang sebuah keterampilan"
+
+msgid "Palimpsest integrations checked."
+msgstr "Integrasi Palimpsest telah diperiksa."
+
+msgid "Palimpsest is set up at the repository root here, so the pack goes inside <0>{sanitized}</0> rather than at the top of the repository."
+msgstr "Di sini Palimpsest disiapkan di root repositori, jadi paket ditempatkan di dalam <0>{sanitized}</0> alih-alih di puncak repositori."
+
+msgid "Palimpsest is using this GitHub account."
+msgstr "Palimpsest memakai akun GitHub ini."
+
+msgid "Palimpsest keeps retrying and shows them as soon as the file can be read."
+msgstr "Palimpsest terus mencoba lagi dan akan menampilkannya segera setelah berkas dapat dibaca."
+
+msgid "Palimpsest left this file alone because it could not parse it safely. Fix the file by hand, then try again."
+msgstr "Palimpsest tidak mengubah file ini karena tidak dapat mengurainya dengan aman. Perbaiki file secara manual, lalu coba lagi."
+
+msgid "Palimpsest listed the installed skills"
+msgstr "Palimpsest menampilkan daftar keterampilan yang terpasang"
+
+msgid "Palimpsest logs across projects. No project is open, so project server logs are not included."
+msgstr "Log Palimpsest lintas proyek. Tidak ada proyek yang terbuka, jadi log server proyek tidak disertakan."
+
+msgid "Palimpsest logs, including activity across projects."
+msgstr "Log Palimpsest, termasuk aktivitas lintas proyek."
+
+msgid "Palimpsest looked at the link graph"
+msgstr "Palimpsest melihat grafik tautan"
+
+msgid "Palimpsest looked up links for {subject}"
+msgstr "Palimpsest mencari tautan untuk {subject}"
+
+msgid "Palimpsest looked up the authoring palette"
+msgstr "Palimpsest membuka palet penulisan"
+
+msgid "Palimpsest maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
+msgstr "Palimpsest menyimpan file navigasi bernama index.md di setiap folder yang berisi Markdown, masing-masing mencantumkan dokumen folder tersebut berdasarkan jenis dan tautan ke subfoldernya. Itu menulis ulang file-file ini saat dokumen Anda berubah, dan apa pun yang Anda edit sendiri ke dalamnya akan diganti."
+
+msgid "Palimpsest moved {subject} to {destination}"
+msgstr "Palimpsest memindahkan {subject} ke {destination}"
+
+msgid "Palimpsest moved a document"
+msgstr "Palimpsest memindahkan sebuah dokumen"
+
+msgid "Palimpsest on GitHub"
+msgstr "Palimpsest di GitHub"
+
+msgid "Palimpsest on this computer changed to a different build, but this tab is still running the old one."
+msgstr "Palimpsest di komputer ini berganti ke build lain, tetapi tab ini masih menjalankan yang lama."
+
+msgid "Palimpsest on this computer is now v{serverVersion}, but this tab is still running v{tabVersion}."
+msgstr "Palimpsest di komputer ini sekarang v{serverVersion}, tetapi tab ini masih menjalankan v{tabVersion}."
+
+msgid "Palimpsest opened the live preview"
+msgstr "Palimpsest membuka pratinjau langsung"
+
+msgid "Palimpsest quit unexpectedly last time."
+msgstr "Palimpsest berhenti tak terduga terakhir kali."
+
+msgid "Palimpsest ran {command}"
+msgstr "Palimpsest menjalankan {command}"
+
+msgid "Palimpsest ran {tool}"
+msgstr "Palimpsest menjalankan {tool}"
+
+msgid "Palimpsest ran a command"
+msgstr "Palimpsest menjalankan sebuah perintah"
+
+msgid "Palimpsest read the edit history"
+msgstr "Palimpsest membaca riwayat penyuntingan"
+
+msgid "Palimpsest read the history of {subject}"
+msgstr "Palimpsest membaca riwayat {subject}"
+
+msgid "Palimpsest read the project settings"
+msgstr "Palimpsest membaca pengaturan proyek"
+
+msgid "Palimpsest read the setting {key}"
+msgstr "Palimpsest membaca pengaturan {key}"
+
+msgid "Palimpsest restored an earlier version"
+msgstr "Palimpsest memulihkan versi sebelumnya"
+
+msgid "Palimpsest restored an earlier version of {subject}"
+msgstr "Palimpsest memulihkan versi sebelumnya dari {subject}"
+
+msgid "Palimpsest rewrites these index.md files as documents change, so manual edits to them are replaced."
+msgstr "Palimpsest menulis ulang file index.md ini seiring perubahan dokumen, sehingga pengeditan manual pada file tersebut diganti."
+
+msgid "Palimpsest saved a checkpoint"
+msgstr "Palimpsest menyimpan titik pemeriksaan"
+
+msgid "Palimpsest searched for {query}"
+msgstr "Palimpsest mencari {query}"
+
+msgid "Palimpsest searched the knowledge base"
+msgstr "Palimpsest mencari di basis pengetahuan"
+
+msgid "Palimpsest skill saved. Upload it in Claude Desktop, then click Cowork again."
+msgstr "Keterampila Palimpsest disimpan. Unggah di Claude Desktop, lalu klik Cowork lagi."
+
+msgid "Palimpsest stores its configuration and internal files inside a newly created <0>.ok</0> directory in your project root folder."
+msgstr "Palimpsest menyimpan konfigurasi dan berkas internalnya di dalam direktori <0>.ok</0> yang baru dibuat di folder akar proyek Anda."
+
+msgid "Palimpsest tools are available in this thread."
+msgstr "Alat Palimpsest tersedia di utas ini."
+
+msgid "Palimpsest tools are unavailable because the project folder is missing, inaccessible, or has changed. Check its location and permissions, then retry."
+msgstr "Alat Palimpsest tidak tersedia karena folder proyek tidak ada, tidak dapat diakses, atau telah berubah. Periksa lokasi dan izinnya, lalu coba lagi."
+
+msgid "Palimpsest tools are unavailable: a file Palimpsest didn't write is already at {bridgePath}."
+msgstr "Alat Palimpsest tidak tersedia: sudah ada berkas di {bridgePath} yang tidak ditulis Palimpsest."
+
+msgid "Palimpsest tools are unavailable: something is already at {bridgePath} but couldn't be read, so Palimpsest left it alone."
+msgstr "Alat Palimpsest tidak tersedia: sudah ada sesuatu di {bridgePath}, tetapi tidak dapat dibaca, jadi Palimpsest membiarkannya."
+
+msgid "Palimpsest will be initialized at <0>{gitRoot}</0> — the parent of your new folder, because it contains a <1>.git</1> folder (one project per git repo)."
+msgstr "Palimpsest akan diinisialisasi di <0>{gitRoot}</0> — folder induk dari folder baru Anda, karena folder itu memuat folder <1>.git</1> (satu proyek per repo git)."
+
+msgid "Palimpsest will create commits and push them to your remote automatically. If you do not want automatic commits in your git history, you should not enable auto-sync."
+msgstr "Palimpsest akan membuat commit dan mengirimkannya ke remote Anda secara otomatis. Jika Anda tidak ingin commit otomatis di riwayat git Anda, sebaiknya jangan aktifkan sinkronisasi otomatis."
+
+msgid "Palimpsest wrote a document"
+msgstr "Palimpsest menulis sebuah dokumen"
+
+msgid "Palimpsest wrote to {subject}"
+msgstr "Palimpsest menulis ke {subject}"
+
+msgid "Palimpsest's own copy of {0} is damaged and won't run. It can download a fresh copy of {1} {2} (about {3} MB from {4}) to replace it."
+msgstr "Salinan {0} milik Palimpsest sendiri rusak dan tidak bisa berjalan. Palimpsest dapat mengunduh salinan baru {1} {2} (sekitar {3} MB dari {4}) untuk menggantinya."
 
 msgid "Pan down"
 msgstr "Geser ke bawah"
@@ -7900,9 +7855,6 @@ msgstr "Mainkan Blob Run"
 msgid "Please choose Good or Not great."
 msgstr "Silakan pilih Bagus atau Kurang bagus."
 
-msgid "Please enter a valid email address."
-msgstr "Silakan masukkan alamat surel yang valid."
-
 msgid "Please enter a valid email."
 msgstr "Silakan masukkan surel yang valid."
 
@@ -8004,12 +7956,6 @@ msgstr "Masalah"
 
 msgid "Problems in {0}"
 msgstr "Masalah di {0}"
-
-msgid "Product updates"
-msgstr "Kabar terbaru produk"
-
-msgid "Product updates in your inbox."
-msgstr "Kabar terbaru produk di kotak masuk Anda."
 
 msgid "project"
 msgstr "proyek"
@@ -9847,9 +9793,6 @@ msgstr "Siapkan bagian yang dipilih di panel agen, siap dilengkapi dan dikirim."
 msgid "stale Git entry"
 msgstr "entri Git usang"
 
-msgid "Star us on GitHub"
-msgstr "Beri kami bintang di GitHub"
-
 msgid "Start a bug report with a screenshot of the screen as it looks right now."
 msgstr "Memulai laporan bug dengan tangkapan layar persis seperti tampilannya saat ini."
 
@@ -9916,9 +9859,6 @@ msgstr "status"
 msgid "Status"
 msgstr "Status"
 
-msgid "Stay in the loop"
-msgstr "Terus ikuti kabar terbaru"
-
 msgid "Stays on this computer. Not committed to git."
 msgstr "Tetap di komputer ini. Tidak di-commit ke git."
 
@@ -9984,15 +9924,6 @@ msgstr "Nama subfolder"
 
 msgid "Subfolder under current folder"
 msgstr "Subfolder di bawah folder saat ini"
-
-msgid "Subscribe"
-msgstr "Berlangganan"
-
-msgid "Subscribing..."
-msgstr "Berlangganan..."
-
-msgid "Subscriptions aren't available right now."
-msgstr "Langganan tidak tersedia saat ini."
 
 msgid "Suggestion menu navigation"
 msgstr "Navigasi menu saran"
@@ -10265,9 +10196,6 @@ msgstr "Teks"
 msgid "Thanks for giving Palimpsest a try."
 msgstr "Terima kasih sudah mencoba Palimpsest."
 
-msgid "Thanks for subscribing. Watch your inbox for product updates."
-msgstr "Terima kasih sudah berlangganan. Pantau kotak masuk Anda untuk kabar terbaru produk."
-
 msgid "Thanks for the feedback!"
 msgstr "Terima kasih atas masukannya!"
 
@@ -10335,8 +10263,8 @@ msgstr "Versi {editor} kini menjadi sumbernya"
 msgid "The {targetNoun} could not be opened — try navigating to it manually."
 msgstr "{targetNoun} tidak dapat dibuka — coba menuju ke sana secara manual."
 
-msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs OpenKnowledge Format–conformant."
-msgstr "<0>type</0> yang didapat setiap dokumen yang dibuat dari templat ini (mis. <1>research-note</1>). Menjaga dokumen baru tetap sesuai Palimpsest Format."
+msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs Open Knowledge Format–conformant."
+msgstr ""
 
 msgid "The agent is working"
 msgstr "Agennya sedang bekerja"
@@ -10473,6 +10401,9 @@ msgstr "Id model yang dilayani endpoint Anda. Ukuran vektornya terdeteksi otomat
 msgid "the open agent"
 msgstr "agen yang terbuka"
 
+msgid "The original text was deleted."
+msgstr "Teks aslinya telah dihapus."
+
 msgid "The Palimpsest project is missing at this checkout path."
 msgstr "Proyek Palimpsest tidak ada di jalur checkout ini."
 
@@ -10487,9 +10418,6 @@ msgstr "Server Palimpsest terlalu lama merespons, dan perubahan mungkin tetap di
 
 msgid "The Palimpsest server took too long to answer. Ask the agent to try again."
 msgstr "Server Palimpsest terlalu lama merespons. Minta agen mencoba lagi."
-
-msgid "The original text was deleted."
-msgstr "Teks aslinya telah dihapus."
 
 msgid "The path can't leave the skill (no . or ..)"
 msgstr "Jalur tidak boleh keluar dari skill (tanpa . atau ..)"
@@ -11067,9 +10995,6 @@ msgstr "Berkas tema ini tidak dapat dibaca"
 msgid "This theme file is too large"
 msgstr "Berkas tema ini terlalu besar"
 
-msgid "This update is no longer ready to install."
-msgstr "Pembaruan ini tidak lagi siap dipasang."
-
 msgid "This usually means one of:"
 msgstr "Biasanya ini berarti salah satu dari:"
 
@@ -11448,10 +11373,6 @@ msgstr "Tidak dilacak"
 msgid "Up to date"
 msgstr "Sudah mutakhir"
 
-msgctxt "settings search keyword"
-msgid "update"
-msgstr "pembaruan"
-
 msgid "Update"
 msgstr "Perbarui"
 
@@ -11484,12 +11405,6 @@ msgstr "Diperbarui {updatedRelative}"
 
 msgid "updated folder properties"
 msgstr "properti folder diperbarui"
-
-msgid "Updated to Version {version}"
-msgstr "Diperbarui ke Versi {version}"
-
-msgid "Updates and feedback"
-msgstr "Pembaruan dan masukan"
 
 msgid "Updates flow in"
 msgstr "Pembaruan mengalir masuk"
@@ -11808,11 +11723,8 @@ msgstr "Apa yang Anda bagikan dikirim ke tim Palimpsest."
 msgid "What's included"
 msgstr "Yang disertakan"
 
-msgid "What's new"
-msgstr "Yang baru"
-
-msgid "When enabled, the agent opens or refreshes the preview after each edit. Disable if you manage your own preview window (OK Desktop, a browser tab on another display, etc.)."
-msgstr "Ketika aktif, agennya membuka atau menyegarkan pratinjau setelah setiap suntingan. Nonaktifkan jika Anda mengelola jendela pratinjau Anda sendiri (OK Desktop, tab peramban di layar lain, dsb.)."
+msgid "When enabled, the agent opens or refreshes the preview after each edit. Disable if you manage your own preview window (Palimpsest Desktop, a browser tab on another display, etc.)."
+msgstr ""
 
 msgid "When the agent runs its scheduled work."
 msgstr "Kapan agennya menjalankan pekerjaan terjadwalnya."
@@ -12004,9 +11916,6 @@ msgstr "Anda melakukan push lebih sering daripada memeriksa pembaruan. Jika oran
 
 msgid "You're signed out — sign in to resume syncing."
 msgstr "Anda sudah keluar — masuk untuk melanjutkan sinkronisasi."
-
-msgid "You're subscribed!"
-msgstr "Anda sudah berlangganan!"
 
 msgid "you@company.com"
 msgstr "anda@perusahaan.com"

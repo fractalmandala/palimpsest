@@ -40,7 +40,7 @@ describe('trackingProblems: timeless field checks, the same for every domain', (
     },
   );
 
-  test('an issue is a GitHub issue in the inkeep organization or a Linear issue in the inkeep workspace', () => {
+  test('an issue is a GitHub issue in the example organization or a Linear issue in the example workspace', () => {
     for (const issue of [
       'https://github.com/inkeep/agents-private/issues/42',
       'https://linear.app/inkeep/issue/PRD-1234',

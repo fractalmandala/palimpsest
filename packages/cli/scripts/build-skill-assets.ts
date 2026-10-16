@@ -11,7 +11,7 @@ const PACKAGE_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 export function resolveSkillAssetPaths(packageRoot: string = PACKAGE_ROOT): SkillBundlePaths {
   return {
-    skillsDir: join(packageRoot, '..', 'server', 'assets', 'skills'),
+    skillsDir: join(packageRoot, '..', '..', 'skills'),
     distDir: join(packageRoot, 'dist', 'assets', 'skills'),
   };
 }

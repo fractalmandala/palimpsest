@@ -3,7 +3,7 @@ export type BundleId = 'discovery' | 'project' | 'write-skill';
 export const BUNDLE_SKILL_NAME: Record<BundleId, string> = {
   discovery: 'palimpsest-discovery',
   project: 'palimpsest',
-  'write-skill': 'open-knowledge-write-skill',
+  'write-skill': 'palimpsest-write-skill',
 };
 
 export const INTERNAL_BUNDLE_SKILL_NAMES: ReadonlySet<string> = new Set(
@@ -35,5 +35,5 @@ export function isUserGlobalBundleSkillName(name: string): boolean {
 export const ONBOARDING_BUNDLE_IDS = ['discovery'] as const satisfies readonly BundleId[];
 
 export function bundleSkillMdPath(id: BundleId): string {
-  return `packages/server/assets/skills/${id}/SKILL.md`;
+  return `skills/${id}/SKILL.md`;
 }

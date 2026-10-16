@@ -186,9 +186,7 @@ describe('scanInPlaceSkills (list projection)', () => {
     const skills = scanInPlaceSkills(contentDir);
     expect(skills.filter((s) => s.name === 'palimpsest')).toHaveLength(1);
     expect(skills.filter((s) => s.name === 'mine')).toHaveLength(2);
-    expect(skills.find((s) => s.name === 'palimpsest')?.dir).toBe(
-      '.agents/skills/palimpsest',
-    );
+    expect(skills.find((s) => s.name === 'palimpsest')?.dir).toBe('.agents/skills/palimpsest');
     expect(skills.find((s) => s.name === 'palimpsest')?.conflictHosts).toEqual([]);
   });
 

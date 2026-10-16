@@ -1435,7 +1435,7 @@ export class WindowManager {
     const serviceName = `Palimpsest Project Server ${++this.projectServerSequence}`;
     const utility = this.deps.forkUtility(
       this.deps.utilityEntryPath,
-      [`--ok-lock-dir-b64=${Buffer.from(lockDir, 'utf8').toString('base64url')}`],
+      [`--ps-lock-dir-b64=${Buffer.from(lockDir, 'utf8').toString('base64url')}`],
       {
         windowLifecycleBound: true,
         serviceName,
@@ -1502,7 +1502,7 @@ export class WindowManager {
     const additionalArguments = [
       `--ok-collab-url=ws://localhost:${port}/collab`,
       `--ok-api-origin=${apiOrigin}`,
-      `--ok-project-path=${projectPath}`,
+      `--ps-project-path=${projectPath}`,
       `--ok-project-name=${projectName}`,
       `--ok-mode=editor`,
       `--ok-app-version=${this.deps.appVersion}`,
@@ -1869,11 +1869,11 @@ export class WindowManager {
       additionalArguments: [
         `--ok-collab-url=${lockCollabUrl(lock)}`,
         `--ok-api-origin=${apiOrigin}`,
-        `--ok-project-path=${opts.contentDir}`,
+        `--ps-project-path=${opts.contentDir}`,
         `--ok-project-name=${projectName}`,
         `--ok-mode=editor`,
         `--ok-single-file=1`,
-        `--ok-initial-doc=${opts.docName}`,
+        `--ps-initial-doc=${opts.docName}`,
         `--ok-app-version=${this.deps.appVersion}`,
         ...instanceLabelArgs(),
       ],
@@ -2307,7 +2307,7 @@ export class WindowManager {
       additionalArguments: [
         `--ok-collab-url=${lockCollabUrl(lock)}`,
         `--ok-api-origin=${apiOrigin}`,
-        `--ok-project-path=${projectPath}`,
+        `--ps-project-path=${projectPath}`,
         `--ok-project-name=${projectName}`,
         `--ok-mode=editor`,
         `--ok-app-version=${this.deps.appVersion}`,

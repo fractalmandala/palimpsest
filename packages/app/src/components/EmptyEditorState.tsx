@@ -1,8 +1,5 @@
-import {
-  DocumentListSuccessSchema,
-  type TemplatesListSuccess,
-} from '@palimpsest/core/schemas/api';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { DocumentListSuccessSchema, type TemplatesListSuccess } from '@palimpsest/core/schemas/api';
 import { Info } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { CopyablePromptList } from '@/components/empty-state/CopyablePromptList';

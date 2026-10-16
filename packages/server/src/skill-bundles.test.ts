@@ -21,7 +21,7 @@ describe('skill-bundles (single source of truth)', () => {
 
   test('bundleSkillMdPath derives from the id (= source dir name)', () => {
     expect(bundleSkillMdPath('write-skill')).toBe(
-      'packages/server/assets/skills/write-skill/SKILL.md',
+      'skills/write-skill/SKILL.md',
     );
   });
 

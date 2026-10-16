@@ -60,8 +60,8 @@ describe('buildPiExtensionSource', () => {
     }
   });
 
-  it('registers under the ok_ prefix so OK tools never shadow Pi built-ins', () => {
-    expect(buildPiExtensionSource()).toContain('const TOOL_PREFIX = "ok_"');
+  it('registers under the ps_ prefix so Palimpsest tools never shadow Pi built-ins', () => {
+    expect(buildPiExtensionSource()).toContain('const TOOL_PREFIX = "ps_"');
   });
 });
 
@@ -197,8 +197,8 @@ rl.on("line", (line) => {
     try {
       await handlers.get('session_start')?.({}, { cwd: dir });
 
-      expect([...tools.keys()].sort()).toEqual(['ok_boom', 'ok_exec']);
-      const exec = tools.get('ok_exec');
+      expect([...tools.keys()].sort()).toEqual(['ps_boom', 'ps_exec']);
+      const exec = tools.get('ps_exec');
       expect(exec?.description).toBe('Run a command.');
       expect(exec?.parameters).toEqual({
         type: 'object',
@@ -210,7 +210,7 @@ rl.on("line", (line) => {
       expect(result?.content).toEqual([{ type: 'text', text: 'ran: ls' }]);
       expect(result?.details).toEqual({ echoed: 'ls' });
 
-      await expect(tools.get('ok_boom')?.execute('t2', {}, undefined)).rejects.toThrow('it broke');
+      await expect(tools.get('ps_boom')?.execute('t2', {}, undefined)).rejects.toThrow('it broke');
     } finally {
       await handlers.get('session_shutdown')?.({}, {});
     }

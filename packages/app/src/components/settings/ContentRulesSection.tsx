@@ -1,10 +1,10 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import { humanFormat } from '@palimpsest/core/config/errors';
 import {
   DEFAULT_LINKS_VALIDATION,
   DEFAULT_SUPPRESS_LOG_LINK_ADVISORIES,
   type LinksValidationSetting,
 } from '@palimpsest/core/markdown/lint';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { toast } from 'sonner';
 import { Label } from '@/components/ui/label';
 import {

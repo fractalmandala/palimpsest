@@ -1,6 +1,6 @@
+import { t } from '@lingui/core/macro';
 import type { GuidanceRef } from '@palimpsest/core/agent-registry';
 import { EDITOR_LABELS } from '@palimpsest/core/constants/editors';
-import { t } from '@lingui/core/macro';
 
 export function followupHintText(ref: GuidanceRef | undefined): string | null {
   if (ref === undefined) return null;

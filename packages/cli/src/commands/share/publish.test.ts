@@ -210,7 +210,7 @@ describe('runPublishFlow (error branches)', () => {
       }),
       token: 'tok',
       projectDir: tmpDir,
-      body: { owner: 'inkeep', name: 'palimpsest', visibility: 'public' },
+      body: { owner: 'example', name: 'palimpsest', visibility: 'public' },
       ownerKind: 'org',
       deps: {
         ensurePsScaffold: () => {},

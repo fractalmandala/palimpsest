@@ -1,6 +1,6 @@
+import { useLingui } from '@lingui/react/macro';
 import { parseManagedArtifactName } from '@palimpsest/core/constants/cc1';
 import { APP_HEADER_HEIGHT } from '@palimpsest/core/constants/chrome';
-import { useLingui } from '@lingui/react/macro';
 import { lazy, Suspense, useRef, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { shouldShowAppMenubar } from '@/components/app-menubar-gate';

@@ -1,6 +1,6 @@
 const SHARE_CONTRACT_EPOCH = 2;
 export const SHARE_CONTRACT_CORPUS_SHA256 =
-  'e4f5bde6115efe82322865d7467de6be9a0eff47bb0dd5dc49f14a7df7dbce82';
+  'b97f34f09cbf041fa5f00de5b1b5fc6d612e0b3d2f9236aea2caea20eaf48c26';
 
 export interface ShareContractManifest {
   epoch: typeof SHARE_CONTRACT_EPOCH;

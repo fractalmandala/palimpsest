@@ -4,7 +4,6 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { promisify } from 'node:util';
-import { emitToleranceFire, PS_DIR, resolveServerRuntimeConfig } from '@palimpsest/core';
 import { context, metrics, propagation, trace } from '@opentelemetry/api';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import { W3CTraceContextPropagator } from '@opentelemetry/core';
@@ -13,6 +12,7 @@ import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
 } from '@opentelemetry/sdk-trace-base';
+import { emitToleranceFire, PS_DIR, resolveServerRuntimeConfig } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../test-support/configure-git-fixture.test-helper.ts';
 import { bootServer } from './boot.ts';

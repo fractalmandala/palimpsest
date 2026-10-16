@@ -5,9 +5,7 @@ import { afterEach, expect, test, vi } from 'vitest';
 let createdServer: { destroy: () => Promise<unknown> } | undefined;
 
 vi.mock('@palimpsest/server', async () => {
-  const actual = await vi.importActual<typeof import('@palimpsest/server')>(
-    '@palimpsest/server',
-  );
+  const actual = await vi.importActual<typeof import('@palimpsest/server')>('@palimpsest/server');
   return {
     ...actual,
     createServer: (...args: Parameters<typeof actual.createServer>) => {

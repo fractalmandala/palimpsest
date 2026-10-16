@@ -7,7 +7,7 @@ import { buildLlmsTxt, type LlmsTxtLink, marketingLinks } from './llms-txt';
 import { MARKETING_MARKDOWN_PAGES } from './marketing-markdown-pages';
 
 const docsLink: LlmsTxtLink = {
-  url: 'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/quickstart.mdx',
+  url: 'https://github.com/fractalmandala/palimpsest/docs/get-started/quickstart.md',
   name: 'Quickstart',
   description: 'Install and open your first file.',
 };
@@ -35,7 +35,7 @@ describe('llms.txt index', () => {
 
   test('lists a page an agent can fetch, with its notes', () => {
     expect(build()).toContain(
-      '- [Quickstart](https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/quickstart.mdx): Install and open your first file.',
+      '- [Quickstart](https://github.com/fractalmandala/palimpsest/docs/get-started/quickstart.md): Install and open your first file.',
     );
   });
 
@@ -43,7 +43,7 @@ describe('llms.txt index', () => {
     const body = build({
       docs: [
         {
-          url: 'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/reference/components/accordion.mdx',
+          url: 'https://github.com/fractalmandala/palimpsest/docs/reference/components/accordion.md',
           name: 'Accordion',
           description: 'Standalone expand/collapse via native HTML5 <details>/<summary>.',
         },
@@ -57,7 +57,7 @@ describe('llms.txt index', () => {
     const body = build({
       docs: [
         {
-          url: 'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/reference/components/accordion.mdx',
+          url: 'https://github.com/fractalmandala/palimpsest/docs/reference/components/accordion.md',
           name: 'The <details> element',
         },
       ],
@@ -68,16 +68,25 @@ describe('llms.txt index', () => {
 
   test('keeps a bracket in a title inside the link label', () => {
     const body = build({
-      docs: [{ url: 'https://github.com/fractalmandala/palimpsest/tree/main/docs/content', name: 'Arrays [and] slices' }],
+      docs: [
+        {
+          url: 'https://github.com/fractalmandala/palimpsest/docs/x.md',
+          name: 'Arrays [and] slices',
+        },
+      ],
     });
-    expect(body).toContain('- [Arrays \\[and\\] slices](https://github.com/fractalmandala/palimpsest/tree/main/docs/content)');
+    expect(body).toContain(
+      '- [Arrays \\[and\\] slices](https://github.com/fractalmandala/palimpsest/docs/x.md)',
+    );
   });
 
   test.each([
     ['A [link](u) title', 'A link title'],
     ['Bang ![img](u) in a title', 'Bang img in a title'],
   ])('reduces link syntax in a title to its words: %j', (name, expected) => {
-    const bullet = build({ docs: [{ url: 'https://github.com/fractalmandala/palimpsest/tree/main/docs/content', name }] })
+    const bullet = build({
+      docs: [{ url: 'https://github.com/fractalmandala/palimpsest/docs/x.md', name }],
+    })
       .split('\n')
       .find((line) => line.startsWith('- [A ') || line.startsWith('- [Bang '));
     const tree = unified()
@@ -90,14 +99,19 @@ describe('llms.txt index', () => {
     visit(tree, 'link', (node) => links.push(node.url));
     visit(tree, 'image', (node) => images.push(node.url));
 
-    expect(links).toEqual(['https://github.com/fractalmandala/palimpsest/tree/main/docs/content']);
+    expect(links).toEqual(['https://github.com/fractalmandala/palimpsest/docs/x.md']);
     expect(images).toEqual([]);
     expect(bullet).toContain(`[${expected}]`);
   });
 
   test('leaves a bracket inside a code span alone', () => {
     const body = build({
-      docs: [{ url: 'https://github.com/fractalmandala/palimpsest/tree/main/docs/content', name: 'The `items[]` prop' }],
+      docs: [
+        {
+          url: 'https://github.com/fractalmandala/palimpsest/docs/x.md',
+          name: 'The `items[]` prop',
+        },
+      ],
     });
     const tree = unified().use(remarkParse).use(remarkGfm).parse(body);
 
@@ -120,9 +134,13 @@ describe('llms.txt index', () => {
 
   test('keeps a multi-line title on the bullet it belongs to', () => {
     const body = build({
-      docs: [{ url: 'https://github.com/fractalmandala/palimpsest/tree/main/docs/content', name: 'Folded\n\ntitle' }],
+      docs: [
+        { url: 'https://github.com/fractalmandala/palimpsest/docs/x.md', name: 'Folded\n\ntitle' },
+      ],
     });
-    expect(body).toContain('- [Folded title](https://github.com/fractalmandala/palimpsest/tree/main/docs/content)');
+    expect(body).toContain(
+      '- [Folded title](https://github.com/fractalmandala/palimpsest/docs/x.md)',
+    );
   });
 
   test('omits the notes separator when an entry has no description', () => {
@@ -136,7 +154,7 @@ describe('llms.txt index', () => {
     for (const url of [...build().matchAll(/^- \[(?:\\.|[^\]\\])*]\(([^)]+)\)/gm)].map(
       (m) => m[1],
     )) {
-      expect(url).toMatch(/^https:\/\/palimpsest\.ai\//);
+      expect(url).toMatch(/^https:\/\/github\.com\/fractalmandala\/palimpsest\//);
       expect(url).toMatch(/\.md$/);
     }
   });

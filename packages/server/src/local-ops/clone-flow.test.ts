@@ -16,7 +16,7 @@ const psCli = (
   cliEnv?: Readonly<Record<string, string | undefined>>,
 ): PsCliCommand => PsCliCommand.resolve({ host: { cliArgs, cliEnv }, env: {} });
 
-const HOME_PATH = join(homedir(), 'open-knowledge-test-clone');
+const HOME_PATH = join(homedir(), 'palimpsest-test-clone');
 
 const fixtureCli = (script: string): readonly string[] => [process.execPath, '-e', script];
 

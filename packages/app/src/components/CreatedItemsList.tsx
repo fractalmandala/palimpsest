@@ -1,6 +1,6 @@
-import type { LintPluginId } from '@palimpsest/core/markdown/lint';
 import { plural } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
+import type { LintPluginId } from '@palimpsest/core/markdown/lint';
 import { File, Folder, Hexagon, type LucideIcon, Puzzle } from 'lucide-react';
 import { Fragment } from 'react';
 import { LINT_PLUGIN_META } from '@/components/settings/lint-plugin-meta';

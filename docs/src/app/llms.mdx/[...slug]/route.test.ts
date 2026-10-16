@@ -25,7 +25,7 @@ function props(slug: string[]) {
 }
 
 function get(slug: string[]) {
-  return GET(new Request(`https://github.com/fractalmandala/palimpsest/tree/main/docs/content'/')}.md`), {
+  return GET(new Request(`https://example.com/docs/${slug.join('/')}.md`), {
     ...props(slug),
   });
 }
@@ -37,7 +37,9 @@ describe('GET /docs/<slug>.md (markdown route handler)', () => {
     expect(res.headers.get('content-type')).toBe('text/markdown; charset=utf-8');
 
     const body = await res.text();
-    expect(body).toContain('# Overview (https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/overview.mdx)');
+    expect(body).toContain(
+      '# Overview (https://github.com/fractalmandala/palimpsest/docs/get-started/overview)',
+    );
     expect(body).toContain('> Early days.');
     expect(body).not.toContain('<Callout');
   });
@@ -45,7 +47,7 @@ describe('GET /docs/<slug>.md (markdown route handler)', () => {
   test('points at the human page with a canonical Link header', async () => {
     const res = await get(['get-started', 'overview']);
     expect(res.headers.get('link')).toBe(
-      '<https://github.com/fractalmandala/palimpsest/tree/main/docs/content rel="canonical"',
+      '<https://github.com/fractalmandala/palimpsest/docs/get-started/overview>; rel="canonical"',
     );
   });
 

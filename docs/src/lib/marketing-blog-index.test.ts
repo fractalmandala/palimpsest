@@ -100,17 +100,28 @@ describe('blog posts read from the marketing zone feed', () => {
   });
 
   test('reads a title the encoder split across two CDATA sections', async () => {
-    respondWith(feed({ title: 'before ]]> after', link: 'https://github.com/fractalmandala/palimpsest/blog/a-post' }));
+    respondWith(
+      feed({
+        title: 'before ]]> after',
+        link: 'https://github.com/fractalmandala/palimpsest/blog/a-post',
+      }),
+    );
     expect((await fetchBlogPostLinks(3600))[0].name).toBe('before ]]> after');
   });
 
   test('decodes XML entities in a link', async () => {
-    respondWith(feed({ title: 'A', link: 'https://github.com/fractalmandala/palimpsest/blog/a&amp;b' }));
-    expect((await fetchBlogPostLinks(3600))[0].url).toBe('https://github.com/fractalmandala/palimpsest/blog/a&b.md');
+    respondWith(
+      feed({ title: 'A', link: 'https://github.com/fractalmandala/palimpsest/blog/a&amp;b' }),
+    );
+    expect((await fetchBlogPostLinks(3600))[0].url).toBe(
+      'https://github.com/fractalmandala/palimpsest/blog/a&b.md',
+    );
   });
 
   test('carries no description when the feed has none to give', async () => {
-    respondWith(feed({ title: 'A', link: 'https://github.com/fractalmandala/palimpsest/blog/a-post' }));
+    respondWith(
+      feed({ title: 'A', link: 'https://github.com/fractalmandala/palimpsest/blog/a-post' }),
+    );
     expect((await fetchBlogPostLinks(3600))[0]).not.toHaveProperty('description');
   });
 
@@ -191,7 +202,9 @@ describe('blog posts read from the marketing zone feed', () => {
       'https://github.com/fractalmandala/palimpsest/blog/edit-mermaid-diagrams-visually.md',
     ]);
     expect(warn).toHaveBeenCalledTimes(1);
-    expect(warn.mock.calls[0]?.[0]).toContain('"https://github.com/fractalmandala/palimpsest/team" is not a post at');
+    expect(warn.mock.calls[0]?.[0]).toContain(
+      '"https://github.com/fractalmandala/palimpsest/team" is not a post at',
+    );
   });
 
   test('keeps the link out of a log line: one line, bounded, quoted', async () => {

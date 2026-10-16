@@ -1,9 +1,9 @@
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { resolveWikiLinkTargetDocName } from '@palimpsest/core';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
+import { resolveWikiLinkTargetDocName } from '@palimpsest/core';
 import { expect, test } from 'vitest';
 import type { BootedServer } from './boot.ts';
 import { bootCompositionRig } from './composition-rig.test-helper.ts';

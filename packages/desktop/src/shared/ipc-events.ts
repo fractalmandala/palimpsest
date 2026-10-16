@@ -17,7 +17,6 @@ import type {
   PsServerRestartedInfo,
   PsServerVersionDriftInfo,
   PsShareReceivedPayload,
-  PsUpdateRelaunchFailedInfo,
 } from './bridge-contract.ts';
 import type {
   McpWiringEditorDetection,
@@ -32,14 +31,6 @@ export interface EventChannels {
   'ps:project:recent-removed-missing': { payload: PsRecentRemovedMissingInfo };
   'ps:menu-action': { payload: PsMenuActionDispatch };
   'ps:note-window:main-action': { payload: PsNoteWindowMainAction };
-  'ps:update:downloaded': { payload: { version: string | null } };
-  'ps:update:relaunching': { payload: { version: string } };
-  'ps:update:fetching-latest': { payload: { version: string } };
-  'ps:update:relaunch-failed': { payload: PsUpdateRelaunchFailedInfo };
-  'ps:update:whats-new': { payload: { version: string; releaseUrl: string } };
-  'ps:update:whats-new-dismissed': { payload: { version: string } };
-  'ps:update:stuck-hint': { payload: { downloadUrl: string } };
-  'ps:update:manual-check': { payload: { phase: 'started' | 'settled' } };
   'ps:deep-link': { payload: PsDeepLinkPayload };
   'ps:share:received': { payload: PsShareReceivedPayload };
   'ps:mcp-wiring:show': {

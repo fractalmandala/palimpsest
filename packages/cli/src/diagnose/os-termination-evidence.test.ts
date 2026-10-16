@@ -392,9 +392,9 @@ describe('Linux journal collection', () => {
   const KERNEL_KILLED =
     '2026-10-04T18:49:10.123456+00:00 host-a kernel: Memory cgroup out of memory: Killed process 1234 (palimpsest) total-vm:79404kB, anon-rss:65208kB, UID:1000';
   const OOMD_PRESSURE =
-    '2026-10-04T18:40:00.000000+00:00 host-a systemd-oomd[812]: Killed /user.slice/user-1000.slice/user@1000.service/app.slice/app-gnome-openknowledge-1234.scope due to memory pressure for /user.slice/user-1000.slice being 71.20% > 50.00% for > 20s with reclaim activity';
+    '2026-10-04T18:40:00.000000+00:00 host-a systemd-oomd[812]: Killed /user.slice/user-1000.slice/user@1000.service/app.slice/app-gnome-palimpsest-1234.scope due to memory pressure for /user.slice/user-1000.slice being 71.20% > 50.00% for > 20s with reclaim activity';
   const OOMD_SWAP =
-    '2026-10-04T18:41:00.000000+00:00 host-a systemd-oomd[812]: Killed /user.slice/user-1000.slice/user@1000.service/app.slice/app-gnome-openknowledge-5678.scope due to memory used (15.5G) / total (15.6G) and swap used (3.9G) / total (4.0G) being more than 90.00%';
+    '2026-10-04T18:41:00.000000+00:00 host-a systemd-oomd[812]: Killed /user.slice/user-1000.slice/user@1000.service/app.slice/app-gnome-palimpsest-5678.scope due to memory used (15.5G) / total (15.6G) and swap used (3.9G) / total (4.0G) being more than 90.00%';
   const FOREIGN =
     '2026-10-04T18:30:00.000000+00:00 host-a kernel: Out of memory: Killed process 99 (chrome) total-vm:1kB';
 
@@ -461,7 +461,7 @@ describe('Linux journal collection', () => {
         action: 'oomd-kill',
         pid: null,
         processName: null,
-        unit: 'app-gnome-openknowledge-1234.scope',
+        unit: 'app-gnome-palimpsest-1234.scope',
         trigger: 'memory-pressure',
       },
       {
@@ -471,7 +471,7 @@ describe('Linux journal collection', () => {
         action: 'oomd-kill',
         pid: null,
         processName: null,
-        unit: 'app-gnome-openknowledge-5678.scope',
+        unit: 'app-gnome-palimpsest-5678.scope',
         trigger: 'swap',
       },
       {

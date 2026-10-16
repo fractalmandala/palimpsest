@@ -1,9 +1,9 @@
+import { useLingui } from '@lingui/react/macro';
 import {
   collectFootnoteIdentifiers,
   findFootnoteDefinitionInsertPos,
   nextFootnoteIdentifier,
 } from '@palimpsest/core/extensions/footnote-reference';
-import { useLingui } from '@lingui/react/macro';
 import type { Editor } from '@tiptap/react';
 import { useEditorState } from '@tiptap/react';
 import { Superscript } from 'lucide-react';

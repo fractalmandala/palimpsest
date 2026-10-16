@@ -140,7 +140,7 @@ export function piExtensionProjectPath(product: DesktopProduct): string {
 }
 
 export function piToolNamespace(product: DesktopProduct): string {
-  return `ok${product.mcpChainTag}`;
+  return `ps${product.mcpChainTag}`;
 }
 
 export const STABLE_EDITOR_PROJECT_CONFIG_PATH = {

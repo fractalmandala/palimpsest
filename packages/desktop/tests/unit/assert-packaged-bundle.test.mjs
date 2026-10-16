@@ -67,10 +67,7 @@ describe('findForbiddenBundlePaths', () => {
     ['app.asar/out/renderer/index.html', 'renderer'],
     ['cli/dist/public/index.html', 'web app'],
     ['app.asar.unpacked/node_modules/@palimpsest/cli/dist/public/index.html', 'web app'],
-    [
-      'app.asar.unpacked/node_modules/@palimpsest/native-config/index.js',
-      'native-config',
-    ],
+    ['app.asar.unpacked/node_modules/@palimpsest/native-config/index.js', 'native-config'],
     ['app.asar/node_modules/@palimpsest/core/src/index.ts', 'sources'],
   ])('flags %s', (path, reasonFragment) => {
     const hits = findForbiddenBundlePaths([...SOUND_PATHS, path]);

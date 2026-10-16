@@ -259,7 +259,7 @@ describe('readRemovalProcessStart', () => {
     expect(reasons.at(-1)).toBe(
       'the Windows native addon (native-config.win32-x64-msvc.node) did not load or does not export readProcessStart: no usable binding was returned',
     );
-    for (const earlier of ['is not a valid Win32 application.', "Cannot find module '@inkeep"]) {
+    for (const earlier of ['is not a valid Win32 application.', "Cannot find module '@example"]) {
       expect(reasons[0]).toContain(earlier);
       expect(reasons[0].indexOf(earlier)).toBeLessThan(
         reasons[0].indexOf('Cannot find native binding.'),

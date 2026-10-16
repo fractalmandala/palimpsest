@@ -1,4 +1,4 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
+// oxlint-disable ps/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
 import { i18n } from '@lingui/core';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -335,8 +335,8 @@ function McpConsentDialogForm({ payload, store, toast }: McpConsentDialogFormPro
                       {ptyAvailable ? (
                         <Trans comment="Warning shown when the user unchecks the PATH toggle on a desktop build with the built-in terminal">
                           <code className="inline-code text-xs!">{cliCommand}</code> won't run in
-                          external terminals until you add it later from the File menu.
-                          Palimpsest's built-in terminal and AI tools keep working.
+                          external terminals until you add it later from the File menu. Palimpsest's
+                          built-in terminal and AI tools keep working.
                         </Trans>
                       ) : (
                         <Trans comment="Warning shown when the user unchecks the PATH toggle on a desktop build without the built-in terminal">
@@ -377,8 +377,8 @@ function McpConsentDialogForm({ payload, store, toast }: McpConsentDialogFormPro
                 {hasEditors ? (
                   <p className={cn(SECTION_SUBTEXT, 'mb-1')}>
                     <Trans comment="Description under the AI-tools section label in the first-launch dialog">
-                      Globally install the Palimpsest skills and MCP to let the agents you
-                      already use read and update your projects.
+                      Globally install the Palimpsest skills and MCP to let the agents you already
+                      use read and update your projects.
                     </Trans>
                   </p>
                 ) : null}
@@ -481,9 +481,7 @@ function McpConsentDialogForm({ payload, store, toast }: McpConsentDialogFormPro
                           <span className="flex min-w-0 flex-1 items-center gap-1.5 pe-28 text-sm font-medium text-foreground">
                             <Trans comment="Checkbox that installs the user-global discovery skill bundle">
                               Install the{' '}
-                              <code className="inline-code text-1sm!">
-                                palimpsest-discovery
-                              </code>{' '}
+                              <code className="inline-code text-1sm!">palimpsest-discovery</code>{' '}
                               skill
                             </Trans>
                           </span>

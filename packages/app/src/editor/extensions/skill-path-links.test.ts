@@ -91,11 +91,11 @@ describe('skillBundlePathNavHash (PRD-7607)', () => {
   });
 
   test('a built-in (palimpsest*) skill stays read-only even for a .md reference', () => {
-    const target = { scope: 'project' as const, name: 'open-knowledge-write-skill' };
+    const target = { scope: 'project' as const, name: 'palimpsest-write-skill' };
     expect(
       skillBundlePathNavHash(
         target,
-        '.claude/skills/open-knowledge-write-skill/SKILL',
+        '.claude/skills/palimpsest-write-skill/SKILL',
         'references/x.md',
       ),
     ).toBe(hashFromSkillFile({ ...target, path: 'references/x.md' }));

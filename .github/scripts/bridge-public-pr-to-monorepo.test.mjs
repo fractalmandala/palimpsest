@@ -283,7 +283,7 @@ describe('postCommitStatus', () => {
 describe('checkOrgMembership', () => {
   test('returns true on a 204 (member)', async () => {
     const { request, calls } = fakeRequest(null);
-    expect(await checkOrgMembership({ token: 't', org: 'inkeep', login: 'octocat', request })).toBe(
+    expect(await checkOrgMembership({ token: 't', org: 'example', login: 'octocat', request })).toBe(
       true,
     );
     expect(calls[0].path).toBe('/orgs/inkeep/members/octocat');
@@ -296,7 +296,7 @@ describe('checkOrgMembership', () => {
       throw error;
     };
     expect(
-      await checkOrgMembership({ token: 't', org: 'inkeep', login: 'outsider', request }),
+      await checkOrgMembership({ token: 't', org: 'example', login: 'outsider', request }),
     ).toBe(false);
   });
 
@@ -307,7 +307,7 @@ describe('checkOrgMembership', () => {
       throw error;
     };
     await expect(
-      checkOrgMembership({ token: 't', org: 'inkeep', login: 'x', request }),
+      checkOrgMembership({ token: 't', org: 'example', login: 'x', request }),
     ).rejects.toThrow(/403/);
   });
 });
@@ -539,7 +539,7 @@ async function runBridgeSync({
   earlierMarker = '',
   headRef = 'contribution',
   headRepo = 'octocat/palimpsest',
-  internalHeadRef = 'public-pr/open-knowledge-310',
+  internalHeadRef = 'public-pr/palimpsest-310',
   associations = [{ number: 310 }],
   publicCandidates,
 }) {
@@ -878,7 +878,7 @@ function setupSyncRepo({ sourceContent = 'updated\n', mapForkToSource = true } =
   const root = mkdtempSync(path.join(tmpdir(), 'bridge-head-status-'));
   const remote = path.join(root, 'remote.git');
   const internal = path.join(root, 'internal');
-  const branch = 'public-pr/open-knowledge-310';
+  const branch = 'public-pr/palimpsest-310';
   git(root, 'init', '--bare', '--initial-branch=main', remote);
   configureTestGitRepository(remote, (args) => git(root, ...args));
   git(root, 'init', '--initial-branch=main', internal);

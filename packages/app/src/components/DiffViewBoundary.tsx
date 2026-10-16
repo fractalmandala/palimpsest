@@ -1,10 +1,10 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import {
   type ConflictEntryWire,
   type ResolveStrategyWire,
   type SyncConflictContentSuccess,
   SyncConflictContentSuccessSchema,
 } from '@palimpsest/core/schemas/api';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';

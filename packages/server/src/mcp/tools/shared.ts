@@ -1,5 +1,6 @@
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
+import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import {
   AdvisoryWarningSchema,
   BrokenLinkSchema,
@@ -12,7 +13,6 @@ import {
   UNREADABLE_WARNINGS_TEXT,
   validateDocName,
 } from '@palimpsest/core';
-import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 import type { Config } from '../../config/schema.ts';
 import { SUPPORTED_DOC_EXTENSIONS } from '../../doc-extensions.ts';
@@ -296,7 +296,7 @@ export function psReservedPathRedirect(path: string): string | null {
   const p = path.replace(/^\/+/, '');
   if (p !== '.ps' && !p.startsWith('.ps/')) return null;
   if (p.startsWith('.ps/skills/')) {
-    return 'Skills are authored with the `skill` target, not a raw document path: `write({ skill: { name, description, body?, scope? } })` writes the SKILL.md wherever the skill lives (a NEW skill lands at the project default skill home, e.g. `.agents/skills/<name>/`). To author or improve a skill, use the `open-knowledge-write-skill` skill.';
+    return 'Skills are authored with the `skill` target, not a raw document path: `write({ skill: { name, description, body?, scope? } })` writes the SKILL.md wherever the skill lives (a NEW skill lands at the project default skill home, e.g. `.agents/skills/<name>/`). To author or improve a skill, use the `palimpsest-write-skill` skill.';
   }
   if (p.startsWith('.ps/templates/')) {
     return 'Templates are authored with the `template` target (`write({ template: { … } })`), not a raw document path.';

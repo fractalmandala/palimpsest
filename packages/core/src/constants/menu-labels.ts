@@ -21,7 +21,6 @@ export const MENU_LABELS = {
   moveToTrash: 'Move to Trash',
   copyFullPath: 'Copy full path',
   copyRelativePath: 'Copy relative path',
-  checkForUpdates: 'Check for updates',
   setUpIntegrations: 'Set up Palimpsest integrations',
   closeTab: 'Close tab',
   newWorktree: 'New worktree',
@@ -31,7 +30,6 @@ export const MENU_LABELS = {
   checkSpelling: 'Check spelling while typing',
   openOnGithub: 'Palimpsest on GitHub',
   openDocs: 'Documentation',
-  joinDiscord: 'Join us on Discord',
   reportBug: 'Report a bug',
   bugReportHistory: 'Bug report history',
   sendFeedback: 'Send feedback',
@@ -82,5 +80,5 @@ export function menuLabelForPlatform(key: MenuLabelKey, platform: string): strin
 }
 
 export const PALIMPSEST_GITHUB_URL = 'https://github.com/fractalmandala/palimpsest';
-export const PALIMPSEST_DOCS_URL = 'https://github.com/fractalmandala/palimpsest/tree/main/docs/content';
-export const PALIMPSEST_DISCORD_URL = 'https://discord.gg/VRKk2EaGHN';
+export const PALIMPSEST_DOCS_URL =
+  'https://github.com/fractalmandala/palimpsest/tree/main/docs/content';

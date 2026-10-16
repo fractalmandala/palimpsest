@@ -10,7 +10,7 @@ export function sendToRenderer<K extends keyof EventChannels>(
   channel: K,
   payload: EventChannels[K]['payload'],
 ): void {
-  // oxlint-disable-next-line ok/no-loosely-typed-webcontents-ipc -- typed sendToRenderer factory body (precedent #14)
+  // oxlint-disable-next-line ps/no-loosely-typed-webcontents-ipc -- typed sendToRenderer factory body (precedent #14)
   webContents.send(channel, payload);
 }
 

@@ -39,8 +39,7 @@ const hoverScrollCases = [
 function longDocumentWithLink(link: string): string {
   const paragraphs = Array.from(
     { length: 140 },
-    (_, index) =>
-      `Paragraph ${index}: ${'Palimpsest interaction test filler text. '.repeat(18)}`,
+    (_, index) => `Paragraph ${index}: ${'Palimpsest interaction test filler text. '.repeat(18)}`,
   );
   paragraphs.splice(80, 0, link);
   return `# Long source\n\n${paragraphs.join('\n\n')}\n`;

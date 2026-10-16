@@ -15,7 +15,7 @@ export const EMPTY_SCOPE_SENTINEL = '__ok_empty_scope__';
 const PS_OWN_SKILLS: ReadonlySet<string> = new Set([
   'palimpsest',
   'palimpsest-discovery',
-  'open-knowledge-write-skill',
+  'palimpsest-write-skill',
 ]);
 
 function pluginOf(s: CatalogSkill): string | null {

@@ -623,9 +623,7 @@ export async function runDiagnoseBundle(
 }
 
 export function diagnoseCommand(): Command {
-  const root = new Command('diagnose').description(
-    'Diagnostic utilities for palimpsest processes',
-  );
+  const root = new Command('diagnose').description('Diagnostic utilities for palimpsest processes');
 
   root
     .command('process')

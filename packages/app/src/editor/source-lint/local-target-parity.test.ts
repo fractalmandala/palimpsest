@@ -1,7 +1,7 @@
 import { markdown, markdownLanguage } from '@codemirror/lang-markdown';
 import { EditorState } from '@codemirror/state';
-import { toWikiLinkSlug, type ValidationDocResult } from '@palimpsest/core';
 import { GFM } from '@lezer/markdown';
+import { toWikiLinkSlug, type ValidationDocResult } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { computeLinkResolutionState } from '../extensions/link-resolution';
 import { buildPagesBySlugIndex, type PageListCacheSnapshot } from '../page-list-cache';

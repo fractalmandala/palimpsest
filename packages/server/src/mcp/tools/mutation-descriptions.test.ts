@@ -1,7 +1,7 @@
-import { getAgentCanonicalDescriptors } from '@palimpsest/core';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { getAgentCanonicalDescriptors } from '@palimpsest/core';
 import { afterAll, beforeAll, expect, test } from 'vitest';
 import { ConfigSchema } from '../../config/schema.ts';
 import { installJsonSchemaDialect } from '../json-schema-dialect.ts';

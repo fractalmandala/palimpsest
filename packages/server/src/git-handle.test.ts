@@ -413,10 +413,7 @@ describe('buildSyncCredentialConfig()', () => {
   });
 
   test('undefined / empty argv falls back to the bare CLI name', () => {
-    const expected = [
-      'credential.helper=',
-      'credential.helper=!palimpsest auth git-credential',
-    ];
+    const expected = ['credential.helper=', 'credential.helper=!palimpsest auth git-credential'];
     expect(buildSyncCredentialConfig(undefined, { resetAmbient: true })).toEqual(expected);
     expect(buildSyncCredentialConfig([], { resetAmbient: true })).toEqual(expected);
   });

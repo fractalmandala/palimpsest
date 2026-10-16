@@ -30,9 +30,9 @@ import {
   isOwnManagedEntry,
   loadConfig,
   type McpInstallOptions,
-  psBugReportsDir,
   type ProjectAiIntegrationsResult,
   previewContent,
+  psBugReportsDir,
   readExistingMcpEntry,
   removeOwnMcpEntry,
   removeProjectSkill,
@@ -54,9 +54,9 @@ import {
   estimateSkillCost,
   hasUninstallFeedbackContent,
   type LanguagePreference,
-  type PsCliCommand,
   PALIMPSEST_SKILLS_REPO,
   PROTOCOL_VERSION,
+  type PsCliCommand,
   projectWorktreeCreateResult,
   resolveDesktopProductName,
   ServerInfoSuccessSchema,
@@ -122,7 +122,6 @@ import {
   clipboard,
   crashReporter,
   dialog,
-  autoUpdater as electronAutoUpdater,
   ipcMain,
   Menu,
   nativeImage,
@@ -159,7 +158,6 @@ import type { EventChannels } from '../shared/ipc-events.ts';
 import { createHandler } from '../shared/ipc-handler.ts';
 import { registerPendingDelivery, sendToRenderer } from '../shared/ipc-send.ts';
 import { createPtyPhaseTrace } from '../shared/pty-phase-trace.ts';
-import { releasesPageUrl } from '../shared/release-links.ts';
 import { UNINSTALL_PRELOAD_ARG } from '../shared/uninstall-preload-arg.ts';
 import { getWindowsEnvValue } from '../shared/windows-env.ts';
 import { resolveShell } from '../utility/pty-host.ts';
@@ -181,12 +179,6 @@ import { openAssetOrReveal, openAssetSafely, revealAssetSafely } from './asset-a
 import { popAssetMenu, revealMenuLabel } from './asset-menu.ts';
 import { attachAssetSafetyNet } from './asset-safety-net.ts';
 import { resolveEffectiveInstanceName } from './auto-instance.ts';
-import {
-  bootAutoUpdater,
-  installWasInFlightDuring,
-  STUCK_HINT_DOWNLOAD_URL,
-  type StartAutoUpdaterHandle,
-} from './auto-updater.ts';
 import { applyBackgroundThrottle } from './background-throttle.ts';
 import { type BootHeartbeatDeps, startBootHeartbeat } from './boot-heartbeat.ts';
 import {
@@ -402,7 +394,7 @@ import {
   setNoteWindowDoc,
   touchNoteWindow,
 } from './note-window-registry.ts';
-import { runPsInit } from './ok-init.ts';
+import { runPsInit } from './ps-init.ts';
 import {
   type OnboardingFlowKind,
   recordCreateNewBannerShown,
@@ -555,15 +547,10 @@ import {
   resolveUninstallWindowTheme,
 } from './uninstall-window.ts';
 import {
-  deliverUpdateNoticesToLoadedWindows,
-  replayUpdateNoticesOnEveryLoad,
-} from './update-notice-replay.ts';
-import {
   applyResetIncompatible,
   applyStateQuery,
   type UpdateStateHandlerDeps,
 } from './update-state-handlers.ts';
-import { reclaimPendingUpdateCache } from './updater-cache.ts';
 import {
   registerProtocolHandler,
   type ScreenTarget,
@@ -595,10 +582,6 @@ import {
 } from './window-manager.ts';
 import { WINDOW_MIN_SIZE } from './window-min-size.ts';
 import { resolveRestoredPlacement, sortWindowsByFocusSequence } from './window-placement.ts';
-import {
-  sweepWindowsUpdateSurvivors,
-  type WindowsUpdateSurvivorSweepResult,
-} from './windows-update-survivor-sweep.ts';
 import { isAllowedInventoryAnchor, WorktreeInventoryService } from './worktree-inventory.ts';
 import { classifyRecentGitAsync, readWorktreeBranchAsync } from './worktree-recents.ts';
 import {
@@ -950,7 +933,7 @@ function loadAppState(): AppState {
   if (unrecognizedUpdateMode !== null) {
     getRootDesktopLogger().warn(
       { persisted: unrecognizedUpdateMode },
-      'persisted update mode unrecognized, automatic updates stay on',
+      'persisted update mode unrecognized, ignoring stored value',
     );
   }
   return parsed;
@@ -1039,16 +1022,6 @@ const noteRestartPending = (): void => {
   announcedShutdownCause = 'relaunch';
 };
 
-function sweepConsoleHostsBeforeUpdate(): WindowsUpdateSurvivorSweepResult {
-  const logger = getLogger('updater');
-  return sweepWindowsUpdateSurvivors({
-    installTree: process.resourcesPath,
-    logger: {
-      info: (event) => logger.info(event, 'Windows update console-host sweep complete'),
-      warn: (event) => logger.warn(event, 'Windows update console-host sweep warning'),
-    },
-  });
-}
 const slidesDeckRegistry = createSlidesDeckRegistry();
 const dockVisibleForWindow = new Map<number, boolean>();
 const agentPanelVisibleForWindow = new Map<number, boolean>();
@@ -1208,9 +1181,6 @@ const reducedTransparencyDeps: ReducedTransparencyDeps = {
     console.warn(line);
   },
 };
-let autoUpdaterHandle: StartAutoUpdaterHandle | null = null;
-const updateNoticeSource = (): StartAutoUpdaterHandle | null =>
-  app.isPackaged || process.env.PS_UPDATER_FORCE_DEV === '1' ? autoUpdaterHandle : null;
 let bundleReplaceWatcherHandle: BundleReplaceWatcherHandle | null = null;
 let debugIpc: DebugIpcHandle | null = null;
 let mcpWiringHandle: RunMcpWiringHandle | null = null;
@@ -1369,7 +1339,7 @@ function ensureWindowManager() {
         process.resourcesPath,
         'app.asar.unpacked',
         'node_modules',
-        '@inkeep',
+        '@example',
         'palimpsest',
         'dist',
         'cli.mjs',
@@ -2488,19 +2458,11 @@ async function runMenuDispatchCommand(
       openSettings(BrowserWindow.fromWebContents(sender));
       return;
     }
-    case 'check-for-updates':
-      void autoUpdaterHandle?.checkForUpdatesNow().catch((err) => {
-        console.warn('[main] checkForUpdatesNow rejected', {
-          message: err instanceof Error ? err.message : String(err),
-        });
-      });
-      return;
     case 'reconfigure-mcp-wiring':
       reconfigureMcpWiringNow(pickLoadedRendererForMcpDialog());
       return;
     case 'open-github':
     case 'open-docs':
-    case 'open-discord':
       void shell.openExternal(menuDispatchHelpLinkUrl(command));
       return;
     case 'toggle-spell-check':
@@ -2559,15 +2521,6 @@ async function runApplicationMenuRefresh(): Promise<void> {
     openSettings: () => openSettings(),
     onReportBug: () => sendMenuAction('report-bug'),
     onSendFeedback: () => sendMenuAction('send-feedback'),
-    onCheckForUpdates: autoUpdaterHandle
-      ? () => {
-          void autoUpdaterHandle?.checkForUpdatesNow().catch((err) => {
-            console.warn('[main] checkForUpdatesNow rejected', {
-              message: err instanceof Error ? err.message : String(err),
-            });
-          });
-        }
-      : undefined,
     onUninstall: desktopSelfUninstallAvailable()
       ? () =>
           void startDesktopSelfUninstallFlow().catch((err) => {
@@ -3023,7 +2976,6 @@ async function startDesktopSelfUninstallFlow(): Promise<void> {
         { width: 560, height: 520, resizable: true },
       );
     },
-    suppressAutoInstallOnQuit: () => autoUpdaterHandle?.suppressAutoInstallOnQuit(),
     quit: () => {
       getLogger('lifecycle').info(
         { projectCount: projectPaths.length, logPath },
@@ -3229,7 +3181,6 @@ async function runDesktopUninstallUiPreview(mode: DesktopUninstallFlowPreviewMod
         { width: 560, height: 520, resizable: true },
       );
     },
-    suppressAutoInstallOnQuit: () => {},
     quit: () =>
       showDesktopUninstallResult(
         {
@@ -4644,7 +4595,7 @@ function registerIpcHandlers() {
           recentProjects: appState.recentProjects.map((r) => ({ path: r.path, name: r.name })),
           spellCheckEnabled: appState.spellCheckEnabled,
           showDevToolsMenu: !app.isPackaged || DESKTOP_VARIANT.name !== 'stable',
-          canCheckForUpdates: autoUpdaterHandle != null,
+
           canReconfigureMcpWiring: canReconfigureMcpWiring(),
           activeTarget: currentActiveTarget(),
           viewMenuState: (() => {
@@ -5525,7 +5476,6 @@ function registerIpcHandlers() {
     clearPendingSchemaIncompatibility,
     getAppVersion: () => app.getVersion(),
     variant: DESKTOP_VARIANT,
-    isUpdaterRunning: () => autoUpdaterHandle != null,
   });
   handle('ps:state:reset-incompatible', async () => applyResetIncompatible(updateStateDeps()));
   handle('ps:state:query', async () => applyStateQuery(updateStateDeps()));
@@ -6234,12 +6184,7 @@ function bootPrimaryInstance(): void {
     now: () => new Date(),
     currentBootSessionUuid: readBootSessionUuid,
     currentBootStartedAtMs: () => readBootStartedAtMs(),
-    installInFlight: (span) =>
-      installWasInFlightDuring(
-        bootStateSnapshot,
-        span,
-        bootStateSnapshot.versionPendingInstallStagedAt,
-      ),
+
     ...(process.platform === 'darwin'
       ? { processTermination: (query) => findJetsamKillSync(query) }
       : {}),
@@ -6610,8 +6555,7 @@ function bootPrimaryInstance(): void {
       startupWaterfall.mark('bootstrapDone');
 
       app.on('browser-window-created', (_event, win) => {
-        replayUpdateNoticesOnEveryLoad(win.webContents, updateNoticeSource);
-      });
+            });
 
       mcpWiringHandle = armMcpWiring();
       void Promise.allSettled([
@@ -6810,240 +6754,6 @@ function bootPrimaryInstance(): void {
 
       maybeRunDesktopUninstallUiPreview();
 
-      autoUpdaterHandle = await bootAutoUpdater(() => import('electron-updater'), {
-        logger: {
-          info: (msg: string, ctx?: object) =>
-            getLogger('updater').info((ctx ?? {}) as Record<string, unknown>, msg),
-          warn: (msg: string, ctx?: object) =>
-            getLogger('updater').warn((ctx ?? {}) as Record<string, unknown>, msg),
-          error: (msg: string, ctx?: object) =>
-            getLogger('updater').error((ctx ?? {}) as Record<string, unknown>, msg),
-          debug: (msg: string, ctx?: object) =>
-            getLogger('updater').debug((ctx ?? {}) as Record<string, unknown>, msg),
-        },
-        ipcMain,
-        readState: () => appState,
-        writeState: (next) => {
-          const prev = appState;
-          appState = next;
-          const ok = saveAppState(appState);
-          if (!ok) {
-            appState = prev;
-            throw new Error('saveAppState failed — rolled back in-memory state');
-          }
-        },
-        getPrimaryWindow: () => {
-          const focused = BrowserWindow.getFocusedWindow();
-          if (focused) return focused;
-          const all = BrowserWindow.getAllWindows();
-          return all[0] ?? null;
-        },
-        getAllWindows: () => BrowserWindow.getAllWindows(),
-        getAppVersion: () => app.getVersion(),
-        buildChannel: DESKTOP_VARIANT.updateChannel,
-        isPackaged: app.isPackaged,
-        forceDevBypass: process.env.PS_UPDATER_FORCE_DEV === '1',
-        feedUrl: process.env.PS_UPDATER_FEED_URL || undefined,
-        proxyFeed: {
-          base: 'https://github.com/fractalmandala/palimpsest/updates',
-          channels: new Set<UpdateChannel>(['beta', 'latest']),
-          betaChannel: DESKTOP_VARIANT.name === 'beta' ? 'beta-product' : 'beta',
-        },
-        whenRendererReady: (fn) => {
-          const tryFire = (win: BrowserWindow): void => {
-            if (win.webContents.isLoading() || win.webContents.getURL() === '') {
-              win.webContents.once('did-finish-load', fn);
-            } else {
-              fn();
-            }
-          };
-          const focused = BrowserWindow.getFocusedWindow();
-          const existing = focused ?? BrowserWindow.getAllWindows()[0] ?? null;
-          if (existing) {
-            tryFire(existing);
-            return;
-          }
-          app.once('browser-window-created', (_event, createdWin) => {
-            tryFire(createdWin as BrowserWindow);
-          });
-        },
-        ...(process.platform === 'linux'
-          ? {
-              linuxInstallSupport: {
-                hasGraphicalAuth: () => detectGraphicalAuthCommand() !== null,
-                stagedInstallerExists: (p) => {
-                  try {
-                    return existsSync(p);
-                  } catch {
-                    return false;
-                  }
-                },
-                showManualInstallFallback: async (ctx) => {
-                  await runManualInstallFallbackDialog(
-                    {
-                      showDialog: async (request) => {
-                        const target =
-                          BrowserWindow.getFocusedWindow() ??
-                          BrowserWindow.getAllWindows()[0] ??
-                          null;
-                        const options = { type: 'info' as const, ...request };
-                        return target
-                          ? dialog.showMessageBox(target, options)
-                          : dialog.showMessageBox(options);
-                      },
-                      copyCommandToClipboard: (command) => clipboard.writeText(command),
-                      relaunchApp: () => {
-                        noteRestartPending();
-                        app.relaunch();
-                        app.quit();
-                      },
-                    },
-                    ctx,
-                  );
-                },
-              },
-            }
-          : {}),
-        ...(app.isPackaged
-          ? {
-              reclaimStagedUpdateCache: () =>
-                reclaimPendingUpdateCache({
-                  appUpdateConfigPath: join(process.resourcesPath, 'app-update.yml'),
-                  platform: process.platform,
-                  env: process.env,
-                  homeDir: osHomedir(),
-                  logger: {
-                    info: (msg, ctx) => getLogger('updater-cache').info(ctx ?? {}, msg),
-                    warn: (msg, ctx) => getLogger('updater-cache').warn(ctx ?? {}, msg),
-                    debug: (msg, ctx) => getLogger('updater-cache').debug(ctx ?? {}, msg),
-                  },
-                }),
-            }
-          : {}),
-        prepareForRelaunch: async () => {
-          freezeFocusTracking('prepare-for-relaunch');
-          captureWindowRestoreSnapshot('prepare-for-relaunch');
-          await terminalReaper?.killAll('relaunch');
-          await wm?.stopAllOwnedServers();
-          flushDesktopLogger();
-        },
-        sweepUpdateSurvivors: sweepConsoleHostsBeforeUpdate,
-        showCheckNowResult: (result) => {
-          const target = BrowserWindow.getFocusedWindow() ?? BrowserWindow.getAllWindows()[0];
-          if (!target) return;
-          if (result.kind === 'not-available') {
-            void dialog.showMessageBox(target, {
-              type: 'info',
-              buttons: ['OK'],
-              defaultId: 0,
-              title: 'Up to Date',
-              message: "You're on the latest version of Palimpsest.",
-              detail: `Palimpsest ${result.currentVersion} is the most current version available.`,
-            });
-          } else if (result.kind === 'ready-to-install') {
-            switch (result.relaunch) {
-              case 'available':
-                return dialog
-                  .showMessageBox(target, {
-                    type: 'info',
-                    buttons: ['Quit and Restart', 'Later'],
-                    defaultId: 0,
-                    cancelId: 1,
-                    title: 'Update Ready',
-                    message: `Palimpsest ${result.stagedVersion} is downloaded and ready.`,
-                    detail:
-                      'Quit and restart now to install it, or it installs the next time you quit Palimpsest.',
-                  })
-                  .then(({ response }) => (response === 0 ? 'relaunch' : 'dismiss'));
-              case 'installing':
-                void dialog.showMessageBox(target, {
-                  type: 'info',
-                  buttons: ['OK'],
-                  defaultId: 0,
-                  title: 'Update Ready',
-                  message: `Palimpsest ${result.stagedVersion} is downloaded and ready.`,
-                  detail: 'Palimpsest is already restarting to install it.',
-                });
-                return undefined;
-              case 'not-pending':
-                void dialog.showMessageBox(target, {
-                  type: 'info',
-                  buttons: ['OK'],
-                  defaultId: 0,
-                  title: 'Update Downloaded',
-                  message: `Palimpsest ${result.stagedVersion} was downloaded.`,
-                  detail: `It may install the next time you quit Palimpsest. If it doesn't, download the latest build from ${STUCK_HINT_DOWNLOAD_URL}.`,
-                });
-                return undefined;
-              default: {
-                const _exhaustive: never = result.relaunch;
-                return _exhaustive;
-              }
-            }
-          } else if (result.kind === 'available') {
-            if (result.download === 'manual') {
-              const releasesUrl = releasesPageUrl(DESKTOP_VARIANT);
-              return dialog
-                .showMessageBox(target, {
-                  type: 'info',
-                  buttons: ['Download Manually', 'OK'],
-                  defaultId: 0,
-                  cancelId: 1,
-                  title: 'Update Available',
-                  message: `Palimpsest ${result.latestVersion} is available.`,
-                  detail:
-                    'Automatic updates are turned off, so Palimpsest will not download it. Download it from the releases page, or turn on "Download and install updates automatically" in Settings > About & updates.',
-                })
-                .then(async ({ response }) => {
-                  if (response === 0) await shell.openExternal(releasesUrl);
-                  return 'dismiss' as const;
-                });
-            }
-            void dialog.showMessageBox(target, {
-              type: 'info',
-              buttons: ['OK'],
-              defaultId: 0,
-              title: 'Update Available',
-              message: `Palimpsest ${result.latestVersion} is available.`,
-              detail: `It's downloading in the background. You'll be prompted to relaunch when the install is ready.`,
-            });
-          } else if (result.kind === 'updater-inactive') {
-            void dialog.showMessageBox(target, {
-              type: 'info',
-              buttons: ['OK'],
-              defaultId: 0,
-              title: "Updates Aren't Available",
-              message: "This copy of Palimpsest can't update itself.",
-              detail: `Development builds don't receive automatic updates. To update, pull the latest source or download the newest release from ${STUCK_HINT_DOWNLOAD_URL}.`,
-            });
-          } else if (result.kind === 'download-failed') {
-            void dialog.showMessageBox(target, {
-              type: 'warning',
-              buttons: ['OK'],
-              defaultId: 0,
-              title: "Couldn't Download the Update",
-              message: `Palimpsest ${result.latestVersion} couldn't be downloaded.`,
-              detail: result.message,
-            });
-          } else if (result.kind === 'error') {
-            void dialog.showMessageBox(target, {
-              type: 'warning',
-              buttons: ['OK'],
-              defaultId: 0,
-              title: "Couldn't Check for Updates",
-              message: "Palimpsest couldn't check for updates right now.",
-              detail: result.message,
-            });
-          } else {
-            const _exhaustive: never = result;
-            return _exhaustive;
-          }
-        },
-      });
-      deliverUpdateNoticesToLoadedWindows(
-        BrowserWindow.getAllWindows().map((win) => win.webContents),
-        updateNoticeSource(),
-      );
       refreshApplicationMenu();
 
       if (process.platform === 'darwin' && app.isPackaged) {
@@ -7079,25 +6789,8 @@ function bootPrimaryInstance(): void {
     terminalReaper?.noteAppShutdown(announcedShutdownCause);
     freezeFocusTracking('before-quit');
     captureWindowRestoreSnapshot('before-quit');
-    autoUpdaterHandle?.recordInstallHandoffOnQuit();
     emitStartupWaterfall();
     endRoot();
-    flushDesktopLogger();
-  });
-  electronAutoUpdater.on('before-quit-for-update', () => {
-    getLogger('updater').info({}, 'before-quit-for-update — update install will relaunch the app');
-    freezeFocusTracking('before-quit-for-update');
-    captureWindowRestoreSnapshot('before-quit-for-update');
-    void (terminalReaper?.killAll('update-install') ?? Promise.resolve()).then(() => {
-      const result = sweepConsoleHostsBeforeUpdate();
-      if (result.scanFailed || result.revalidationFailed || result.failedCount > 0) {
-        getLogger('updater').warn(
-          { result },
-          'Silent update console-host sweep incomplete — continuing shutdown',
-        );
-      }
-    });
-    wm?.signalStopAllOwnedServers();
     flushDesktopLogger();
   });
 
@@ -7130,8 +6823,6 @@ function bootPrimaryInstance(): void {
     editorVisibleForWindow.clear();
     dockOrderForWindow.clear();
     terminalSnapshotForWindow.clear();
-    autoUpdaterHandle?.destroy();
-    autoUpdaterHandle = null;
     bundleReplaceWatcherHandle?.stop();
     bundleReplaceWatcherHandle = null;
     mcpWiringHandle?.destroy();

@@ -17,7 +17,7 @@ import { computeBrokenOutboundLinks } from '../backlink-index.ts';
 import { applySubstitution } from '../content/substitution.ts';
 import { applySeed } from './apply.ts';
 import { planSeed } from './plan.ts';
-import { PSF_RESERVED_FILENAMES, type PackId, STARTER_PACKS } from './starter.ts';
+import { type PackId, PSF_RESERVED_FILENAMES, STARTER_PACKS } from './starter.ts';
 
 const PSF_PACK = STARTER_PACKS.psf;
 const PSF_INDEX_BODY = PSF_PACK.rootFiles?.['index.md'];
@@ -249,11 +249,7 @@ describe('psf pack — OKF §11 conformance by construction', () => {
       writeFileSync(join(projectDir, '.ps', 'config.yml'), '', 'utf-8');
       const platformSkillDir = join(projectDir, '.claude', 'skills', 'palimpsest');
       mkdirSync(platformSkillDir, { recursive: true });
-      writeFileSync(
-        join(platformSkillDir, 'SKILL.md'),
-        '---\nname: palimpsest\n---\n',
-        'utf-8',
-      );
+      writeFileSync(join(platformSkillDir, 'SKILL.md'), '---\nname: palimpsest\n---\n', 'utf-8');
 
       const plan = await planSeed({ projectDir, packId: 'psf' });
       const result = await applySeed(plan, { projectDir, packId: 'psf' });

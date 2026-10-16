@@ -457,10 +457,7 @@ describe('collectReportBundle — full level', () => {
         diagnosticReportsDir,
       });
 
-      const report = readZipEntry(
-        zipPath,
-        'diagnostic-reports/Palimpsest-2026-08-27-045958.ips',
-      );
+      const report = readZipEntry(zipPath, 'diagnostic-reports/Palimpsest-2026-08-27-045958.ips');
       expect(report).toContain('USER 0');
       expect(report).not.toContain('s3cretpassword');
       expect(report).not.toContain('/Users/test');
@@ -513,10 +510,7 @@ describe('collectReportBundle — full level', () => {
       expect(readme).toContain('Redaction was disabled for this bundle');
       expect(readme).toContain('rewritten on the way in');
       expect(readme).toContain('not byte-identical to the files macOS wrote');
-      const report = readZipEntry(
-        zipPath,
-        'diagnostic-reports/Palimpsest-2026-08-27-045958.ips',
-      );
+      const report = readZipEntry(zipPath, 'diagnostic-reports/Palimpsest-2026-08-27-045958.ips');
       expect(report).not.toContain(DEVICE_KEY);
       expect(report).not.toContain(String.raw`\/Users`);
     });

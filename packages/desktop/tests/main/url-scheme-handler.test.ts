@@ -447,7 +447,9 @@ describe('registerProtocolHandler — deferred-share routeUrl + dedup', () => {
 
     const sharedUrl = 'https://github.com/o/r/blob/main/wiki/x.md';
     control.routeUrl(`https://github.com/fractalmandala/palimpsest/d/${encodeShareUrl(sharedUrl)}`);
-    control.routeUrl(`https://github.com/fractalmandala/palimpsest/d/${encodeShareUrl(sharedUrl, 1)}`);
+    control.routeUrl(
+      `https://github.com/fractalmandala/palimpsest/d/${encodeShareUrl(sharedUrl, 1)}`,
+    );
     await flushPromises();
     await flushPromises();
 
@@ -994,7 +996,7 @@ describe('registerProtocolHandler — share-flow routing', () => {
     expect(resolveShareTarget).toHaveBeenCalledWith({
       contentRootDepth: null,
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'playbooks',
       branch: 'main',
       repositoryTarget: { kind: 'doc', docPath: 'x.md' },
@@ -1247,7 +1249,7 @@ describe('registerProtocolHandler — resolved share routing (US-003)', () => {
     return {
       contentRootDepth: null,
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'playbooks',
       branch: 'main',
       sharedUrl: 'https://github.com/inkeep/playbooks/blob/main/docs/getting-started.md',
@@ -1345,7 +1347,9 @@ describe('registerProtocolHandler — resolved share routing (US-003)', () => {
     });
     env.app.resolveReady();
     await flushPromises();
-    env.app.fireOpenUrl(`https://github.com/fractalmandala/palimpsest/d/${encodeShareUrl(sharedUrl, 1)}`);
+    env.app.fireOpenUrl(
+      `https://github.com/fractalmandala/palimpsest/d/${encodeShareUrl(sharedUrl, 1)}`,
+    );
     await flushPromises();
     await flushPromises();
 
@@ -2198,7 +2202,7 @@ describe('registerProtocolHandler — continue-activity Handoff path', () => {
     expect(resolveShareTarget).toHaveBeenCalledWith({
       contentRootDepth: null,
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'playbooks',
       branch: 'main',
       repositoryTarget: { kind: 'doc', docPath: 'x.md' },
@@ -2523,9 +2527,7 @@ describe('registerProtocolHandler — single-file open (file=)', () => {
     env.app.resolveReady();
     await flushPromises();
 
-    env.app.fireOpenUrl(
-      `palimpsest://open?file=${encodeURIComponent('/Users/me/notes/todo.md')}`,
-    );
+    env.app.fireOpenUrl(`palimpsest://open?file=${encodeURIComponent('/Users/me/notes/todo.md')}`);
     await flushPromises();
 
     expect(env.openEphemeralFile).toHaveBeenCalledWith('/Users/me/notes/todo.md');

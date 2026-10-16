@@ -68,14 +68,14 @@ describe('formatCloneErrorMessage', () => {
 
 describe('buildCloneUrl', () => {
   test('matches the canonical .git form (the clone wizard accepts both forms equally)', () => {
-    expect(buildCloneUrl({ host: 'github.com', owner: 'inkeep', repo: 'palimpsest' })).toBe(
+    expect(buildCloneUrl({ host: 'github.com', owner: 'example', repo: 'palimpsest' })).toBe(
       'https://github.com/fractalmandala/palimpsest.git',
     );
   });
 });
 
 describe('mapValidationToToast', () => {
-  const expected = { host: 'github.com', owner: 'inkeep', repo: 'palimpsest' };
+  const expected = { host: 'github.com', owner: 'example', repo: 'palimpsest' };
 
   function withKind<K extends ShareFolderValidationResult['kind']>(
     kind: K,

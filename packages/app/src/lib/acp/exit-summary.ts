@@ -1,5 +1,5 @@
-import type { ThreadExitDiagnosis } from '@palimpsest/core/acp/thread-protocol';
 import { t } from '@lingui/core/macro';
+import type { ThreadExitDiagnosis } from '@palimpsest/core/acp/thread-protocol';
 
 export function exitSummary(exit: ThreadExitDiagnosis): string {
   const signal = exit.signal ?? '';

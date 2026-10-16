@@ -254,7 +254,7 @@ describe('desktop uninstall handoff readiness', () => {
 });
 
 describe('desktop uninstall handoff flow', () => {
-  test('waits for optional feedback before starting the bounded handoff and suppresses updates before quitting', async () => {
+  test('waits for optional feedback before starting the bounded handoff', async () => {
     vi.useFakeTimers();
     try {
       const events: string[] = [];
@@ -272,9 +272,6 @@ describe('desktop uninstall handoff flow', () => {
         showFailure: async () => {
           events.push('failure');
         },
-        suppressAutoInstallOnQuit: () => {
-          events.push('suppress update');
-        },
         quit: () => {
           events.push('quit');
         },
@@ -283,7 +280,7 @@ describe('desktop uninstall handoff flow', () => {
       expect(events).toEqual(['feedback']);
       finishFeedback();
       await completed;
-      expect(events).toEqual(['feedback', 'handoff', 'suppress update', 'quit']);
+      expect(events).toEqual(['feedback', 'handoff', 'quit']);
     } finally {
       vi.useRealTimers();
     }
@@ -291,17 +288,14 @@ describe('desktop uninstall handoff flow', () => {
 
   test('keeps the app running and displays the error when the helper cannot start', async () => {
     const showFailure = vi.fn(async () => {});
-    const suppressAutoInstallOnQuit = vi.fn();
     const quit = vi.fn();
     await runDesktopUninstallHandoffStep({
       collectFeedback: async () => {},
       launchHandoff: async () => ({ ok: false, error: 'spawn EACCES' }),
       showFailure,
-      suppressAutoInstallOnQuit,
       quit,
     });
     expect(showFailure).toHaveBeenCalledWith({ ok: false, error: 'spawn EACCES' });
-    expect(suppressAutoInstallOnQuit).not.toHaveBeenCalled();
     expect(quit).not.toHaveBeenCalled();
   });
 });

@@ -1,8 +1,4 @@
-import {
-  contextEvidenceFloor,
-  contextMatchScore,
-  rewriteCeiling,
-} from '@palimpsest/core';
+import { contextEvidenceFloor, contextMatchScore, rewriteCeiling } from '@palimpsest/core';
 import type { Anchor } from './types.ts';
 
 const DEFAULT_CONTEXT_LEN = 32;

@@ -1,4 +1,4 @@
-const SMOKE_SERVICE = 'open-knowledge-smoke';
+const SMOKE_SERVICE = 'palimpsest-smoke';
 const SMOKE_ACCOUNT = 'test-user';
 
 export interface KeyringSmokeResult {

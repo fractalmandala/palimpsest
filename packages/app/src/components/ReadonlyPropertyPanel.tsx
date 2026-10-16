@@ -1,6 +1,6 @@
+import { Trans } from '@lingui/react/macro';
 import { readFmKeys, readFmRegionWithError } from '@palimpsest/core/bridge';
 import { type FrontmatterValue, inferType } from '@palimpsest/core/frontmatter/schema';
-import { Trans } from '@lingui/react/macro';
 import { PropertyDisclosure } from '@/components/PropertyDisclosure';
 import { PropertyDisplayRow } from '@/components/PropertyDisplayRow';
 import { ComplexValueWidget, isComplexValue, TYPE_ICON } from '@/components/PropertyWidgets';

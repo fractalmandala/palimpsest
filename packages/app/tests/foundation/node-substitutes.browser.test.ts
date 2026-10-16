@@ -40,7 +40,7 @@ describe('test-side node: imports in the browser tier', () => {
     expect(() => writeFileSync(join(FIXTURES, 'written.txt'), 'x')).toThrow(
       'node:fs.writeFileSync is not available in the browser tier: the file bridge is read-only',
     );
-    expect(() => mkdtempSync(join(tmpdir(), 'ok-'))).toThrow(
+    expect(() => mkdtempSync(join(tmpdir(), 'ps-'))).toThrow(
       'node:fs.mkdtempSync is not available in the browser tier: the file bridge is read-only',
     );
   });

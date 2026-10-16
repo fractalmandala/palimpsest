@@ -29,13 +29,13 @@ function lint(args) {
   expect(output.number_of_rules).toBeGreaterThan(0);
   return {
     status: result.status,
-    diagnostics: output.diagnostics.filter((diagnostic) => diagnostic.code === `ok(${RULE})`),
+    diagnostics: output.diagnostics.filter((diagnostic) => diagnostic.code === `ps(${RULE})`),
   };
 }
 
 describe('shared test-file predicate enforcement', () => {
   test('fires on all 15 positives and none of the adjacent negatives', () => {
-    const fires = lintPsRulesFixture(FIXTURE).filter((fire) => fire.code === `ok(${RULE})`);
+    const fires = lintPsRulesFixture(FIXTURE).filter((fire) => fire.code === `ps(${RULE})`);
     expect(fires.map((fire) => fire.position)).toEqual([
       '6:20',
       '7:21',

@@ -1,3 +1,4 @@
+import * as actualLinguiMacro from '@lingui/react/macro';
 import {
   AGENT_REGISTRY,
   type AgentId,
@@ -12,7 +13,6 @@ import {
   TERMINAL_CLIS,
   VISIBLE_HANDOFF_TARGETS,
 } from '@palimpsest/core';
-import * as actualLinguiMacro from '@lingui/react/macro';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   cleanup,
@@ -1017,9 +1017,7 @@ describe('AgentConnectionsSection — Terminal group (docked terminal present)',
       expect(row.textContent ?? '').toContain('Not installed · Palimpsest files present'),
     );
     expect(within(row).getByRole('link', { name: /^Install\b/ })).toBeTruthy();
-    expect(
-      within(row).getByRole('button', { name: 'Remove Palimpsest from Pi CLI' }),
-    ).toBeTruthy();
+    expect(within(row).getByRole('button', { name: 'Remove Palimpsest from Pi CLI' })).toBeTruthy();
   });
 
   test('an absent CLI with nothing on disk offers no cleanup and no residual hint', async () => {

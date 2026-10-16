@@ -1,7 +1,7 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import type { ConfigBinding } from '@palimpsest/core/config/bind-config-doc';
 import { humanFormat } from '@palimpsest/core/config/errors';
 import { normalizeGitHostname } from '@palimpsest/core/constants/github';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { Trash2 } from 'lucide-react';
 import { type SubmitEvent, useEffect, useId, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';

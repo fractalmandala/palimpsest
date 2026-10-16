@@ -1,4 +1,5 @@
 import { autoUpdate, computePosition, flip, offset, shift, size } from '@floating-ui/dom';
+import { t } from '@lingui/core/macro';
 import { sharedExtensions as coreExtensions } from '@palimpsest/core/extensions/shared';
 import { MarkdownManager } from '@palimpsest/core/markdown';
 import {
@@ -8,7 +9,6 @@ import {
   type LintTextEdit,
   lintDocument,
 } from '@palimpsest/core/markdown/lint';
-import { t } from '@lingui/core/macro';
 import { type Editor, Extension } from '@tiptap/core';
 import type { Node as PmNode } from '@tiptap/pm/model';
 import { Plugin, PluginKey, TextSelection } from '@tiptap/pm/state';

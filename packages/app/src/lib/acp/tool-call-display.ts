@@ -1,3 +1,4 @@
+import { plural, t } from '@lingui/core/macro';
 import {
   asRecord,
   identifyPalimpsestToolCall,
@@ -6,7 +7,6 @@ import {
   unwrapMcpInput,
 } from '@palimpsest/core/acp/tool-call-input';
 import { graphemePrefix } from '@palimpsest/core/utils/grapheme-clip';
-import { plural, t } from '@lingui/core/macro';
 
 export type ToolCallGlyph =
   | 'read'
@@ -126,26 +126,18 @@ function palimpsestDisplay(tool: string, args: Record<string, unknown>): ToolCal
     case 'write':
       return {
         glyph: 'edit',
-        text:
-          subject === null
-            ? t`Palimpsest wrote a document`
-            : t`Palimpsest wrote to ${subject}`,
+        text: subject === null ? t`Palimpsest wrote a document` : t`Palimpsest wrote to ${subject}`,
       };
     case 'edit':
       return {
         glyph: 'edit',
-        text:
-          subject === null
-            ? t`Palimpsest edited a document`
-            : t`Palimpsest edited ${subject}`,
+        text: subject === null ? t`Palimpsest edited a document` : t`Palimpsest edited ${subject}`,
       };
     case 'delete':
       return {
         glyph: 'delete',
         text:
-          subject === null
-            ? t`Palimpsest deleted a document`
-            : t`Palimpsest deleted ${subject}`,
+          subject === null ? t`Palimpsest deleted a document` : t`Palimpsest deleted ${subject}`,
       };
     case 'move': {
       const to = pathsOf(args.to)[0];
@@ -177,9 +169,7 @@ function palimpsestDisplay(tool: string, args: Record<string, unknown>): ToolCal
       return {
         glyph: 'check',
         text:
-          subject === null
-            ? t`Palimpsest checked the project`
-            : t`Palimpsest checked ${subject}`,
+          subject === null ? t`Palimpsest checked the project` : t`Palimpsest checked ${subject}`,
       };
     case 'links':
       return {
@@ -213,16 +203,13 @@ function palimpsestDisplay(tool: string, args: Record<string, unknown>): ToolCal
       return {
         glyph: 'install',
         text:
-          subject === null
-            ? t`Palimpsest installed a skill`
-            : t`Palimpsest installed ${subject}`,
+          subject === null ? t`Palimpsest installed a skill` : t`Palimpsest installed ${subject}`,
       };
     case 'import': {
       const source = inlineText(args.skill) ?? inlineText(args.source);
       return {
         glyph: 'install',
-        text:
-          source === null ? t`Palimpsest imported a skill` : t`Palimpsest imported ${source}`,
+        text: source === null ? t`Palimpsest imported a skill` : t`Palimpsest imported ${source}`,
       };
     }
     case 'palette':

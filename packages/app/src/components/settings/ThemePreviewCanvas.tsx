@@ -1,6 +1,6 @@
+import { useLingui } from '@lingui/react/macro';
 import type { Base16Scheme, Base16Slot } from '@palimpsest/core/theme/base16';
 import { base16ToTokens } from '@palimpsest/core/theme/base16';
-import { useLingui } from '@lingui/react/macro';
 import { cn } from '@/lib/utils';
 
 interface ThemePreviewCanvasProps {

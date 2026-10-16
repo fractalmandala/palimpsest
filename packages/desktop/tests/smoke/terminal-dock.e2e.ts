@@ -1346,9 +1346,7 @@ test.describe('Docked terminal — live Electron', () => {
     await expect(terminalOutput).toContainText('FAKE_CLAUDE_TUI_READY');
     await expect(banner).toHaveCount(0);
     expect(
-      JSON.parse(readFileSync(join(s.projectDir, '.mcp.json'), 'utf8')).mcpServers[
-        'palimpsest'
-      ],
+      JSON.parse(readFileSync(join(s.projectDir, '.mcp.json'), 'utf8')).mcpServers.palimpsest,
     ).toBeDefined();
     expect(existsSync(join(s.projectDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
       true,
@@ -1434,9 +1432,7 @@ test.describe('Docked terminal — live Electron', () => {
       true,
     );
     expect(
-      JSON.parse(readFileSync(join(s.projectDir, '.mcp.json'), 'utf8')).mcpServers[
-        'palimpsest'
-      ],
+      JSON.parse(readFileSync(join(s.projectDir, '.mcp.json'), 'utf8')).mcpServers.palimpsest,
     ).toBeDefined();
   });
 

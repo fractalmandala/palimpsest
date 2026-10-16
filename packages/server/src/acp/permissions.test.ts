@@ -103,7 +103,7 @@ describe('AcpPermissionStore', () => {
     }
   });
 
-  test('the five gated OK tools still ask, and the user setting turns the rest off', () => {
+  test('the five gated Palimpsest tools still ask, and the user setting turns the rest off', () => {
     const store = new AcpPermissionStore(tmp(), log);
     for (const tool of ['delete', 'move', 'share_link', 'install', 'import']) {
       const call = {
@@ -152,12 +152,7 @@ describe('AcpPermissionStore', () => {
   test("every channel's own server name and Pi bridge prefix keep gated tools gated and the rest auto-approved", async () => {
     const always = OPTIONS.find((o) => o.kind === 'allow_always');
     if (always === undefined) throw new Error('fixture');
-    for (const prefix of [
-      'mcp__open-knowledge__',
-      'mcp__palimpsest-beta__',
-      'ok_',
-      'ps-beta_',
-    ]) {
+    for (const prefix of ['mcp__open-knowledge__', 'mcp__palimpsest-beta__', 'ok_', 'ps-beta_']) {
       const store = new AcpPermissionStore(tmp(), log);
       await store.recordChoice('claude', toolCall('other'), always, NOT_A_BROWSER_CALL);
       for (const tool of ['delete', 'move', 'share_link', 'install', 'import']) {

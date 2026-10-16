@@ -77,8 +77,8 @@ function FullSyncBullets() {
         title={<Trans>Commits happen automatically</Trans>}
         body={
           <Trans>
-            Palimpsest will create commits and push them to your remote automatically. If you do
-            not want automatic commits in your git history, you should not enable auto-sync.
+            Palimpsest will create commits and push them to your remote automatically. If you do not
+            want automatic commits in your git history, you should not enable auto-sync.
           </Trans>
         }
       />

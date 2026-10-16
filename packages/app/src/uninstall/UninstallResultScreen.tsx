@@ -1,5 +1,5 @@
-import type { UninstallNoticeScreen as UninstallNoticeSpec } from '@palimpsest/core/uninstall-bridge';
 import { useLingui } from '@lingui/react/macro';
+import type { UninstallNoticeScreen as UninstallNoticeSpec } from '@palimpsest/core/uninstall-bridge';
 import { UninstallNoticeScreen } from './UninstallNoticeScreen';
 
 export function UninstallResultScreen({

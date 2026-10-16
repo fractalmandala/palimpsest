@@ -4,6 +4,8 @@ import { realpathSync, statSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { PS_PROJECT_MARKER, resolveIsHostedAgent } from '@palimpsest/core';
 import { type KeepaliveHandle, startKeepalive } from '@palimpsest/core/keepalive';
 import {
@@ -20,8 +22,6 @@ import {
   sanitizeClientName,
   withHiddenWindowsConsole,
 } from '@palimpsest/server';
-import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { createProjectConfigResolver } from '../config/loader.ts';
 import {
   type BundleIdentityWatcherHandle,

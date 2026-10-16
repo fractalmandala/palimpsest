@@ -153,7 +153,7 @@ export function deriveServerProcessTitle(cwd: string): string {
     .trim()
     .slice(0, PROCESS_TITLE_PROJECT_NAME_MAX);
   const projectName = sanitized.length > 0 ? sanitized : 'unknown';
-  return `open-knowledge-server ${projectName}`;
+  return `palimpsest-server ${projectName}`;
 }
 
 export class PsDirMissingError extends Error {

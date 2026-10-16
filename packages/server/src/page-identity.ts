@@ -1,8 +1,4 @@
-import {
-  stripFrontmatter,
-  toWikiLinkSlug,
-  unwrapFrontmatterFences,
-} from '@palimpsest/core';
+import { stripFrontmatter, toWikiLinkSlug, unwrapFrontmatterFences } from '@palimpsest/core';
 
 export interface PageIdentity {
   docName: string;

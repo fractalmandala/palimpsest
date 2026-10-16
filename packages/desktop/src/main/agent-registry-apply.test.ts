@@ -679,7 +679,7 @@ describe('applyIntents on the desktop host', () => {
         join(fixture.projectDir, '.mcp.json'),
         JSON.stringify({
           mcpServers: {
-            'palimpsest': {
+            palimpsest: {
               command: '/bin/sh',
               args: ['-l', '-c', '# ps-mcp-v1\nexit 127'],
             },

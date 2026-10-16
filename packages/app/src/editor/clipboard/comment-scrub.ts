@@ -1,7 +1,7 @@
 import type { Mark, MarkType, Node, NodeType, Schema, Slice } from '@tiptap/pm/model';
 import { Fragment, Slice as SliceCtor } from '@tiptap/pm/model';
 
-export const PS_INTERNAL_CLIPBOARD_MIME = 'application/x-openknowledge-markdown';
+export const PS_INTERNAL_CLIPBOARD_MIME = 'application/x-palimpsest-markdown';
 
 const OMIT_ATTR = 'data-clipboard-omit';
 

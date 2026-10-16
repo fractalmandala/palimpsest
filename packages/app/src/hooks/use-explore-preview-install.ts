@@ -1,7 +1,7 @@
+import { useLingui } from '@lingui/react/macro';
 import { AGENTS_SKILLS_ROOT } from '@palimpsest/core/constants/skills';
 import type { SkillScope } from '@palimpsest/core/schemas/api';
 import { isSkillInstallTarget } from '@palimpsest/core/skill-targets/schema';
-import { useLingui } from '@lingui/react/macro';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { INSTALL_EDITORS, type SkillHostToggles } from '@/components/SkillInstallMenu';

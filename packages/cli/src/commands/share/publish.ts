@@ -1,6 +1,7 @@
 import { execSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { Octokit } from '@octokit/rest';
 import {
   FilesystemRootProjectError,
   HomeProjectRootError,
@@ -9,7 +10,6 @@ import {
   isHomeDir,
   withHiddenWindowsConsole,
 } from '@palimpsest/server';
-import { Octokit } from '@octokit/rest';
 import { Command } from 'commander';
 import simpleGit, { type SimpleGit } from 'simple-git';
 import { buildHttpsHostCliCredentialConfig, type ResolvedAuth } from '../../auth/resolve-auth.ts';

@@ -1,9 +1,9 @@
+import { t } from '@lingui/core/macro';
 import {
   type FolderConfigWarningCode,
   type TemplatesListSuccess,
   TemplatesListSuccessSchema,
 } from '@palimpsest/core/schemas/api';
-import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { subscribeToTemplatesChanged } from '@/lib/documents-events';
 import { parseApiError } from '@/lib/parse-api-error';

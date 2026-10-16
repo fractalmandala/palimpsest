@@ -385,7 +385,9 @@ describe('state-store (gitRemoteUrl field on RecentProject)', () => {
       'https://github.com/fractalmandala/palimpsest.git',
     );
     s = addRecentProject(s, '/tmp/p1', 'p1');
-    expect(s.recentProjects[0]?.gitRemoteUrl).toBe('https://github.com/fractalmandala/palimpsest.git');
+    expect(s.recentProjects[0]?.gitRemoteUrl).toBe(
+      'https://github.com/fractalmandala/palimpsest.git',
+    );
   });
 
   test('addRecentProject updates gitRemoteUrl when a fresh value is supplied', () => {

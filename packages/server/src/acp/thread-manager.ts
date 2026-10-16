@@ -1802,7 +1802,7 @@ export class AcpThreadManager {
     if (hostedMarker === 'none') {
       this.opts.log.warn(
         { threadId: record.info.threadId, agentId: record.agentRef.id },
-        '[acp-threads] no OK MCP transport available for this agent — it starts without OK tools',
+        '[acp-threads] no OK MCP transport available for this agent — it starts without Palimpsest tools',
       );
     } else {
       this.opts.log.info(
@@ -1996,7 +1996,7 @@ export class AcpThreadManager {
     if (probe === undefined) {
       this.opts.log.debug(
         { threadId, agentId: record.agentRef.id },
-        '[acp-threads] no Pi bridge probe wired — OK tools depend on whether the project was already wired',
+        '[acp-threads] no Pi bridge probe wired — Palimpsest tools depend on whether the project was already wired',
       );
       return 'unknown';
     }
@@ -2011,7 +2011,7 @@ export class AcpThreadManager {
     if (state.project === 'unavailable') {
       this.opts.log.warn(
         { threadId, cwd: state.cwd, err: new Error(state.error) },
-        '[acp-threads] Pi project folder is unavailable; this thread has no OK tools',
+        '[acp-threads] Pi project folder is unavailable; this thread has no Palimpsest tools',
       );
       this.emitPiBridgeStatus(record, {
         kind: 'pi_bridge_status',
@@ -2032,7 +2032,7 @@ export class AcpThreadManager {
     if (state.bridge === 'foreign' || state.bridge === 'unreadable') {
       this.opts.log.warn(
         { threadId, bridge: state.bridge, bridgePath: state.bridgePath },
-        "[acp-threads] OK can't claim the Pi bridge path — leaving it alone; this thread has no OK tools",
+        "[acp-threads] OK can't claim the Pi bridge path — leaving it alone; this thread has no Palimpsest tools",
       );
       this.emitPiBridgeStatus(record, {
         kind: 'pi_bridge_status',
@@ -2065,7 +2065,7 @@ export class AcpThreadManager {
     if (decision !== 'granted') {
       this.opts.log.info(
         { threadId, decision },
-        '[acp-threads] Pi bridge not provisioned — the thread continues without OK tools',
+        '[acp-threads] Pi bridge not provisioned — the thread continues without Palimpsest tools',
       );
       return 'unavailable';
     }
@@ -2118,7 +2118,7 @@ export class AcpThreadManager {
         bridgePath: result.bridgePath,
         err: result.error,
       },
-      '[acp-threads] Pi bridge provisioning did not complete — the thread continues without OK tools',
+      '[acp-threads] Pi bridge provisioning did not complete — the thread continues without Palimpsest tools',
     );
     this.appendPiBridgeFailure(record, ticket, requestId, state2, result.bridgePath, {
       bridge: result.bridge,

@@ -169,8 +169,8 @@ export async function GET(
         artifact_type: type,
         os: OS_BY_ARTIFACT[type],
         arch: archOf(filename),
-        to_version: version ?? resolvedTagVersion ?? headerVersion(request, 'x-ok-to-version'),
-        from_version: headerVersion(request, 'x-ok-from-version'),
+        to_version: version ?? resolvedTagVersion ?? headerVersion(request, 'x-ps-to-version'),
+        from_version: headerVersion(request, 'x-ps-from-version'),
         ...userAgentProperties(request),
       },
     });

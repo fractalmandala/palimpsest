@@ -1,11 +1,6 @@
 import { mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
-import {
-  BASE16_SLOTS,
-  REMOVED_KEYS,
-  resolveThemePlugin,
-  type WriteScope,
-} from '@palimpsest/core';
+import { BASE16_SLOTS, REMOVED_KEYS, resolveThemePlugin, type WriteScope } from '@palimpsest/core';
 import { readConfigSafely, resolveConfigPath } from '@palimpsest/core/server';
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest';
 import { stringify } from 'yaml';

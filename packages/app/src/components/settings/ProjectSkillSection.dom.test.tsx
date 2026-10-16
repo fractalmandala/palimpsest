@@ -1,5 +1,5 @@
-import type { SkillsListEntry } from '@palimpsest/core';
 import * as actualLinguiMacro from '@lingui/react/macro';
+import type { SkillsListEntry } from '@palimpsest/core';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
@@ -90,9 +90,7 @@ describe('ProjectSkillSection', () => {
     await userEvent.click(screen.getByTestId('skill-consent-row-preview'));
 
     expect(window.location.hash.startsWith('#/__skill-preview__/')).toBe(true);
-    expect(decodeURIComponent(window.location.hash)).toContain(
-      '/proj/.claude/skills/palimpsest',
-    );
+    expect(decodeURIComponent(window.location.hash)).toContain('/proj/.claude/skills/palimpsest');
     expect(decodeURIComponent(window.location.hash)).not.toContain('SKILL.md');
     expect(decodeURIComponent(window.location.hash)).toMatch(/\/project$/);
   });

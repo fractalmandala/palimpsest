@@ -1,5 +1,5 @@
-import type { ThreadInfo } from '@palimpsest/core/acp/thread-protocol';
 import * as actualLinguiMacro from '@lingui/react/macro';
+import type { ThreadInfo } from '@palimpsest/core/acp/thread-protocol';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { useEffect, useState, useSyncExternalStore } from 'react';

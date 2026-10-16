@@ -77,7 +77,7 @@ describe('local-op group over the composed listener — served natively', () => 
   test('the family is registered natively (GET → 405 + Allow: POST, x-request-id echoed)', async () => {
     for (const path of [
       '/api/local-op/clone',
-      '/api/local-op/ok-init',
+      '/api/local-op/ps-init',
       '/api/local-op/auth/login',
       '/api/local-op/auth/status',
       '/api/local-op/embeddings/test',
@@ -115,7 +115,7 @@ describe('local-op group over the composed listener — served natively', () => 
   });
 
   test('a POST reaches the real handler (ps-init gates on absolute-path discipline, then git-worktree shape)', async () => {
-    const relative = await fetch(`http://127.0.0.1:${server.port}/api/local-op/ok-init`, {
+    const relative = await fetch(`http://127.0.0.1:${server.port}/api/local-op/ps-init`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ projectPath: 'not/absolute' }),
@@ -126,7 +126,7 @@ describe('local-op group over the composed listener — served natively', () => 
     );
 
     const nonGit = mkdtempSync(join(homeScratch, 'non-git-'));
-    const res = await fetch(`http://127.0.0.1:${server.port}/api/local-op/ok-init`, {
+    const res = await fetch(`http://127.0.0.1:${server.port}/api/local-op/ps-init`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ projectPath: nonGit }),

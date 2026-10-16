@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import {
   isSyncMode,
   modeFromCommittedDefault,
@@ -6,7 +7,6 @@ import {
   SYNC_INTERVAL_PRESET_SECONDS,
   type SyncMode,
 } from '@palimpsest/core/config/auto-sync-mode';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { ArrowUpRight, ChevronRight } from 'lucide-react';
 import { type RefObject, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -132,9 +132,8 @@ function SyncSectionContent({
             <p className="text-sm text-muted-foreground">
               {fetchError === 'network' ? (
                 <Trans>
-                  Couldn't reach the Palimpsest server, so sync options are hidden. They appear
-                  here as soon as the sync status loads; closing and reopening Settings also
-                  retries.
+                  Couldn't reach the Palimpsest server, so sync options are hidden. They appear here
+                  as soon as the sync status loads; closing and reopening Settings also retries.
                 </Trans>
               ) : (
                 <Trans>

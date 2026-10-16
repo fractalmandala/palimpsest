@@ -3,7 +3,6 @@ import { buildAboutInfo } from './about-info.ts';
 import {
   type AppState,
   emptyState,
-  resolveUpdateMode,
   type SchemaIncompatibilityDiagnostic,
   type UpdateChannel,
 } from './state-store.ts';
@@ -17,7 +16,6 @@ export interface UpdateStateHandlerDeps {
   clearPendingSchemaIncompatibility: () => void;
   getAppVersion: () => string;
   variant: { readonly name: string; readonly productName: string };
-  isUpdaterRunning: () => boolean;
 }
 
 export async function applyResetIncompatible(deps: UpdateStateHandlerDeps): Promise<undefined> {
@@ -42,8 +40,6 @@ export async function applyStateQuery(
     about: buildAboutInfo({
       version: deps.getAppVersion(),
       variant: deps.variant,
-      updateChecksAvailable: deps.isUpdaterRunning(),
     }),
-    updateMode: resolveUpdateMode(deps.getAppState().updateMode).mode,
   };
 }

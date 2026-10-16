@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
-const RELEASES_API_URL = 'https://api.github.com/repos/fractalmandala/palimpsest/releases?per_page=100';
+const RELEASES_API_URL =
+  'https://api.github.com/repos/fractalmandala/palimpsest/releases?per_page=100';
 
 export const DMG_ASSET_NAME = 'Palimpsest-arm64.dmg';
 export const BETA_DMG_ASSET_NAME = 'Palimpsest-Beta-arm64.dmg';

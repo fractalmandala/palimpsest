@@ -1,9 +1,6 @@
-import { toWikiLinkSlug } from '@palimpsest/core/utils/slug';
-import {
-  asTargetNamespace,
-  createTargetNamespace,
-} from '@palimpsest/core/utils/target-namespace';
 import { t } from '@lingui/core/macro';
+import { toWikiLinkSlug } from '@palimpsest/core/utils/slug';
+import { asTargetNamespace, createTargetNamespace } from '@palimpsest/core/utils/target-namespace';
 import { createContext, type ReactNode, use, useEffect, useRef, useState } from 'react';
 import {
   buildPageIconsIndex,

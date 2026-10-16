@@ -1,6 +1,6 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import { RAGE_STREAK_TO_REVEAL } from '@/components/ok-blob-runner-logic';
+import { RAGE_STREAK_TO_REVEAL } from '@/components/ps-blob-runner-logic';
 import {
   expectVisualClassTokens,
   expectVisualClassTokensAbsent,

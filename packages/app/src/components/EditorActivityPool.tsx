@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import {
   isManagedArtifactDocName,
   parseTemplateContentDocName,
@@ -9,7 +10,6 @@ import {
   isMermaidDocFile,
 } from '@palimpsest/core/constants/upload';
 import { randomUUID } from '@palimpsest/core/utils/random-uuid';
-import { t } from '@lingui/core/macro';
 import { RefreshCw } from 'lucide-react';
 import {
   Activity,

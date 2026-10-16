@@ -88,12 +88,7 @@ function Wordmark() {
   return (
     <div style={{ display: 'flex', alignItems: 'center' }}>
       {/* biome-ignore lint: satori renders a raster; next/image is browser-only and requires explicit dimensions here. */}
-      <img
-        src={wordmarkDataUrl}
-        width={WORDMARK_WIDTH}
-        height={WORDMARK_HEIGHT}
-        alt="Palimpsest"
-      />
+      <img src={wordmarkDataUrl} width={WORDMARK_WIDTH} height={WORDMARK_HEIGHT} alt="Palimpsest" />
     </div>
   );
 }

@@ -149,6 +149,22 @@ export {
 } from './frontmatter-validate.ts';
 export { fixMarkdownText, runMarkdownlint } from './markdownlint-runner.ts';
 export {
+  type LintPluginFailure,
+  type LintPluginFailureReporter,
+  summarizeLintPluginFailures,
+} from './plugin-failure.ts';
+export {
+  DEFAULT_LINTER_CONFIG,
+  type GoverningFrontmatterSchema,
+  LINT_PLUGINS,
+  type LinterConfig,
+  type LintPlugin,
+  type LintPluginId,
+  selectAdvertisedFrontmatterMappings,
+  selectFrontmatterOnlyConfig,
+  selectGoverningFrontmatterSchemas,
+} from './plugins.ts';
+export {
   PSF_SCHEMA_DIR,
   type PsfSchemaFile,
   psfSchemaPathFor,
@@ -175,22 +191,6 @@ export {
   type PsfRuleId,
   type PsfRuleToggles,
 } from './psf-rule-meta.ts';
-export {
-  type LintPluginFailure,
-  type LintPluginFailureReporter,
-  summarizeLintPluginFailures,
-} from './plugin-failure.ts';
-export {
-  DEFAULT_LINTER_CONFIG,
-  type GoverningFrontmatterSchema,
-  LINT_PLUGINS,
-  type LinterConfig,
-  type LintPlugin,
-  type LintPluginId,
-  selectAdvertisedFrontmatterMappings,
-  selectFrontmatterOnlyConfig,
-  selectGoverningFrontmatterSchemas,
-} from './plugins.ts';
 export { canonicalRuleId, findRuleConfigEntry } from './rule-aliases.ts';
 export { MARKDOWNLINT_RULE_CATALOG } from './rule-catalog.generated.ts';
 export {

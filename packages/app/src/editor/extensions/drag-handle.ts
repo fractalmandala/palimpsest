@@ -1,6 +1,6 @@
 import { offset } from '@floating-ui/dom';
-import { incrementBlockGripClickSelectFailed } from '@palimpsest/core/metrics/parse-health';
 import { t } from '@lingui/core/macro';
+import { incrementBlockGripClickSelectFailed } from '@palimpsest/core/metrics/parse-health';
 import { type Editor, Extension } from '@tiptap/core';
 import { DragHandlePlugin, normalizeNestedOptions } from '@tiptap/extension-drag-handle';
 import type { Node as PmNode } from '@tiptap/pm/model';

@@ -116,11 +116,6 @@ function isSecFetchSite(value: string): value is SecFetchSite {
 
 export type UaClass = 'browser' | 'bot' | 'cli' | 'electron' | 'none' | 'other';
 
-// FORK: no first-party docs/site domain exists for Palimpsest yet, so there is
-// no own-site hostname to recognize. Every referrer is treated as external
-// (hostname only, no path). When the docs site is deployed, restore this to
-// compare against that host (and its subdomains) and re-enable the own-site
-// referrer_path behavior below.
 function isOwnSiteHostname(_hostname: string): boolean {
   return false;
 }

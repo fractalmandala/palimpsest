@@ -1,5 +1,5 @@
-import { posixPsManagedBinDir } from './ps-dir.ts';
 import { DESKTOP_PRODUCTS, type DesktopProductName } from './product.ts';
+import { posixPsManagedBinDir } from './ps-dir.ts';
 
 function posixHome(home: string): string {
   return home.replace(/\/+/g, '/').replace(/\/+$/, '');
@@ -25,5 +25,5 @@ export function pathShimBlockLabel(channel: DesktopProductName): string {
 }
 
 export function pathShimFishConfFileName(channel: DesktopProductName): string {
-  return channel === 'stable' ? 'palimpsest.fish' : `open-knowledge-${channel}.fish`;
+  return channel === 'stable' ? 'palimpsest.fish' : `palimpsest-${channel}.fish`;
 }

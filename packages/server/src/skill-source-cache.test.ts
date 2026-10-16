@@ -2,11 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import {
-  discoverSkillDirs,
-  parseSkillDir,
-  type SourceSpec,
-} from '@palimpsest/core/skills-catalog';
+import { discoverSkillDirs, parseSkillDir, type SourceSpec } from '@palimpsest/core/skills-catalog';
 import { afterEach, describe, expect, test, vi } from 'vitest';
 import { configureTestGitRepository } from '../../../test-support/configure-git-fixture.test-helper.ts';
 import { clearSourceCache, fetchCachedSource } from './skill-source-cache.ts';

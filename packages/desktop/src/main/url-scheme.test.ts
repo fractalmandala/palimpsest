@@ -28,7 +28,9 @@ describe('frozen pre-v2 reader compatibility oracle', () => {
       });
       expect(
         frozenV1DecodeShareToken(
-          new URL(`https://github.com/fractalmandala/palimpsest/d/${entry.token}`).pathname.slice(3),
+          new URL(`https://github.com/fractalmandala/palimpsest/d/${entry.token}`).pathname.slice(
+            3,
+          ),
         ),
       ).toEqual({ kind: 'unsupported-version', version: 2 });
     },
@@ -100,9 +102,7 @@ describe('parsePalimpsestUrl — valid inputs', () => {
 
   test('accepts unicode in nested doc-name', () => {
     expect(
-      parsePalimpsestUrl(
-        'palimpsest://open?project=/abs&doc=notes%2F%E6%97%A5%E6%9C%AC%E8%AA%9E',
-      ),
+      parsePalimpsestUrl('palimpsest://open?project=/abs&doc=notes%2F%E6%97%A5%E6%9C%AC%E8%AA%9E'),
     ).toMatchObject({ doc: 'notes/日本語' });
   });
 });
@@ -170,9 +170,7 @@ describe('parsePalimpsestUrl — null-byte defense', () => {
     expect(
       parsePalimpsestUrl(`palimpsest://open?project=${project}${splitNulEscape}&doc=x.md`),
     ).toBeNull();
-    expect(
-      parsePalimpsestFileUrl(`palimpsest://open?file=${file}${splitNulEscape}.md`),
-    ).toBeNull();
+    expect(parsePalimpsestFileUrl(`palimpsest://open?file=${file}${splitNulEscape}.md`)).toBeNull();
   });
 
   test('rejects literal null byte in raw input', () => {
@@ -188,9 +186,7 @@ describe('parsePalimpsestUrl — null-byte defense', () => {
   });
 
   test('rejects encoded NUL inside an otherwise absolute project', () => {
-    expect(
-      parsePalimpsestUrl('palimpsest://open?project=/abs/safe%00/proj&doc=x.md'),
-    ).toBeNull();
+    expect(parsePalimpsestUrl('palimpsest://open?project=/abs/safe%00/proj&doc=x.md')).toBeNull();
   });
 
   test('rejects encoded NUL in folder', () => {
@@ -202,7 +198,7 @@ describe.each(['doc', 'folder'] as const)('single-encoded %s links', (kind) => {
   test.each(['100% complete', 'literal%20name', 'literal%00name', '日本語 café'])(
     'preserves project and target names containing %s',
     (name) => {
-      const project = resolve(tmpdir(), 'open-knowledge-links', name);
+      const project = resolve(tmpdir(), 'palimpsest-links', name);
       const target = `notes/${name}`;
       const url = `palimpsest://open?project=${encodeURIComponent(project)}&${kind}=${encodeURIComponent(target)}`;
       expect(parsePalimpsestUrl(url)).toEqual({ host: 'open', project, kind, doc: target });
@@ -212,15 +208,11 @@ describe.each(['doc', 'folder'] as const)('single-encoded %s links', (kind) => {
 
 describe('parsePalimpsestUrl — path-traversal defense', () => {
   test('rejects literal ../ in project', () => {
-    expect(
-      parsePalimpsestUrl('palimpsest://open?project=/abs/../etc/passwd&doc=x.md'),
-    ).toBeNull();
+    expect(parsePalimpsestUrl('palimpsest://open?project=/abs/../etc/passwd&doc=x.md')).toBeNull();
   });
 
   test('rejects ../../ in project', () => {
-    expect(
-      parsePalimpsestUrl('palimpsest://open?project=../../etc/passwd&doc=x.md'),
-    ).toBeNull();
+    expect(parsePalimpsestUrl('palimpsest://open?project=../../etc/passwd&doc=x.md')).toBeNull();
   });
 
   test('rejects URL-encoded %2e%2e path traversal', () => {
@@ -262,9 +254,7 @@ describe('parsePalimpsestUrl — path-traversal defense', () => {
   });
 
   test('rejects URL-encoded ../ prefix in doc', () => {
-    expect(
-      parsePalimpsestUrl('palimpsest://open?project=/abs&doc=%2e%2e%2ffoo.md'),
-    ).toBeNull();
+    expect(parsePalimpsestUrl('palimpsest://open?project=/abs&doc=%2e%2e%2ffoo.md')).toBeNull();
   });
 });
 
@@ -300,7 +290,9 @@ describe('parseShareUrl — universal-link happy path', () => {
   test.each(fixture.validShares.filter((entry) => entry.version === 2))(
     'projects canonical $id to its content-relative target',
     (entry) => {
-      expect(parseShareUrl(`https://github.com/fractalmandala/palimpsest/d/${entry.token}`)).toMatchObject({
+      expect(
+        parseShareUrl(`https://github.com/fractalmandala/palimpsest/d/${entry.token}`),
+      ).toMatchObject({
         kind: 'ok',
         source: 'universal-link',
         payload: {
@@ -312,7 +304,9 @@ describe('parseShareUrl — universal-link happy path', () => {
   );
 
   test.each(fixture.legacyAliases)('preserves tolerated v1 alias $id', (entry) => {
-    expect(parseShareUrl(`https://github.com/fractalmandala/palimpsest/d/${entry.token}`)).toMatchObject({
+    expect(
+      parseShareUrl(`https://github.com/fractalmandala/palimpsest/d/${entry.token}`),
+    ).toMatchObject({
       kind: 'ok',
       payload: { sharedUrl: entry.sharedUrl },
     });
@@ -328,7 +322,7 @@ describe('parseShareUrl — universal-link happy path', () => {
       payload: {
         contentRootDepth: null,
         host: 'github.com',
-        owner: 'inkeep',
+        owner: 'example',
         repo: 'playbooks',
         branch: 'main',
         repositoryTarget: { kind: 'doc', docPath: 'marketing.md' },
@@ -377,7 +371,9 @@ describe('parseShareUrl — universal-link extensibility (D30 Axis 1+2)', () => 
 
   test('tolerates a URL fragment', () => {
     const encoded = encodeShareUrl('https://github.com/o/r/blob/main/x.md');
-    const result = parseShareUrl(`https://github.com/fractalmandala/palimpsest/d/${encoded}#section-2`);
+    const result = parseShareUrl(
+      `https://github.com/fractalmandala/palimpsest/d/${encoded}#section-2`,
+    );
     expect(result?.kind).toBe('ok');
   });
 
@@ -432,7 +428,7 @@ describe('parseShareUrl — universal-link error states', () => {
       source: 'universal-link',
       payload: {
         host: 'github.com',
-        owner: 'inkeep',
+        owner: 'example',
         repo: 'playbooks',
         branch: 'main',
         target: { kind: 'folder', folderPath: 'docs' },
@@ -468,7 +464,7 @@ describe('parseShareUrl — custom-scheme happy path', () => {
       payload: {
         contentRootDepth: null,
         host: 'github.com',
-        owner: 'inkeep',
+        owner: 'example',
         repo: 'playbooks',
         branch: 'main',
         repositoryTarget: { kind: 'doc', docPath: 'marketing.md' },
@@ -586,7 +582,9 @@ describe('parseShareUrl — not-a-share-url (returns null, caller falls through)
   });
 
   test('returns null for palimpsest.ai URL not under /d/', () => {
-    expect(parseShareUrl('https://github.com/fractalmandala/palimpsest/tree/main/docs/content')).toBeNull();
+    expect(
+      parseShareUrl('https://github.com/fractalmandala/palimpsest/tree/main/docs/content'),
+    ).toBeNull();
     expect(parseShareUrl('https://github.com/fractalmandala/palimpsest/')).toBeNull();
     expect(parseShareUrl('https://github.com/fractalmandala/palimpsest')).toBeNull();
   });
@@ -612,7 +610,9 @@ describe('parseShareUrl — not-a-share-url (returns null, caller falls through)
     });
 
     expect(parseShareUrl('https://example.com:bad/d/secret-token')).toBeNull();
-    expect(parseShareUrl('https://github.com/fractalmandala/palimpsest@evil.example:bad/d/secret-token')).toBeNull();
+    expect(
+      parseShareUrl('https://github.com/fractalmandala/palimpsest@evil.example:bad/d/secret-token'),
+    ).toBeNull();
     expect(parseShareUrl('palimpsest://shareholder:bad?token=secret-token')).toBeNull();
   });
 

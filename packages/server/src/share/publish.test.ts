@@ -31,7 +31,7 @@ describe('isValidShareRepoName', () => {
 describe('isValidShareOwnerName', () => {
   test('accepts allowed shapes', () => {
     expect(isValidShareOwnerName('alice')).toBe(true);
-    expect(isValidShareOwnerName('inkeep')).toBe(true);
+    expect(isValidShareOwnerName('example')).toBe(true);
     expect(isValidShareOwnerName('a-b-c')).toBe(true);
     expect(isValidShareOwnerName('a'.repeat(39))).toBe(true);
   });
@@ -71,14 +71,14 @@ describe('parseOwnersEvent', () => {
       type: 'owners',
       owners: [
         { login: 'alice', kind: 'user', avatarUrl: 'a' },
-        { login: 'inkeep', kind: 'org' },
+        { login: 'example', kind: 'org' },
       ],
     });
     expect(result).toEqual({
       ok: true,
       owners: [
         { login: 'alice', kind: 'user', avatarUrl: 'a' },
-        { login: 'inkeep', kind: 'org' },
+        { login: 'example', kind: 'org' },
       ],
     });
   });
@@ -88,7 +88,7 @@ describe('parseOwnersEvent', () => {
       owners: [
         { login: 'alice', kind: 'user' },
         { kind: 'org' },
-        { login: 'inkeep', kind: 'invalid' },
+        { login: 'example', kind: 'invalid' },
       ],
     });
     expect(result).toEqual({ ok: true, owners: [{ login: 'alice', kind: 'user' }] });

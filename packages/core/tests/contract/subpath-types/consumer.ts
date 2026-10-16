@@ -200,7 +200,6 @@ export type {
   SERVER_UNREACHABLE_ERROR_PREFIX,
 } from '@palimpsest/core/constants/mcp';
 export type {
-  PALIMPSEST_DISCORD_URL,
   PALIMPSEST_DOCS_URL,
   PALIMPSEST_GITHUB_URL,
 } from '@palimpsest/core/constants/menu-labels';
@@ -217,8 +216,8 @@ export type {
 export type {
   AGENTS_SKILLS_ROOT,
   isSkillRefCandidate,
-  PALIMPSEST_SKILLS_REPO,
   PACK_SKILL_PREFIX,
+  PALIMPSEST_SKILLS_REPO,
   SKILL_REF_RE,
 } from '@palimpsest/core/constants/skills';
 export type {
@@ -343,9 +342,9 @@ export type {
   HandoffScope,
   HandoffTarget,
   InstallState,
+  PromptTransport,
   PS_TERMINAL_SURFACE_PREAMBLE,
   PS_THREAD_SURFACE_PREAMBLE,
-  PromptTransport,
   quoteWindowsShellPath,
   shellSingleQuote,
   startupInjectionFor,
@@ -443,11 +442,11 @@ export type {
   MarkdownlintRuleSetting,
   MarkdownlintRuleSeverity,
   MarkdownlintRuleWriteValue,
+  PersistedLinterConfig,
   PSF_RULE_GROUPS,
   PSF_RULE_IDS,
   PsfRuleGroupId,
   PsfRuleId,
-  PersistedLinterConfig,
   RULE_DISPLAY_CATEGORIES,
   RuleCatalogEntry,
   RuleDisplayCategory,

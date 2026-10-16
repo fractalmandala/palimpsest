@@ -1,5 +1,5 @@
-import type { RuleOptionSpec } from '@palimpsest/core/markdown/lint';
 import { Trans } from '@lingui/react/macro';
+import type { RuleOptionSpec } from '@palimpsest/core/markdown/lint';
 import { type ComponentType, type ReactNode, useEffect, useRef, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { FieldDescription } from '@/components/ui/field';

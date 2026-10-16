@@ -1,5 +1,5 @@
-import { MARKDOWNLINT_RULE_CATALOG } from '@palimpsest/core/markdown/lint';
 import type { MessageDescriptor } from '@lingui/core';
+import { MARKDOWNLINT_RULE_CATALOG } from '@palimpsest/core/markdown/lint';
 import { INDEXED_FIELD_GROUPS } from './settings-fields';
 import type { SidebarGroup } from './settings-sidebar-types';
 

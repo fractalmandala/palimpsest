@@ -13,8 +13,7 @@ import { dirname, join, resolve } from 'node:path';
 import type { ProcessTerminationLookup, ProcessTerminationQuery } from '@palimpsest/cli';
 import type { PsBugReportCrashDetectedEvent } from '@palimpsest/core';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import { installWasInFlightDuring } from './auto-updater.ts';
-import {
+import { installWasInFlightDuring } from './crash-detection.ts';import {
   type CrashDetectionDeps,
   createCrashDetection,
   GPU_CRASH_INVITE_THRESHOLD,

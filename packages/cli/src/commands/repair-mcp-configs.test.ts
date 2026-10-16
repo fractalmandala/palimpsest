@@ -55,13 +55,13 @@ describe('repairMcpConfigs', () => {
 
   function writeClaude(entry: Record<string, unknown>): string {
     const path = resolveClaudeCodeConfigPath({ home: fakeHome });
-    writeFileSync(path, JSON.stringify({ mcpServers: { 'palimpsest': entry } }, null, 2));
+    writeFileSync(path, JSON.stringify({ mcpServers: { palimpsest: entry } }, null, 2));
     return path;
   }
 
   function writeProjectClaude(entry: Record<string, unknown>): string {
     const path = join(projectDir, '.mcp.json');
-    writeFileSync(path, JSON.stringify({ mcpServers: { 'palimpsest': entry } }, null, 2));
+    writeFileSync(path, JSON.stringify({ mcpServers: { palimpsest: entry } }, null, 2));
     return path;
   }
 
@@ -79,7 +79,7 @@ describe('repairMcpConfigs', () => {
       expect(result.repairedCount).toBe(1);
       expect(result.outcomes.find((o) => o.editorId === 'claude')?.outcome).toBe('repaired');
       const written = JSON.parse(readFileSync(configPath, 'utf-8'));
-      expect(written.mcpServers['palimpsest']).toEqual(CHAIN_ENTRY);
+      expect(written.mcpServers.palimpsest).toEqual(CHAIN_ENTRY);
       expect(logEvents).toContainEqual({
         event: 'mcp-config-migrate',
         severity: 'info',
@@ -147,7 +147,7 @@ describe('repairMcpConfigs', () => {
 
     expect(result.outcomes.find((o) => o.editorId === 'claude')?.outcome).toBe('repaired');
     const after = JSON.parse(readFileSync(configPath, 'utf-8'));
-    expect(after.mcpServers['palimpsest']).toEqual({
+    expect(after.mcpServers.palimpsest).toEqual({
       command: '/bin/sh',
       args: ['-l', '-c', '# ps-mcp-v99\nfuture launcher body'],
       cwd: '/srv/notes',
@@ -230,7 +230,7 @@ describe('repairMcpConfigs', () => {
 
     expect(result.repairedCount).toBe(1);
     const written = JSON.parse(readFileSync(configPath, 'utf-8'));
-    expect(written.mcpServers['palimpsest']).toEqual(CHAIN_ENTRY);
+    expect(written.mcpServers.palimpsest).toEqual(CHAIN_ENTRY);
   });
 
   it('leaves configs without an palimpsest entry untouched', () => {
@@ -289,7 +289,7 @@ describe('repairMcpConfigs', () => {
 
     expect(result.outcomes.find((o) => o.editorId === 'claude')?.outcome).toBe('repaired');
     const after = JSON.parse(readFileSync(configPath, 'utf-8'));
-    expect(after.mcpServers['palimpsest']).toEqual(CHAIN_ENTRY);
+    expect(after.mcpServers.palimpsest).toEqual(CHAIN_ENTRY);
   });
 
   it('rewrites our current project launcher when an env map was added after we wrote it', () => {
@@ -306,7 +306,7 @@ describe('repairMcpConfigs', () => {
 
     expect(outcome?.outcome).toBe('repaired');
     const after = JSON.parse(readFileSync(configPath, 'utf-8'));
-    expect(after.mcpServers['palimpsest']).toEqual({ ...CHAIN_ENTRY, cwd: '/srv/notes' });
+    expect(after.mcpServers.palimpsest).toEqual({ ...CHAIN_ENTRY, cwd: '/srv/notes' });
   });
   it('does not claim a prune when the write fails, and reports write-failed', () => {
     const events: RepairLogEvent[] = [];

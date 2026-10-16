@@ -1,9 +1,9 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import type { ConfigBinding } from '@palimpsest/core/config/bind-config-doc';
 import { humanFormat } from '@palimpsest/core/config/errors';
 import { normalizeAttachmentFolderPath } from '@palimpsest/core/config/schema';
 import { CONFIG_DOC_NAME_PROJECT } from '@palimpsest/core/constants/cc1';
 import { DEFAULT_ATTACHMENT_FOLDER_PATH } from '@palimpsest/core/constants/upload';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';

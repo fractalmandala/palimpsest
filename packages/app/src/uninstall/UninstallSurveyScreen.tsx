@@ -1,10 +1,10 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import {
   UNINSTALL_FEEDBACK_EMAIL_MAX_LEN,
   UNINSTALL_FEEDBACK_NOTE_MAX_LEN,
   UNINSTALL_FEEDBACK_REASONS,
   type UninstallFeedbackReason,
 } from '@palimpsest/core/constants/uninstall-feedback';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useId, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';

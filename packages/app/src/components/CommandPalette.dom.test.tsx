@@ -1169,7 +1169,7 @@ describe('Cmd+K menu-parity backfill', () => {
     },
     {
       testid: 'command-palette-toggle-show-ps-folders',
-      query: 'ok folders',
+      query: 'ps folders',
       id: 'toggle-show-ps-folders',
     },
     {
@@ -1259,13 +1259,6 @@ describe('Cmd+K menu-parity backfill', () => {
       (id) => !PALETTE_COMMAND_IDS.has(id),
     );
     expect(stalePreExisting).toEqual([]);
-  });
-
-  test('AC1: check-for-updates invokes bridge.update.checkNow', async () => {
-    const { bridge } = await renderPalette({ bridge: createBridge() });
-    await setQuery('check for updates');
-    fireEvent.click(screen.getByTestId('command-palette-check-for-updates'));
-    await waitFor(() => expect(bridge?.update.checkNow).toHaveBeenCalledTimes(1));
   });
 
   test('AC1: set-up-integrations invokes bridge.mcpWiring.reconfigure', async () => {

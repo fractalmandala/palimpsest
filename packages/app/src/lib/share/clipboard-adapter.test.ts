@@ -91,9 +91,9 @@ describe('scheduleClipboardWrite — Electron IPC bridge path (preferred when av
       navigatorClipboardWriteText: undefined,
     });
 
-    await expect(scheduleClipboardWrite('https://github.com/fractalmandala/palimpsest/d/AAA')).rejects.toThrow(
-      /ipc-channel-closed/,
-    );
+    await expect(
+      scheduleClipboardWrite('https://github.com/fractalmandala/palimpsest/d/AAA'),
+    ).rejects.toThrow(/ipc-channel-closed/);
   });
 });
 
@@ -119,9 +119,9 @@ describe('scheduleClipboardWrite — navigator.clipboard.writeText fallback', ()
       },
     });
 
-    await expect(scheduleClipboardWrite('https://github.com/fractalmandala/palimpsest/d/BBB')).rejects.toThrow(
-      /NotAllowedError|clipboard denied/,
-    );
+    await expect(
+      scheduleClipboardWrite('https://github.com/fractalmandala/palimpsest/d/BBB'),
+    ).rejects.toThrow(/NotAllowedError|clipboard denied/);
   });
 });
 
@@ -169,9 +169,9 @@ describe('scheduleClipboardWrite — no clipboard API available', () => {
       navigatorClipboardWriteText: undefined,
     });
 
-    await expect(scheduleClipboardWrite('https://github.com/fractalmandala/palimpsest/d/ZZZ')).rejects.toThrow(
-      /clipboard API unavailable/,
-    );
+    await expect(
+      scheduleClipboardWrite('https://github.com/fractalmandala/palimpsest/d/ZZZ'),
+    ).rejects.toThrow(/clipboard API unavailable/);
   });
 });
 
@@ -304,9 +304,9 @@ describe('scheduleClipboardWrite — document.execCommand("copy") fallback', () 
       },
     });
 
-    await expect(scheduleClipboardWrite('https://github.com/fractalmandala/palimpsest/d/EEE')).rejects.toThrow(
-      /permissions policy/,
-    );
+    await expect(
+      scheduleClipboardWrite('https://github.com/fractalmandala/palimpsest/d/EEE'),
+    ).rejects.toThrow(/permissions policy/);
   });
 
   test('execCommand throwing rejects with the original writeText error', async () => {
@@ -319,9 +319,9 @@ describe('scheduleClipboardWrite — document.execCommand("copy") fallback', () 
       },
     });
 
-    await expect(scheduleClipboardWrite('https://github.com/fractalmandala/palimpsest/d/FFF')).rejects.toThrow(
-      /permissions policy/,
-    );
+    await expect(
+      scheduleClipboardWrite('https://github.com/fractalmandala/palimpsest/d/FFF'),
+    ).rejects.toThrow(/permissions policy/);
     expect(created[0]?.removed).toBe(true);
   });
 
@@ -334,9 +334,9 @@ describe('scheduleClipboardWrite — document.execCommand("copy") fallback', () 
       },
     });
 
-    await expect(scheduleClipboardWrite('https://github.com/fractalmandala/palimpsest/d/GGG')).rejects.toThrow(
-      /permissions policy/,
-    );
+    await expect(
+      scheduleClipboardWrite('https://github.com/fractalmandala/palimpsest/d/GGG'),
+    ).rejects.toThrow(/permissions policy/);
   });
 
   test('psDesktop bridge path never touches execCommand', async () => {

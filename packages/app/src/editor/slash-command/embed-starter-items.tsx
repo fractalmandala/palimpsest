@@ -1,9 +1,9 @@
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   PREVIEW_EMBED_STARTERS,
   type PreviewEmbedStarter,
 } from '@palimpsest/core/constants/preview-embed-starters';
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
 import { BarChart3, Code, LayoutGrid, Shapes, SlidersHorizontal } from 'lucide-react';
 import type { ReactNode } from 'react';
 import type { SlashCommandContext, SlashCommandItem } from './items';

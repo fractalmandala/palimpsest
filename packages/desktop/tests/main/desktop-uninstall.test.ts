@@ -40,9 +40,9 @@ describe('desktop self-uninstall helpers', () => {
     expect(
       isSupportedApplicationsBundle('/Volumes/Palimpsest/Palimpsest.app', '/Users/alice'),
     ).toBe(false);
-    expect(
-      isSupportedApplicationsBundle('/Applications/Palimpsest Beta.app', '/Users/alice'),
-    ).toBe(false);
+    expect(isSupportedApplicationsBundle('/Applications/Palimpsest Beta.app', '/Users/alice')).toBe(
+      false,
+    );
   });
 
   test('collects open, recent, and running project candidates with .ps markers only', () => {
@@ -95,7 +95,7 @@ describe('desktop self-uninstall helpers', () => {
 
   test('builds a cleanup script that deinitializes selected projects before global uninstall', () => {
     const script = buildDesktopUninstallCleanupScript({
-      cliPath: "/Applications/Palimpsest.app/Contents/Resources/cli/bin/ok's.sh",
+      cliPath: "/Applications/Palimpsest.app/Contents/Resources/cli/bin/ps's.sh",
       projectPaths: ['/work/a', "/work/quote's"],
       logPath: '/Users/alice/Library/Logs/Palimpsest/uninstall.log',
     });
@@ -106,7 +106,7 @@ describe('desktop self-uninstall helpers', () => {
     expect(script).not.toContain('osascript');
     expect(script).not.toContain('Finder');
     expect(script).toContain(
-      "PS_CLI='/Applications/Palimpsest.app/Contents/Resources/cli/bin/ok'\\''s.sh'",
+      "PS_CLI='/Applications/Palimpsest.app/Contents/Resources/cli/bin/ps'\\''s.sh'",
     );
   });
 

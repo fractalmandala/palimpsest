@@ -4,6 +4,9 @@ import { closeSync, existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { Readable, Writable } from 'node:stream';
 import { setTimeout as wait } from 'node:timers/promises';
+import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import type { JSONRPCMessage, RequestId } from '@modelcontextprotocol/sdk/types.js';
 import {
   clientVersionHeaders,
   currentCliCommandName,
@@ -22,9 +25,6 @@ import {
   readServerLock,
   type ServerLockMetadata,
 } from '@palimpsest/server';
-import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import type { JSONRPCMessage, RequestId } from '@modelcontextprotocol/sdk/types.js';
 import { resolveSelfSpawn } from '../commands/self-spawn.ts';
 
 const DEFAULT_SPAWN_TIMEOUT_MS = 5000;

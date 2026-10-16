@@ -132,7 +132,7 @@ describe('readOriginGitHubRepo', () => {
     expect(readOriginGitHubRepo(dir)).toEqual({
       kind: 'ok',
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       transport: 'https',
     });
@@ -145,13 +145,13 @@ describe('readOriginGitHubRepo', () => {
     expect(readOriginGitHubRepo(dir)).toEqual({
       kind: 'ok',
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       transport: 'https',
     });
     expect(parseGitHubOriginUrl('https://alice@github.com/fractalmandala/palimpsest.git')).toEqual({
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       transport: 'https',
       login: 'alice',
@@ -165,7 +165,7 @@ describe('readOriginGitHubRepo', () => {
     expect(readOriginGitHubRepo(dir)).toEqual({
       kind: 'ok',
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       transport: 'ssh',
     });
@@ -178,7 +178,7 @@ describe('readOriginGitHubRepo', () => {
     expect(readOriginGitHubRepo(dir)).toEqual({
       kind: 'ok',
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       transport: 'ssh',
     });
@@ -187,7 +187,7 @@ describe('readOriginGitHubRepo', () => {
   test('surfaces the account declared in an ssh:// origin userinfo', () => {
     expect(parseGitHubOriginUrl('ssh://alice@github.com/fractalmandala/palimpsest.git')).toEqual({
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       transport: 'ssh',
       login: 'alice',
@@ -197,7 +197,7 @@ describe('readOriginGitHubRepo', () => {
   test('surfaces the account declared in an scp-style origin userinfo', () => {
     expect(parseGitHubOriginUrl('alice@github.com:fractalmandala/palimpsest.git')).toEqual({
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       transport: 'ssh',
       login: 'alice',
@@ -281,7 +281,7 @@ describe('readOriginGitHubRepo', () => {
     expect(readOriginGitHubRepo(dir)).toEqual({
       kind: 'ok',
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       transport: 'https',
     });
@@ -302,7 +302,7 @@ describe('readOriginGitHubRepo', () => {
     expect(readOriginGitHubRepo(dir)).toEqual({
       kind: 'ok',
       host: 'ghes.acme.test',
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       transport: 'https',
     });
@@ -343,7 +343,7 @@ describe('readOriginGitHubRepo', () => {
     expect(readOriginGitHubRepo(dir)).toEqual({
       kind: 'ok',
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       transport: 'git',
     });
@@ -351,12 +351,13 @@ describe('readOriginGitHubRepo', () => {
 
   test('normalizes host casing, port, and www-folding', () => {
     seedRepo(dir, {
-      config: '[remote "origin"]\n\turl = https://WWW.GitHub.com:443/fractalmandala/palimpsest.git\n',
+      config:
+        '[remote "origin"]\n\turl = https://WWW.GitHub.com:443/fractalmandala/palimpsest.git\n',
     });
     expect(readOriginGitHubRepo(dir)).toEqual({
       kind: 'ok',
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       transport: 'https',
     });
@@ -430,7 +431,7 @@ describe('readOriginGitHubRepo', () => {
     expect(readOriginGitHubRepo(dir)).toEqual({
       kind: 'ok',
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       transport: 'https',
     });
@@ -444,7 +445,7 @@ describe('readOriginGitHubRepo', () => {
     expect(readOriginGitHubRepo(dir)).toEqual({
       kind: 'ok',
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       transport: 'https',
     });
@@ -929,7 +930,7 @@ describe('linked-worktree common-dir resolution', () => {
     expect(readOriginGitHubRepo(project)).toEqual({
       kind: 'ok',
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       transport: 'https',
     });

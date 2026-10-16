@@ -3,14 +3,9 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { setTimeout as wait } from 'node:timers/promises';
-import {
-  formatSpawnAttemptHeader,
-  LOCAL_DIR,
-  PS_DIR,
-  SPAWN_ERROR_LOG,
-} from '@palimpsest/core';
-import { AutoStartDisabledError, type ServerLockMetadata } from '@palimpsest/server';
 import type { JSONRPCMessage } from '@modelcontextprotocol/sdk/types.js';
+import { formatSpawnAttemptHeader, LOCAL_DIR, PS_DIR, SPAWN_ERROR_LOG } from '@palimpsest/core';
+import { AutoStartDisabledError, type ServerLockMetadata } from '@palimpsest/server';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import {
   bridgeStdioToHttpMcp,

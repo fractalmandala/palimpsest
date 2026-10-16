@@ -71,9 +71,7 @@ describe('built-in palimpsest skill: read-only surfacing', () => {
   });
 
   test('GET /api/skill-file serves SKILL.md read-only (skill-dir root)', async () => {
-    const res = await fetch(
-      `${base()}/api/skill-file?name=palimpsest&scope=project&path=SKILL.md`,
-    );
+    const res = await fetch(`${base()}/api/skill-file?name=palimpsest&scope=project&path=SKILL.md`);
     expect(res.status).toBe(200);
     const body = (await res.json()) as { text?: string };
     expect(body.text).toContain('# Palimpsest');

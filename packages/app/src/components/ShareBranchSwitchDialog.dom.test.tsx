@@ -1,8 +1,4 @@
-import type {
-  BranchInfoResponse,
-  CheckoutResponse,
-  WorktreeCreateResult,
-} from '@palimpsest/core';
+import type { BranchInfoResponse, CheckoutResponse, WorktreeCreateResult } from '@palimpsest/core';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
@@ -147,7 +143,7 @@ function projectBranchSwitchPayload(): Extract<
     kind: 'project-branch-switch',
     share: {
       contentRootDepth: null,
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       branch: 'feat/branch-x',
       sharedUrl: 'https://github.com/fractalmandala/palimpsest/blob/feat/branch-x/docs/notes.md',
@@ -197,7 +193,7 @@ describe('ShareBranchSwitchDialog — payload gating', () => {
           kind: 'launcher-miss',
           share: {
             contentRootDepth: null,
-            owner: 'inkeep',
+            owner: 'example',
             repo: 'palimpsest',
             branch: 'main',
             sharedUrl: 'https://github.com/fractalmandala/palimpsest/blob/main/docs/x.md',

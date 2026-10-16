@@ -1,8 +1,4 @@
-import {
-  type HandoffTarget,
-  type InstallState,
-  TERMINAL_CLI_IDS,
-} from '@palimpsest/core';
+import { type HandoffTarget, type InstallState, TERMINAL_CLI_IDS } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import {
   IN_APP_THREAD_ID,

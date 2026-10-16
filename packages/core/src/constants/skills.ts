@@ -31,9 +31,7 @@ const TRUSTED_SKILL_HOSTS: ReadonlySet<string> = new Set([
 
 function pathIsOurRepo(pathname: string): boolean {
   const trimmed = pathname.replace(/^\/+/, '').replace(/\.git$/, '');
-  return (
-    trimmed === PALIMPSEST_SKILLS_REPO || trimmed.startsWith(`${PALIMPSEST_SKILLS_REPO}/`)
-  );
+  return trimmed === PALIMPSEST_SKILLS_REPO || trimmed.startsWith(`${PALIMPSEST_SKILLS_REPO}/`);
 }
 
 export const RENAMED_PACK_SKILLS: Readonly<Record<string, string>> = {

@@ -1,7 +1,7 @@
+import { useLingui } from '@lingui/react/macro';
 import type { ConfigBinding } from '@palimpsest/core/config/bind-config-doc';
 import type { PsignoreBinding } from '@palimpsest/core/config/bind-psignore-doc';
 import type { Config } from '@palimpsest/core/config/schema';
-import { useLingui } from '@lingui/react/macro';
 import { createContext, use } from 'react';
 
 export interface ConfigContextValue {

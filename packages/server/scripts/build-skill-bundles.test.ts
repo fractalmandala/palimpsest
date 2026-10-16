@@ -367,7 +367,7 @@ describe('repo assets — production guard', () => {
     const expected: Record<(typeof BUNDLE_IDS)[number], string> = {
       discovery: 'palimpsest-discovery',
       project: 'palimpsest',
-      'write-skill': 'open-knowledge-write-skill',
+      'write-skill': 'palimpsest-write-skill',
     };
     const names = new Set<string>();
     for (const bundle of BUNDLE_IDS) {

@@ -1,5 +1,5 @@
-import type { SyncMode } from '@palimpsest/core';
 import * as actualLinguiMacro from '@lingui/react/macro';
+import type { SyncMode } from '@palimpsest/core';
 import { act, cleanup, render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';

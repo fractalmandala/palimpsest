@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { PALIMPSEST_SKILLS_REPO, PACK_SKILL_PREFIX } from '../../constants/skills.ts';
+import { PACK_SKILL_PREFIX, PALIMPSEST_SKILLS_REPO } from '../../constants/skills.ts';
 import { packMarkerOf, retrofitPackLockEntry } from './lockfile.ts';
 
 describe('retrofitPackLockEntry', () => {

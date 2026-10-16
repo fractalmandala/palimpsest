@@ -30,20 +30,14 @@ describe('writeProjectAiIntegrations — installs MCP config AND the project ski
     for (const outcome of claudeOutcomes) expect(outcome.action).toBe('written');
 
     expect(existsSync(join(projectDir, '.mcp.json'))).toBe(true);
-    expect(existsSync(join(projectDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
-      true,
-    );
+    expect(existsSync(join(projectDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(true);
   });
 
   test('installs the project skill for cursor and codex too', () => {
     writeProjectAiIntegrations(projectDir, ['cursor', 'codex']);
 
-    expect(existsSync(join(projectDir, '.cursor', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
-      true,
-    );
-    expect(existsSync(join(projectDir, '.codex', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
-      true,
-    );
+    expect(existsSync(join(projectDir, '.cursor', 'skills', 'palimpsest', 'SKILL.md'))).toBe(true);
+    expect(existsSync(join(projectDir, '.codex', 'skills', 'palimpsest', 'SKILL.md'))).toBe(true);
   });
 
   test('all editors: 2 outcomes per editor; claude-desktop skips both as unsupported', () => {

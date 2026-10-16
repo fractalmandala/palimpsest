@@ -44,7 +44,7 @@ function connectToFakeAgent(): Peer {
   const clientToAgent = new WritableStream<Uint8Array>({ write() {} });
 
   const delivered: SessionNotification[] = [];
-  const conn = acpClient({ name: 'open-knowledge-typed-notice-canary' })
+  const conn = acpClient({ name: 'palimpsest-typed-notice-canary' })
     .onNotification(acpMethods.client.session.update, (ctx) => {
       delivered.push(ctx.params);
     })

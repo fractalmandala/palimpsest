@@ -1,5 +1,5 @@
-import type { AttachmentPart } from '@palimpsest/core/acp/thread-protocol';
 import { Trans, useLingui } from '@lingui/react/macro';
+import type { AttachmentPart } from '@palimpsest/core/acp/thread-protocol';
 import { ChevronDown, Pencil } from 'lucide-react';
 import { type ReactNode, use, useEffect, useRef, useState } from 'react';
 import { useCalendarDayNow } from '@/components/acp/calendar-day-store';

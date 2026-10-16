@@ -1,7 +1,4 @@
-import {
-  type DocumentListEntry,
-  DocumentListEntrySchema,
-} from '@palimpsest/core/schemas/api';
+import { type DocumentListEntry, DocumentListEntrySchema } from '@palimpsest/core/schemas/api';
 
 export const SHOW_ALL_NDJSON_ACCEPT = { Accept: 'application/x-ndjson, application/json' } as const;
 

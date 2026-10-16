@@ -1,4 +1,3 @@
-import type { PsBugReportListRow, PsBugReportSendResult } from '@palimpsest/core';
 import { propagation, trace } from '@opentelemetry/api';
 import { W3CTraceContextPropagator } from '@opentelemetry/core';
 import {
@@ -6,6 +5,7 @@ import {
   InMemorySpanExporter,
   SimpleSpanProcessor,
 } from '@opentelemetry/sdk-trace-base';
+import type { PsBugReportListRow, PsBugReportSendResult } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import {
   type BugReportSendBridge,
@@ -24,7 +24,9 @@ const OTHER_OPERATION_ID = 'ps-report-2026-08-18-130000.zip';
 const FAILED_RESULT: PsBugReportSendResult = {
   ok: false,
   reason: 'send-failed',
-  fallback: { mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=failed' },
+  fallback: {
+    mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=failed',
+  },
 };
 
 function createDeferredBridge() {
@@ -189,7 +191,9 @@ describe('bug-report send manager', () => {
     await stub.settle({
       ok: false,
       reason: 'email-draft',
-      fallback: { mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=draft' },
+      fallback: {
+        mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=draft',
+      },
     });
 
     expect(manager.get(OPERATION_ID)).toEqual(
@@ -223,7 +227,9 @@ describe('bug-report send manager', () => {
     await stub.settle({
       ok: false,
       reason: 'send-in-flight',
-      fallback: { mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=inflight' },
+      fallback: {
+        mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=inflight',
+      },
     });
 
     expect(manager.get(OPERATION_ID)?.status).toBe('already-sending');

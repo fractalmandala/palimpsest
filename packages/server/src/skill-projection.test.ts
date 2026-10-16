@@ -98,15 +98,11 @@ describe('validateSkillForInstall', () => {
   });
 
   test('rejects reserved palimpsest* prefix unless allowed', () => {
-    const dir = makeSkill(
-      'palimpsest-mine',
-      '# x',
-      'name: palimpsest-mine\ndescription: d',
-    );
+    const dir = makeSkill('palimpsest-mine', '# x', 'name: palimpsest-mine\ndescription: d');
     expect(validateSkillForInstall(dir, 'palimpsest-mine').ok).toBe(false);
-    expect(
-      validateSkillForInstall(dir, 'palimpsest-mine', { allowReservedName: true }).ok,
-    ).toBe(true);
+    expect(validateSkillForInstall(dir, 'palimpsest-mine', { allowReservedName: true }).ok).toBe(
+      true,
+    );
   });
 
   test('the exact LEGACY pack names stay installable; unknown pack-prefixed names stay rejected', () => {
@@ -386,20 +382,20 @@ describe('projectInPlaceSkill / removeInPlaceSkillCopies (in-place fan-out guard
   });
 
   test('a drifted dir for an ORDINARY skill is still untouchable', () => {
-    const canonical = makeAt('.agents/skills/open-knowledge-ish', '# Current');
-    makeAt('.cursor/skills/open-knowledge-ish', '# MINE');
+    const canonical = makeAt('.agents/skills/palimpsest-ish', '# Current');
+    makeAt('.cursor/skills/palimpsest-ish', '# MINE');
     const r = projectInPlaceSkill({
       canonicalAbs: canonical,
       canonicalHash: hashOf(canonical),
       canonicalRootRel: '.agents/skills',
-      name: 'open-knowledge-ish',
+      name: 'palimpsest-ish',
       cwd: root,
       targets: ['cursor'],
     });
     expect(r.conflicted).toEqual(['cursor']);
-    expect(
-      readFileSync(join(root, '.cursor/skills/open-knowledge-ish/SKILL.md'), 'utf-8'),
-    ).toContain('# MINE');
+    expect(readFileSync(join(root, '.cursor/skills/palimpsest-ish/SKILL.md'), 'utf-8')).toContain(
+      '# MINE',
+    );
   });
 
   test("uninstall removes a built-in's drifted projection too", () => {

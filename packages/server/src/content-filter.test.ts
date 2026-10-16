@@ -538,10 +538,7 @@ describe('ContentFilter', () => {
   describe('dot-dir scope symmetry', () => {
     test('admits user-tracked markdown in non-built-in dot dirs and rejects built-in/internal dirs', () => {
       mkdirSync(join(projectDir, '.cursor', 'skills', 'palimpsest'), { recursive: true });
-      writeFileSync(
-        join(projectDir, '.cursor', 'skills', 'palimpsest', 'SKILL.md'),
-        '# Skill\n',
-      );
+      writeFileSync(join(projectDir, '.cursor', 'skills', 'palimpsest', 'SKILL.md'), '# Skill\n');
       writeFileSync(join(projectDir, '.cursor', 'skills', 'palimpsest', 'diagram.png'), 'png');
       mkdirSync(join(projectDir, '.claude', 'skills'), { recursive: true });
       writeFileSync(join(projectDir, '.claude', 'skills', 'foo.md'), '# Claude\n');
@@ -593,10 +590,7 @@ describe('ContentFilter', () => {
       const filter = createContentFilter({
         projectDir,
         contentDir: projectDir,
-        inPlaceSkillDirs: new Set([
-          '.claude/skills/palimpsest',
-          '.agents/skills/palimpsest',
-        ]),
+        inPlaceSkillDirs: new Set(['.claude/skills/palimpsest', '.agents/skills/palimpsest']),
       });
 
       expect(filter.isExcluded('.claude/skills/palimpsest/SKILL.md')).toBe(true);
@@ -1851,7 +1845,7 @@ describe('ContentFilter', () => {
       };
       const secretBearing = join(projectDir, 'deploy/secrets/.env');
       const distSegment = join(projectDir, 'packages/server/dist/assets/skills/project/SKILL.md');
-      const noStructuralAnswer = join(projectDir, 'packages/server/assets/skills/project/SKILL.md');
+      const noStructuralAnswer = join(projectDir, 'skills/project/SKILL.md');
 
       expect(
         filter.isPathIgnored(secretBearing),

@@ -1,10 +1,6 @@
 import { existsSync, rmSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import {
-  AGENTS_SKILLS_ROOT,
-  ALL_EDITOR_IDS,
-  EDITOR_USER_SKILL_ROOT,
-} from '@palimpsest/core';
+import { AGENTS_SKILLS_ROOT, ALL_EDITOR_IDS, EDITOR_USER_SKILL_ROOT } from '@palimpsest/core';
 import {
   BUNDLE_SKILL_NAME,
   detectUserSkillHosts,

@@ -1,5 +1,5 @@
-import { templateContentDocName } from '@palimpsest/core/constants/cc1';
 import { Trans } from '@lingui/react/macro';
+import { templateContentDocName } from '@palimpsest/core/constants/cc1';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { InheritedBadge } from '@/components/FrontmatterRow';

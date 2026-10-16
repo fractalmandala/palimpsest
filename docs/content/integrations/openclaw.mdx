@@ -16,7 +16,7 @@ icon: custom/OpenClaw
   here, since OpenClaw manages its own server lifecycle.
 </McpInstall>
 
-`ps init` writes the Palimpsest server into `~/.openclaw/openclaw.json` under `mcp.servers`, using the same resilient launcher every other editor gets — it finds `ok` whether you installed the desktop app or the npm CLI, so there's no PATH to configure.
+`ps init` writes the Palimpsest server into `~/.openclaw/openclaw.json` under `mcp.servers`, using the same resilient launcher every other editor gets — it finds `ps` whether you installed the desktop app or the npm CLI, so there's no PATH to configure.
 
 <Callout type="info">
   The managed entry doesn't pin a project. Each OK tool call takes a `cwd` argument to target a specific knowledge base — pass it once and it sticks for that session — so one registration serves every project (and git worktree) an agent visits. If you previously hand-wrote an entry with a `cwd` pinned, `ps init` replaces it with the managed launcher; pass `cwd` per tool call instead.
@@ -140,7 +140,7 @@ For the complete tool surface, see the [MCP reference](/docs/reference/mcp).
 | --- | --- | --- |
 | `ps init` showed OpenClaw as `config root missing; skipped` | `~/.openclaw/` doesn't exist yet, so OpenClaw wasn't detected | Launch OpenClaw once (it creates its home directory), then re-run `ps init` |
 | `ps init` reported the config was `left unchanged` | Palimpsest declined to edit `~/.openclaw/openclaw.json` for the reason shown in parentheses | Fix what the reason names (invalid JSON, a duplicated server block, an oversize config), then re-run `ps init` |
-| `openclaw mcp probe` shows 0 tools | server couldn't launch, or the folder isn't a KB yet | Confirm `ok` is installed (desktop app or `npm i -g @palimpsest/cli`), and `ps init` the folder |
+| `openclaw mcp probe` shows 0 tools | server couldn't launch, or the folder isn't a KB yet | Confirm `ps` is installed (desktop app or `npm i -g @palimpsest/cli`), and `ps init` the folder |
 | Agent doesn't see the `palimpsest` tools | MCP tools lazy-loaded, or the agent's process predates the entry | Run tool discovery, then restart the gateway |
 | `ps init` "refreshed" a parent project, no new KB | upward project resolution | Run `ps init` outside any existing `.ps` tree |
 | Broken-link warning on a just-written doc | forward link to a not-yet-created target | Create the target, then re-check `links({ kind: "dead" })` |

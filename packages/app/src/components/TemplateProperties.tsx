@@ -1,10 +1,10 @@
 import type { HocuspocusProvider } from '@hocuspocus/provider';
+import { Trans, useLingui } from '@lingui/react/macro';
 import {
   canonicalTemplateName,
   TEMPLATE_NAME_REGEX,
   templateRenameTarget,
 } from '@palimpsest/core/schemas/api';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { FolderGit2, Type } from 'lucide-react';
 import { useEffect, useId, useState } from 'react';
 import { PropertyDisclosure } from '@/components/PropertyDisclosure';

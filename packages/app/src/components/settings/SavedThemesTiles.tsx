@@ -1,8 +1,5 @@
-import {
-  deriveSavedThemeName,
-  parseSavedThemeId,
-} from '@palimpsest/core/theme/theme-plugins';
 import { useLingui } from '@lingui/react/macro';
+import { deriveSavedThemeName, parseSavedThemeId } from '@palimpsest/core/theme/theme-plugins';
 import { TriangleAlert } from 'lucide-react';
 import { type SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';

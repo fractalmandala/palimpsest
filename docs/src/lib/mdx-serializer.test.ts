@@ -17,7 +17,7 @@ import {
   serializeMdx,
 } from './mdx-serializer.ts';
 
-const PAGE_URL = 'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/quickstart.mdx';
+const PAGE_URL = 'https://github.com/fractalmandala/palimpsest/docs/get-started/quickstart';
 
 function body(source: string, registry: SerializerRegistry = {}): string {
   return serializeMdx(source, { registry, pageUrl: PAGE_URL }).body;
@@ -49,7 +49,7 @@ describe('serializeMdx', () => {
     });
     expect(md).toBe(
       [
-        'Read the [editor guide](https://github.com/fractalmandala/palimpsest/tree/main/docs/content) first.',
+        'Read the [editor guide](https://github.com/fractalmandala/palimpsest/docs/features/editor#ask-ai) first.',
         '',
         '- one',
         '- two',
@@ -173,30 +173,38 @@ describe('link rewriting', () => {
     [
       'parent-relative source link',
       '[a](../features/editor.mdx)',
-      'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/features/editor.mdx',
+      'https://github.com/fractalmandala/palimpsest/docs/features/editor',
     ],
     [
       'sibling-relative source link',
       '[a](./overview.mdx)',
-      'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/overview.mdx',
+      'https://github.com/fractalmandala/palimpsest/docs/get-started/overview',
     ],
     [
       'a .md sibling',
       '[a](../reference/core-concepts.md)',
-      'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/reference/core-concepts.md',
+      'https://github.com/fractalmandala/palimpsest/docs/reference/core-concepts',
     ],
     [
       'a fragment on a relative link',
       '[a](../features/editor.mdx#ask-ai)',
-      'https://github.com/fractalmandala/palimpsest/tree/main/docs/content',
+      'https://github.com/fractalmandala/palimpsest/docs/features/editor#ask-ai',
     ],
-    ['a root-relative link', '[a](/download)', 'https://github.com/fractalmandala/palimpsest/download'],
+    [
+      'a root-relative link',
+      '[a](/download)',
+      'https://github.com/fractalmandala/palimpsest/download',
+    ],
     [
       'a bare fragment',
       '[a](#section)',
-      'https://github.com/fractalmandala/palimpsest/tree/main/docs/content',
+      'https://github.com/fractalmandala/palimpsest/docs/get-started/quickstart#section',
     ],
-    ['an image', '![a](/screenshots/x.png)', 'https://github.com/fractalmandala/palimpsest/screenshots/x.png'],
+    [
+      'an image',
+      '![a](/screenshots/x.png)',
+      'https://github.com/fractalmandala/palimpsest/screenshots/x.png',
+    ],
     [
       'an extensionless route named index',
       '[a](/api/index?q=1#item)',
@@ -205,17 +213,17 @@ describe('link rewriting', () => {
     [
       'a folder index, which fumadocs serves at the folder URL',
       '[a](../features/skills/index.mdx)',
-      'https://github.com/fractalmandala/palimpsest/tree/main/docs/content',
+      'https://github.com/fractalmandala/palimpsest/docs/features/skills',
     ],
     [
       'a fragment on a folder index',
       '[a](./skills/index.mdx#where-to-find-skills-studio)',
-      'https://github.com/fractalmandala/palimpsest/tree/main/docs/content',
+      'https://github.com/fractalmandala/palimpsest/docs/get-started/skills#where-to-find-skills-studio',
     ],
     [
       'a folder index named from inside its own folder',
       '[a](./index.mdx)',
-      'https://github.com/fractalmandala/palimpsest/tree/main/docs/content',
+      'https://github.com/fractalmandala/palimpsest/docs/get-started',
     ],
   ])('absolutises %s', (_label, source, expected) => {
     expect(body(source)).toContain(`(${expected})`);
@@ -223,7 +231,7 @@ describe('link rewriting', () => {
 
   test.each([
     ['an external URL that happens to end in .md', 'https://github.com/o/r/blob/main/SPEC.md'],
-    ['a mailto link', 'mailto:hi@palimpsest.ai'],
+    ['a mailto link', 'mailto:hi@example.com'],
     ['a protocol-relative URL', '//cdn.example.com/x.png'],
   ])('leaves %s untouched', (_label, url) => {
     expect(body(`[a](${url})`)).toContain(`(${url})`);
@@ -231,7 +239,7 @@ describe('link rewriting', () => {
 
   test('rewrites a link reference definition', () => {
     expect(body('[a][ref]\n\n[ref]: ../features/editor.mdx\n')).toContain(
-      'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/features/editor.mdx',
+      'https://github.com/fractalmandala/palimpsest/docs/features/editor',
     );
   });
 
@@ -239,7 +247,7 @@ describe('link rewriting', () => {
     const md = body('<Callout>\n\n[a](../features/editor.mdx)\n\n</Callout>', {
       Callout: 'flatten',
     });
-    expect(md).toContain('https://github.com/fractalmandala/palimpsest/blob/main/docs/content/features/editor.mdx');
+    expect(md).toContain('https://github.com/fractalmandala/palimpsest/docs/features/editor');
   });
 });
 
@@ -272,7 +280,8 @@ describe('escapeRawHtml', () => {
   });
 
   test('keeps the inline formatting the author wrote', () => {
-    const prose = 'Prefer **the editor**, or read [the guide](https://github.com/fractalmandala/palimpsest/tree/main/docs/content).';
+    const prose =
+      'Prefer **the editor**, or read [the guide](https://github.com/fractalmandala/palimpsest/docs).';
     expect(escapeRawHtml(prose)).toBe(prose);
   });
 
@@ -283,7 +292,7 @@ describe('escapeRawHtml', () => {
   });
 
   test('leaves prose carrying no markup byte-identical', () => {
-    const prose = 'What Palimpsest is, and why it exists.';
+    const prose = 'What OpenKnowledge is, and why it exists.';
     expect(escapeRawHtml(prose)).toBe(prose);
   });
 });
@@ -348,7 +357,7 @@ describe('the docs content corpus', () => {
       .relative(CONTENT_ROOT, file)
       .replace(/\.mdx?$/, '')
       .replace(/(^|\/)index$/, '');
-    return `https://github.com/fractalmandala/palimpsest/tree/main/docs/content '');
+    return `https://github.com/fractalmandala/palimpsest/docs/${slug}`.replace(/\/$/, '');
   }
 
   const files = corpusFiles();
@@ -409,15 +418,20 @@ describe('a refusal names the page it came from', () => {
     expect(() =>
       serializeMdx('<Unknown />', {
         registry: {},
-        pageUrl: 'https://github.com/fractalmandala/palimpsest/tree/main/docs/content',
+        pageUrl: 'https://github.com/fractalmandala/palimpsest/docs/x/y',
       }),
-    ).toThrow('https://github.com/fractalmandala/palimpsest/tree/main/docs/content No serializer disposition for <Unknown>');
+    ).toThrow(
+      'https://github.com/fractalmandala/palimpsest/docs/x/y: No serializer disposition for <Unknown>',
+    );
   });
 
   test('keeps the original refusal reachable as the cause', () => {
     const thrown = (() => {
       try {
-        serializeMdx('<Unknown />', { registry: {}, pageUrl: 'https://github.com/fractalmandala/palimpsest/tree/main/docs/content' });
+        serializeMdx('<Unknown />', {
+          registry: {},
+          pageUrl: 'https://github.com/fractalmandala/palimpsest/docs/x',
+        });
       } catch (error) {
         return error as Error;
       }

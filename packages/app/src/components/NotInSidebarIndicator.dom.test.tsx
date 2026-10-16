@@ -1,7 +1,7 @@
 /** Runs under the jsdom substrate (precedent #43). */
 
-import type { Config } from '@palimpsest/core';
 import * as actualLinguiMacro from '@lingui/react/macro';
+import type { Config } from '@palimpsest/core';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { renderLinguiTemplate } from '@/test-utils/lingui-mock';

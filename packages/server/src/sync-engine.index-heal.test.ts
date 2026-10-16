@@ -761,7 +761,7 @@ describe('SyncEngine index-lock paused reason', () => {
     const config = (marker: string) =>
       `${JSON.stringify({
         theme: 'keep',
-        mcpServers: { other: { command: 'keep-me' }, 'palimpsest': entry(marker) },
+        mcpServers: { other: { command: 'keep-me' }, palimpsest: entry(marker) },
       })}\n`;
     writeFileSync(join(projectDir, '.mcp.json'), config('# ps-mcp-v2'), 'utf-8');
     await git.add('.mcp.json');

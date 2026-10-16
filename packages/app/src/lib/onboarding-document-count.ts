@@ -1,7 +1,4 @@
-import {
-  type DocumentListSuccess,
-  DocumentListSuccessSchema,
-} from '@palimpsest/core/schemas/api';
+import { type DocumentListSuccess, DocumentListSuccessSchema } from '@palimpsest/core/schemas/api';
 import { filterVisibleEntries } from '@/components/file-tree-utils';
 
 export function countVisibleEntries(documents: DocumentListSuccess['documents']): number {

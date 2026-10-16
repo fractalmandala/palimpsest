@@ -1,17 +1,14 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
+// oxlint-disable ps/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
 import type { HocuspocusProvider } from '@hocuspocus/provider';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { parseExternalSkillDocName } from '@palimpsest/core/constants/cc1';
 import { detectEmbeddedHostFromBrowser } from '@palimpsest/core/constants/embedded-host';
-import {
-  isFrontmatterSchemaAsset,
-  isMarkdownlintJsonConfig,
-} from '@palimpsest/core/markdown/lint';
+import { isFrontmatterSchemaAsset, isMarkdownlintJsonConfig } from '@palimpsest/core/markdown/lint';
 import {
   PREFERRED_TERMINAL_RIGHT_WIDTH,
   type TerminalPlacement,
 } from '@palimpsest/core/terminal-layout';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { ChevronLeft, PanelRightClose } from 'lucide-react';
 import {
   lazy,
@@ -44,8 +41,8 @@ import { FolderOverview } from '@/components/FolderOverview';
 import { LargeFileEditorState } from '@/components/LargeFileEditorState';
 import { MountStalledAffordance } from '@/components/MountStalledAffordance';
 import { NothingOpen } from '@/components/NothingOpen';
-import { PsBlobRunnerPage } from '@/components/PsBlobRunnerPage';
 import { PropertyProvider, useProperties } from '@/components/PropertyContext';
+import { PsBlobRunnerPage } from '@/components/PsBlobRunnerPage';
 import { ShareReceiveMissPanel } from '@/components/ShareReceiveMissPanel';
 import { SkillFileViewer } from '@/components/SkillFileViewer';
 import { SkillPreviewTab } from '@/components/SkillPreviewTab';

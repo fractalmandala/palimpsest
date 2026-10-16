@@ -1,11 +1,11 @@
 #!/usr/bin/env -S npx tsx
 /**
- * Shared-content composer for the two OK skill bundles
+ * Shared-content composer for the two Palimpsest skill bundles
  *
  * Source of truth (git-tracked):
- *   packages/server/assets/skills/discovery/SKILL.md
- *   packages/server/assets/skills/project/SKILL.md
- *   packages/server/assets/skills/_shared/<name>.md   — prose used by ≥2 bundles
+ *   skills/discovery/SKILL.md
+ *   skills/project/SKILL.md
+ *   skills/_shared/<name>.md   — prose used by ≥2 bundles
  *
  * Source SKILL.md files MAY contain `{{> _shared/<name>.md }}` placeholders.
  * This build step resolves each placeholder against `_shared/` and writes the
@@ -64,7 +64,7 @@ export interface SkillBundlePaths {
 
 export function defaultPaths(): SkillBundlePaths {
   return {
-    skillsDir: join(PKG_ROOT, 'assets', 'skills'),
+    skillsDir: join(PKG_ROOT, '..', '..', 'skills'),
     distDir: join(PKG_ROOT, 'dist', 'assets', 'skills'),
   };
 }
@@ -419,7 +419,7 @@ export function buildPackSkills(paths: SkillBundlePaths = defaultPaths()): strin
  * conformant plugin directory —
  * `dist/assets/agent-plugin/{plugin.json, skills/<real skill name>/…}`.
  *
- * Derived, not a second source: the internal `assets/skills/<id>` layout stays
+ * Derived, not a second source: the internal `skills/<id>` layout stays
  * the single source of truth (its id→name indirection and probe chain are
  * load-bearing across installed apps), and this artifact re-materializes from
  * it on every build, so it cannot drift. The `skills/` children carry the
@@ -441,8 +441,7 @@ export function buildAgentPluginArtifact(paths: SkillBundlePaths = defaultPaths(
     const manifest = {
       $schema: 'https://agent-plugins.org/schemas/1.0.0/plugin.schema.json',
       name: 'palimpsest',
-      description:
-        'Palimpsest built-in skills: project workflow, discovery, and skill authoring',
+      description: 'Palimpsest built-in skills: project workflow, discovery, and skill authoring',
       author: { name: 'Fractal Mandala' },
       repository: 'https://github.com/fractalmandala/palimpsest',
       keywords: ['palimpsest', 'knowledge-base'],

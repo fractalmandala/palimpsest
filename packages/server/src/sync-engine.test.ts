@@ -800,7 +800,7 @@ describe('SyncEngine tracked MCP overlap preparation', () => {
     const v1 = JSON.stringify({
       mcpServers: {
         other: { command: 'keep-me' },
-        'palimpsest': { command: '/bin/sh', args: ['-l', '-c', '# ps-mcp-v1\nexit 127'] },
+        palimpsest: { command: '/bin/sh', args: ['-l', '-c', '# ps-mcp-v1\nexit 127'] },
       },
     });
     const v2 = v1.replace('# ps-mcp-v1', '# ps-mcp-v2');
@@ -865,7 +865,7 @@ describe('SyncEngine tracked MCP overlap preparation', () => {
         theme,
         mcpServers: {
           other: { command: 'keep-me' },
-          'palimpsest': {
+          palimpsest: {
             command: '/bin/sh',
             args: ['-l', '-c', `${marker}\nexit 127`],
           },
@@ -934,7 +934,7 @@ describe('SyncEngine tracked MCP overlap preparation', () => {
         theme: 'keep',
         mcpServers: {
           other: { command: 'keep-me' },
-          'palimpsest': entry(marker),
+          palimpsest: entry(marker),
         },
       })}\n`;
     writeFileSync(join(projectDir, '.mcp.json'), config('# ps-mcp-v2'), 'utf8');
@@ -993,7 +993,7 @@ describe('SyncEngine tracked MCP overlap preparation', () => {
       `${JSON.stringify({
         mcpServers: {
           other: { command: 'keep-me' },
-          'palimpsest': {
+          palimpsest: {
             command: '/bin/sh',
             args: ['-l', '-c', `${marker}\nexit 127`],
           },
@@ -4117,7 +4117,7 @@ describe('SyncEngine push-permission probe', () => {
     await waitForPushPermissionResolved(engine);
     expect(probe.calls).toBe(1);
     expect(probe.opts[0]).toMatchObject({
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       host: 'ghes.acme.test',
     });
@@ -5586,7 +5586,7 @@ describe('SyncEngine pull-only B1 fast-forward cycle', () => {
       `${JSON.stringify({
         mcpServers: {
           other: { command: 'keep-me' },
-          'palimpsest': { command: '/bin/sh', args: ['-l', '-c', `${marker}\nexit 127`] },
+          palimpsest: { command: '/bin/sh', args: ['-l', '-c', `${marker}\nexit 127`] },
         },
       })}\n`;
     const { originTip } = await cloneBehindOrigin({
@@ -5616,7 +5616,7 @@ describe('SyncEngine pull-only B1 fast-forward cycle', () => {
       `${JSON.stringify({
         mcpServers: {
           other: { command: 'keep-me' },
-          'palimpsest': { command: '/bin/sh', args: ['-l', '-c', `${marker}\nexit 127`] },
+          palimpsest: { command: '/bin/sh', args: ['-l', '-c', `${marker}\nexit 127`] },
         },
       })}\n`;
     const { originTip } = await cloneBehindOrigin({

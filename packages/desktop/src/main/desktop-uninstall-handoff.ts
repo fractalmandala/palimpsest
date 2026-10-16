@@ -38,7 +38,6 @@ interface DesktopUninstallHandoffStepDeps {
   collectFeedback: () => Promise<void>;
   launchHandoff: () => Promise<RunDesktopUninstallCleanupResult>;
   showFailure: (failure: { error: string }) => Promise<void>;
-  suppressAutoInstallOnQuit: () => void;
   quit: () => void | Promise<void>;
 }
 
@@ -51,7 +50,6 @@ export async function runDesktopUninstallHandoffStep(
     await deps.showFailure(handoff);
     return;
   }
-  deps.suppressAutoInstallOnQuit();
   await deps.quit();
 }
 

@@ -1,7 +1,4 @@
-import type {
-  ContentDivergenceCurrentState,
-  ContentDivergenceWarning,
-} from '@palimpsest/core';
+import type { ContentDivergenceCurrentState, ContentDivergenceWarning } from '@palimpsest/core';
 
 export const CONTENT_DIVERGENCE_CAP_BYTES = 50 * 1024;
 

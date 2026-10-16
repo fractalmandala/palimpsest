@@ -1,17 +1,13 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import {
-  isMutatingParserReservation,
-  LINT_PLUGIN_IDS,
-  VALIDATION_SOURCES,
-} from '@palimpsest/core';
+import { isMutatingParserReservation, LINT_PLUGIN_IDS, VALIDATION_SOURCES } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { formatValidatorDegradationWarning } from './lint/validation-audit.ts';
 import { DESCRIPTION as AUDIT_DESCRIPTION, AUDIT_WARNINGS_DESCRIPTION } from './mcp/tools/audit.ts';
 import { DESCRIPTION as LINT_DESCRIPTION, LINT_WARNINGS_DESCRIPTION } from './mcp/tools/lint.ts';
 
 const PROJECT_SKILL = readFileSync(
-  join(import.meta.dir, '../assets/skills/project/SKILL.md'),
+  join(import.meta.dir, '../../skills/project/SKILL.md'),
   'utf8',
 );
 const CONTENT_RULES_OVERVIEW = readFileSync(

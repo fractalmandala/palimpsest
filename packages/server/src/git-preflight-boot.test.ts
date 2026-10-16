@@ -2,13 +2,13 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { mkdtemp, realpath, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import { PS_DIR } from '@palimpsest/core';
 import { context, metrics, trace } from '@opentelemetry/api';
 import {
   BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
 } from '@opentelemetry/sdk-trace-base';
+import { PS_DIR } from '@palimpsest/core';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { bootServer } from './boot.ts';
 import { ConfigSchema } from './config/schema.ts';

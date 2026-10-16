@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import type {
   SharePublishErrorCode,
   SharePublishNameCheckResponse,
@@ -12,7 +13,6 @@ import {
   SharePublishOwnersResponseSchema,
   SharePublishResponseSchema,
 } from '@palimpsest/core/schemas/api';
-import { t } from '@lingui/core/macro';
 
 const SHARE_PUBLISH_OWNERS_PATH = '/api/share/publish/owners';
 const SHARE_PUBLISH_NAME_CHECK_PATH = '/api/share/publish/name-check';

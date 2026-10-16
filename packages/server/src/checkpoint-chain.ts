@@ -1,7 +1,4 @@
-import {
-  isChainAnchorCheckpointKind,
-  parseCheckpoint,
-} from '@palimpsest/core/shadow-repo-layout';
+import { isChainAnchorCheckpointKind, parseCheckpoint } from '@palimpsest/core/shadow-repo-layout';
 import type { SimpleGit } from 'simple-git';
 import { getLogger } from './logger.ts';
 

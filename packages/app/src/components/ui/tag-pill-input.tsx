@@ -1,10 +1,10 @@
 'use client';
 
+import { useLingui } from '@lingui/react/macro';
 import {
   FRONTMATTER_TAG_GRAMMAR_HINT,
   isValidFrontmatterTagValue,
 } from '@palimpsest/core/frontmatter/tags';
-import { useLingui } from '@lingui/react/macro';
 import { XIcon } from 'lucide-react';
 import { type Ref, useEffect, useId, useRef, useState } from 'react';
 import { Badge } from '@/components/ui/badge';

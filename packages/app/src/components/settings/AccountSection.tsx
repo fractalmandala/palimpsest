@@ -1,6 +1,6 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import type { ConfigBinding } from '@palimpsest/core/config/bind-config-doc';
 import { isGitCredentialHost } from '@palimpsest/core/constants/github';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { useEffect, useId, useRef, useState } from 'react';
 import { AuthModal } from '@/components/AuthModal';
 import { isGitHubRemote, remoteTakesStoredToken } from '@/components/SyncStatusBadge';

@@ -1,6 +1,6 @@
-import { FALLBACK_LOCALE } from '@palimpsest/core/i18n/resolve-locale';
 import type { Messages } from '@lingui/core';
 import { i18n } from '@lingui/core';
+import { FALLBACK_LOCALE } from '@palimpsest/core/i18n/resolve-locale';
 import catalog from '@/locales/en/messages.json';
 
 i18n.load(FALLBACK_LOCALE, catalog.messages as unknown as Messages);

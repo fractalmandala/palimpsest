@@ -1,7 +1,4 @@
-import type {
-  UninstallFeedbackAnswers,
-  UninstallFeedbackResult,
-} from '@palimpsest/core';
+import type { UninstallFeedbackAnswers, UninstallFeedbackResult } from '@palimpsest/core';
 import { describe, expect, test, vi } from 'vitest';
 import {
   confirmDesktopUninstall,

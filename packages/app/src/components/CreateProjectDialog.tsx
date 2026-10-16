@@ -1,3 +1,6 @@
+import type { MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
+import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import type { CreateNewBannerKind } from '@palimpsest/core/constants/create-new-banner';
 import {
   CREATE_NEW_PROJECT_FAILURE_REASONS,
@@ -5,9 +8,6 @@ import {
 } from '@palimpsest/core/constants/create-new-project-reason';
 import { receivesProjectIntegrationWrite } from '@palimpsest/core/constants/editors';
 import { sanitizeFolderName } from '@palimpsest/core/utils/sanitize-folder-name';
-import type { MessageDescriptor } from '@lingui/core';
-import { msg } from '@lingui/core/macro';
-import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { ArrowLeft } from 'lucide-react';
 import { type RefObject, useEffect, useId, useRef, useState } from 'react';
 import { toast } from 'sonner';

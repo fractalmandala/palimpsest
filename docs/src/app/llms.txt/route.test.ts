@@ -61,7 +61,7 @@ describe('GET /llms.txt', () => {
     const quickstart = pages.find((page) => page.url === '/docs/get-started/quickstart');
     expect(quickstart).toBeDefined();
     expect(await body()).toContain(
-      `- [${quickstart?.data.title}](https://github.com/fractalmandala/palimpsest/blob/main/docs/content/get-started/quickstart.mdx)`,
+      `- [${quickstart?.data.title}](https://github.com/fractalmandala/palimpsest/docs/get-started/quickstart.md)`,
     );
   });
 
@@ -106,7 +106,7 @@ describe('GET /llms.txt', () => {
     const urls = listedUrls(await body());
     expect(urls.length).toBeGreaterThan(50);
     for (const url of urls) {
-      expect(url).toMatch(/^https:\/\/palimpsest\.ai\/[^\s]*\.md$/);
+      expect(url).toMatch(/^https:\/\/github\.com\/fractalmandala\/palimpsest\/[^\s]*\.md$/);
     }
     expect(urls).toEqual([...new Set(urls)]);
   });

@@ -33,7 +33,7 @@ describe('M1 smoke', () => {
       return;
     }
 
-    const entry = new Entry('open-knowledge-m1-smoke', 'test-user');
+    const entry = new Entry('palimpsest-m1-smoke', 'test-user');
     try {
       entry.setPassword('secret-from-test');
       const got = entry.getPassword();
@@ -199,9 +199,7 @@ describe('M1 smoke', () => {
           /from\s+['"]@palimpsest\/core(?:\/[\w-]+)*['"]/.test(src) ||
           /from\s+['"]\.\/constants\/[\w-]+\.ts['"]/.test(src);
         if (!importsFromCore) {
-          offenders.push(
-            `  [${pin.typeName}] ${label} does not import from @palimpsest/core`,
-          );
+          offenders.push(`  [${pin.typeName}] ${label} does not import from @palimpsest/core`);
         }
         const typeRe = new RegExp(`\\b${pin.typeName}\\b`);
         if (!typeRe.test(src)) {

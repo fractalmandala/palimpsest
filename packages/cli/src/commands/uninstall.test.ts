@@ -82,19 +82,14 @@ describe('detectInstallMethods', () => {
       'Palimpsest Beta (/Applications/Palimpsest Beta.app)',
     ];
     expect(labels('/usr/local/bin/node')).toEqual(expected);
-    expect(
-      labels('/Applications/Palimpsest Beta.app/Contents/MacOS/Palimpsest Beta'),
-    ).toEqual(expected);
+    expect(labels('/Applications/Palimpsest Beta.app/Contents/MacOS/Palimpsest Beta')).toEqual(
+      expected,
+    );
   });
 
   test('detects the Windows NSIS install and points at Settings → Apps', () => {
     const localAppData = 'C:\\Users\\Jane\\AppData\\Local';
-    const exe = join(
-      localAppData,
-      'Programs',
-      '@palimpsestdesktop',
-      'Palimpsest.exe',
-    );
+    const exe = join(localAppData, 'Programs', '@palimpsestdesktop', 'Palimpsest.exe');
     const methods = detectInstallMethods(
       'C:\\Users\\Jane',
       undefined,

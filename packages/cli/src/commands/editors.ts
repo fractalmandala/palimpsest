@@ -14,8 +14,8 @@ import {
   type DesktopProduct,
   isDevChannel,
   mcpChainMarkerPrefix,
-  PS_CHANNEL_ENV,
   type PackagedDesktopProductName,
+  PS_CHANNEL_ENV,
   piExtensionProjectPath,
   resolveDesktopProductName,
 } from '@palimpsest/core';
@@ -24,12 +24,15 @@ import { getTomlConfigEngine } from '../native/toml-config-engine.ts';
 export type EditorId = CoreEditorId;
 export const ALL_EDITOR_IDS: readonly EditorId[] = CORE_ALL_EDITOR_IDS;
 export const EDITOR_LABELS: Record<EditorId, string> = CORE_EDITOR_LABELS;
-export const HOSTS_WITH_USER_SKILL_DIR = CORE_HOSTS_WITH_USER_SKILL_DIR;
+export const HOSTS_WITH_USER_SKILL_DIR: ReadonlyArray<{
+  readonly hostDir: string;
+  readonly editorId: CoreEditorId;
+}> = CORE_HOSTS_WITH_USER_SKILL_DIR;
 
 const DEV_MCP_SERVER_COMMAND = 'node';
 const DEV_MCP_ENV = {
   MCP_DEBUG: '1',
-  PS_LOG_FILE: '/tmp/ok-mcp.log',
+  PS_LOG_FILE: '/tmp/ps-mcp.log',
 } as const;
 
 function devMcpEnv(): Record<string, string> {

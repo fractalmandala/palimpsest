@@ -287,8 +287,8 @@ describe('createNoteWindow', () => {
     expect(args).toContain('--ok-mode=note');
     expect(args).toContain('--ok-collab-url=ws://localhost:5200/collab');
     expect(args).toContain('--ok-api-origin=http://localhost:5200');
-    expect(args).toContain('--ok-project-path=/Users/me/project');
-    expect(args).toContain('--ok-initial-doc=notes/alpha');
+    expect(args).toContain('--ps-project-path=/Users/me/project');
+    expect(args).toContain('--ps-initial-doc=notes/alpha');
   });
 
   test('titles the window with the document name', () => {

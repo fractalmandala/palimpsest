@@ -51,7 +51,7 @@ export async function launchOwnedWorkerServer({
     openedServerLog = serverLog;
     teardown.push(() => removeAllDuringTeardown(serverLog.path));
     teardown.push(() => closeServerLog(serverLog));
-    const contentDir = mkdtempSync(join(tmpdir(), `ok-${label}-`));
+    const contentDir = mkdtempSync(join(tmpdir(), `ps-${label}-`));
     teardown.push(() => removeAllDuringTeardown(contentDir));
     const viteCacheDir = prepareViteCacheDir(label);
     teardown.push(() => removeAllDuringTeardown(viteCacheDir));

@@ -317,64 +317,6 @@ describe('buildMenuTemplate', () => {
     }
   });
 
-  describe('Check for updates… menu item', () => {
-    const isMac = process.platform === 'darwin';
-
-    test('omitted entirely when onCheckForUpdates dep is undefined (dev mode / boot failure)', () => {
-      const deps = makeDeps();
-      const template = buildMenuTemplate(deps);
-      expect(findByLabel(template, 'Check for updates…')).toBeUndefined();
-    });
-
-    if (isMac) {
-      test('macOS: appears in App menu between About and Settings…', () => {
-        const onCheckForUpdates = vi.fn(() => {});
-        const deps = makeDeps({ onCheckForUpdates, openSettings: vi.fn(() => {}) });
-        const template = buildMenuTemplate(deps);
-        const appMenu = template.find((t) => t.label === deps.appName);
-        const sub = appMenu?.submenu as MenuItemConstructorOptions[] | undefined;
-        if (!sub) throw new Error('App submenu missing');
-        const aboutIdx = sub.findIndex((i) => i.role === 'about');
-        const checkIdx = sub.findIndex((i) => i.label === 'Check for updates…');
-        const settingsIdx = sub.findIndex((i) => i.label === 'Settings…');
-        expect(aboutIdx).toBeGreaterThanOrEqual(0);
-        expect(checkIdx).toBeGreaterThan(aboutIdx);
-        expect(settingsIdx).toBeGreaterThan(checkIdx);
-      });
-
-      test('macOS: NOT in the Help menu — exactly one entry, in the App menu', () => {
-        const onCheckForUpdates = vi.fn(() => {});
-        const deps = makeDeps({ onCheckForUpdates });
-        const template = buildMenuTemplate(deps);
-        const helpMenu = template.find((t) => t.label === 'Help');
-        const sub = helpMenu?.submenu as MenuItemConstructorOptions[] | undefined;
-        if (!sub) throw new Error('Help submenu missing');
-        expect(sub.find((i) => i.label === 'Check for updates…')).toBeUndefined();
-      });
-    } else {
-      test('non-mac: appears in Help menu only (no App menu on these platforms)', () => {
-        const onCheckForUpdates = vi.fn(() => {});
-        const deps = makeDeps({ onCheckForUpdates });
-        const template = buildMenuTemplate(deps);
-        const helpMenu = template.find((t) => t.label === 'Help');
-        const sub = helpMenu?.submenu as MenuItemConstructorOptions[] | undefined;
-        if (!sub) throw new Error('Help submenu missing');
-        expect(sub.find((i) => i.label === 'Check for updates…')).toBeDefined();
-      });
-    }
-
-    test('click dispatches deps.onCheckForUpdates()', () => {
-      const onCheckForUpdates = vi.fn(() => {});
-      const deps = makeDeps({ onCheckForUpdates });
-      const template = buildMenuTemplate(deps);
-      const item = findByLabel(template, 'Check for updates…');
-      if (!item || typeof item.click !== 'function')
-        throw new Error('Check for updates… click missing');
-      (item.click as () => void)();
-      expect(onCheckForUpdates).toHaveBeenCalledTimes(1);
-    });
-  });
-
   describe('Report a bug… menu item', () => {
     test('always renders in the Help menu, even without the dep wired', () => {
       const template = buildMenuTemplate(makeDeps());
@@ -431,10 +373,9 @@ describe('buildMenuTemplate', () => {
       const labels = helpSubmenu('darwin', makeDeps())
         .map((item) => item.label)
         .filter((label) => label !== undefined);
-      expect(labels.slice(0, 5)).toEqual([
+      expect(labels.slice(0, 4)).toEqual([
         'Palimpsest on GitHub',
         'Documentation',
-        'Join us on Discord',
         'Report a bug…',
         'Send feedback…',
       ]);
@@ -442,7 +383,6 @@ describe('buildMenuTemplate', () => {
 
     test.each([
       ['Documentation', 'https://github.com/fractalmandala/palimpsest/tree/main/docs/content'],
-      ['Join us on Discord', 'https://discord.gg/VRKk2EaGHN'],
     ])('%s opens %s externally', (label, url) => {
       const openExternalUrl = vi.fn(() => {});
       const item = helpSubmenu('darwin', makeDeps({ openExternalUrl })).find(

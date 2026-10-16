@@ -1,8 +1,4 @@
-import type {
-  PsUninstallBridge,
-  UninstallDispatchResult,
-  UninstallIntent,
-} from '@palimpsest/core';
+import type { PsUninstallBridge, UninstallDispatchResult, UninstallIntent } from '@palimpsest/core';
 import type { IpcInvoker } from '../shared/ipc-invoke.ts';
 
 export function createUninstallBridge(invoke: IpcInvoker): PsUninstallBridge {

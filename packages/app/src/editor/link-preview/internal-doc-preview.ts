@@ -1,7 +1,4 @@
-import {
-  stripFrontmatter,
-  unwrapFrontmatterFences,
-} from '@palimpsest/core/extensions/frontmatter';
+import { stripFrontmatter, unwrapFrontmatterFences } from '@palimpsest/core/extensions/frontmatter';
 import { extractFrontmatterTags } from '@palimpsest/core/frontmatter/tags';
 import {
   BacklinkCountsSuccessSchema,

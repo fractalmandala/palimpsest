@@ -8,7 +8,7 @@ import {
   generateFireworkParticles,
   IDLE_RESET_MS,
   nextClickLevel,
-} from './ok-blob-logic';
+} from './ps-blob-logic';
 
 interface PsBlobProps {
   size?: number;

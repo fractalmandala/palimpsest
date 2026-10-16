@@ -1,5 +1,5 @@
-import type { CreateScenario } from '@palimpsest/core/handoff';
 import { useLingui } from '@lingui/react/macro';
+import type { CreateScenario } from '@palimpsest/core/handoff';
 import { Bird, FileCode2, ListTree, Network, Telescope } from 'lucide-react';
 import type { ComponentType } from 'react';
 

@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import {
-  applyPsInitOutcome,
   applyOpenOutcome,
+  applyPsInitOutcome,
   type ConsentFlowSeed,
   type ConsentFlowState,
   initialConsentFlowState,

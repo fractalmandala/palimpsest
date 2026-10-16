@@ -1,11 +1,11 @@
-// oxlint-disable ok/no-raw-html-interactive-element -- pre-rule backlog — file uses raw <button>/<input>/<textarea> awaiting shadcn migration; tracked at https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-raw-html-interactive-element
+// oxlint-disable ps/no-raw-html-interactive-element -- pre-rule backlog — file uses raw <button>/<input>/<textarea> awaiting shadcn migration; tracked at https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-raw-html-interactive-element
 
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
+// oxlint-disable ps/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
-import { receivesProjectIntegrationWrite } from '@palimpsest/core/constants/editors';
 import type { MessageDescriptor } from '@lingui/core';
 import { msg, plural } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { receivesProjectIntegrationWrite } from '@palimpsest/core/constants/editors';
 import { ChevronRight } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useId, useRef, useState } from 'react';

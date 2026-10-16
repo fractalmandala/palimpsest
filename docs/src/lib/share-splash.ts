@@ -429,7 +429,7 @@ export function buildCloneCommand({
   repo: string;
   branch: string;
 }): string {
-  return `ok clone ${quoteShareArg(owner)}/${quoteShareArg(repo)} -b ${quoteShareArg(branch)}`;
+  return `ps clone ${quoteShareArg(owner)}/${quoteShareArg(repo)} -b ${quoteShareArg(branch)}`;
 }
 
 export type SplashOs = DetectedOs;

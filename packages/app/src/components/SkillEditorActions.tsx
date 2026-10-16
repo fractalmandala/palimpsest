@@ -1,5 +1,5 @@
-import type { SkillScope, SkillsListEntry } from '@palimpsest/core/schemas/api';
 import { Trans, useLingui } from '@lingui/react/macro';
+import type { SkillScope, SkillsListEntry } from '@palimpsest/core/schemas/api';
 import { ChevronDown, FilePlus } from 'lucide-react';
 import { useState } from 'react';
 import { AgentIconCluster } from '@/components/AgentIconCluster';

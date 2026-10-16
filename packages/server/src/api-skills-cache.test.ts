@@ -208,9 +208,7 @@ test('the composed listener serves the list and admitted documents from shared s
   const docs = await fetch(`http://127.0.0.1:${server.port}/api/documents`);
   expect(docs.status).toBe(200);
   const indexed = (await docs.json()) as { documents: Array<{ docName?: string }> };
-  expect(indexed.documents.some((d) => d.docName === '.agents/skills/palimpsest/SKILL')).toBe(
-    true,
-  );
+  expect(indexed.documents.some((d) => d.docName === '.agents/skills/palimpsest/SKILL')).toBe(true);
 });
 
 test('folder artifact writes invalidate the shared list without an optional files signal', async () => {

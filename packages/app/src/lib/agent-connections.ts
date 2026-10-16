@@ -1,8 +1,4 @@
-import type {
-  ApplyIntent,
-  ApplyReport,
-  HostSnapshot,
-} from '@palimpsest/core/agent-registry';
+import type { ApplyIntent, ApplyReport, HostSnapshot } from '@palimpsest/core/agent-registry';
 import { AgentIntegrationsApplySuccessSchema } from '@palimpsest/core/schemas/api';
 
 export interface ApplyAgentConnectionsResult {

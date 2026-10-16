@@ -237,8 +237,8 @@ describe('ConfigSchema coverage (NR3 — every leaf has fieldRegistry metadata)'
     expect(projectLocalStrict).toEqual([
       'appearance.sidebar.pinnedProjectSkills',
       'appearance.sidebar.showHiddenFiles',
-      'appearance.sidebar.showPsFolders',
       'appearance.sidebar.showOnlyMarkdownFiles',
+      'appearance.sidebar.showPsFolders',
       'appearance.sidebar.showSkillGroups',
       'appearance.sidebar.showSkillsSection',
       'autoSync.enabled',

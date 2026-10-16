@@ -112,7 +112,6 @@ describe('AppMenubar Help menu', () => {
     expect(labels).toEqual([
       'Palimpsest on GitHub',
       'Documentation',
-      'Join us on Discord',
       'Report a bug…Ctrl+Shift+D',
       'Send feedback…',
       'About Palimpsest',
@@ -121,7 +120,6 @@ describe('AppMenubar Help menu', () => {
 
   test.each([
     ['Documentation', 'open-docs'],
-    ['Join us on Discord', 'open-discord'],
   ] as const)('%s dispatches the %s command', async (name, command) => {
     const dispatch = installBridge('win32');
     await openHelpMenu();
@@ -210,7 +208,6 @@ describe('AppMenubar View terminal toggle', () => {
     recentProjects: [],
     spellCheckEnabled: true,
     showDevToolsMenu: false,
-    canCheckForUpdates: false,
     canReconfigureMcpWiring: false,
     activeTarget: { kind: null },
     viewMenuState: {

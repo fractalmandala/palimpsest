@@ -47,13 +47,13 @@ test('composeFilePrompt interpolates a deep relative path with autoOpen=false', 
 
 test('composeSkillPrompt names the write-skill skill + scope, with the autoOpen trailer', () => {
   expect(composeSkillPrompt('commit-helper', 'project', true)).toBe(
-    'Use your open-knowledge-write-skill skill to author the project Palimpsest skill `commit-helper`. Edit it with the Palimpsest tools. Open the OK editor in web view.',
+    'Use your palimpsest-write-skill skill to author the project Palimpsest skill `commit-helper`. Edit it with the Palimpsest tools. Open the OK editor in web view.',
   );
 });
 
 test('composeSkillPrompt carries the global scope + drops the trailer when autoOpen=false', () => {
   expect(composeSkillPrompt('my-notes', 'global', false)).toBe(
-    'Use your open-knowledge-write-skill skill to author the global Palimpsest skill `my-notes`. Edit it with the Palimpsest tools.',
+    'Use your palimpsest-write-skill skill to author the global Palimpsest skill `my-notes`. Edit it with the Palimpsest tools.',
   );
 });
 
@@ -341,13 +341,13 @@ test('composeCreatePrompt skill frames the brief as a new skill authored via wri
   const out = composeCreatePrompt('a PR reviewer', false, 'skill', []);
   expect(out).toContain("I want to create a new Palimpsest skill. Here's what it should do:");
   expect(out).toContain('> a PR reviewer');
-  expect(out).toContain('Use your open-knowledge-write-skill skill to author it');
+  expect(out).toContain('Use your palimpsest-write-skill skill to author it');
 });
 
 test('composeCreatePrompt skill empty brief degrades to a bare write-skill directive', () => {
   const expected =
     "Let's create a new Palimpsest skill." +
-    ' Use your open-knowledge-write-skill skill to author it with the Palimpsest tools.';
+    ' Use your palimpsest-write-skill skill to author it with the Palimpsest tools.';
   expect(composeCreatePrompt('', false, 'skill', [])).toBe(expected);
   expect(composeCreatePrompt('   \n  ', false, 'skill', [])).toBe(expected);
 });
@@ -1463,9 +1463,7 @@ test('composeFixAllProblemsPrompt names the doc scope and points at audit', () =
 
 test('composeFixAllProblemsPrompt names the project scope with no doc mention', () => {
   const prompt = composeFixAllProblemsPrompt(null);
-  expect(prompt).toContain(
-    "Fix every problem across this project's documents using Palimpsest.",
-  );
+  expect(prompt).toContain("Fix every problem across this project's documents using Palimpsest.");
   expect(prompt).toContain('Run the `audit` tool for the current list');
   expect(prompt).toContain('work file by file');
   expect(prompt).toContain("clears one document's mechanically-fixable problems at a time");

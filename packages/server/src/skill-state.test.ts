@@ -44,15 +44,15 @@ describe('per-bundle opt-in decisions', () => {
     await writeTargetVersion(home, 'cli-hosts', '1.2.3', 'cli-start');
 
     await writeBundleDecision(home, 'palimpsest-discovery', true);
-    await writeBundleDecision(home, 'open-knowledge-write-skill', false);
+    await writeBundleDecision(home, 'palimpsest-write-skill', false);
 
     expect(await readBundleDecision(home, 'palimpsest-discovery')).toBe(true);
-    expect(await readBundleDecision(home, 'open-knowledge-write-skill')).toBe(false);
+    expect(await readBundleDecision(home, 'palimpsest-write-skill')).toBe(false);
     expect(await readTargetVersion(home, 'cli-hosts')).toBe('1.2.3');
 
     await writeBundleDecision(home, 'palimpsest-discovery', false);
     expect(await readBundleDecision(home, 'palimpsest-discovery')).toBe(false);
-    expect(await readBundleDecision(home, 'open-knowledge-write-skill')).toBe(false);
+    expect(await readBundleDecision(home, 'palimpsest-write-skill')).toBe(false);
   });
 });
 
@@ -67,7 +67,7 @@ describe('readServerPackageVersion', () => {
 describe('built-in SKILL.md carries no version stamp', () => {
   for (const bundle of ['discovery', 'project', 'write-skill'] as const) {
     test(`${bundle} bundle SKILL.md frontmatter has no version: field`, async () => {
-      const skillMdUrl = new URL(`../assets/skills/${bundle}/SKILL.md`, import.meta.url);
+      const skillMdUrl = new URL(`../../skills/${bundle}/SKILL.md`, import.meta.url);
       const skillMd = await readFile(fileURLToPath(skillMdUrl), 'utf-8');
       const frontmatter = skillMd.split(/^---$/m)[1] ?? '';
       expect(frontmatter).not.toMatch(/^\s*version:/m);

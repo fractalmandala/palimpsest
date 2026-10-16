@@ -1,5 +1,5 @@
-import { EDITOR_LABELS } from '@palimpsest/core';
 import { i18n } from '@lingui/core';
+import { EDITOR_LABELS } from '@palimpsest/core';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, test, vi } from 'vitest';

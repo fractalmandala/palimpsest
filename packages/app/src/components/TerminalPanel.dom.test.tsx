@@ -2388,7 +2388,7 @@ describe('TerminalPanel', () => {
     },
   );
 
-  test('a claude launch shows no readiness banner when claude is present and OK tools are wired', async () => {
+  test('a claude launch shows no readiness banner when claude is present and Palimpsest tools are wired', async () => {
     connectionSnapshot = terminalAgentSnapshot(['claude']);
     const { bridge, terminal } = makeBridge({ ok: true, ptyId: 'pty-1' }, WIRED);
     render(<TerminalPanel bridge={bridge} launch={{ prompt: null, cli: 'claude', nonce: 1 }} />);

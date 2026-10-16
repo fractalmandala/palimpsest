@@ -1,5 +1,5 @@
-import { formatFileSize } from '@palimpsest/core/utils/file-size';
 import { Trans } from '@lingui/react/macro';
+import { formatFileSize } from '@palimpsest/core/utils/file-size';
 import { ArrowLeft, FileWarning } from 'lucide-react';
 import { useEffect, useId, useRef } from 'react';
 import { Button } from '@/components/ui/button';

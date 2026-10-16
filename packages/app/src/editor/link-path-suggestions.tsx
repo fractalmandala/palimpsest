@@ -1,6 +1,6 @@
 import { autoUpdate, computePosition, flip, offset, shift, size } from '@floating-ui/dom';
-import { isExternalHref } from '@palimpsest/core/utils/link-targets';
 import { useLingui } from '@lingui/react/macro';
+import { isExternalHref } from '@palimpsest/core/utils/link-targets';
 import {
   type ComponentProps,
   type KeyboardEvent,

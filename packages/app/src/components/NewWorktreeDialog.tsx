@@ -1,8 +1,8 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
+// oxlint-disable ps/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
-import { stripRemotePrefix } from '@palimpsest/core/git/worktree-selector-model';
 import type { MessageDescriptor } from '@lingui/core';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { stripRemotePrefix } from '@palimpsest/core/git/worktree-selector-model';
 import { Check, ChevronsUpDown, Cloud, FolderOpen, GitBranch, Plus, Search } from 'lucide-react';
 import { useEffect, useId, useRef, useState } from 'react';
 import { toast } from 'sonner';

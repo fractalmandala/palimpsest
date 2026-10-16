@@ -15,12 +15,7 @@ describe('terminal-launch-events', () => {
       if (request.kind === 'cli') received.push({ prompt: request.prompt, cli: request.cli });
     }, target);
 
-    requestTerminalLaunch(
-      "Let's work on `foo.md` using Palimpsest.",
-      'codex',
-      undefined,
-      target,
-    );
+    requestTerminalLaunch("Let's work on `foo.md` using Palimpsest.", 'codex', undefined, target);
     expect(received).toEqual([
       { prompt: "Let's work on `foo.md` using Palimpsest.", cli: 'codex' },
     ]);

@@ -2,13 +2,13 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, statSync, writeFileSy
 import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
-import { bootServer, ConfigSchema, getLogger } from '@palimpsest/server';
 import { context, metrics, trace } from '@opentelemetry/api';
 import {
   BasicTracerProvider,
   InMemorySpanExporter,
   SimpleSpanProcessor,
 } from '@opentelemetry/sdk-trace-base';
+import { bootServer, ConfigSchema, getLogger } from '@palimpsest/server';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { createLinkedWorktree, type LinkedWorktreeHandle } from './worktree-test-harness.ts';
 

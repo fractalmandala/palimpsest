@@ -1,6 +1,6 @@
+import { useLingui } from '@lingui/react/macro';
 import { humanFormat } from '@palimpsest/core/config/errors';
 import { DEFAULT_TUNNEL_PORT } from '@palimpsest/core/config/schema';
-import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import {

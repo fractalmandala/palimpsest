@@ -25,15 +25,15 @@ export function McpInstall({ editor, children }: { editor: string; children?: Re
           <strong>Desktop app</strong> (macOS, Windows, Linux). The first time you open a project, a
           consent dialog detects {editor} and configures it for you. To re-trigger the dialog,
           choose{' '}
-          {/* oxlint-disable-next-line ok/microcopy-ellipsis -- quoting the literal menu label (menu.ts) */}
+          {/* oxlint-disable-next-line ps/microcopy-ellipsis -- quoting the literal menu label (menu.ts) */}
           <strong>File → Set up Palimpsest integrations…</strong>.
         </li>
         <li>
           <strong>Web app / terminal</strong> (any platform, including Intel Macs — see the{' '}
           <a href={WEB_APP_GUIDE_HREF}>web app guide</a>
-          ). Run <code>ps init</code> in your project: it registers the Palimpsest MCP server
-          with {editor} and the other editors it detects. Every <code>ps start</code> repairs the
-          entry if it has drifted (it never adds one you removed).
+          ). Run <code>ps init</code> in your project: it registers the Palimpsest MCP server with{' '}
+          {editor} and the other editors it detects. Every <code>ps start</code> repairs the entry
+          if it has drifted (it never adds one you removed).
         </li>
       </ul>
       {children}

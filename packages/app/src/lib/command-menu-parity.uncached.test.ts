@@ -10,7 +10,7 @@ import {
   type KeyboardShortcutId,
   type ShortcutPlatform,
 } from '@/lib/keyboard-shortcuts';
-import { PS_MENU_ACTIONS } from '@/lib/ok-menu-actions';
+import { PS_MENU_ACTIONS } from '@/lib/ps-menu-actions';
 import {
   buildMenuTemplate,
   MENU_BINDING_IDS,

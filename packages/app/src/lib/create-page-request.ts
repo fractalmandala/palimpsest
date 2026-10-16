@@ -1,5 +1,5 @@
-import { CreatePageSuccessSchema } from '@palimpsest/core/schemas/api';
 import { t } from '@lingui/core/macro';
+import { CreatePageSuccessSchema } from '@palimpsest/core/schemas/api';
 import { emitDocumentsChanged } from '@/lib/documents-events';
 import { parseServerResponse } from '@/lib/parse-server-response';
 import { hashFromDocName } from './doc-hash';

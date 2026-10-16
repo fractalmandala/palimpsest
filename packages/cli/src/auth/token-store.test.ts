@@ -782,9 +782,7 @@ describe('credentials per channel', () => {
     vi.stubEnv('PS_CHANNEL', 'beta');
     const { createTokenStore, FileBackend: ChannelFileBackend } = await import('./token-store.ts');
     await (await createTokenStore(join(fakeHome, 'unused.yml'))).set('github.com', 'a', 't');
-    expect(keyringMockState.setPasswordCalls.map((c) => c.service)).toEqual([
-      'palimpsest-beta',
-    ]);
+    expect(keyringMockState.setPasswordCalls.map((c) => c.service)).toEqual(['palimpsest-beta']);
     await new ChannelFileBackend().set('github.com', 'a', 't');
     expect(readFileSync(join(fakeHome, '.ps-beta', 'auth.yml'), 'utf-8')).toContain('github.com');
     expect(() => readFileSync(join(fakeHome, '.ps', 'auth.yml'), 'utf-8')).toThrow();
@@ -807,15 +805,11 @@ describe('credentials per channel', () => {
     expect((await store.get('github.com'))?.token).toBe('gho_beta');
 
     await store.clear('github.com');
-    expect(keyringMockState.deletePasswordCalls.map((c) => c.service)).toEqual([
-      'palimpsest-beta',
-    ]);
+    expect(keyringMockState.deletePasswordCalls.map((c) => c.service)).toEqual(['palimpsest-beta']);
 
     keyringMockState.deletePasswordCalls = [];
     const result = await clearTokenFromAllBackends('github.com', authFile);
     expect(result.touched).toEqual(['keychain']);
-    expect(keyringMockState.deletePasswordCalls.map((c) => c.service)).toEqual([
-      'palimpsest-beta',
-    ]);
+    expect(keyringMockState.deletePasswordCalls.map((c) => c.service)).toEqual(['palimpsest-beta']);
   });
 });

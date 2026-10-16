@@ -106,9 +106,9 @@ test.describe('lone-URL paste over a selection — [text](url) bytes', () => {
     await page.goto(`/#/${docName}`);
     await waitForProvider(page);
     await page.waitForSelector(EDITOR);
-    await api.replaceDoc(docName, 'inkeep docs\n');
-    await expect.poll(() => getYText(page), { timeout: 5_000 }).toBe('inkeep docs\n');
-    await expect(page.locator(`${EDITOR} p`).first()).toContainText('inkeep docs');
+    await api.replaceDoc(docName, 'example docs\n');
+    await expect.poll(() => getYText(page), { timeout: 5_000 }).toBe('example docs\n');
+    await expect(page.locator(`${EDITOR} p`).first()).toContainText('example docs');
   });
 
   test('pasting a URL over a selected word keeps the text and links it', async ({ page }) => {
@@ -116,7 +116,7 @@ test.describe('lone-URL paste over a selection — [text](url) bytes', () => {
     await pasteText(page, URL_LITERAL);
     await expect
       .poll(() => getYText(page), { timeout: 5_000 })
-      .toBe('inkeep [docs](https://inkeep.com)\n');
+      .toBe('example [docs](https://inkeep.com)\n');
     await expect(page.locator(`${LINK_CHIP}[aria-label="Link: ${URL_LITERAL}"]`)).toHaveCount(1);
   });
 
@@ -125,10 +125,10 @@ test.describe('lone-URL paste over a selection — [text](url) bytes', () => {
     await pasteText(page, URL_LITERAL);
     await expect
       .poll(() => getYText(page), { timeout: 5_000 })
-      .toBe('inkeep [docs](https://inkeep.com)\n');
+      .toBe('example [docs](https://inkeep.com)\n');
     await focusEditor(page);
     await page.keyboard.press('ControlOrMeta+z');
-    await expect.poll(() => getYText(page), { timeout: 5_000 }).toBe('inkeep docs\n');
+    await expect.poll(() => getYText(page), { timeout: 5_000 }).toBe('example docs\n');
     await expect(page.locator(LINK_CHIP)).toHaveCount(0);
   });
 });

@@ -1,5 +1,5 @@
-import { desktopChannelLabel } from '@palimpsest/core/constants/product';
 import { t } from '@lingui/core/macro';
+import { desktopChannelLabel } from '@palimpsest/core/constants/product';
 import { psCliCommandName } from '@/lib/channel-cli-copy';
 import type { PsDesktopBridge, PsServerRestartFailure } from '@/lib/desktop-bridge-types';
 

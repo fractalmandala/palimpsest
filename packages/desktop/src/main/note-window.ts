@@ -179,9 +179,9 @@ export function createNoteWindow(deps: CreateNoteWindowDeps): NoteBrowserWindow 
       `--ok-app-version=${deps.appVersion}`,
       `--ok-collab-url=${project.collabUrl}`,
       `--ok-api-origin=${project.apiOrigin}`,
-      `--ok-project-path=${project.projectPath}`,
+      `--ps-project-path=${project.projectPath}`,
       `--ok-project-name=${project.projectName}`,
-      `--ok-initial-doc=${docName}`,
+      `--ps-initial-doc=${docName}`,
     ],
     title: noteWindowTitle(docName),
   });

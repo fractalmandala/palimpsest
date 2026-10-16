@@ -1,6 +1,6 @@
 import type { HocuspocusProvider } from '@hocuspocus/provider';
-import { SKILL_NAME_REGEX, type SkillScope } from '@palimpsest/core/schemas/api';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { SKILL_NAME_REGEX, type SkillScope } from '@palimpsest/core/schemas/api';
 import { Gauge, Type } from 'lucide-react';
 import { useEffect, useId, useState } from 'react';
 import { PropertyDisplayRow } from '@/components/PropertyDisplayRow';

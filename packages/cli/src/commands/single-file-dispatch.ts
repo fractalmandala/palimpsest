@@ -79,7 +79,7 @@ export function isFileishTarget(absPath: string, token: string): boolean {
     const code = (err as { code?: string } | null)?.code;
     if (code !== 'ENOENT' && code !== 'ENOTDIR') {
       process.stderr.write(
-        `[ok] statSync failed for ${absPath} (${code ?? 'unknown'}); treating as non-fileish\n`,
+        `[ps] statSync failed for ${absPath} (${code ?? 'unknown'}); treating as non-fileish\n`,
       );
     }
     return false;

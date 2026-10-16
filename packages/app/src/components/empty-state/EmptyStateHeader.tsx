@@ -1,6 +1,6 @@
 import { useRef } from 'react';
+import { nextRageStreak, RAGE_STREAK_TO_REVEAL } from '@/components/ps-blob-runner-logic';
 import { PsBlob } from '@/components/PsBlob';
-import { nextRageStreak, RAGE_STREAK_TO_REVEAL } from '@/components/ok-blob-runner-logic';
 import { MASCOT_VIEW_TRANSITION_NAME } from '@/lib/view-transition';
 
 interface EmptyStateHeaderProps {

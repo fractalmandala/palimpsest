@@ -12,7 +12,7 @@ import { MATCHED_FIDELITY_CLASSES } from '../rules/no-inline-tolerance-class.mjs
 
 const REPO_ROOT = fileURLToPath(new URL('../../..', import.meta.url));
 const RULE = 'no-inline-tolerance-class';
-const CODE = `ok(${RULE})`;
+const CODE = `ps(${RULE})`;
 const FIXTURE = `lint-plugins/ps-rules/__fixtures__/${RULE}.fixture.tsx`;
 const DOCS = `lint-plugins/ps-rules/README.md#${RULE}`;
 

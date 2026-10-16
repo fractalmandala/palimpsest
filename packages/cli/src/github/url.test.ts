@@ -302,7 +302,7 @@ describe('parseGitUrl', () => {
       expect(result).toEqual({
         protocol: 'https',
         hostname: 'github.com',
-        owner: 'inkeep',
+        owner: 'fractalmandala',
         name: 'palimpsest',
       });
     });
@@ -350,7 +350,7 @@ describe('parseGitHubBlobUrl', () => {
     );
     expect(result).toEqual({
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
       branch: 'main',
       path: 'README.md',
@@ -363,7 +363,7 @@ describe('parseGitHubBlobUrl', () => {
     );
     expect(result).toEqual({
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
       branch: 'feat-x',
       path: 'docs/sub/page.md',
@@ -376,7 +376,7 @@ describe('parseGitHubBlobUrl', () => {
     );
     expect(result).toEqual({
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
       branch: 'feat/foo',
       path: 'docs/page.md',
@@ -521,7 +521,7 @@ describe('parseGitHubTreeUrl', () => {
     );
     expect(result).toEqual({
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
       branch: 'main',
       path: 'docs/sub',
@@ -556,7 +556,7 @@ describe('parseGitHubTreeUrl', () => {
     );
     expect(result).toEqual({
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
       branch: 'feat/foo',
       path: 'docs',
@@ -658,7 +658,7 @@ describe('parseGitHubShareUrl (dispatcher)', () => {
     expect(result).toEqual({
       kind: 'doc',
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'fractalmandala',
       repo: 'palimpsest',
       branch: 'main',
       path: 'README.md',

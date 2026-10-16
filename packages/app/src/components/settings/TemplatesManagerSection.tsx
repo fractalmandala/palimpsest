@@ -1,5 +1,5 @@
-import { templateContentDocName } from '@palimpsest/core/constants/cc1';
 import { Trans } from '@lingui/react/macro';
+import { templateContentDocName } from '@palimpsest/core/constants/cc1';
 import { Plus } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 import { NewTemplateDialog } from '@/components/NewTemplateDialog';

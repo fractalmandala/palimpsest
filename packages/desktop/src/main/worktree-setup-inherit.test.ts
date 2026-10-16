@@ -40,7 +40,7 @@ function wireEditorAtRoot(dir: string, relPath: string, sentinel = '# ps-mcp-v1'
     abs,
     JSON.stringify({
       mcpServers: {
-        'palimpsest': { command: '/bin/sh', args: ['-l', '-c', `${sentinel}\nexec ps mcp`] },
+        palimpsest: { command: '/bin/sh', args: ['-l', '-c', `${sentinel}\nexec ps mcp`] },
       },
     }),
   );

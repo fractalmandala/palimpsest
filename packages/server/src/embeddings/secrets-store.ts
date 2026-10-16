@@ -11,10 +11,7 @@ import {
 } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
-import {
-  DEFAULT_EMBEDDINGS_BASE_URL,
-  PS_USER_HOME_SECRETS_FILE,
-} from '@palimpsest/core';
+import { DEFAULT_EMBEDDINGS_BASE_URL, PS_USER_HOME_SECRETS_FILE } from '@palimpsest/core';
 import { psUserHomeDir } from '@palimpsest/core/server';
 import { parse as yamlParse, stringify as yamlStringify } from 'yaml';
 import {

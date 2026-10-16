@@ -1,6 +1,8 @@
-// oxlint-disable ok/no-raw-html-interactive-element -- pre-rule backlog — file uses raw <button>/<input>/<textarea> awaiting shadcn migration; tracked at https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-raw-html-interactive-element
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
+// oxlint-disable ps/no-raw-html-interactive-element -- pre-rule backlog — file uses raw <button>/<input>/<textarea> awaiting shadcn migration; tracked at https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-raw-html-interactive-element
+// oxlint-disable ps/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
+import { plural, t } from '@lingui/core/macro';
+import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { isSurfacedCheckpointKind } from '@palimpsest/core/checkpoint-kinds';
 import { ProblemDetailsSchema } from '@palimpsest/core/schemas/api';
 import type { TimelineEntry } from '@palimpsest/core/types/timeline';
@@ -11,8 +13,6 @@ import {
   iconFromClientName,
   SYSTEM_WRITER_DISPLAY_NAMES,
 } from '@palimpsest/core/utils/identity';
-import { plural, t } from '@lingui/core/macro';
-import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import {
   ArrowDownToLine,
   ArrowLeftRight,
@@ -171,7 +171,13 @@ function displayAuthor(entry: TimelineEntry): string {
   if (entry.type === 'upstream') return t`Upstream sync`;
   if (entry.contributors.length === 1) return entry.contributors[0].name;
   if (entry.contributors.length > 1) return entry.contributors.map((c) => c.name).join(', ');
-  if (entry.author === 'openknowledge-server' || entry.author === 'server') return t`Auto-save`;
+  if (
+    entry.author === 'palimpsest-service' ||
+    entry.author === 'openknowledge-service' ||
+    entry.author === 'openknowledge-server' ||
+    entry.author === 'server'
+  )
+    return t`Auto-save`;
   return entry.author;
 }
 
@@ -226,7 +232,12 @@ function ContributorIcon({ entry, isDark }: { entry: TimelineEntry; isDark: bool
   ) {
     return <Sparkles className={iconClass} />;
   }
-  if (entry.author === 'openknowledge-server' || entry.author === 'server') {
+  if (
+    entry.author === 'palimpsest-service' ||
+    entry.author === 'openknowledge-service' ||
+    entry.author === 'openknowledge-server' ||
+    entry.author === 'server'
+  ) {
     return <ArrowDownToLine className={iconClass} />;
   }
   return <User className={iconClass} />;

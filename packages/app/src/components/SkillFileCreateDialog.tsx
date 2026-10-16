@@ -1,6 +1,6 @@
-import type { SkillsListEntry } from '@palimpsest/core/schemas/api';
 import { t } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
+import type { SkillsListEntry } from '@palimpsest/core/schemas/api';
 import { useEffect, useId, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';

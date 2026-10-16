@@ -1,8 +1,5 @@
 import { isExternalHref } from '@palimpsest/core/utils/link-targets';
-import {
-  decodeHrefPath,
-  resolveInternalHref,
-} from '@palimpsest/core/utils/resolve-internal-href';
+import { decodeHrefPath, resolveInternalHref } from '@palimpsest/core/utils/resolve-internal-href';
 import { docNameFromAbsolutePath } from '@/components/acp/follow-file';
 import { hashFromDocName } from '@/lib/doc-hash';
 import type { Workspace } from '@/lib/workspace-paths';

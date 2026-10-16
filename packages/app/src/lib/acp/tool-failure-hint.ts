@@ -1,10 +1,10 @@
+import { t } from '@lingui/core/macro';
 import { palimpsestToolName } from '@palimpsest/core/acp/tool-call-input';
 import {
   PALIMPSEST_MCP_WRITE_TOOLS,
   SERVER_TIMEOUT_ERROR_PREFIX,
   SERVER_UNREACHABLE_ERROR_PREFIX,
 } from '@palimpsest/core/constants/mcp';
-import { t } from '@lingui/core/macro';
 import {
   type RenderedPermission,
   type RenderedToolCall,

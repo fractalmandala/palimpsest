@@ -6,19 +6,14 @@ import {
   desktopChannelLabel,
   resolveDesktopProductName,
 } from '@palimpsest/core';
-import {
-  type Config,
-  isProcessAlive,
-  lockBaseUrl,
-  resolveLockDir,
-} from '@palimpsest/server';
+import { type Config, isProcessAlive, lockBaseUrl, resolveLockDir } from '@palimpsest/server';
 import { Command } from 'commander';
 import type { Logger as PinoLoggerInstance } from 'pino';
 import { getCliLogger } from '../cli-logger.ts';
 import { getInvocationCwd } from '../project-anchor.ts';
 import { discoverLockDirs } from '../utils/process-scan.ts';
 import { inspectLock, type LockState } from './lock-state.ts';
-import { runPs } from './ps.ts';
+import { runServers } from './servers.ts';
 
 const CLIENT_PROBE_TIMEOUT_MS = 1500;
 
@@ -254,7 +249,7 @@ export function formatNoTargetMessage(
   }
   const agreement = otherRunningServers === 1 ? ' is' : 's are';
   const pointer =
-    opts.listingFollows === true ? '' : ` — run \`${currentCliCommandName()} ps\` to list them`;
+    opts.listingFollows === true ? '' : ` — run \`${currentCliCommandName()} servers\` to list them`;
   return (
     `Nothing was running for ${targetDir}. ${otherRunningServers} other palimpsest server` +
     `${agreement} running${pointer}.`
@@ -303,7 +298,7 @@ export function stopCommand(getConfig: () => Config): Command {
         } else {
           const others = await countOtherRunningServers(lockDir);
           console.log(formatNoTargetMessage(process.cwd(), others, { listingFollows: others > 0 }));
-          if (others > 0) await runPs({});
+          if (others > 0) await runServers({});
         }
         return;
       }

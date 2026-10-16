@@ -7,7 +7,7 @@ describe('detectLoneGfmUrl — cursor-paste policy (GFM shapes only)', () => {
     ['http://example.com/path?q=1', 'http://example.com/path?q=1'],
     ['HTTPS://EXAMPLE.COM', 'HTTPS://EXAMPLE.COM'],
     ['www.example.com', 'www.example.com'],
-    ['nick@inkeep.com', 'nick@inkeep.com'],
+    ['nick@example.com', 'nick@example.com'],
     ['https://en.wikipedia.org/wiki/Foo_(bar)', 'https://en.wikipedia.org/wiki/Foo_(bar)'],
     ['http://localhost:5174/', 'http://localhost:5174/'],
     ['http://127.0.0.1:8080/x', 'http://127.0.0.1:8080/x'],
@@ -46,7 +46,7 @@ describe('detectLoneTrustedUrl — over-selection policy (trust the gesture)', (
     ['https://inkeep.com', 'https://inkeep.com'],
     ['  https://inkeep.com\n', 'https://inkeep.com'],
     ['ftp://host/file', 'ftp://host/file'],
-    ['mailto:nick@inkeep.com', 'mailto:nick@inkeep.com'],
+    ['mailto:nick@example.com', 'mailto:nick@example.com'],
     ['tel:+15551234567', 'tel:+15551234567'],
   ])('allowlisted explicit scheme passes verbatim: %s', (raw, expected) => {
     expect(detectLoneTrustedUrl(raw)).toBe(expected);
@@ -70,7 +70,7 @@ describe('detectLoneTrustedUrl — over-selection policy (trust the gesture)', (
   });
 
   test('email becomes mailto:', () => {
-    expect(detectLoneTrustedUrl('nick@inkeep.com')).toBe('mailto:nick@inkeep.com');
+    expect(detectLoneTrustedUrl('nick@example.com')).toBe('mailto:nick@example.com');
   });
 
   test('email-shaped token the GFM grammar rejects is refused rather than guessed at', () => {
@@ -98,7 +98,7 @@ describe('detectClipboardPrefillUrl — link-popover pre-fill policy (explicit s
     ['https://inkeep.com/docs', 'https://inkeep.com/docs'],
     ['  https://inkeep.com\n', 'https://inkeep.com'],
     ['http://example.com', 'http://example.com'],
-    ['mailto:nick@inkeep.com', 'mailto:nick@inkeep.com'],
+    ['mailto:nick@example.com', 'mailto:nick@example.com'],
     ['tel:+15551234567', 'tel:+15551234567'],
     ['ftp://host/file', 'ftp://host/file'],
   ])('pre-fills an allowlisted explicit-scheme URL verbatim: %s', (raw, expected) => {
@@ -112,7 +112,7 @@ describe('detectClipboardPrefillUrl — link-popover pre-fill policy (explicit s
     },
   );
 
-  test.each([['example.com'], ['www.example.com'], ['nick@inkeep.com'], ['AGENTS.md']])(
+  test.each([['example.com'], ['www.example.com'], ['nick@example.com'], ['AGENTS.md']])(
     'schemeless token the trust-intent policy would convert stays out: %s',
     (raw) => {
       expect(detectClipboardPrefillUrl(raw)).toBeNull();

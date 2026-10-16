@@ -367,9 +367,6 @@ export function AppMenubar({ className }: AppMenubarProps) {
           <MenubarItem onSelect={() => dispatch({ kind: 'command', command: 'open-docs' })}>
             {t`Documentation`}
           </MenubarItem>
-          <MenubarItem onSelect={() => dispatch({ kind: 'command', command: 'open-discord' })}>
-            {t`Join us on Discord`}
-          </MenubarItem>
           <MenubarItem onSelect={() => dispatch({ kind: 'menu-action', action: 'report-bug' })}>
             {t`Report a bug…`}
             <MenubarShortcut>Ctrl+Shift+D</MenubarShortcut>
@@ -377,16 +374,6 @@ export function AppMenubar({ className }: AppMenubarProps) {
           <MenubarItem onSelect={() => dispatch({ kind: 'menu-action', action: 'send-feedback' })}>
             {t`Send feedback…`}
           </MenubarItem>
-          {snapshot?.canCheckForUpdates === true && (
-            <>
-              <MenubarSeparator />
-              <MenubarItem
-                onSelect={() => dispatch({ kind: 'command', command: 'check-for-updates' })}
-              >
-                {t`Check for updates…`}
-              </MenubarItem>
-            </>
-          )}
           <MenubarSeparator />
           <MenubarItem onSelect={() => dispatch({ kind: 'role', role: 'about' })}>
             {aboutAppLabel(bridge.platform)}

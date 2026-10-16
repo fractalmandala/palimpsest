@@ -1,10 +1,7 @@
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import type {
-  ThreadEvent,
-  ThreadServerFrame,
-} from '@palimpsest/core/acp/thread-protocol';
+import type { ThreadEvent, ThreadServerFrame } from '@palimpsest/core/acp/thread-protocol';
 import { afterEach, describe, expect, test } from 'vitest';
 import type { AgentSessionManager } from '../agent-sessions.ts';
 import { getLogger } from '../logger.ts';

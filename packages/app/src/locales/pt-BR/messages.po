@@ -1075,9 +1075,6 @@ msgstr "Sobre"
 msgid "About {appName}"
 msgstr "Sobre o {appName}"
 
-msgid "About & updates"
-msgstr "Sobre e atualizações"
-
 msgid "Above"
 msgstr "Acima"
 
@@ -1733,12 +1730,6 @@ msgstr "Automático"
 msgid "Automatic picks a free port each start. Choose a fixed port to keep the same address across restarts."
 msgstr "O modo automático escolhe uma porta livre a cada inicialização. Escolha uma porta fixa para manter o mesmo endereço entre reinicializações."
 
-msgid "Automatic updates"
-msgstr "Atualizações automáticas"
-
-msgid "Automatic updates are not available right now."
-msgstr "As atualizações automáticas não estão disponíveis no momento."
-
 msgid "Available"
 msgstr "Disponível"
 
@@ -2033,14 +2024,8 @@ msgstr "Histórico de chats"
 msgid "Chat name"
 msgstr "Nome do chat"
 
-msgid "Check for updates"
-msgstr "Buscar atualizações"
-
 msgid "Check for updates every"
 msgstr "Verificar atualizações a cada"
-
-msgid "Check for updates…"
-msgstr "Buscar atualizações…"
 
 msgid "Check out remote branch"
 msgstr "Extrair ramo remoto"
@@ -2074,9 +2059,6 @@ msgstr "Buscando atualizações"
 
 msgid "Checking for updates on GitHub"
 msgstr "Buscando atualizações no GitHub"
-
-msgid "Checking for updates…"
-msgstr "Buscando atualizações…"
 
 msgid "Checking GitHub connection..."
 msgstr "Verificando a conexão com o GitHub..."
@@ -3198,9 +3180,6 @@ msgstr "Não deu para salvar a chave — tente de novo."
 msgid "Couldn't save the resolution for {filePath}."
 msgstr "Não deu para salvar a resolução de {filePath}."
 
-msgid "Couldn't save this setting. Try again."
-msgstr "Não foi possível salvar esta configuração. Tente novamente."
-
 msgid "Couldn't save your theme preference."
 msgstr "Não foi possível salvar sua preferência de tema."
 
@@ -3773,9 +3752,6 @@ msgstr "Clique duas vezes para editar"
 msgid "Download {0}"
 msgstr "Baixar {0}"
 
-msgid "Download and install updates automatically"
-msgstr "Baixar e instalar atualizações automaticamente"
-
 msgid "Download app"
 msgstr "Baixar aplicativo"
 
@@ -4022,8 +3998,8 @@ msgstr "embeddings"
 msgid "Embeddings API key"
 msgstr "Chave de API de embeddings"
 
-msgid "Embeddings are computed only when a search runs and are cached locally under <0>.ok/local</0>."
-msgstr "Os embeddings só são calculados quando uma busca roda e ficam em cache localmente em <0>.ok/local</0>."
+msgid "Embeddings are computed only when a search runs and are cached locally under <0>.ps/local</0>."
+msgstr ""
 
 msgid "Emoji"
 msgstr "Emoji"
@@ -4548,6 +4524,9 @@ msgstr "Falha ao enviar o arquivo"
 msgid "Fast"
 msgstr "Rápido"
 
+msgid "Feedback"
+msgstr ""
+
 msgid "Feedback isn't available right now. Please try again later."
 msgstr "Não dá para enviar comentários agora. Tente mais tarde."
 
@@ -4744,15 +4723,6 @@ msgstr "Pastas e arquivos vazios não podem ser anexados — solte os próprios 
 msgid "Follow the agent's edits"
 msgstr "Acompanhar as edições do agente"
 
-msgid "Follow us on"
-msgstr "Siga a gente no"
-
-msgid "Follow us on social media"
-msgstr "Siga a gente nas redes sociais"
-
-msgid "Follow us on X"
-msgstr "Siga a gente no X"
-
 msgid "Following the agent's edits"
 msgstr "Acompanhando as edições do agente"
 
@@ -4827,9 +4797,6 @@ msgstr "Obter {displayName}"
 
 msgid "Get Claude Code"
 msgstr "Obter o Claude Code"
-
-msgid "Get product updates in your inbox."
-msgstr "Receba novidades do produto no seu e-mail."
 
 msgid "Get set up"
 msgstr "Comece agora"
@@ -5547,8 +5514,8 @@ msgid "Install skill"
 msgstr "Instalar habilidade"
 
 #. Checkbox that installs the user-global discovery skill bundle
-msgid "Install the <0>open-knowledge-discovery</0> skill"
-msgstr "Instalar a habilidade <0>open-knowledge-discovery</0>"
+msgid "Install the <0>palimpsest-discovery</0> skill"
+msgstr ""
 
 msgid "Install the gh CLI"
 msgstr "Instalar a CLI gh"
@@ -5672,9 +5639,6 @@ msgstr "Itálico"
 
 msgid "Item {0}"
 msgstr "Item {0}"
-
-msgid "Join us on Discord"
-msgstr "Entre no nosso Discord"
 
 msgid "Jump to last tab"
 msgstr "Ir para a última aba"
@@ -5965,11 +5929,11 @@ msgstr "Carregando os títulos de {pageTarget}"
 msgid "Loading image"
 msgstr "Carregando a imagem"
 
-msgid "Loading Palimpsest skills"
-msgstr "Carregando as habilidades do Palimpsest"
-
 msgid "Loading pages"
 msgstr "Carregando páginas"
+
+msgid "Loading Palimpsest skills"
+msgstr "Carregando as habilidades do Palimpsest"
 
 msgid "Loading paths…"
 msgstr "Carregando caminhos…"
@@ -6302,11 +6266,11 @@ msgstr "Mover o bloco"
 msgid "Move down"
 msgstr "Mover para baixo"
 
-msgid "Move Palimpsest.app to the Trash"
-msgstr "Mova Palimpsest.app para o Lixo"
-
 msgid "Move or rename this file inside the skill — the path stays under references/ or scripts/."
 msgstr "Mova ou renomeie este arquivo dentro da habilidade — o caminho continua sob references/ ou scripts/."
+
+msgid "Move Palimpsest.app to the Trash"
+msgstr "Mova Palimpsest.app para o Lixo"
 
 msgid "Move succeeded but the sidebar may be out of date — refresh to resync"
 msgstr "A movimentação deu certo, mas a barra lateral pode estar desatualizada — atualize para ressincronizar"
@@ -6421,9 +6385,6 @@ msgstr "Divagando…"
 
 msgid "my-feature"
 msgstr "meu-recurso"
-
-msgid "my@email.com"
-msgstr "eu@email.com"
 
 msgid "name"
 msgstr "nome"
@@ -7039,9 +7000,6 @@ msgstr "Offline"
 msgid "OK can't move these, so they go when {pick} does."
 msgstr "OK não consegue mover isto, então some junto com {pick}."
 
-msgid "OK Desktop"
-msgstr "OK Desktop"
-
 msgid "OK last set this folder to {0} — something outside OK changed it since. The state shown is what's on disk now; your next Symlink/Unlink wins."
 msgstr "Da última vez o OK deixou esta pasta como {0} — algo fora do OK mudou isso desde então. O estado exibido é o que está no disco agora; o seu próximo Vincular/Desvincular prevalece."
 
@@ -7238,36 +7196,6 @@ msgstr "Abrir em um worktree"
 msgid "Open it there"
 msgstr "Abrir por lá"
 
-msgid "Palimpsest could not reach the project server to check index maintenance. The status updates when the project reconnects."
-msgstr "Palimpsest não conseguiu acessar o servidor do projeto para verificar a manutenção do índice. O status será atualizado quando o projeto for reconectado."
-
-msgid "Palimpsest creates and maintains a navigation file named index.md in every folder that contains Markdown."
-msgstr "Palimpsest cria e mantém um arquivo de navegação denominado index.md em cada pasta que contém Markdown."
-
-msgid "OpenKnowledge Format guidance"
-msgstr "Palimpsest Format orientação"
-
-msgid "Palimpsest maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
-msgstr "Palimpsest mantém um arquivo de navegação denominado index.md em cada pasta que contém Markdown, cada um listando os documentos dessa pasta por tipo e vinculando-os às suas subpastas. Ele reescreve esses arquivos à medida que seus documentos são alterados e tudo o que você mesmo edita neles é substituído."
-
-msgid "Palimpsest rewrites these index.md files as documents change, so manual edits to them are replaced."
-msgstr "Palimpsest reescreve esses arquivos index.md conforme os documentos são alterados, portanto, as edições manuais neles são substituídas."
-
-msgid "Palimpsest tools are available in this thread."
-msgstr "As ferramentas do Palimpsest estão disponíveis nesta conversa."
-
-msgid "Palimpsest tools are unavailable because the project folder is missing, inaccessible, or has changed. Check its location and permissions, then retry."
-msgstr "As ferramentas do Palimpsest estão indisponíveis porque a pasta do projeto não existe, está inacessível ou foi alterada. Verifique a localização e as permissões e tente novamente."
-
-msgid "Palimpsest tools are unavailable: a file Palimpsest didn't write is already at {bridgePath}."
-msgstr "As ferramentas do Palimpsest estão indisponíveis: já existe em {bridgePath} um arquivo que o Palimpsest não escreveu."
-
-msgid "Palimpsest tools are unavailable: something is already at {bridgePath} but couldn't be read, so Palimpsest left it alone."
-msgstr "As ferramentas do Palimpsest estão indisponíveis: já existe algo em {bridgePath}, mas não foi possível ler, então o Palimpsest o deixou intacto."
-
-msgid "Palimpsest's own copy of {0} is damaged and won't run. It can download a fresh copy of {1} {2} (about {3} MB from {4}) to replace it."
-msgstr "A cópia de {0} do próprio Palimpsest está danificada e não executa. Ele pode baixar uma cópia nova de {1} {2} (cerca de {3} MB de {4}) para substituí-la."
-
 msgid "Open link"
 msgstr "Abrir o link"
 
@@ -7376,194 +7304,8 @@ msgstr "Abrindo o worktree"
 msgid "Opening..."
 msgstr "Abrindo..."
 
-msgid "Palimpsest"
-msgstr "Palimpsest"
-
-msgid "Palimpsest can't sign in to GitHub for this project."
-msgstr "O Palimpsest não pode entrar no GitHub para este projeto."
-
-msgid "Palimpsest checked {subject}"
-msgstr "Palimpsest verificou {subject}"
-
-msgid "Palimpsest checked the project"
-msgstr "Palimpsest verificou o projeto"
-
-msgid "Palimpsest checks for and downloads updates in the background."
-msgstr "O Palimpsest busca e baixa atualizações em segundo plano."
-
-msgid "Palimpsest could not find this agent on this machine."
-msgstr "O Palimpsest não encontrou este agente nesta máquina."
-
-msgid "Palimpsest couldn't finish setting up this project. The worktree was created but not opened."
-msgstr "O Palimpsest não conseguiu concluir a configuração deste projeto. O worktree foi criado, mas não foi aberto."
-
-msgid "Palimpsest couldn't read terminal.shell in .ps/local/config.yml. Using an available Windows shell instead."
-msgstr "O Palimpsest não conseguiu ler terminal.shell em .ps/local/config.yml. Um shell do Windows disponível será usado."
-
-msgid "Palimpsest couldn't write launch settings under .ps/local/terminal because the folder is not safely contained in this project. Check that it is a real folder inside the project, not a link. Claude will ask you to approve Palimpsest."
-msgstr "O Palimpsest não conseguiu gravar as configurações de inicialização em .ps/local/terminal porque a pasta não está contida com segurança neste projeto. Verifique se ela é uma pasta real dentro do projeto, e não um link. O Claude pedirá que você aprove o Palimpsest."
-
-msgid "Palimpsest couldn't write launch settings under .ps/local/terminal this time. Check that the folder is writable. Claude will ask you to approve Palimpsest."
-msgstr "O Palimpsest não conseguiu gravar as configurações de inicialização em .ps/local/terminal desta vez. Verifique se a pasta permite gravação. O Claude pedirá que você aprove o Palimpsest."
-
-msgid "Palimpsest created a share link"
-msgstr "Palimpsest criou um link de compartilhamento"
-
-msgid "Palimpsest created a share link for {subject}"
-msgstr "Palimpsest criou um link de compartilhamento para {subject}"
-
-msgid "Palimpsest deleted {subject}"
-msgstr "Palimpsest excluiu {subject}"
-
-msgid "Palimpsest deleted a document"
-msgstr "Palimpsest excluiu um documento"
-
-msgid "Palimpsest discovery skill"
-msgstr "Habilidade de descoberta do Palimpsest"
-
-msgid "Palimpsest does not recognize this entry, and cannot safely replace it in this file's format."
-msgstr "O Palimpsest não reconhece esta entrada e não pode substituí-la com segurança no formato deste arquivo."
-
-msgid "Palimpsest does not recognize this entry. Turning it on replaces it."
-msgstr "O Palimpsest não reconhece esta entrada. Ativá-la a substituirá."
-
-msgid "Palimpsest doesn't check for or download updates on its own. Check for updates still works when you want a newer version."
-msgstr "O Palimpsest não busca nem baixa atualizações por conta própria. Buscar atualizações continua funcionando quando você quiser uma versão mais recente."
-
-msgid "Palimpsest edited {subject}"
-msgstr "Palimpsest editou {subject}"
-
-msgid "Palimpsest edited a document"
-msgstr "Palimpsest editou um documento"
-
-msgid "Palimpsest files were removed"
-msgstr "Os arquivos do Palimpsest foram removidos"
-
-msgid "Palimpsest has no credential stored for this host. Add a token in Settings, or let git use the credentials it already has."
-msgstr "O Palimpsest não tem nenhuma credencial guardada para este host. Adicione um token nas Configurações, ou deixe o git usar as credenciais que ele já tem."
-
-msgid "Palimpsest imported {source}"
-msgstr "Palimpsest importou {source}"
-
-msgid "Palimpsest imported a skill"
-msgstr "Palimpsest importou uma habilidade"
-
-msgid "Palimpsest initializes at <0>{projectDir}</0> — the parent of <1>{pickedRelative}</1> because it contains a <2>.git</2> folder (one .ps/ per git repo). <3>Content directory</3> defaults to <4>.</4> (the whole repo); type a sub-folder to narrow it."
-msgstr "O Palimpsest é inicializado em <0>{projectDir}</0> — a pasta acima de <1>{pickedRelative}</1>, porque ela contém uma pasta <2>.git</2> (um .ps/ por repositório git). O <3>diretório de conteúdo</3> é <4>.</4> por padrão (o repositório inteiro); digite uma subpasta para restringir."
-
-msgid "Palimpsest installed {subject}"
-msgstr "Palimpsest instalou {subject}"
-
-msgid "Palimpsest installed a skill"
-msgstr "Palimpsest instalou uma habilidade"
-
-msgid "Palimpsest integrations checked."
-msgstr "Integrações do Palimpsest verificadas."
-
-msgid "Palimpsest is set up at the repository root here, so the pack goes inside <0>{sanitized}</0> rather than at the top of the repository."
-msgstr "Aqui o Palimpsest é configurado na raiz do repositório, então o pacote fica dentro de <0>{sanitized}</0> em vez de no topo do repositório."
-
-msgid "Palimpsest is using this GitHub account."
-msgstr "O Palimpsest está usando esta conta do GitHub."
-
-msgid "Palimpsest keeps retrying and shows them as soon as the file can be read."
-msgstr "O Palimpsest continua tentando e vai mostrá-las assim que o arquivo puder ser lido."
-
-msgid "Palimpsest left this file alone because it could not parse it safely. Fix the file by hand, then try again."
-msgstr "O Palimpsest não alterou este arquivo porque não conseguiu analisá-lo com segurança. Corrija o arquivo manualmente e tente novamente."
-
-msgid "Palimpsest listed the installed skills"
-msgstr "Palimpsest listou as habilidades instaladas"
-
-msgid "Palimpsest logs across projects. No project is open, so project server logs are not included."
-msgstr "Logs do Palimpsest de vários projetos. Nenhum projeto está aberto, por isso os logs do servidor do projeto não são incluídos."
-
-msgid "Palimpsest logs, including activity across projects."
-msgstr "Logs do Palimpsest, incluindo atividade de vários projetos."
-
-msgid "Palimpsest looked at the link graph"
-msgstr "Palimpsest consultou o grafo de links"
-
-msgid "Palimpsest looked up links for {subject}"
-msgstr "Palimpsest consultou os links de {subject}"
-
-msgid "Palimpsest looked up the authoring palette"
-msgstr "Palimpsest consultou a paleta de edição"
-
-msgid "Palimpsest moved {subject} to {destination}"
-msgstr "Palimpsest moveu {subject} para {destination}"
-
-msgid "Palimpsest moved a document"
-msgstr "Palimpsest moveu um documento"
-
-msgid "Palimpsest on GitHub"
-msgstr "Palimpsest no GitHub"
-
-msgid "Palimpsest on this computer changed to a different build, but this tab is still running the old one."
-msgstr "O Palimpsest neste computador mudou para outra versão, mas esta aba ainda está executando a antiga."
-
-msgid "Palimpsest on this computer is now v{serverVersion}, but this tab is still running v{tabVersion}."
-msgstr "O Palimpsest neste computador agora está na v{serverVersion}, mas esta aba ainda está executando a v{tabVersion}."
-
-msgid "Palimpsest opened the live preview"
-msgstr "Palimpsest abriu a pré-visualização ao vivo"
-
-msgid "Palimpsest quit unexpectedly last time."
-msgstr "Da última vez o Palimpsest fechou de forma inesperada."
-
-msgid "Palimpsest ran {command}"
-msgstr "Palimpsest executou {command}"
-
-msgid "Palimpsest ran {tool}"
-msgstr "Palimpsest executou {tool}"
-
-msgid "Palimpsest ran a command"
-msgstr "Palimpsest executou um comando"
-
-msgid "Palimpsest read the edit history"
-msgstr "Palimpsest leu o histórico de edições"
-
-msgid "Palimpsest read the history of {subject}"
-msgstr "Palimpsest leu o histórico de {subject}"
-
-msgid "Palimpsest read the project settings"
-msgstr "Palimpsest leu as configurações do projeto"
-
-msgid "Palimpsest read the setting {key}"
-msgstr "Palimpsest leu a configuração {key}"
-
-msgid "Palimpsest restored an earlier version"
-msgstr "Palimpsest restaurou uma versão anterior"
-
-msgid "Palimpsest restored an earlier version of {subject}"
-msgstr "Palimpsest restaurou uma versão anterior de {subject}"
-
-msgid "Palimpsest saved a checkpoint"
-msgstr "Palimpsest salvou um ponto de verificação"
-
-msgid "Palimpsest searched for {query}"
-msgstr "Palimpsest pesquisou por {query}"
-
-msgid "Palimpsest searched the knowledge base"
-msgstr "Palimpsest pesquisou na base de conhecimento"
-
-msgid "Palimpsest skill saved. Upload it in Claude Desktop, then click Cowork again."
-msgstr "Habilidade do Palimpsest salva. Envie-a no Claude Desktop e clique em Cowork novamente."
-
-msgid "Palimpsest stores its configuration and internal files inside a newly created <0>.ok</0> directory in your project root folder."
-msgstr "O Palimpsest guarda sua configuração e seus arquivos internos em um diretório <0>.ok</0> recém-criado na pasta raiz do seu projeto."
-
-msgid "Palimpsest will be initialized at <0>{gitRoot}</0> — the parent of your new folder, because it contains a <1>.git</1> folder (one project per git repo)."
-msgstr "O Palimpsest será inicializado em <0>{gitRoot}</0> — a pasta acima da sua nova pasta, porque ela contém uma pasta <1>.git</1> (um projeto por repositório git)."
-
-msgid "Palimpsest will create commits and push them to your remote automatically. If you do not want automatic commits in your git history, you should not enable auto-sync."
-msgstr "O Palimpsest vai criar commits e enviá-los ao seu remoto automaticamente. Se você não quer commits automáticos no seu histórico do git, não deve ativar a sincronização automática."
-
-msgid "Palimpsest wrote a document"
-msgstr "Palimpsest escreveu um documento"
-
-msgid "Palimpsest wrote to {subject}"
-msgstr "Palimpsest escreveu em {subject}"
+msgid "OpenKnowledge Format guidance"
+msgstr "Palimpsest Format orientação"
 
 msgid "Opens a folder picker to choose where to clone the repository."
 msgstr "Abre um seletor de pastas para escolher onde clonar o repositório."
@@ -7700,6 +7442,219 @@ msgstr "As páginas viram embeddings na primeira vez que uma busca precisa delas
 
 msgid "Pages indexed: {semanticIndexedCount} of {semanticTotalCount}."
 msgstr "Páginas indexadas: {semanticIndexedCount} de {semanticTotalCount}."
+
+msgid "Palimpsest"
+msgstr "Palimpsest"
+
+msgid "Palimpsest can't sign in to GitHub for this project."
+msgstr "O Palimpsest não pode entrar no GitHub para este projeto."
+
+msgid "Palimpsest checked {subject}"
+msgstr "Palimpsest verificou {subject}"
+
+msgid "Palimpsest checked the project"
+msgstr "Palimpsest verificou o projeto"
+
+msgid "Palimpsest could not find this agent on this machine."
+msgstr "O Palimpsest não encontrou este agente nesta máquina."
+
+msgid "Palimpsest could not reach the project server to check index maintenance. The status updates when the project reconnects."
+msgstr "Palimpsest não conseguiu acessar o servidor do projeto para verificar a manutenção do índice. O status será atualizado quando o projeto for reconectado."
+
+msgid "Palimpsest couldn't finish setting up this project. The worktree was created but not opened."
+msgstr "O Palimpsest não conseguiu concluir a configuração deste projeto. O worktree foi criado, mas não foi aberto."
+
+msgid "Palimpsest couldn't read terminal.shell in .ps/local/config.yml. Using an available Windows shell instead."
+msgstr "O Palimpsest não conseguiu ler terminal.shell em .ps/local/config.yml. Um shell do Windows disponível será usado."
+
+msgid "Palimpsest couldn't write launch settings under .ps/local/terminal because the folder is not safely contained in this project. Check that it is a real folder inside the project, not a link. Claude will ask you to approve Palimpsest."
+msgstr "O Palimpsest não conseguiu gravar as configurações de inicialização em .ps/local/terminal porque a pasta não está contida com segurança neste projeto. Verifique se ela é uma pasta real dentro do projeto, e não um link. O Claude pedirá que você aprove o Palimpsest."
+
+msgid "Palimpsest couldn't write launch settings under .ps/local/terminal this time. Check that the folder is writable. Claude will ask you to approve Palimpsest."
+msgstr "O Palimpsest não conseguiu gravar as configurações de inicialização em .ps/local/terminal desta vez. Verifique se a pasta permite gravação. O Claude pedirá que você aprove o Palimpsest."
+
+msgid "Palimpsest created a share link"
+msgstr "Palimpsest criou um link de compartilhamento"
+
+msgid "Palimpsest created a share link for {subject}"
+msgstr "Palimpsest criou um link de compartilhamento para {subject}"
+
+msgid "Palimpsest creates and maintains a navigation file named index.md in every folder that contains Markdown."
+msgstr "Palimpsest cria e mantém um arquivo de navegação denominado index.md em cada pasta que contém Markdown."
+
+msgid "Palimpsest deleted {subject}"
+msgstr "Palimpsest excluiu {subject}"
+
+msgid "Palimpsest deleted a document"
+msgstr "Palimpsest excluiu um documento"
+
+msgid "Palimpsest Desktop"
+msgstr ""
+
+msgid "Palimpsest discovery skill"
+msgstr "Habilidade de descoberta do Palimpsest"
+
+msgid "Palimpsest does not recognize this entry, and cannot safely replace it in this file's format."
+msgstr "O Palimpsest não reconhece esta entrada e não pode substituí-la com segurança no formato deste arquivo."
+
+msgid "Palimpsest does not recognize this entry. Turning it on replaces it."
+msgstr "O Palimpsest não reconhece esta entrada. Ativá-la a substituirá."
+
+msgid "Palimpsest edited {subject}"
+msgstr "Palimpsest editou {subject}"
+
+msgid "Palimpsest edited a document"
+msgstr "Palimpsest editou um documento"
+
+msgid "Palimpsest files were removed"
+msgstr "Os arquivos do Palimpsest foram removidos"
+
+msgid "Palimpsest has no credential stored for this host. Add a token in Settings, or let git use the credentials it already has."
+msgstr "O Palimpsest não tem nenhuma credencial guardada para este host. Adicione um token nas Configurações, ou deixe o git usar as credenciais que ele já tem."
+
+msgid "Palimpsest imported {source}"
+msgstr "Palimpsest importou {source}"
+
+msgid "Palimpsest imported a skill"
+msgstr "Palimpsest importou uma habilidade"
+
+msgid "Palimpsest initializes at <0>{projectDir}</0> — the parent of <1>{pickedRelative}</1> because it contains a <2>.git</2> folder (one .ps/ per git repo). <3>Content directory</3> defaults to <4>.</4> (the whole repo); type a sub-folder to narrow it."
+msgstr "O Palimpsest é inicializado em <0>{projectDir}</0> — a pasta acima de <1>{pickedRelative}</1>, porque ela contém uma pasta <2>.git</2> (um .ps/ por repositório git). O <3>diretório de conteúdo</3> é <4>.</4> por padrão (o repositório inteiro); digite uma subpasta para restringir."
+
+msgid "Palimpsest installed {subject}"
+msgstr "Palimpsest instalou {subject}"
+
+msgid "Palimpsest installed a skill"
+msgstr "Palimpsest instalou uma habilidade"
+
+msgid "Palimpsest integrations checked."
+msgstr "Integrações do Palimpsest verificadas."
+
+msgid "Palimpsest is set up at the repository root here, so the pack goes inside <0>{sanitized}</0> rather than at the top of the repository."
+msgstr "Aqui o Palimpsest é configurado na raiz do repositório, então o pacote fica dentro de <0>{sanitized}</0> em vez de no topo do repositório."
+
+msgid "Palimpsest is using this GitHub account."
+msgstr "O Palimpsest está usando esta conta do GitHub."
+
+msgid "Palimpsest keeps retrying and shows them as soon as the file can be read."
+msgstr "O Palimpsest continua tentando e vai mostrá-las assim que o arquivo puder ser lido."
+
+msgid "Palimpsest left this file alone because it could not parse it safely. Fix the file by hand, then try again."
+msgstr "O Palimpsest não alterou este arquivo porque não conseguiu analisá-lo com segurança. Corrija o arquivo manualmente e tente novamente."
+
+msgid "Palimpsest listed the installed skills"
+msgstr "Palimpsest listou as habilidades instaladas"
+
+msgid "Palimpsest logs across projects. No project is open, so project server logs are not included."
+msgstr "Logs do Palimpsest de vários projetos. Nenhum projeto está aberto, por isso os logs do servidor do projeto não são incluídos."
+
+msgid "Palimpsest logs, including activity across projects."
+msgstr "Logs do Palimpsest, incluindo atividade de vários projetos."
+
+msgid "Palimpsest looked at the link graph"
+msgstr "Palimpsest consultou o grafo de links"
+
+msgid "Palimpsest looked up links for {subject}"
+msgstr "Palimpsest consultou os links de {subject}"
+
+msgid "Palimpsest looked up the authoring palette"
+msgstr "Palimpsest consultou a paleta de edição"
+
+msgid "Palimpsest maintains a navigation file named index.md in every folder that contains Markdown, each listing that folder's documents by type and linking to its subfolders. It rewrites these files as your documents change, and anything you edit into them yourself is replaced."
+msgstr "Palimpsest mantém um arquivo de navegação denominado index.md em cada pasta que contém Markdown, cada um listando os documentos dessa pasta por tipo e vinculando-os às suas subpastas. Ele reescreve esses arquivos à medida que seus documentos são alterados e tudo o que você mesmo edita neles é substituído."
+
+msgid "Palimpsest moved {subject} to {destination}"
+msgstr "Palimpsest moveu {subject} para {destination}"
+
+msgid "Palimpsest moved a document"
+msgstr "Palimpsest moveu um documento"
+
+msgid "Palimpsest on GitHub"
+msgstr "Palimpsest no GitHub"
+
+msgid "Palimpsest on this computer changed to a different build, but this tab is still running the old one."
+msgstr "O Palimpsest neste computador mudou para outra versão, mas esta aba ainda está executando a antiga."
+
+msgid "Palimpsest on this computer is now v{serverVersion}, but this tab is still running v{tabVersion}."
+msgstr "O Palimpsest neste computador agora está na v{serverVersion}, mas esta aba ainda está executando a v{tabVersion}."
+
+msgid "Palimpsest opened the live preview"
+msgstr "Palimpsest abriu a pré-visualização ao vivo"
+
+msgid "Palimpsest quit unexpectedly last time."
+msgstr "Da última vez o Palimpsest fechou de forma inesperada."
+
+msgid "Palimpsest ran {command}"
+msgstr "Palimpsest executou {command}"
+
+msgid "Palimpsest ran {tool}"
+msgstr "Palimpsest executou {tool}"
+
+msgid "Palimpsest ran a command"
+msgstr "Palimpsest executou um comando"
+
+msgid "Palimpsest read the edit history"
+msgstr "Palimpsest leu o histórico de edições"
+
+msgid "Palimpsest read the history of {subject}"
+msgstr "Palimpsest leu o histórico de {subject}"
+
+msgid "Palimpsest read the project settings"
+msgstr "Palimpsest leu as configurações do projeto"
+
+msgid "Palimpsest read the setting {key}"
+msgstr "Palimpsest leu a configuração {key}"
+
+msgid "Palimpsest restored an earlier version"
+msgstr "Palimpsest restaurou uma versão anterior"
+
+msgid "Palimpsest restored an earlier version of {subject}"
+msgstr "Palimpsest restaurou uma versão anterior de {subject}"
+
+msgid "Palimpsest rewrites these index.md files as documents change, so manual edits to them are replaced."
+msgstr "Palimpsest reescreve esses arquivos index.md conforme os documentos são alterados, portanto, as edições manuais neles são substituídas."
+
+msgid "Palimpsest saved a checkpoint"
+msgstr "Palimpsest salvou um ponto de verificação"
+
+msgid "Palimpsest searched for {query}"
+msgstr "Palimpsest pesquisou por {query}"
+
+msgid "Palimpsest searched the knowledge base"
+msgstr "Palimpsest pesquisou na base de conhecimento"
+
+msgid "Palimpsest skill saved. Upload it in Claude Desktop, then click Cowork again."
+msgstr "Habilidade do Palimpsest salva. Envie-a no Claude Desktop e clique em Cowork novamente."
+
+msgid "Palimpsest stores its configuration and internal files inside a newly created <0>.ok</0> directory in your project root folder."
+msgstr "O Palimpsest guarda sua configuração e seus arquivos internos em um diretório <0>.ok</0> recém-criado na pasta raiz do seu projeto."
+
+msgid "Palimpsest tools are available in this thread."
+msgstr "As ferramentas do Palimpsest estão disponíveis nesta conversa."
+
+msgid "Palimpsest tools are unavailable because the project folder is missing, inaccessible, or has changed. Check its location and permissions, then retry."
+msgstr "As ferramentas do Palimpsest estão indisponíveis porque a pasta do projeto não existe, está inacessível ou foi alterada. Verifique a localização e as permissões e tente novamente."
+
+msgid "Palimpsest tools are unavailable: a file Palimpsest didn't write is already at {bridgePath}."
+msgstr "As ferramentas do Palimpsest estão indisponíveis: já existe em {bridgePath} um arquivo que o Palimpsest não escreveu."
+
+msgid "Palimpsest tools are unavailable: something is already at {bridgePath} but couldn't be read, so Palimpsest left it alone."
+msgstr "As ferramentas do Palimpsest estão indisponíveis: já existe algo em {bridgePath}, mas não foi possível ler, então o Palimpsest o deixou intacto."
+
+msgid "Palimpsest will be initialized at <0>{gitRoot}</0> — the parent of your new folder, because it contains a <1>.git</1> folder (one project per git repo)."
+msgstr "O Palimpsest será inicializado em <0>{gitRoot}</0> — a pasta acima da sua nova pasta, porque ela contém uma pasta <1>.git</1> (um projeto por repositório git)."
+
+msgid "Palimpsest will create commits and push them to your remote automatically. If you do not want automatic commits in your git history, you should not enable auto-sync."
+msgstr "O Palimpsest vai criar commits e enviá-los ao seu remoto automaticamente. Se você não quer commits automáticos no seu histórico do git, não deve ativar a sincronização automática."
+
+msgid "Palimpsest wrote a document"
+msgstr "Palimpsest escreveu um documento"
+
+msgid "Palimpsest wrote to {subject}"
+msgstr "Palimpsest escreveu em {subject}"
+
+msgid "Palimpsest's own copy of {0} is damaged and won't run. It can download a fresh copy of {1} {2} (about {3} MB from {4}) to replace it."
+msgstr "A cópia de {0} do próprio Palimpsest está danificada e não executa. Ele pode baixar uma cópia nova de {1} {2} (cerca de {3} MB de {4}) para substituí-la."
 
 msgid "Pan down"
 msgstr "Deslocar para baixo"
@@ -7900,9 +7855,6 @@ msgstr "Jogar Blob Run"
 msgid "Please choose Good or Not great."
 msgstr "Escolha Bom ou Nem tanto."
 
-msgid "Please enter a valid email address."
-msgstr "Digite um endereço de e-mail válido."
-
 msgid "Please enter a valid email."
 msgstr "Digite um e-mail válido."
 
@@ -8004,12 +7956,6 @@ msgstr "Problemas"
 
 msgid "Problems in {0}"
 msgstr "Problemas em {0}"
-
-msgid "Product updates"
-msgstr "Novidades do produto"
-
-msgid "Product updates in your inbox."
-msgstr "Novidades do produto no seu e-mail."
 
 msgid "project"
 msgstr "projeto"
@@ -9847,9 +9793,6 @@ msgstr "Prepara o trecho selecionado no painel de agentes, pronto para complemen
 msgid "stale Git entry"
 msgstr "entrada Git obsoleta"
 
-msgid "Star us on GitHub"
-msgstr "Dê uma estrela no GitHub"
-
 msgid "Start a bug report with a screenshot of the screen as it looks right now."
 msgstr "Inicia um relatório de erro com uma captura de tela exatamente como ela está agora."
 
@@ -9916,9 +9859,6 @@ msgstr "status"
 msgid "Status"
 msgstr "Status"
 
-msgid "Stay in the loop"
-msgstr "Fique por dentro"
-
 msgid "Stays on this computer. Not committed to git."
 msgstr "Fica neste computador. Não vai para o git."
 
@@ -9984,15 +9924,6 @@ msgstr "Nome da subpasta"
 
 msgid "Subfolder under current folder"
 msgstr "Subpasta dentro da pasta atual"
-
-msgid "Subscribe"
-msgstr "Assinar"
-
-msgid "Subscribing..."
-msgstr "Assinando..."
-
-msgid "Subscriptions aren't available right now."
-msgstr "As assinaturas não estão disponíveis agora."
 
 msgid "Suggestion menu navigation"
 msgstr "Navegação pelo menu de sugestões"
@@ -10265,9 +10196,6 @@ msgstr "Texto"
 msgid "Thanks for giving Palimpsest a try."
 msgstr "Obrigado por experimentar o Palimpsest."
 
-msgid "Thanks for subscribing. Watch your inbox for product updates."
-msgstr "Obrigado por assinar. Fique de olho no seu e-mail para as novidades do produto."
-
 msgid "Thanks for the feedback!"
 msgstr "Obrigado pelo retorno!"
 
@@ -10335,8 +10263,8 @@ msgstr "A versão do {editor} agora é a fonte"
 msgid "The {targetNoun} could not be opened — try navigating to it manually."
 msgstr "Não foi possível abrir {targetNoun} — tente chegar até lá manualmente."
 
-msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs OpenKnowledge Format–conformant."
-msgstr "O <0>type</0> que cada documento criado a partir deste modelo recebe (ex.: <1>research-note</1>). Mantém os novos documentos em conformidade com o Palimpsest Format."
+msgid "The <0>type</0> every document created from this template gets (e.g. <1>research-note</1>). Keeps new docs Open Knowledge Format–conformant."
+msgstr ""
 
 msgid "The agent is working"
 msgstr "O agente está trabalhando"
@@ -10473,6 +10401,9 @@ msgstr "O id do modelo que seu endpoint serve. O tamanho do vector é detectado 
 msgid "the open agent"
 msgstr "o agente aberto"
 
+msgid "The original text was deleted."
+msgstr "O texto original foi excluído."
+
 msgid "The Palimpsest project is missing at this checkout path."
 msgstr "O projeto do Palimpsest está ausente neste caminho de checkout."
 
@@ -10487,9 +10418,6 @@ msgstr "O servidor do Palimpsest demorou demais para responder e a alteracao pod
 
 msgid "The Palimpsest server took too long to answer. Ask the agent to try again."
 msgstr "O servidor do Palimpsest demorou demais para responder. Peca ao agente que tente de novo."
-
-msgid "The original text was deleted."
-msgstr "O texto original foi excluído."
 
 msgid "The path can't leave the skill (no . or ..)"
 msgstr "O caminho não pode sair da habilidade (sem . ou ..)"
@@ -11067,9 +10995,6 @@ msgstr "Não foi possível ler este arquivo de tema"
 msgid "This theme file is too large"
 msgstr "Este arquivo de tema é muito grande"
 
-msgid "This update is no longer ready to install."
-msgstr "Esta atualização não está mais pronta para ser instalada."
-
 msgid "This usually means one of:"
 msgstr "Isto costuma significar uma destas coisas:"
 
@@ -11448,10 +11373,6 @@ msgstr "Não rastreado"
 msgid "Up to date"
 msgstr "Atualizado"
 
-msgctxt "settings search keyword"
-msgid "update"
-msgstr "atualização"
-
 msgid "Update"
 msgstr "Atualizar"
 
@@ -11484,12 +11405,6 @@ msgstr "Atualizado {updatedRelative}"
 
 msgid "updated folder properties"
 msgstr "propriedades da pasta atualizadas"
-
-msgid "Updated to Version {version}"
-msgstr "Atualizado para a versão {version}"
-
-msgid "Updates and feedback"
-msgstr "Atualizações e comentários"
 
 msgid "Updates flow in"
 msgstr "As atualizações chegam sozinhas"
@@ -11808,11 +11723,8 @@ msgstr "O que você compartilha é enviado para a equipe do Palimpsest."
 msgid "What's included"
 msgstr "O que está incluído"
 
-msgid "What's new"
-msgstr "Novidades"
-
-msgid "When enabled, the agent opens or refreshes the preview after each edit. Disable if you manage your own preview window (OK Desktop, a browser tab on another display, etc.)."
-msgstr "Quando está ligado, o agente abre ou atualiza a pré-visualização depois de cada edição. Desligue se você cuida da sua própria janela de pré-visualização (OK Desktop, uma aba do navegador em outra tela, etc.)."
+msgid "When enabled, the agent opens or refreshes the preview after each edit. Disable if you manage your own preview window (Palimpsest Desktop, a browser tab on another display, etc.)."
+msgstr ""
 
 msgid "When the agent runs its scheduled work."
 msgstr "Quando o agente roda o trabalho agendado dele."
@@ -12004,9 +11916,6 @@ msgstr "Você está enviando com mais frequência do que verifica atualizações
 
 msgid "You're signed out — sign in to resume syncing."
 msgstr "Você saiu da conta — entre para retomar a sincronização."
-
-msgid "You're subscribed!"
-msgstr "Assinatura confirmada!"
 
 msgid "you@company.com"
 msgstr "voce@empresa.com"

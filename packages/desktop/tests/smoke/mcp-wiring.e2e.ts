@@ -169,9 +169,9 @@ test.describe('M6b first-launch MCP-wiring smoke (US-010)', () => {
       const claudeConfigPath = join(tmpHome, '.claude.json');
       expect(existsSync(claudeConfigPath)).toBe(true);
       const claudeConfig = JSON.parse(readFileSync(claudeConfigPath, 'utf8')) as {
-        mcpServers?: { 'palimpsest'?: { command?: string; args?: string[] } };
+        mcpServers?: { palimpsest?: { command?: string; args?: string[] } };
       };
-      const psEntry = claudeConfig.mcpServers?.['palimpsest'];
+      const psEntry = claudeConfig.mcpServers?.palimpsest;
       expect(psEntry).toBeDefined();
       expect(psEntry?.command).toBe(EXPECTED_CHAIN.command);
       expect(psEntry?.args?.slice(0, EXPECTED_CHAIN.prefixArgs.length)).toEqual([
@@ -295,7 +295,7 @@ test.describe('M6b first-launch MCP-wiring smoke (US-010)', () => {
         configured: true,
         configuredAt: new Date().toISOString(),
         editors: ['claude'],
-        cliPath: '/usr/local/bin/ok',
+        cliPath: '/usr/local/bin/ps',
       }),
     );
     seedEditorDetectionDirs(tmpHome, ['.claude']);

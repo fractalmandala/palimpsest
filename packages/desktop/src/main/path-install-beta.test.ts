@@ -410,10 +410,7 @@ describe('Beta installer and runtime agree on the bin dir', () => {
       const relative = runtimeBin?.slice(userHome.length);
       expect(readFileSync(result.marker.envShimPath, 'utf8')).toContain(`"$\{HOME}${relative}"`);
       expect(
-        readFileSync(
-          join(userHome, '.config', 'fish', 'conf.d', 'palimpsest-beta.fish'),
-          'utf8',
-        ),
+        readFileSync(join(userHome, '.config', 'fish', 'conf.d', 'palimpsest-beta.fish'), 'utf8'),
       ).toContain(`"$HOME${relative}"`);
     } finally {
       vi.unstubAllEnvs();

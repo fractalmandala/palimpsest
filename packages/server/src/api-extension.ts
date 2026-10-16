@@ -48,10 +48,10 @@ import {
   lintDocument,
   MANAGED_ARTIFACT_PREFIX_SKILL,
   mediaKindForSidebarAssetExtension,
-  PS_DIR,
   PALIMPSEST_SKILLS_REPO,
   type Principal,
   type ProblemType,
+  PS_DIR,
   parseFrontmatterRecord,
   pathspecArgs,
   readFmMap,
@@ -4200,7 +4200,7 @@ export function createApiExtension(options: ApiExtensionOptions): Extension & {
     res: ServerResponse,
     label: 'path' | 'folder',
     handler: string,
-    components: 'ps' \| 'ps-and-templates',
+    components: 'ps' | 'ps-and-templates',
   ): { folderRel: string; resolvedContentDir: string } | null {
     const folderRel = raw.replace(/^\.\//, '').replace(/^\/+/, '').replace(/\/+$/, '');
     if (folderRel.split('/').some((seg) => seg === '..') || raw.startsWith('/')) {

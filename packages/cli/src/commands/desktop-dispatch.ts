@@ -9,8 +9,8 @@ import {
   desktopChannelLabel,
   desktopWindowsExecutableName,
   desktopWindowsInstallDirNames,
-  PS_CHANNEL_ENV,
   PACKAGED_DESKTOP_PRODUCT_NAMES,
+  PS_CHANNEL_ENV,
   resolveDesktopProductName,
 } from '@palimpsest/core';
 import { spawnDetachedScrubbed } from '../utils/detached-spawn.ts';

@@ -1,5 +1,5 @@
-import type { SkillsListEntry } from '@palimpsest/core';
 import * as actualLinguiMacro from '@lingui/react/macro';
+import type { SkillsListEntry } from '@palimpsest/core';
 import { cleanup, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
@@ -81,12 +81,12 @@ const discovery: SkillsListEntry = {
 };
 
 const writeSkill: SkillsListEntry = {
-  name: 'open-knowledge-write-skill',
+  name: 'palimpsest-write-skill',
   description:
     'Use when the user wants to create, author, write, or design a new Agent Skill (a SKILL.md).',
   scope: 'global',
-  path: 'bundles/open-knowledge-write-skill/SKILL.md',
-  absolutePath: '/bundles/open-knowledge-write-skill/SKILL.md',
+  path: 'bundles/palimpsest-write-skill/SKILL.md',
+  absolutePath: '/bundles/palimpsest-write-skill/SKILL.md',
   installed: false,
   hosts: [],
   managed: true,
@@ -122,23 +122,20 @@ const baseStatus: PsIntegrationsStatus = {
       description: discovery.description ?? '',
       installed: true,
       onboarding: true,
-      paths: [
-        '~/.agents/skills/palimpsest-discovery',
-        '~/.claude/skills/palimpsest-discovery',
-      ],
+      paths: ['~/.agents/skills/palimpsest-discovery', '~/.claude/skills/palimpsest-discovery'],
       size: { alwaysOn: 140, onTrigger: 1495, onDemand: 0 },
       sourceDir: '/bundles/palimpsest-discovery',
       resolvedHosts: [{ editor: 'claude', skillsRoot: '.claude/skills', custom: false }],
     },
     {
       id: 'write-skill',
-      name: 'open-knowledge-write-skill',
+      name: 'palimpsest-write-skill',
       description: writeSkill.description ?? '',
       installed: false,
       onboarding: false,
-      paths: ['~/.agents/skills/open-knowledge-write-skill'],
+      paths: ['~/.agents/skills/palimpsest-write-skill'],
       size: { alwaysOn: 156, onTrigger: 3218, onDemand: 916 },
-      sourceDir: '/bundles/open-knowledge-write-skill',
+      sourceDir: '/bundles/palimpsest-write-skill',
       resolvedHosts: [{ editor: 'claude', skillsRoot: '.claude/skills', custom: false }],
     },
   ],
@@ -221,7 +218,7 @@ describe('BuiltInSkillsSection', () => {
   test('a bundle the copy module does not know falls back to its description', async () => {
     skillsState = {
       status: 'ready',
-      data: [{ ...writeSkill, name: 'open-knowledge-future' }],
+      data: [{ ...writeSkill, name: 'palimpsest-future' }],
     };
     renderSection();
 
@@ -282,8 +279,8 @@ describe('BuiltInSkillsSection', () => {
     expect(openPreviewSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         flavor: 'builtin',
-        name: 'open-knowledge-write-skill',
-        source: '/bundles/open-knowledge-write-skill',
+        name: 'palimpsest-write-skill',
+        source: '/bundles/palimpsest-write-skill',
         level: 'global',
       }),
     );
@@ -335,9 +332,9 @@ describe('BuiltInSkillsSection', () => {
 
       const dialog = await screen.findByTestId('skills-studio-intro');
       expect(dialog.textContent).toContain('Skills teach your AI tools repeatable tasks');
-      expect(within(dialog).getByText('open-knowledge-write-skill')).toBeTruthy();
+      expect(within(dialog).getByText('palimpsest-write-skill')).toBeTruthy();
       expect(within(dialog).getByText('How to write a new skill and install it.')).toBeTruthy();
-      expect(within(dialog).getByText('~/.agents/skills/open-knowledge-write-skill')).toBeTruthy();
+      expect(within(dialog).getByText('~/.agents/skills/palimpsest-write-skill')).toBeTruthy();
       expect(within(dialog).queryByText('palimpsest-discovery')).toBeNull();
 
       await userEvent.click(screen.getByTestId('skills-studio-intro-install'));
@@ -390,7 +387,7 @@ describe('BuiltInSkillsSection', () => {
       installBridge({
         setResult: () => ({
           ok: false as const,
-          error: "Couldn't write ~/.claude/skills/open-knowledge-write-skill",
+          error: "Couldn't write ~/.claude/skills/palimpsest-write-skill",
           status: baseStatus,
         }),
       });
@@ -399,7 +396,7 @@ describe('BuiltInSkillsSection', () => {
 
       await waitFor(() => {
         expect(toastError).toHaveBeenCalledWith(
-          "Couldn't write ~/.claude/skills/open-knowledge-write-skill",
+          "Couldn't write ~/.claude/skills/palimpsest-write-skill",
         );
       });
       expect(screen.getAllByTestId('skill-consent-row-preview').length).toBe(2);

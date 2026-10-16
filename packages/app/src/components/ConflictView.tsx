@@ -1,9 +1,9 @@
+import { useLingui } from '@lingui/react/macro';
 import {
   type SynthesisedConflictRegion,
   synthesiseConflictMarkersWithRegions,
 } from '@palimpsest/core/bridge';
 import type { SyncConflictContentSuccess } from '@palimpsest/core/schemas/api';
-import { useLingui } from '@lingui/react/macro';
 import type {
   FileDiffMetadata,
   MergeConflictMarkerRow,

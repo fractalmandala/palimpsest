@@ -1,3 +1,5 @@
+import { i18n } from '@lingui/core';
+import { Trans, useLingui } from '@lingui/react/macro';
 import {
   EDITOR_LABELS,
   EDITOR_PROJECT_SKILL_ROOT,
@@ -5,8 +7,6 @@ import {
   RESERVED_PROJECT_SKILL_NAME,
   STABLE_EDITOR_PROJECT_CONFIG_PATH,
 } from '@palimpsest/core/constants/editors';
-import { i18n } from '@lingui/core';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { RowDisclosure } from '@/components/RowDisclosure';
 import { Checkbox } from '@/components/ui/checkbox';

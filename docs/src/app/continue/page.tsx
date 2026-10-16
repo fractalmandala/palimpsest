@@ -44,8 +44,8 @@ export default async function ContinuePage({ searchParams }: ContinuePageProps) 
         <SlideHeading>You&rsquo;re all set.</SlideHeading>
 
         <SlideLead className="mt-8">
-          Palimpsest is a local-first, markdown-native knowledge base where you and your AI
-          agents co-create. Open the app to create your first project, or connect an existing GitHub
+          Palimpsest is a local-first, markdown-native knowledge base where you and your AI agents
+          co-create. Open the app to create your first project, or connect an existing GitHub
           repository.
         </SlideLead>
 
@@ -63,8 +63,8 @@ export default async function ContinuePage({ searchParams }: ContinuePageProps) 
         <div className="max-w-3xl">
           <p className="text-sm font-medium text-slide-text">Were you sent a share link?</p>
           <p className="mt-2 text-sm leading-relaxed text-slide-muted">
-            Click the link again and choose{' '}
-            <span className="font-medium">Open in Palimpsest</span> to jump straight to it.
+            Click the link again and choose <span className="font-medium">Open in Palimpsest</span>{' '}
+            to jump straight to it.
             <br />
             Don&rsquo;t have the app yet?{' '}
             <DownloadTextLink

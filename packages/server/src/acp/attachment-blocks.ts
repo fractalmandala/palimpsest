@@ -2,10 +2,7 @@ import { readFile, stat } from 'node:fs/promises';
 import { basename } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import type { ContentBlock, PromptCapabilities } from '@agentclientprotocol/sdk';
-import {
-  type AttachmentPart,
-  isTextishMime,
-} from '@palimpsest/core/acp/thread-protocol';
+import { type AttachmentPart, isTextishMime } from '@palimpsest/core/acp/thread-protocol';
 
 function mimeFromExtension(path: string): string | null {
   const dot = path.lastIndexOf('.');

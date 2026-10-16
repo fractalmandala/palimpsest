@@ -32,7 +32,7 @@ function slugOf(page: CorpusSourcePage): string[] {
 }
 
 async function serve(slug: string[]): Promise<string> {
-  const response = await GET(new Request(`https://github.com/fractalmandala/palimpsest/tree/main/docs/content'/')}.md`), {
+  const response = await GET(new Request(`https://example.com/docs/${slug.join('/')}.md`), {
     params: Promise.resolve({ slug }),
   });
   return response.text();

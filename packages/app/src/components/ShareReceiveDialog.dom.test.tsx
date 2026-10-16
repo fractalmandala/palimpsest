@@ -35,7 +35,7 @@ function okPayload(
     share: {
       contentRootDepth: null,
       host: 'github.com',
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       branch: 'main',
       sharedUrl: 'https://github.com/fractalmandala/palimpsest/blob/main/docs/guide.md',
@@ -347,7 +347,7 @@ describe('ShareReceiveDialog runtime behavior', () => {
         return Promise.resolve(
           host === 'ghes.acme.test'
             ? { authenticated: true, host, login: 'omar-acme' }
-            : { authenticated: true, host: 'github.com', login: 'omar-inkeep' },
+            : { authenticated: true, host: 'github.com', login: 'omar-example' },
         );
       }),
       runClone: vi.fn(() => Promise.resolve({ kind: 'ok', dir: '/cloned/kb' })),
@@ -361,7 +361,7 @@ describe('ShareReceiveDialog runtime behavior', () => {
       expect(screen.getByTestId('share-receive-auth-banner').textContent).toContain('omar-acme'),
     );
     expect(screen.getByTestId('share-receive-auth-banner').textContent).not.toContain(
-      'omar-inkeep',
+      'omar-example',
     );
     expect(seenHosts).toEqual(['ghes.acme.test']);
   });
@@ -472,7 +472,7 @@ describe('ShareReceiveDialog runtime behavior', () => {
     expect(openArg.pendingShareBranchSwitch?.projectPath).toBe('/local/clone');
     expect(openArg.pendingShareBranchSwitch?.currentBranch).toBe('main');
     expect(openArg.pendingShareBranchSwitch?.share).toMatchObject({
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       branch: 'feat/share',
       target: { kind: 'doc', docPath: 'docs/guide.md' },

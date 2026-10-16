@@ -112,41 +112,39 @@ describe('resolveStartConsoleLevel', () => {
 });
 
 describe('deriveServerProcessTitle', () => {
-  test('returns "open-knowledge-server <basename>" for a typical project path', () => {
+  test('returns "palimpsest-server <basename>" for a typical project path', () => {
     expect(deriveServerProcessTitle('/Users/alice/projects/my-notes')).toBe(
-      'open-knowledge-server my-notes',
+      'palimpsest-server my-notes',
     );
   });
 
   test('strips non-printable bytes from the project name', () => {
-    expect(deriveServerProcessTitle('/path/to/bad\x07name\x7F')).toBe(
-      'open-knowledge-server badname',
-    );
+    expect(deriveServerProcessTitle('/path/to/bad\x07name\x7F')).toBe('palimpsest-server badname');
   });
 
   test('falls back to "unknown" when basename is empty or all non-printable', () => {
-    expect(deriveServerProcessTitle('/')).toBe('open-knowledge-server unknown');
-    expect(deriveServerProcessTitle('/path/to/\x00\x01\x02')).toBe('open-knowledge-server unknown');
+    expect(deriveServerProcessTitle('/')).toBe('palimpsest-server unknown');
+    expect(deriveServerProcessTitle('/path/to/\x00\x01\x02')).toBe('palimpsest-server unknown');
   });
 
   test('truncates long project names to keep ps lines readable', () => {
     const longName = 'a'.repeat(200);
     const result = deriveServerProcessTitle(`/parent/${longName}`);
-    expect(result.length).toBeLessThanOrEqual(86);
-    expect(result.startsWith('open-knowledge-server ')).toBe(true);
-    expect(result.length).toBe(22 + 64);
+    expect(result.length).toBeLessThanOrEqual(82);
+    expect(result.startsWith('palimpsest-server ')).toBe(true);
+    expect(result.length).toBe(18 + 64);
   });
 
   test('trims leading/trailing whitespace from the project name', () => {
     expect(deriveServerProcessTitle('/parent/   leading-trailing   ')).toBe(
-      'open-knowledge-server leading-trailing',
+      'palimpsest-server leading-trailing',
     );
   });
 
   test('preserves typical kebab-case, snake_case, and dotted names', () => {
-    expect(deriveServerProcessTitle('/x/my-project')).toBe('open-knowledge-server my-project');
-    expect(deriveServerProcessTitle('/x/my_project')).toBe('open-knowledge-server my_project');
-    expect(deriveServerProcessTitle('/x/v1.2.3')).toBe('open-knowledge-server v1.2.3');
+    expect(deriveServerProcessTitle('/x/my-project')).toBe('palimpsest-server my-project');
+    expect(deriveServerProcessTitle('/x/my_project')).toBe('palimpsest-server my_project');
+    expect(deriveServerProcessTitle('/x/v1.2.3')).toBe('palimpsest-server v1.2.3');
   });
 });
 
@@ -743,9 +741,7 @@ describe('bootStartServer (integration)', () => {
       };
       walk(home);
       expect(wrote).toEqual([]);
-      expect(existsSync(join(tmpDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
-        false,
-      );
+      expect(existsSync(join(tmpDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(false);
     } finally {
       if (prevHome === undefined) delete process.env.HOME;
       else process.env.HOME = prevHome;
@@ -1428,7 +1424,7 @@ describe('isReapableEphemeralProjectDir', () => {
     const realpathFn = (p: string): string =>
       p === '/tmp' || p.startsWith('/tmp/') ? p.replace(/^\/tmp/, '/private/tmp') : p;
     expect(
-      isReapableEphemeralProjectDir('/tmp/ok-ephemeral-x', {
+      isReapableEphemeralProjectDir('/tmp/ps-ephemeral-x', {
         tmpdirFn: () => '/private/tmp',
         realpathFn,
       }),

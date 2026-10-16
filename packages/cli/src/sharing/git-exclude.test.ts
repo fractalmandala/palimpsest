@@ -106,7 +106,7 @@ describe('getPsArtifactPaths', () => {
   });
 
   it('never excludes an AUTHORED skill projection, marker or not', () => {
-    writeMarker(dir, { 'trip-log': ['claude', 'cursor', 'copilot'], 'palimpsest': ['claude'] });
+    writeMarker(dir, { 'trip-log': ['claude', 'cursor', 'copilot'], palimpsest: ['claude'] });
     const paths = getPsArtifactPaths(dir);
     expect(paths).not.toContain('.claude/skills/trip-log/');
     expect(paths).not.toContain('.cursor/skills/trip-log/');
@@ -202,7 +202,7 @@ describe('addPsPathsToGitExclude', () => {
     writeExclude(dir, '*.tmp');
     const result = addPsPathsToGitExclude(dir, ['.ps/']);
     expect(result.kind).toBe('updated');
-    expect(readExclude(dir)).toBe('*.tmp\n.ok/\n');
+    expect(readExclude(dir)).toBe('*.tmp\n.ps/\n');
   });
 
   it('is idempotent — running twice classifies as alreadyPresent', () => {
@@ -233,11 +233,7 @@ describe('addPsPathsToGitExclude', () => {
 
   it('overlaps cleanly with the clone-precedent `.ps/` line', () => {
     writeExclude(dir, '.ps/\n');
-    const result = addPsPathsToGitExclude(dir, [
-      '.ps/',
-      '.mcp.json',
-      '.claude/skills/palimpsest/',
-    ]);
+    const result = addPsPathsToGitExclude(dir, ['.ps/', '.mcp.json', '.claude/skills/palimpsest/']);
     expect(result.kind).toBe('updated');
     if (result.kind !== 'updated') throw new Error('unreachable');
     expect(result.alreadyPresent).toEqual(['.ps/']);

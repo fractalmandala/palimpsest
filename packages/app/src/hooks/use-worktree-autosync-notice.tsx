@@ -1,8 +1,5 @@
-import {
-  resolveLocalAutoSyncMode,
-  type SyncMode,
-} from '@palimpsest/core/config/auto-sync-mode';
 import { Trans } from '@lingui/react/macro';
+import { resolveLocalAutoSyncMode, type SyncMode } from '@palimpsest/core/config/auto-sync-mode';
 import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import { useConfigContext } from '@/lib/config-provider';

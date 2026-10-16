@@ -6,7 +6,7 @@ const FORBIDDEN_MESSAGE = `Forbidden module in the uninstall entry — the unins
 const DYNAMIC_MESSAGE = `Dynamic import under src/uninstall — the uninstall screens must eager-load so the completion/failure screens paint from memory after teardown starts removing files. Use a static import. See ${URL}`;
 
 const FORBIDDEN_SOURCE =
-  /^(?:@\/editor\/.*|@inkeep\/open-knowledge-server.*|@hocuspocus\/.*|@tiptap\/y-tiptap.*|@tiptap\/extension-collaboration.*|yjs(?:\/.*)?|y-protocols(?:\/.*)?|y-prosemirror(?:\/.*)?|y-codemirror\.next(?:\/.*)?|y-indexeddb(?:\/.*)?)$/;
+  /^(?:@\/editor\/.*|@palimpsest\/server.*|@hocuspocus\/.*|@tiptap\/y-tiptap.*|@tiptap\/extension-collaboration.*|yjs(?:\/.*)?|y-protocols(?:\/.*)?|y-prosemirror(?:\/.*)?|y-codemirror\.next(?:\/.*)?|y-indexeddb(?:\/.*)?)$/;
 
 export const noUninstallForbiddenImport = {
   meta: {

@@ -582,7 +582,7 @@ describe('runCreateNew — installs the project-local skill (PRD-6733)', () => {
     writeFileSync(
       join(copilotHome, 'mcp-config.json'),
       JSON.stringify({
-        mcpServers: { 'palimpsest': { command: 'custom-ok', args: ['mcp'] } },
+        mcpServers: { palimpsest: { command: 'custom-ok', args: ['mcp'] } },
       }),
     );
     let result: Awaited<ReturnType<typeof runCreateNew>>;
@@ -597,18 +597,18 @@ describe('runCreateNew — installs the project-local skill (PRD-6733)', () => {
       else process.env.COPILOT_HOME = originalCopilotHome;
     }
 
-    expect(
-      existsSync(join(result.projectDir, '.claude', 'skills', 'palimpsest', 'SKILL.md')),
-    ).toBe(true);
-    expect(
-      existsSync(join(result.projectDir, '.cursor', 'skills', 'palimpsest', 'SKILL.md')),
-    ).toBe(true);
-    expect(
-      existsSync(join(result.projectDir, '.codex', 'skills', 'palimpsest', 'SKILL.md')),
-    ).toBe(true);
-    expect(
-      existsSync(join(result.projectDir, '.github', 'skills', 'palimpsest', 'SKILL.md')),
-    ).toBe(true);
+    expect(existsSync(join(result.projectDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
+      true,
+    );
+    expect(existsSync(join(result.projectDir, '.cursor', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
+      true,
+    );
+    expect(existsSync(join(result.projectDir, '.codex', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
+      true,
+    );
+    expect(existsSync(join(result.projectDir, '.github', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
+      true,
+    );
     expect(
       existsSync(join(result.projectDir, '.opencode', 'skills', 'palimpsest', 'SKILL.md')),
     ).toBe(true);
@@ -627,9 +627,9 @@ describe('runCreateNew — installs the project-local skill (PRD-6733)', () => {
       'opencode',
       'pi',
     ]);
-    expect(
-      existsSync(join(result.projectDir, '.agents', 'skills', 'palimpsest', 'SKILL.md')),
-    ).toBe(true);
+    expect(existsSync(join(result.projectDir, '.agents', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
+      true,
+    );
   });
 
   test('skips the Copilot project skill when Copilot is selected without MCP wiring', async () => {
@@ -647,9 +647,9 @@ describe('runCreateNew — installs the project-local skill (PRD-6733)', () => {
       else process.env.COPILOT_HOME = originalCopilotHome;
     }
 
-    expect(
-      existsSync(join(result.projectDir, '.github', 'skills', 'palimpsest', 'SKILL.md')),
-    ).toBe(false);
+    expect(existsSync(join(result.projectDir, '.github', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
+      false,
+    );
     expect(result.aiIntegrations.integrations).toContainEqual(
       expect.objectContaining({
         editorId: 'copilot',

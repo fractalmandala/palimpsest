@@ -1,11 +1,6 @@
 import { basename } from 'node:path';
 
-const DEFAULT_USERDATA_NAMES = new Set([
-  'Palimpsest',
-  'Palimpsest',
-  'Palimpsest Beta',
-  'Electron',
-]);
+const DEFAULT_USERDATA_NAMES = new Set(['Palimpsest', 'Palimpsest', 'Palimpsest Beta', 'Electron']);
 
 const DEV_WRAPPER = /^(?:Palimpsest|Palimpsest) \((.+)\)$/;
 

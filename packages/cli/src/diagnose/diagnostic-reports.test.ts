@@ -360,10 +360,7 @@ describe('collectDiagnosticReports', () => {
       at: hoursBefore(40),
     });
 
-    expect(collectedNames(dir)).toEqual([
-      'Palimpsest-odd-timestamp.ips',
-      'Palimpsest-older.ips',
-    ]);
+    expect(collectedNames(dir)).toEqual(['Palimpsest-odd-timestamp.ips', 'Palimpsest-older.ips']);
   });
 
   test('falls back to mtime when the header carries no usable timestamp', () => {
@@ -376,10 +373,7 @@ describe('collectDiagnosticReports', () => {
     });
     writeReport(dir, 'Palimpsest-older.ips', { name: 'Palimpsest', at: hoursBefore(3) });
 
-    expect(collectedNames(dir)).toEqual([
-      'Palimpsest-no-timestamp.ips',
-      'Palimpsest-older.ips',
-    ]);
+    expect(collectedNames(dir)).toEqual(['Palimpsest-no-timestamp.ips', 'Palimpsest-older.ips']);
   });
 
   describe('reports we cannot identify', () => {

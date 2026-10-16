@@ -1,8 +1,8 @@
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { instantiateDoc, stripFrontmatter } from '@palimpsest/core';
 import type { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { instantiateDoc, stripFrontmatter } from '@palimpsest/core';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 import {
   bootArtifactAdmissionRig,

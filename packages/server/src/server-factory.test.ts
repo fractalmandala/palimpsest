@@ -24,11 +24,7 @@ import {
   lintDocument,
   REMOVED_KEYS,
 } from '@palimpsest/core';
-import {
-  readConfigSafely,
-  resolveConfigPath,
-  writeConfigPatch,
-} from '@palimpsest/core/server';
+import { readConfigSafely, resolveConfigPath, writeConfigPatch } from '@palimpsest/core/server';
 import { parseCheckpoint } from '@palimpsest/core/shadow-repo-layout';
 import simpleGit from 'simple-git';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from 'vitest';
@@ -4149,7 +4145,7 @@ describe('createServer() — push-permission auth wiring', () => {
       expect(firstCall.detectGh).toBe(detectGhStub);
       expect(firstCall.detectGhAccounts).toBe(detectGhAccountsStub);
       expect(firstCall.tokenStore).toBe(tokenStoreStub);
-      expect(firstCall.owner).toBe('inkeep');
+      expect(firstCall.owner).toBe('example');
       expect(firstCall.repo).toBe('palimpsest');
     } finally {
       await server.destroy();

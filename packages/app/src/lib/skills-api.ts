@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import type {
   SeedInstallPackSkillSuccess,
   SkillFolderLinkPreview,
@@ -24,7 +25,6 @@ import type {
   SkillsInstalledSuccess,
   SkillsSearchSuccess,
 } from '@palimpsest/core/skills-catalog/schema';
-import { t } from '@lingui/core/macro';
 import { toast } from 'sonner';
 import { emitSkillScopeMoved, emitSkillsChanged } from '@/lib/documents-events';
 import { parseApiError } from '@/lib/parse-api-error';

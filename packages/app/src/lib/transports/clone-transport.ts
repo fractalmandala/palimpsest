@@ -1,5 +1,5 @@
-import { ProblemDetailsSchema } from '@palimpsest/core/schemas/api';
 import { t } from '@lingui/core/macro';
+import { ProblemDetailsSchema } from '@palimpsest/core/schemas/api';
 import type { PsDesktopBridge, PsLocalOpCloneEvent } from '@/lib/desktop-bridge-types';
 import { createBufferedAsyncStream } from './buffered-async-stream';
 

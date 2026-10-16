@@ -1,7 +1,7 @@
+import { Trans, useLingui } from '@lingui/react/macro';
 import type { SkillsListEntry } from '@palimpsest/core/schemas/api';
 import type { SkillSearchResult } from '@palimpsest/core/skills-catalog/schema';
 import type { SkillCostTiers } from '@palimpsest/core/skills-catalog/skill-cost';
-import { Trans, useLingui } from '@lingui/react/macro';
 import { Check, Package } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { formatSkillTokens } from '@/components/SkillCostValue';
@@ -77,7 +77,7 @@ export function SkillDirectoryResult({
         <div className="mt-0.5 flex items-center gap-1.5 text-muted-foreground text-xs">
           <span className="truncate">{result.publisher ?? result.source}</span>
           {}
-          {result.publisher === 'palimpsest' || result.publisher === 'inkeep' ? (
+          {result.publisher === 'palimpsest' || result.publisher === 'example' ? (
             <Badge variant="secondary" className="h-4 px-1 text-[10px] uppercase tracking-wide">
               <Trans>By Palimpsest</Trans>
             </Badge>

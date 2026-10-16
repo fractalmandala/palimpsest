@@ -557,9 +557,7 @@ describe('FileSidebar menu-action runtime routing', () => {
 
     menuActionCallback?.('copy-full-path' as MenuAction);
     await waitFor(() =>
-      expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
-        '/tmp/palimpsest/notes/source.md',
-      ),
+      expect(navigator.clipboard.writeText).toHaveBeenCalledWith('/tmp/palimpsest/notes/source.md'),
     );
 
     menuActionCallback?.('copy-relative-path' as MenuAction);

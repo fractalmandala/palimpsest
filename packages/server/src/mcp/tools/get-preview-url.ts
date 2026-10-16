@@ -1,9 +1,5 @@
 import { isAbsolute } from 'node:path';
-import {
-  currentCliCommandName,
-  MANAGED_ARTIFACT_SCOPES,
-  SKILL_NAME_REGEX,
-} from '@palimpsest/core';
+import { currentCliCommandName, MANAGED_ARTIFACT_SCOPES, SKILL_NAME_REGEX } from '@palimpsest/core';
 import { readConfigSafely, resolveConfigPath } from '@palimpsest/core/server';
 import { z } from 'zod';
 import { AutoStartDisabledError } from '../../autostart.ts';

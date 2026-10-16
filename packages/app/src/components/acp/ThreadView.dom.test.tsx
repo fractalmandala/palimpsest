@@ -1,3 +1,4 @@
+import { i18n } from '@lingui/core';
 import {
   THREAD_EXIT_STDERR_WINDOW_LINES,
   type ThreadAuthTerminalLaunch,
@@ -5,7 +6,6 @@ import {
   type ThreadExitDiagnosis,
   type ThreadInfo,
 } from '@palimpsest/core/acp/thread-protocol';
-import { i18n } from '@lingui/core';
 import {
   act,
   cleanup,

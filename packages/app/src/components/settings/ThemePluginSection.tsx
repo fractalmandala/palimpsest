@@ -1,5 +1,5 @@
-import type { ConfigBinding } from '@palimpsest/core/config/bind-config-doc';
 import { useLingui } from '@lingui/react/macro';
+import type { ConfigBinding } from '@palimpsest/core/config/bind-config-doc';
 import { useEffect } from 'react';
 import { useSavedThemes } from '@/lib/saved-themes-client';
 import { CustomThemeEditor } from './CustomThemeEditor';

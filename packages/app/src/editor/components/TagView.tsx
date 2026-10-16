@@ -1,5 +1,5 @@
-import { INLINE_TAG_VALUE_RE } from '@palimpsest/core/markdown/tag-promotion';
 import { useLingui } from '@lingui/react/macro';
+import { INLINE_TAG_VALUE_RE } from '@palimpsest/core/markdown/tag-promotion';
 import type { NodeViewProps } from '@tiptap/core';
 import { TextSelection } from '@tiptap/pm/state';
 import { NodeViewWrapper } from '@tiptap/react';

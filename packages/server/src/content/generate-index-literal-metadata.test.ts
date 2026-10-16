@@ -1,9 +1,5 @@
 import assert from 'node:assert/strict';
-import {
-  MarkdownManager,
-  resolveInternalHref,
-  sharedExtensions,
-} from '@palimpsest/core';
+import { MarkdownManager, resolveInternalHref, sharedExtensions } from '@palimpsest/core';
 import type { JSONContent } from '@tiptap/core';
 import { describe, expect, test, vi } from 'vitest';
 import * as Y from 'yjs';

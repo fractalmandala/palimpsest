@@ -119,7 +119,7 @@ describe('GET /api/share/publish/owners', () => {
           type: 'owners',
           owners: [
             { login: 'alice', kind: 'user', avatarUrl: 'a' },
-            { login: 'inkeep', kind: 'org' },
+            { login: 'example', kind: 'org' },
           ],
         }),
       ),
@@ -130,7 +130,7 @@ describe('GET /api/share/publish/owners', () => {
       ok: true,
       owners: [
         { login: 'alice', kind: 'user', avatarUrl: 'a' },
-        { login: 'inkeep', kind: 'org' },
+        { login: 'example', kind: 'org' },
       ],
     });
   });
@@ -266,7 +266,7 @@ describe('POST /api/share/publish', () => {
       cliArgs: fixtureCliArgs(JSON.stringify({ type: 'error', code: 'name-conflict' })),
     });
     const { status, body } = await postJson(rig.port, '/api/share/publish', {
-      owner: 'inkeep',
+      owner: 'example',
       name: 'palimpsest',
       visibility: 'public',
     });

@@ -75,7 +75,7 @@ function githubApiBase(host: string): string {
 
 function buildHeaders(token: string | undefined): Record<string, string> {
   const headers: Record<string, string> = {
-    'User-Agent': 'open-knowledge-server',
+    'User-Agent': 'palimpsest-server',
     Accept: 'application/vnd.github+json',
   };
   if (token) headers.Authorization = `Bearer ${token}`;

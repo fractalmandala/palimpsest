@@ -3,7 +3,7 @@ import { STABLE_DMG_URL } from './download-links';
 export const SITE_URL = 'https://github.com/fractalmandala/palimpsest';
 
 export function absoluteSiteUrl(path: string): string {
-  return new URL(path, SITE_URL).href;
+  return `${SITE_URL}${path.startsWith('/') ? path : `/${path}`}`;
 }
 export const SITE_NAME = 'Palimpsest';
 

@@ -10,8 +10,8 @@ export const DESKTOP_PRODUCTS = {
       rpm: 'palimpsest',
     },
     retiredLinuxPackageNames: {
-      deb: ['openknowledge'],
-      rpm: ['Palimpsest', 'openknowledge'],
+      deb: [],
+      rpm: ['Palimpsest'],
     },
     cliCommandNames: ['ps', 'palimpsest'],
     mcpServerName: 'palimpsest',
@@ -31,8 +31,8 @@ export const DESKTOP_PRODUCTS = {
       rpm: 'palimpsest-beta',
     },
     retiredLinuxPackageNames: {
-      deb: ['palimpsest-beta-desktop', 'openknowledge-beta'],
-      rpm: ['palimpsest-beta-desktop', 'openknowledge-beta'],
+      deb: ['palimpsest-beta-desktop'],
+      rpm: ['palimpsest-beta-desktop'],
     },
     cliCommandNames: ['ps-beta', 'palimpsest-beta'],
     mcpServerName: 'palimpsest-beta',
@@ -52,8 +52,8 @@ export const DESKTOP_PRODUCTS = {
       rpm: 'palimpsest-dev',
     },
     retiredLinuxPackageNames: {
-      deb: ['openknowledge-dev'],
-      rpm: ['openknowledge-dev'],
+      deb: [],
+      rpm: [],
     },
     cliCommandNames: ['ps-dev', 'palimpsest-dev'],
     mcpServerName: 'palimpsest-dev',

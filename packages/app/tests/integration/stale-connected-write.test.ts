@@ -12,10 +12,7 @@ import {
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { HocuspocusProvider } from '@hocuspocus/provider';
-import {
-  MetricsReconciliationSuccessSchema,
-  PagesSuccessSchema,
-} from '@palimpsest/core';
+import { MetricsReconciliationSuccessSchema, PagesSuccessSchema } from '@palimpsest/core';
 import { afterEach, expect, test, vi } from 'vitest';
 import * as Y from 'yjs';
 import * as fileWatcher from '../../../server/src/file-watcher.ts';

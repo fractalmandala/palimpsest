@@ -6,11 +6,7 @@ import {
   REMOVED_KEYS,
   type WriteScope,
 } from '@palimpsest/core';
-import {
-  readConfigSafely,
-  resolveConfigPath,
-  writeConfigPatch,
-} from '@palimpsest/core/server';
+import { readConfigSafely, resolveConfigPath, writeConfigPatch } from '@palimpsest/core/server';
 import { Command } from 'commander';
 import { parseDocument } from 'yaml';
 import { loadConfig } from '../config/loader.ts';

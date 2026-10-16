@@ -33,7 +33,7 @@ export interface HistoryRouteDeps {
     res: ServerResponse,
     label: 'path' | 'folder',
     handler: string,
-    components: 'ps' \| 'ps-and-templates',
+    components: 'ps' | 'ps-and-templates',
   ) => { folderRel: string; resolvedContentDir: string } | null;
   safeDocPath: (docName: string, contentRoot: string) => { path: string } | { error: string };
   docTreePathCandidates: (docName: string, contentRoot: string) => readonly string[];

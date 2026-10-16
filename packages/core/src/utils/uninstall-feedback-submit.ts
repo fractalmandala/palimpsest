@@ -98,7 +98,7 @@ export async function postUninstallFeedback(
 ): Promise<UninstallFeedbackResult> {
   const origin = resolveIntakeOrigin();
   if (origin === null) return { ok: false, reason: 'error' };
-  const url = new URL('/api/feedback', origin);
+  const url = new URL(`${origin.href.replace(/\/+$/, '')}/api/feedback`);
   const message = presentText(submission.note);
   const email = plausibleEmail(submission.email);
   const body = {

@@ -1,6 +1,5 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { getMetrics, resetMetrics } from '@palimpsest/server';
 import { trace } from '@opentelemetry/api';
 import {
   BasicTracerProvider,
@@ -8,6 +7,7 @@ import {
   type ReadableSpan,
   SimpleSpanProcessor,
 } from '@opentelemetry/sdk-trace-base';
+import { getMetrics, resetMetrics } from '@palimpsest/server';
 import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import {
   awaitFileWatcherIndexed,

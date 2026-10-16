@@ -1,12 +1,10 @@
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
+// oxlint-disable ps/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
+import { plural, t } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import type { PsignoreBinding } from '@palimpsest/core/config/bind-psignore-doc';
 import { isDocumentOverOpenByteLimit } from '@palimpsest/core/constants/document-open';
-import type {
-  HandoffOutcome,
-  HandoffTarget,
-  InstallState,
-} from '@palimpsest/core/handoff';
+import type { HandoffOutcome, HandoffTarget, InstallState } from '@palimpsest/core/handoff';
 import {
   CreateFolderSuccessSchema,
   CreatePageSuccessSchema,
@@ -17,8 +15,6 @@ import {
   UploadAssetSuccessSchema,
   WorkspaceSuccessSchema,
 } from '@palimpsest/core/schemas/api';
-import { plural, t } from '@lingui/core/macro';
-import { Trans, useLingui } from '@lingui/react/macro';
 import {
   type ContextMenuItem,
   type ContextMenuOpenContext,
@@ -90,7 +86,6 @@ import {
   LINK_DECORATION_ICON_ID,
   MARKDOWN_FILE_ICON_ID,
 } from '@/components/file-tree-icon-sprite';
-import { buildPsignorePatternFromTarget } from '@/components/file-tree-psignore';
 import {
   applyDeleteToDocuments,
   applyDuplicateToDocuments,
@@ -125,6 +120,7 @@ import {
   PS_PROBLEM_BADGE_ATTR,
   PS_PROBLEM_ROW_ATTR,
 } from '@/components/file-tree-problem-indicators';
+import { buildPsignorePatternFromTarget } from '@/components/file-tree-psignore';
 import {
   applyRenameInputAffordance,
   FILE_TREE_RENAME_INPUT_CSS,

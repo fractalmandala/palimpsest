@@ -16,7 +16,7 @@ vi.doMock('../../../../lib/track.ts', () => ({
     _lastCapture = opts;
   },
   resolveDistinctId: () => 'splash-1',
-  attribution: () => ({ referrer: 'palimpsest.ai', utm_content: 'should-be-overridden' }),
+  attribution: () => ({ referrer: 'example.com', utm_content: 'should-be-overridden' }),
   isPrefetchRequest: () => _isPrefetch,
 }));
 
@@ -46,9 +46,12 @@ vi.doMock('../../../../lib/deferred-share.ts', async (importOriginal) => {
 const { GET } = await import('./route.ts');
 
 function call(encoded: string, query = ''): Promise<Response> {
-  return GET(new Request(`https://github.com/fractalmandala/palimpsest/d/${encoded}/download${query}`), {
-    params: Promise.resolve({ encoded }),
-  });
+  return GET(
+    new Request(`https://github.com/fractalmandala/palimpsest/d/${encoded}/download${query}`),
+    {
+      params: Promise.resolve({ encoded }),
+    },
+  );
 }
 
 describe('GET /d/[encoded]/download', () => {

@@ -1,6 +1,6 @@
-import type { PropDef } from '@palimpsest/core/registry/types';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
+import type { PropDef } from '@palimpsest/core/registry/types';
 import { ChevronDown, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';

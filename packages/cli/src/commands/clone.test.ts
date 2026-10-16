@@ -99,7 +99,7 @@ describe('resolveCloneUrl', () => {
 
   test('passes an @-less SCP/GHES SSH URL through unchanged (not rewritten to https)', () => {
     const url = 'host.ghe.com:inkeep/playbooks.git';
-    expect(resolveCloneUrl(url, parsed('inkeep', 'playbooks', 'host.ghe.com'))).toBe(url);
+    expect(resolveCloneUrl(url, parsed('example', 'playbooks', 'host.ghe.com'))).toBe(url);
   });
 
   test('reconstructs shorthand with a trailing .git suffix', () => {
@@ -1115,7 +1115,7 @@ describe('formatCloneAuthFailure', () => {
       url: 'inkeep/playbooks',
       branch: null,
     });
-    expect(out).toMatch(/ok clone inkeep\/playbooks$/);
+    expect(out).toMatch(/ps clone inkeep\/playbooks$/);
     expect(out).not.toContain('-b');
   });
 

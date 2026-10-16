@@ -1,6 +1,6 @@
-import { planHasOutstandingWork } from '@palimpsest/core/seed-plan-work';
 import { plural } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { planHasOutstandingWork } from '@palimpsest/core/seed-plan-work';
 import { ArrowLeft } from 'lucide-react';
 import type { ReactElement } from 'react';
 import { useEffect, useRef, useState } from 'react';

@@ -1,5 +1,5 @@
-import type { SkillScope } from '@palimpsest/core/schemas/api';
 import { useLingui } from '@lingui/react/macro';
+import type { SkillScope } from '@palimpsest/core/schemas/api';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useOpenSkill } from '@/hooks/use-open-skill';

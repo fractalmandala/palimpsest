@@ -1,3 +1,4 @@
+import { type Attributes, type Tracer, trace } from '@opentelemetry/api';
 import {
   BASE16_SLOTS,
   CONFIG_DOC_NAME_PROJECT,
@@ -10,7 +11,6 @@ import {
   PICKER_LOCALES,
   SavedThemesListSuccessSchema,
 } from '@palimpsest/core';
-import { type Attributes, type Tracer, trace } from '@opentelemetry/api';
 import { act, cleanup, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ThemeProvider, useTheme } from 'next-themes';

@@ -1,5 +1,5 @@
-import { isEditableTextDocFile, type LintDiagnostic } from '@palimpsest/core';
 import * as actualLinguiMacro from '@lingui/react/macro';
+import { isEditableTextDocFile, type LintDiagnostic } from '@palimpsest/core';
 import { cleanup, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';

@@ -429,7 +429,7 @@ export {
   MissingPsConfigError,
   type MissingPsConfigKind,
   missingPsConfigMessage,
-} from './missing-ok-config-error.ts';
+} from './missing-ps-config-error.ts';
 export {
   createPersistenceExtension,
   type PersistenceHandle,

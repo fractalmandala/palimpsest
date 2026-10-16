@@ -12,21 +12,22 @@ import { isValidLockPid, type ProcessLiveness, readProcessLiveness } from './pro
 const SPAWN_TIMEOUT_MS = 2000;
 const LOCK_SCAN_MAX_DEPTH = 3;
 const LOCK_SCAN_MAX_ENTRIES = 2000;
-const PS_LOCK_DIR_ARG_PREFIX = '--ok-lock-dir-b64=';
-const PS_PROJECT_PATH_ARG_PREFIX = '--ok-project-path=';
+const PS_LOCK_DIR_ARG_PREFIX = '--ps-lock-dir-b64=';
+const PS_PROJECT_PATH_ARG_PREFIX = '--ps-project-path=';
 const LISTENER_QUERY_ARGS = ['-iTCP', '-sTCP:LISTEN', '-nP'];
 const PS_PROCESS_PGREP_QUERY =
-  'cli\\.mjs|palimpsest|Open ?Knowledge(\\.app| Helper)|--ok-lock-dir-b64=|--ok-project-path=|(^|[ /])ok[ ]+(start|mcp|ui)([ ]|$)|packages/(cli|app)|hocuspocus|vite';
+  'cli\\.mjs|palimpsest|Open ?Knowledge(\\.app| Helper)|--ps-lock-dir-b64=|--ps-project-path=|(^|[ /])ps[ ]+(start|mcp|ui)([ ]|$)|packages/(cli|app)|hocuspocus|vite';
 
 const PS_PROCESS_PATTERNS: RegExp[] = [
+  /^palimpsest-server(?:\s|$)/,
   /^open-knowledge-server(?:\s|$)/,
   /cli\.mjs/,
-  /(^|[\s/])(palimpsest|ok)\s+(start|mcp|ui)(\s|$)/,
+  /(^|[\s/])(palimpsest|ps)\s+(start|mcp|ui)(\s|$)/,
   /Open ?Knowledge(?:\.app| Helper)/,
   /(^|[\s/])bun([\s/]).*?(run dev|packages\/app|vite|hocuspocus)/,
   /(^|[\s/])node([\s/]).*?(packages\/(cli|app)|vite|hocuspocus)/,
-  /(^|\s)--ok-lock-dir-b64=/,
-  /(^|\s)--ok-project-path=/,
+  /(^|\s)--ps-lock-dir-b64=/,
+  /(^|\s)--ps-project-path=/,
 ];
 
 function isPsProcess(command: string): boolean {
@@ -252,8 +253,6 @@ export function extractPsBinaryPath(command: string): string | null {
   for (const token of tokens) {
     if (token.startsWith('@')) continue;
     const base = basename(token);
-    // 'ok' matches the upstream OpenKnowledge CLI this fork replaces, so a
-    // machine running both surfaces the conflict instead of hiding it.
     if (base === 'palimpsest' || base === 'ok') return token;
     if (
       token.endsWith('/packages/cli/src/cli.ts') ||

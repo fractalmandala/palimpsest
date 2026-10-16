@@ -3,7 +3,7 @@ import { join, relative } from 'node:path';
 import { load } from 'js-yaml';
 import { describe, expect, test } from 'vitest';
 
-const SKILLS_ROOT = join(import.meta.dirname, '../assets/skills');
+const SKILLS_ROOT = join(import.meta.dirname, '../../skills');
 
 function shippedSkillFiles(directory: string): string[] {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {

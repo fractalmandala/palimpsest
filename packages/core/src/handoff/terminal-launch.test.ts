@@ -288,7 +288,7 @@ describe('Windows launch composition', () => {
 
     expect(composed.slice(0, 3)).toEqual(['--login', '-i', '-c']);
     expect(composed[3]).toContain('base64 -d');
-    const quotedArgvExpansion = '"$' + '{__ok_argv[@]}"';
+    const quotedArgvExpansion = '"$' + '{__ps_argv[@]}"';
     expect(composed[3]).toContain(quotedArgvExpansion);
     expect(composed[3]).not.toContain('claude');
     expect(composed[4]).toBe('bash');
@@ -808,15 +808,15 @@ describe('PowerShell launch composition with curly single quotes', () => {
         composeWindowsShellLaunchArgs('pwsh.exe', CURLY_QUOTE_LAUNCH_WITH_ENV),
       ),
     ).toBe(
-      "$__ok_names = @('AGENT_HOME'); $__ok_slots = @('PS_TERMINAL_LAUNCH_ENV_0'); $__ok_prev = @{}; " +
-        'for ($__ok_i = 0; $__ok_i -lt $__ok_names.Length; $__ok_i++) { ' +
-        '$__ok_prev[$__ok_names[$__ok_i]] = [Environment]::GetEnvironmentVariable($__ok_names[$__ok_i]); ' +
-        "[Environment]::SetEnvironmentVariable($__ok_names[$__ok_i], [Environment]::GetEnvironmentVariable($__ok_slots[$__ok_i]), 'Process') }; " +
+      "$__ps_names = @('AGENT_HOME'); $__ps_slots = @('PS_TERMINAL_LAUNCH_ENV_0'); $__ps_prev = @{}; " +
+        'for ($__ps_i = 0; $__ps_i -lt $__ps_names.Length; $__ps_i++) { ' +
+        '$__ps_prev[$__ps_names[$__ps_i]] = [Environment]::GetEnvironmentVariable($__ps_names[$__ps_i]); ' +
+        "[Environment]::SetEnvironmentVariable($__ps_names[$__ps_i], [Environment]::GetEnvironmentVariable($__ps_slots[$__ps_i]), 'Process') }; " +
         `try { ${CURLY_QUOTE_LAUNCH_CALL} } finally { ` +
-        'for ($__ok_i = 0; $__ok_i -lt $__ok_names.Length; $__ok_i++) { ' +
-        "[Environment]::SetEnvironmentVariable($__ok_names[$__ok_i], $__ok_prev[$__ok_names[$__ok_i]], 'Process'); " +
-        "[Environment]::SetEnvironmentVariable($__ok_slots[$__ok_i], $null, 'Process') }; " +
-        'Remove-Variable __ok_names, __ok_slots, __ok_prev, __ok_i -ErrorAction SilentlyContinue }',
+        'for ($__ps_i = 0; $__ps_i -lt $__ps_names.Length; $__ps_i++) { ' +
+        "[Environment]::SetEnvironmentVariable($__ps_names[$__ps_i], $__ps_prev[$__ps_names[$__ps_i]], 'Process'); " +
+        "[Environment]::SetEnvironmentVariable($__ps_slots[$__ps_i], $null, 'Process') }; " +
+        'Remove-Variable __ps_names, __ps_slots, __ps_prev, __ps_i -ErrorAction SilentlyContinue }',
     );
   });
 });
@@ -1307,7 +1307,7 @@ describe('launch approval names the server the main process checked', () => {
   it('keeps the Stable artifacts byte-identical when main supplies the Stable names', () => {
     const out = artifacts({ ...ALL_ON, mcpServerName: 'palimpsest', cliCommandName: 'ps' });
     expect(out[0]).toBe(
-      `--settings {"enabledMcpjsonServers":["palimpsest"],"permissions":{"allow":["mcp__palimpsest","Bash(ps open:*)"],"ask":["mcp__open-knowledge__delete","mcp__open-knowledge__move","mcp__open-knowledge__share_link","mcp__open-knowledge__install","mcp__open-knowledge__import"]}} hi`,
+      `--settings {"enabledMcpjsonServers":["palimpsest"],"permissions":{"allow":["mcp__palimpsest","Bash(ps open:*)"],"ask":["mcp__palimpsest__delete","mcp__palimpsest__move","mcp__palimpsest__share_link","mcp__palimpsest__install","mcp__palimpsest__import"]}} hi`,
     );
     expect(out[1]).toBe(`-c mcp_servers.palimpsest.default_tools_approval_mode="approve" hi`);
     expect(out[3]).toBe('-c mcp_servers.palimpsest.default_tools_approval_mode=approve');
@@ -1396,10 +1396,10 @@ describe('composeWindowsShellLaunchArgs with a launch env', () => {
       'PS_TERMINAL_LAUNCH_ENV_1',
     ]);
     expect(args[3]).toContain(
-      `(for ((__ok_i = 0; __ok_i < \${#__ok_env[@]}; __ok_i += 2)); do __ok_slot="\${__ok_env[__ok_i + 1]}"; export "\${__ok_env[__ok_i]}=\${!__ok_slot}"; done; exec "\${__ok_argv[@]}"); `,
+      `(for ((__ps_i = 0; __ps_i < \${#__ps_env[@]}; __ps_i += 2)); do __ps_slot="\${__ps_env[__ps_i + 1]}"; export "\${__ps_env[__ps_i]}=\${!__ps_slot}"; done; exec "\${__ps_argv[@]}"); `,
     );
     expect(args[3]).toContain(
-      `for ((__ok_i = 1; __ok_i < \${#__ok_env[@]}; __ok_i += 2)); do unset "\${__ok_env[__ok_i]}"; done; exec "$BASH" --login -i`,
+      `for ((__ps_i = 1; __ps_i < \${#__ps_env[@]}; __ps_i += 2)); do unset "\${__ps_env[__ps_i]}"; done; exec "$BASH" --login -i`,
     );
     expect(args.join(' ')).not.toContain('.auggie');
   });
@@ -1408,15 +1408,15 @@ describe('composeWindowsShellLaunchArgs with a launch env', () => {
     const args = composeWindowsShellLaunchArgs('pwsh.exe', launch) as string[];
     const script = Buffer.from(args[2] ?? '', 'base64').toString('utf16le');
     expect(script).toBe(
-      "$__ok_names = @('AUGGIE_HOME', 'AUGGIE_LOGIN_FLOW'); $__ok_slots = @('PS_TERMINAL_LAUNCH_ENV_0', 'PS_TERMINAL_LAUNCH_ENV_1'); $__ok_prev = @{}; " +
-        'for ($__ok_i = 0; $__ok_i -lt $__ok_names.Length; $__ok_i++) { ' +
-        '$__ok_prev[$__ok_names[$__ok_i]] = [Environment]::GetEnvironmentVariable($__ok_names[$__ok_i]); ' +
-        "[Environment]::SetEnvironmentVariable($__ok_names[$__ok_i], [Environment]::GetEnvironmentVariable($__ok_slots[$__ok_i]), 'Process') }; " +
+      "$__ps_names = @('AUGGIE_HOME', 'AUGGIE_LOGIN_FLOW'); $__ps_slots = @('PS_TERMINAL_LAUNCH_ENV_0', 'PS_TERMINAL_LAUNCH_ENV_1'); $__ps_prev = @{}; " +
+        'for ($__ps_i = 0; $__ps_i -lt $__ps_names.Length; $__ps_i++) { ' +
+        '$__ps_prev[$__ps_names[$__ps_i]] = [Environment]::GetEnvironmentVariable($__ps_names[$__ps_i]); ' +
+        "[Environment]::SetEnvironmentVariable($__ps_names[$__ps_i], [Environment]::GetEnvironmentVariable($__ps_slots[$__ps_i]), 'Process') }; " +
         "try { & 'auggie' '--acp' 'login' } finally { " +
-        'for ($__ok_i = 0; $__ok_i -lt $__ok_names.Length; $__ok_i++) { ' +
-        "[Environment]::SetEnvironmentVariable($__ok_names[$__ok_i], $__ok_prev[$__ok_names[$__ok_i]], 'Process'); " +
-        "[Environment]::SetEnvironmentVariable($__ok_slots[$__ok_i], $null, 'Process') }; " +
-        'Remove-Variable __ok_names, __ok_slots, __ok_prev, __ok_i -ErrorAction SilentlyContinue }',
+        'for ($__ps_i = 0; $__ps_i -lt $__ps_names.Length; $__ps_i++) { ' +
+        "[Environment]::SetEnvironmentVariable($__ps_names[$__ps_i], $__ps_prev[$__ps_names[$__ps_i]], 'Process'); " +
+        "[Environment]::SetEnvironmentVariable($__ps_slots[$__ps_i], $null, 'Process') }; " +
+        'Remove-Variable __ps_names, __ps_slots, __ps_prev, __ps_i -ErrorAction SilentlyContinue }',
     );
     expect(script).not.toContain('.auggie');
     const plain = composeWindowsShellLaunchArgs('pwsh.exe', {
@@ -1510,7 +1510,7 @@ describe('composeWindowsShellLaunchArgs with a launch env', () => {
       { 'A B': '1' },
       { '1ABC': '1' },
       { PS_TERMINAL_LAUNCH_ENV_0: 'reserved for the slot the launch itself uses' },
-      { ok_terminal_launch_env_0: 'the same slot on a case-folding shell' },
+      { ps_terminal_launch_env_0: 'the same slot on a case-folding shell' },
       { OK: `a${NUL}b` },
     ]) {
       expect(() =>

@@ -1,3 +1,4 @@
+import * as actualLinguiMacro from '@lingui/react/macro';
 import {
   AGENT_REGISTRY,
   type ApplyIntent,
@@ -7,7 +8,6 @@ import {
   TERMINAL_CLI_IDS,
   TERMINAL_CLIS,
 } from '@palimpsest/core';
-import * as actualLinguiMacro from '@lingui/react/macro';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, describe, expect, test, vi } from 'vitest';

@@ -162,7 +162,9 @@ describe('installBugReportSendToasts', () => {
     await settle({
       ok: false,
       reason: 'send-failed',
-      fallback: { mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=failed' },
+      fallback: {
+        mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=failed',
+      },
     });
 
     expect(mintedIds()).toEqual([
@@ -195,13 +197,19 @@ describe('installBugReportSendToasts', () => {
     await settle({
       ok: false,
       reason: 'send-failed',
-      fallback: { mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=failed' },
+      fallback: {
+        mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=failed',
+      },
     });
 
-    actionsOf(1).openExternal('mailto:https://github.com/fractalmandala/palimpsest/issues?subject=failed');
+    actionsOf(1).openExternal(
+      'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=failed',
+    );
     actionsOf(1).revealInFileManager(ZIP_PATH);
 
-    expect(shell.openedExternal).toEqual(['mailto:https://github.com/fractalmandala/palimpsest/issues?subject=failed']);
+    expect(shell.openedExternal).toEqual([
+      'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=failed',
+    ]);
     expect(shell.revealed).toEqual([ZIP_PATH]);
     uninstall();
   });
@@ -231,7 +239,9 @@ describe('installBugReportSendToasts', () => {
     await settle({
       ok: false,
       reason: 'send-in-flight',
-      fallback: { mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=inflight' },
+      fallback: {
+        mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=inflight',
+      },
     });
 
     const duration = durationOf(1);
@@ -246,7 +256,9 @@ describe('installBugReportSendToasts', () => {
     await settle({
       ok: false,
       reason: 'email-draft',
-      fallback: { mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=draft' },
+      fallback: {
+        mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=draft',
+      },
     });
 
     expect(durationOf(1)).toBe(Number.POSITIVE_INFINITY);
@@ -259,7 +271,9 @@ describe('installBugReportSendToasts', () => {
     await settle({
       ok: false,
       reason: 'send-failed',
-      fallback: { mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=failed' },
+      fallback: {
+        mailtoUrl: 'mailto:https://github.com/fractalmandala/palimpsest/issues?subject=failed',
+      },
     });
 
     actionsOf(1).retry();

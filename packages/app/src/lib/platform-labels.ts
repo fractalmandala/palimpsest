@@ -1,5 +1,5 @@
-import { PRODUCT_NAME } from '@palimpsest/core/constants/product';
 import { t } from '@lingui/core/macro';
+import { PRODUCT_NAME } from '@palimpsest/core/constants/product';
 
 export function revealInFileManagerLabel(platform: string | null | undefined): string {
   if (platform === 'win32') return t`Reveal in File Explorer`;

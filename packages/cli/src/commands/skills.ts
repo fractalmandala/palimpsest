@@ -8,9 +8,7 @@ import { accent, dim, error as errorColor, info, success } from '../ui/colors.ts
 import { inspectLock } from './lock-state.ts';
 
 export function skillsCommand(): Command {
-  const skills = new Command('skills').description(
-    'Manage Palimpsest skills for this project.',
-  );
+  const skills = new Command('skills').description('Manage Palimpsest skills for this project.');
 
   skills
     .command('installed')

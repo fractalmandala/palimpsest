@@ -106,7 +106,7 @@ describe('runInit', () => {
     args: [join(devRepoRoot(), 'packages', 'cli', 'dist', 'cli.mjs'), 'mcp'],
     env: {
       MCP_DEBUG: '1',
-      PS_LOG_FILE: '/tmp/ok-mcp.log',
+      PS_LOG_FILE: '/tmp/ps-mcp.log',
       PS_CHANNEL: 'dev',
     },
   });
@@ -297,7 +297,7 @@ describe('runInit', () => {
       JSON.stringify(
         {
           mcpServers: {
-            'palimpsest': {
+            palimpsest: {
               command: 'node',
               args: ['./packages/cli/dist/cli.mjs', 'mcp'],
             },
@@ -313,7 +313,7 @@ describe('runInit', () => {
     expect(result.editors[0].action).toBe('overwritten');
 
     const config = JSON.parse(readFileSync(claudeConfigPath(), 'utf-8'));
-    expect(config.mcpServers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+    expect(config.mcpServers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
   });
 
   it('keeps user-added fields but drops env while updating the managed launcher', async () => {
@@ -322,7 +322,7 @@ describe('runInit', () => {
       JSON.stringify(
         {
           mcpServers: {
-            'palimpsest': {
+            palimpsest: {
               command: 'npx',
               args: ['-y', '@palimpsest/cli@latest', 'mcp'],
               cwd: testDir,
@@ -340,7 +340,7 @@ describe('runInit', () => {
     expect(result.editors[0].action).toBe('overwritten');
 
     const config = JSON.parse(readFileSync(claudeConfigPath(), 'utf-8'));
-    expect(config.mcpServers['palimpsest']).toEqual({
+    expect(config.mcpServers.palimpsest).toEqual({
       ...PUBLISHED_CHAIN_ENTRY,
       cwd: testDir,
     });
@@ -348,14 +348,14 @@ describe('runInit', () => {
 
   it('leaves the installed Stable entry alone when registering dev MCP', async () => {
     const stableUserConfig = `${JSON.stringify(
-      { mcpServers: { 'palimpsest': PUBLISHED_CHAIN_ENTRY } },
+      { mcpServers: { palimpsest: PUBLISHED_CHAIN_ENTRY } },
       null,
       2,
     )}\n`;
     writeFileSync(claudeConfigPath(), stableUserConfig);
     writeFileSync(
       join(testDir, '.mcp.json'),
-      JSON.stringify({ mcpServers: { 'palimpsest': PUBLISHED_CHAIN_ENTRY } }, null, 2),
+      JSON.stringify({ mcpServers: { palimpsest: PUBLISHED_CHAIN_ENTRY } }, null, 2),
     );
 
     enableDevChannelMcp();
@@ -364,7 +364,7 @@ describe('runInit', () => {
     expect(readFileSync(claudeConfigPath(), 'utf-8')).toBe(stableUserConfig);
     const project = JSON.parse(readFileSync(join(testDir, '.mcp.json'), 'utf-8'));
     expect(project.mcpServers).toEqual({
-      'palimpsest': PUBLISHED_CHAIN_ENTRY,
+      palimpsest: PUBLISHED_CHAIN_ENTRY,
       'palimpsest-dev': expectedDevMcpEntry(),
     });
   });
@@ -569,7 +569,7 @@ describe('runInit', () => {
       expect(existsSync(projectConfigPath)).toBe(true);
 
       const config = JSON.parse(readFileSync(projectConfigPath, 'utf-8'));
-      expect(config.mcp['palimpsest']).toEqual(PUBLISHED_OPENCODE_ENTRY);
+      expect(config.mcp.palimpsest).toEqual(PUBLISHED_OPENCODE_ENTRY);
     });
 
     it('writes the dev MCP entry with an environment block to project opencode.json', async () => {
@@ -589,7 +589,7 @@ describe('runInit', () => {
         type: 'local',
         enabled: true,
         command: ['node', join(devRepoRoot(), 'packages', 'cli', 'dist', 'cli.mjs'), 'mcp'],
-        environment: { MCP_DEBUG: '1', PS_LOG_FILE: '/tmp/ok-mcp.log', PS_CHANNEL: 'dev' },
+        environment: { MCP_DEBUG: '1', PS_LOG_FILE: '/tmp/ps-mcp.log', PS_CHANNEL: 'dev' },
       });
       expect(existsSync(opencodeConfigPath())).toBe(false);
     });
@@ -617,9 +617,7 @@ describe('runInit', () => {
       expect(result.projectSkills.some((s) => s.path === opencodeSkill)).toBe(true);
       expect(existsSync(codexSkill)).toBe(true);
       expect(existsSync(opencodeSkill)).toBe(true);
-      expect(existsSync(join(testDir, '.agents', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
-        false,
-      );
+      expect(existsSync(join(testDir, '.agents', 'skills', 'palimpsest', 'SKILL.md'))).toBe(false);
     });
   });
 
@@ -717,7 +715,7 @@ describe('runInit', () => {
         JSON.stringify(
           {
             mcpServers: {
-              'palimpsest': {
+              palimpsest: {
                 command: 'npx',
                 args: ['some-old-package', 'mcp'],
               },
@@ -785,9 +783,7 @@ describe('runInit', () => {
       mkdirSync(join(fakeHome, '.claude'), { recursive: true });
       const claudeDetected = await runInitForTest({ mcp: false });
       expect(claudeDetected.projectSkills.map((skill) => skill.editorId)).toEqual(['claude']);
-      expect(existsSync(join(testDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
-        true,
-      );
+      expect(existsSync(join(testDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(true);
       expect(existsSync(join(testDir, '.cursor'))).toBe(false);
       expect(existsSync(join(testDir, '.agents'))).toBe(false);
     });
@@ -798,9 +794,7 @@ describe('runInit', () => {
       const result = await runInitForTest({ editors: ['cursor'], mcp: false });
 
       expect(result.projectSkills.map((skill) => skill.editorId)).toEqual(['cursor']);
-      expect(existsSync(join(testDir, '.cursor', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
-        true,
-      );
+      expect(existsSync(join(testDir, '.cursor', 'skills', 'palimpsest', 'SKILL.md'))).toBe(true);
       expect(existsSync(join(testDir, '.claude'))).toBe(false);
       expect(existsSync(join(testDir, '.agents'))).toBe(false);
     });
@@ -851,29 +845,29 @@ describe('runInit', () => {
       const openclawConfig = JSON.parse(
         readFileSync(join(fakeHome, '.openclaw', 'openclaw.json'), 'utf-8'),
       );
-      expect(openclawConfig.mcp.servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+      expect(openclawConfig.mcp.servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
       const antigravityConfig = JSON.parse(
         readFileSync(join(fakeHome, '.gemini', 'config', 'mcp_config.json'), 'utf-8'),
       );
-      expect(antigravityConfig.mcpServers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+      expect(antigravityConfig.mcpServers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
       const hermesConfig = parseYaml(
         readFileSync(join(fakeHome, '.hermes', 'config.yaml'), 'utf-8'),
       );
-      expect(hermesConfig.mcp_servers['palimpsest']).toEqual(PUBLISHED_CHAIN_ENTRY);
+      expect(hermesConfig.mcp_servers.palimpsest).toEqual(PUBLISHED_CHAIN_ENTRY);
     });
 
     it('overwrites across all targeted editors', async () => {
       writeFileSync(
         claudeConfigPath(),
         JSON.stringify({
-          mcpServers: { 'palimpsest': { command: 'old', args: [] } },
+          mcpServers: { palimpsest: { command: 'old', args: [] } },
         }),
       );
       mkdirSync(dirname(cursorConfigPath()), { recursive: true });
       writeFileSync(
         cursorConfigPath(),
         JSON.stringify({
-          mcpServers: { 'palimpsest': { command: 'old', args: [] } },
+          mcpServers: { palimpsest: { command: 'old', args: [] } },
         }),
       );
 
@@ -1146,7 +1140,7 @@ describe('runInit', () => {
         },
       });
       expect([...installed].sort()).toEqual(['discovery']);
-      expect(await readBundleDecision(fakeHome, 'open-knowledge-write-skill')).toBeNull();
+      expect(await readBundleDecision(fakeHome, 'palimpsest-write-skill')).toBeNull();
     });
 
     it('--no-skills installs nothing and records NOTHING', async () => {
@@ -1160,19 +1154,19 @@ describe('runInit', () => {
       });
       expect(installed).toEqual([]);
       expect(await readBundleDecision(fakeHome, 'palimpsest-discovery')).toBeNull();
-      expect(await readBundleDecision(fakeHome, 'open-knowledge-write-skill')).toBeNull();
+      expect(await readBundleDecision(fakeHome, 'palimpsest-write-skill')).toBeNull();
     });
 
     it('--no-skills leaves bundles another project already installed on disk', async () => {
       const central = join(fakeHome, '.agents', 'skills');
-      for (const name of ['palimpsest-discovery', 'open-knowledge-write-skill']) {
+      for (const name of ['palimpsest-discovery', 'palimpsest-write-skill']) {
         mkdirSync(join(central, name), { recursive: true });
         writeFileSync(join(central, name, 'SKILL.md'), '# Installed earlier\n');
       }
 
       await runInitForTest({ skills: false, installUserSkill: async () => 'installed' });
 
-      for (const name of ['palimpsest-discovery', 'open-knowledge-write-skill']) {
+      for (const name of ['palimpsest-discovery', 'palimpsest-write-skill']) {
         expect(existsSync(join(central, name, 'SKILL.md'))).toBe(true);
         expect(await readBundleDecision(fakeHome, name)).toBeNull();
       }
@@ -1194,7 +1188,7 @@ describe('runInit', () => {
       });
       expect(installed).toEqual(['discovery']);
       expect(await readBundleDecision(fakeHome, 'palimpsest-discovery')).toBe(true);
-      expect(await readBundleDecision(fakeHome, 'open-knowledge-write-skill')).toBeNull();
+      expect(await readBundleDecision(fakeHome, 'palimpsest-write-skill')).toBeNull();
     });
 
     it('a default run honors a recorded machine-wide opt-out instead of overwriting it', async () => {
@@ -1350,7 +1344,7 @@ describe('runInit', () => {
       const section = userGlobalSection(formatInitResult(result, testDir));
       const lines = section.split('\n');
       const discovery = lines.find((l) => l.includes('palimpsest-discovery'));
-      const writeSkill = lines.find((l) => l.includes('open-knowledge-write-skill'));
+      const writeSkill = lines.find((l) => l.includes('palimpsest-write-skill'));
       expect(discovery).toContain('already installed at current version');
       expect(discovery).not.toContain('installed for');
       expect(writeSkill).toContain('installed for');
@@ -1366,9 +1360,7 @@ describe('runInit', () => {
       });
       const lines = userGlobalSection(formatInitResult(result, testDir)).split('\n');
       expect(lines.find((l) => l.includes('palimpsest-discovery'))).not.toContain('failed');
-      expect(lines.find((l) => l.includes('open-knowledge-write-skill'))).toContain(
-        'install failed',
-      );
+      expect(lines.find((l) => l.includes('palimpsest-write-skill'))).toContain('install failed');
     });
   });
 
@@ -1422,7 +1414,7 @@ describe('runInit', () => {
         JSON.stringify(
           {
             mcpServers: {
-              'palimpsest': {
+              palimpsest: {
                 command: 'node',
                 args: ['./packages/cli/dist/cli.mjs', 'mcp'],
               },
@@ -1583,9 +1575,7 @@ describe('runInit', () => {
       expect(existsSync(join(testDir, '.mcp.json'))).toBe(false);
       const claudeSkill = result.projectSkills.find((s) => s.editorId === 'claude');
       expect(claudeSkill?.action).toBe('written');
-      expect(existsSync(join(testDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
-        true,
-      );
+      expect(existsSync(join(testDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(true);
     });
 
     it('wires Copilot’s user-global MCP config and project-local GitHub skill', async () => {
@@ -1636,9 +1626,7 @@ describe('runInit', () => {
           action: 'skipped-prerequisite',
         }),
       );
-      expect(existsSync(join(testDir, '.github', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
-        false,
-      );
+      expect(existsSync(join(testDir, '.github', 'skills', 'palimpsest', 'SKILL.md'))).toBe(false);
     });
 
     it('installs Copilot’s project skill with custom pre-existing MCP wiring', async () => {
@@ -1647,7 +1635,7 @@ describe('runInit', () => {
         join(fakeHome, '.copilot', 'mcp-config.json'),
         JSON.stringify({
           mcpServers: {
-            'palimpsest': { ...PUBLISHED_CHAIN_ENTRY, cwd: testDir },
+            palimpsest: { ...PUBLISHED_CHAIN_ENTRY, cwd: testDir },
           },
         }),
       );
@@ -1657,9 +1645,7 @@ describe('runInit', () => {
       expect(result.projectSkills).toContainEqual(
         expect.objectContaining({ editorId: 'copilot', action: 'written' }),
       );
-      expect(existsSync(join(testDir, '.github', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
-        true,
-      );
+      expect(existsSync(join(testDir, '.github', 'skills', 'palimpsest', 'SKILL.md'))).toBe(true);
     });
 
     it('does not install Copilot’s project skill when its MCP config write is declined', async () => {
@@ -1678,9 +1664,7 @@ describe('runInit', () => {
           action: 'skipped-prerequisite',
         }),
       );
-      expect(existsSync(join(testDir, '.github', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
-        false,
-      );
+      expect(existsSync(join(testDir, '.github', 'skills', 'palimpsest', 'SKILL.md'))).toBe(false);
     });
 
     it('scope=project writes only project-level config for Claude', async () => {
@@ -1698,9 +1682,7 @@ describe('runInit', () => {
         action: 'written',
         path: join(testDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'),
       });
-      expect(existsSync(join(testDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
-        true,
-      );
+      expect(existsSync(join(testDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(true);
     });
 
     it('scope=project writes project-level configs for claude, cursor, codex', async () => {
@@ -1735,12 +1717,8 @@ describe('runInit', () => {
           }),
         ]),
       );
-      expect(existsSync(join(testDir, '.cursor', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
-        true,
-      );
-      expect(existsSync(join(testDir, '.codex', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
-        true,
-      );
+      expect(existsSync(join(testDir, '.cursor', 'skills', 'palimpsest', 'SKILL.md'))).toBe(true);
+      expect(existsSync(join(testDir, '.codex', 'skills', 'palimpsest', 'SKILL.md'))).toBe(true);
     });
 
     it('scope=project silently skips editors without projectConfigPath (claude-desktop)', async () => {
@@ -1762,9 +1740,7 @@ describe('runInit', () => {
           path: join(testDir, '.github', 'skills', 'palimpsest', 'SKILL.md'),
         }),
       );
-      expect(existsSync(join(testDir, '.github', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
-        false,
-      );
+      expect(existsSync(join(testDir, '.github', 'skills', 'palimpsest', 'SKILL.md'))).toBe(false);
       expect(formatInitResult(result, testDir)).not.toContain(
         'GitHub Copilot does not support project-level config; skipped',
       );
@@ -1781,9 +1757,7 @@ describe('runInit', () => {
       expect(projResult?.action).toBe('written');
       expect(existsSync(claudeConfigPath())).toBe(true);
       expect(existsSync(join(testDir, '.mcp.json'))).toBe(true);
-      expect(existsSync(join(testDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
-        true,
-      );
+      expect(existsSync(join(testDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(true);
     });
 
     it('scope=both suppresses project-config notice for paths just written', async () => {
@@ -1815,9 +1789,7 @@ describe('runInit', () => {
       expect(existsSync(join(testDir, '.mcp.json'))).toBe(false);
       const claudeSkill = result.projectSkills.find((s) => s.editorId === 'claude');
       expect(claudeSkill?.action).toBe('written');
-      expect(existsSync(join(testDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(
-        true,
-      );
+      expect(existsSync(join(testDir, '.claude', 'skills', 'palimpsest', 'SKILL.md'))).toBe(true);
     });
 
     it('scope=both "Next steps" deduplicates editor labels (no double-count)', async () => {
@@ -2298,9 +2270,7 @@ describe('runInit — refuses the home directory as a project root', () => {
 
       expect(process.exitCode).toBe(64);
       const printed = stderrSpy.mock.calls.map((call) => String(call[0])).join('');
-      expect(printed).toContain(
-        'Refusing to set up a Palimpsest project in your home directory',
-      );
+      expect(printed).toContain('Refusing to set up a Palimpsest project in your home directory');
       expect(printed).not.toContain('at runInit');
     } finally {
       process.chdir(savedCwd);
@@ -2645,12 +2615,12 @@ describe('writeUserMcpConfigs', () => {
     const claudeConfig = JSON.parse(
       readFileSync(resolveClaudeCodeConfigPath({ home: fakeHome }), 'utf-8'),
     );
-    expect(claudeConfig.mcpServers['palimpsest']).toEqual(CANONICAL);
+    expect(claudeConfig.mcpServers.palimpsest).toEqual(CANONICAL);
 
     const cursorConfig = JSON.parse(
       readFileSync(resolveCursorConfigPath({ home: fakeHome }), 'utf-8'),
     );
-    expect(cursorConfig.mcpServers['palimpsest']).toEqual(CANONICAL);
+    expect(cursorConfig.mcpServers.palimpsest).toEqual(CANONICAL);
   });
 
   it('creates OK entry into a blank config with no .broken sidecar', async () => {
@@ -2665,7 +2635,7 @@ describe('writeUserMcpConfigs', () => {
     expect(results[0]?.action).toBe('written');
 
     const config = JSON.parse(readFileSync(claudePath, 'utf-8'));
-    expect(config.mcpServers['palimpsest']).toEqual(CANONICAL);
+    expect(config.mcpServers.palimpsest).toEqual(CANONICAL);
 
     expect(readdirSync(dirname(claudePath)).some((name) => name.includes('.broken-'))).toBe(false);
   });
@@ -2686,18 +2656,14 @@ describe('writeUserMcpConfigs', () => {
     mkdirSync(dirname(claudePath), { recursive: true });
     writeFileSync(
       claudePath,
-      JSON.stringify(
-        { mcpServers: { 'palimpsest': { command: 'custom', args: ['old'] } } },
-        null,
-        2,
-      ),
+      JSON.stringify({ mcpServers: { palimpsest: { command: 'custom', args: ['old'] } } }, null, 2),
     );
 
     const results = await writeUserMcpConfigs({ editors: ['claude'], home: fakeHome });
 
     expect(results[0].action).toBe('overwritten');
     const config = JSON.parse(readFileSync(claudePath, 'utf-8'));
-    expect(config.mcpServers['palimpsest']).toEqual(CANONICAL);
+    expect(config.mcpServers.palimpsest).toEqual(CANONICAL);
   });
 
   it('caller controls which editors get overwritten by omitting them from the editors array', async () => {
@@ -2707,21 +2673,19 @@ describe('writeUserMcpConfigs', () => {
     mkdirSync(dirname(cursorPath), { recursive: true });
     writeFileSync(
       claudePath,
-      JSON.stringify({ mcpServers: { 'palimpsest': { command: 'custom', args: ['a'] } } }),
+      JSON.stringify({ mcpServers: { palimpsest: { command: 'custom', args: ['a'] } } }),
     );
     writeFileSync(
       cursorPath,
-      JSON.stringify({ mcpServers: { 'palimpsest': { command: 'custom', args: ['b'] } } }),
+      JSON.stringify({ mcpServers: { palimpsest: { command: 'custom', args: ['b'] } } }),
     );
 
     const results = await writeUserMcpConfigs({ editors: ['claude'], home: fakeHome });
 
     expect(results).toHaveLength(1);
     expect(results[0]?.action).toBe('overwritten');
-    expect(JSON.parse(readFileSync(claudePath, 'utf-8')).mcpServers['palimpsest']).toEqual(
-      CANONICAL,
-    );
-    expect(JSON.parse(readFileSync(cursorPath, 'utf-8')).mcpServers['palimpsest']).toEqual({
+    expect(JSON.parse(readFileSync(claudePath, 'utf-8')).mcpServers.palimpsest).toEqual(CANONICAL);
+    expect(JSON.parse(readFileSync(cursorPath, 'utf-8')).mcpServers.palimpsest).toEqual({
       command: 'custom',
       args: ['b'],
     });
@@ -2739,7 +2703,7 @@ describe('writeUserMcpConfigs', () => {
 
     const config = JSON.parse(readFileSync(claudePath, 'utf-8'));
     expect(config.mcpServers.other).toEqual({ command: 'node', args: ['x.js'] });
-    expect(config.mcpServers['palimpsest']).toEqual(CANONICAL);
+    expect(config.mcpServers.palimpsest).toEqual(CANONICAL);
   });
 
   it('reports action:failed for unsupported editors without throwing', async () => {
@@ -2792,7 +2756,7 @@ describe('writeEditorMcpConfig — TOML fallback declines a present config', () 
     expect(readdirSync(dirname(path)).some((n) => n.includes('.broken-'))).toBe(false);
   });
 
-  it('still creates Palimpsest's entry into a blank config on the fallback (nothing to preserve)', () => {
+  it("still creates Palimpsest's entry into a blank config on the fallback (nothing to preserve)", () => {
     const path = EDITOR_TARGETS.codex.configPath('', fakeHome);
     mkdirSync(dirname(path), { recursive: true });
     writeFileSync(path, '   \n', 'utf-8');
@@ -2875,11 +2839,7 @@ describe('readExistingMcpEntry (Pass 0 Major #13)', () => {
   it('returns null when the server entry exists but is not an object', () => {
     const path = resolveCursorConfigPath({ home: fakeHome });
     mkdirSync(dirname(path), { recursive: true });
-    writeFileSync(
-      path,
-      JSON.stringify({ mcpServers: { 'palimpsest': 'not-an-object' } }),
-      'utf-8',
-    );
+    writeFileSync(path, JSON.stringify({ mcpServers: { palimpsest: 'not-an-object' } }), 'utf-8');
     expect(readExistingMcpEntry(EDITOR_TARGETS.cursor, '', fakeHome)).toBeNull();
   });
 
@@ -2887,7 +2847,7 @@ describe('readExistingMcpEntry (Pass 0 Major #13)', () => {
     const path = resolveCursorConfigPath({ home: fakeHome });
     mkdirSync(dirname(path), { recursive: true });
     const entry = { command: 'npx', args: ['-y', '@palimpsest/cli@latest', 'mcp'] };
-    writeFileSync(path, JSON.stringify({ mcpServers: { 'palimpsest': entry } }), 'utf-8');
+    writeFileSync(path, JSON.stringify({ mcpServers: { palimpsest: entry } }), 'utf-8');
     expect(readExistingMcpEntry(EDITOR_TARGETS.cursor, '', fakeHome)).toEqual(entry);
   });
 
@@ -3081,7 +3041,7 @@ describe('classifyExistingMcpEntry', () => {
     const path = resolveCursorConfigPath({ home: fakeHome });
     mkdirSync(dirname(path), { recursive: true });
     const entry = { command: 'npx', args: ['-y', '@palimpsest/cli@latest', 'mcp'] };
-    writeFileSync(path, JSON.stringify({ mcpServers: { 'palimpsest': entry } }), 'utf-8');
+    writeFileSync(path, JSON.stringify({ mcpServers: { palimpsest: entry } }), 'utf-8');
     const result = classifyExistingMcpEntry(EDITOR_TARGETS.cursor, '', fakeHome);
     expect(result).toEqual({ kind: 'present', entry });
   });
@@ -3089,11 +3049,7 @@ describe('classifyExistingMcpEntry', () => {
   it('decline (not creatable-blank) on a half-written / truncated JSON config', () => {
     const path = resolveCursorConfigPath({ home: fakeHome });
     mkdirSync(dirname(path), { recursive: true });
-    writeFileSync(
-      path,
-      '{\n  "mcpServers": {\n    "palimpsest": {\n      "command": "np',
-      'utf-8',
-    );
+    writeFileSync(path, '{\n  "mcpServers": {\n    "palimpsest": {\n      "command": "np', 'utf-8');
     expect(classifyExistingMcpEntry(EDITOR_TARGETS.cursor, '', fakeHome).kind).toBe('decline');
   });
 
@@ -3146,11 +3102,7 @@ describe('classifyExistingMcpEntry', () => {
     const path = resolveCursorConfigPath({ home: fakeHome });
     mkdirSync(dirname(path), { recursive: true });
     const entry = { command: 'npx', args: ['-y', '@palimpsest/cli@latest', 'mcp'] };
-    writeFileSync(
-      path,
-      `\uFEFF${JSON.stringify({ mcpServers: { 'palimpsest': entry } })}`,
-      'utf-8',
-    );
+    writeFileSync(path, `\uFEFF${JSON.stringify({ mcpServers: { palimpsest: entry } })}`, 'utf-8');
     expect(classifyExistingMcpEntry(EDITOR_TARGETS.cursor, '', fakeHome)).toEqual({
       kind: 'present',
       entry,

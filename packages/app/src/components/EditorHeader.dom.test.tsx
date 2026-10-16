@@ -1,5 +1,5 @@
-import { REDUCED_CHROME_HEADER_HEIGHT } from '@palimpsest/core';
 import * as actualLinguiMacro from '@lingui/react/macro';
+import { REDUCED_CHROME_HEADER_HEIGHT } from '@palimpsest/core';
 import { act, cleanup, render, screen } from '@testing-library/react';
 import { type ComponentProps, type ReactNode, useEffect } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';

@@ -1,9 +1,6 @@
-import { type FrontmatterValue, inferType } from '@palimpsest/core/frontmatter/schema';
-import type {
-  FrontmatterDelta,
-  PropertyChange,
-} from '@palimpsest/core/frontmatter-diff';
 import { Plural, Trans, useLingui } from '@lingui/react/macro';
+import { type FrontmatterValue, inferType } from '@palimpsest/core/frontmatter/schema';
+import type { FrontmatterDelta, PropertyChange } from '@palimpsest/core/frontmatter-diff';
 import { Minus, Pencil, Plus } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { PropertyDisclosure } from '@/components/PropertyDisclosure';

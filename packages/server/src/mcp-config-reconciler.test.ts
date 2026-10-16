@@ -22,8 +22,8 @@ function config(entry: unknown, theme = 'dark'): string {
 
 describe('reconcileTrackedMcpConfig', () => {
   test('keeps incoming bytes when they already contain the selected launcher and unowned shell', () => {
-    const base = `${JSON.stringify({ mcpServers: { other: { command: 'keep-me' }, 'palimpsest': v1 } })}\n`;
-    const incoming = `${JSON.stringify({ mcpServers: { other: { command: 'keep-me' }, 'palimpsest': v2 } })}\n`;
+    const base = `${JSON.stringify({ mcpServers: { other: { command: 'keep-me' }, palimpsest: v1 } })}\n`;
+    const incoming = `${JSON.stringify({ mcpServers: { other: { command: 'keep-me' }, palimpsest: v2 } })}\n`;
     const plan = reconcileTrackedMcpConfig({
       target: '.mcp.json',
       layers: { base, head: base, index: base, worktree: base, incoming },
@@ -76,7 +76,7 @@ describe('reconcileTrackedMcpConfig', () => {
 
     expect(plan.kind).toBe('resolved');
     if (plan.kind !== 'resolved') return;
-    expect(parseJsonc(plan.raw).mcpServers['palimpsest']).toMatchObject({
+    expect(parseJsonc(plan.raw).mcpServers.palimpsest).toMatchObject({
       env: { MODE: 'incoming' },
     });
     expect(plan.raw).toContain('# ps-mcp-v2');
@@ -93,7 +93,7 @@ describe('reconcileTrackedMcpConfig', () => {
 
     expect(plan.kind).toBe('resolved');
     if (plan.kind !== 'resolved') return;
-    expect(parseJsonc(plan.raw).mcpServers['palimpsest']).toMatchObject({
+    expect(parseJsonc(plan.raw).mcpServers.palimpsest).toMatchObject({
       env: { MODE: 'local' },
     });
     expect(plan.raw).toContain('# ps-mcp-v2');
@@ -174,7 +174,7 @@ describe('reconcileTrackedMcpConfig', () => {
   test('reports a native TOML write failure as unparseable', () => {
     let upsertCalls = 0;
     const editor: NativeTomlMcpEditor = {
-      parseToObject: () => ({ mcp_servers: { 'palimpsest': v1 } }),
+      parseToObject: () => ({ mcp_servers: { palimpsest: v1 } }),
       removeEntry: (raw) => ({ text: raw, existed: true }),
       upsertEntry: (raw) => {
         upsertCalls++;
@@ -211,7 +211,7 @@ describe('reconcileTrackedMcpConfig', () => {
     const betaV2 = { command: '/bin/sh', args: ['-l', '-c', '# ps-mcp-beta-v2\nexit 127'] };
 
     function both(beta: unknown): string {
-      return `${JSON.stringify({ mcpServers: { 'palimpsest': v1, 'palimpsest-beta': beta } }, null, 2)}\n`;
+      return `${JSON.stringify({ mcpServers: { palimpsest: v1, 'palimpsest-beta': beta } }, null, 2)}\n`;
     }
 
     test('upgrades only its own JSON entry and leaves the Stable neighbour byte-for-byte', () => {
@@ -225,7 +225,7 @@ describe('reconcileTrackedMcpConfig', () => {
       expect(plan.kind).toBe('resolved');
       if (plan.kind !== 'resolved') return;
       const servers = parseJsonc(plan.raw).mcpServers;
-      expect(servers['palimpsest']).toEqual(v1);
+      expect(servers.palimpsest).toEqual(v1);
       expect(servers['palimpsest-beta']).toEqual(betaV2);
       expect(plan.winner.revision).toBe(2);
     });
@@ -247,7 +247,7 @@ describe('reconcileTrackedMcpConfig', () => {
       const editor: NativeTomlMcpEditor = {
         parseToObject: (raw) => ({
           mcp_servers: {
-            'palimpsest': v1,
+            palimpsest: v1,
             'palimpsest-beta': raw.includes('beta-v2') ? betaV2 : betaV1,
           },
         }),

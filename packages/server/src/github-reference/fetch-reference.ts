@@ -1,7 +1,4 @@
-import {
-  type GitHubReferencePreview,
-  GitHubReferencePreviewSchema,
-} from '@palimpsest/core';
+import { type GitHubReferencePreview, GitHubReferencePreviewSchema } from '@palimpsest/core';
 import { isGitHubRateLimited } from '../github-permissions.ts';
 import { getLogger } from '../logger.ts';
 import type { GitHubReferenceTarget } from './reference-target.ts';
@@ -138,7 +135,7 @@ function graphqlEndpoint(host: string): string {
 }
 
 function requestHeaders(token: string | null, accept: string): Record<string, string> {
-  const headers: Record<string, string> = { 'User-Agent': 'open-knowledge-server', Accept: accept };
+  const headers: Record<string, string> = { 'User-Agent': 'palimpsest-server', Accept: accept };
   if (token !== null) headers.Authorization = `Bearer ${token}`;
   return headers;
 }

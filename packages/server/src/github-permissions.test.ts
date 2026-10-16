@@ -133,7 +133,7 @@ describe('checkPushPermission — classification', () => {
     test(c.name, async () => {
       const { fetch } = mockFetch(() => jsonResponse(c.status, c.body));
       const result = await checkPushPermission({
-        owner: 'inkeep',
+        owner: 'example',
         repo: 'palimpsest',
         detectGh: c.withToken ? ghAvailable() : ghUnavailable(),
         _fetchFn: fetch,
@@ -151,7 +151,7 @@ describe('checkPushPermission — classification', () => {
         }),
     );
     const result = await checkPushPermission({
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       detectGh: ghAvailable(),
       _fetchFn: fetch,
@@ -168,7 +168,7 @@ describe('checkPushPermission — classification', () => {
         }),
     );
     const result = await checkPushPermission({
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       detectGh: ghAvailable(),
       _fetchFn: fetch,
@@ -179,7 +179,7 @@ describe('checkPushPermission — classification', () => {
   test('200 with a non-JSON body → unknown/malformed-response', async () => {
     const { fetch } = mockFetch(() => new Response('<!doctype html>', { status: 200 }));
     const result = await checkPushPermission({
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       detectGh: ghAvailable(),
       _fetchFn: fetch,
@@ -190,7 +190,7 @@ describe('checkPushPermission — classification', () => {
   test('fetch rejection (network/DNS/TLS failure) → unknown/network', async () => {
     const fetchFn: FetchFn = () => Promise.reject(new Error('ENETUNREACH'));
     const result = await checkPushPermission({
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       detectGh: ghAvailable(),
       _fetchFn: fetchFn,
@@ -207,7 +207,7 @@ describe('checkPushPermission — classification', () => {
         }),
       );
     const result = await checkPushPermission({
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       detectGh: ghAvailable(),
       _fetchFn: fetchFn,
@@ -228,7 +228,7 @@ describe('checkPushPermission — classification', () => {
         });
       });
     const result = await checkPushPermission({
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       detectGh: ghAvailable(),
       _fetchFn: fetchFn,
@@ -243,7 +243,7 @@ describe('checkPushPermission — token resolution', () => {
     const { fetch, calls } = mockFetch(() => jsonResponse(200, { permissions: { push: true } }));
     const { store, hosts } = fakeStore('gho_tier_b_token');
     await checkPushPermission({
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       detectGh: ghAvailable('ghs_tier_a_token'),
       tokenStore: store,
@@ -257,7 +257,7 @@ describe('checkPushPermission — token resolution', () => {
     const { fetch, calls } = mockFetch(() => jsonResponse(200, { permissions: { push: false } }));
     const { store, hosts } = fakeStore('gho_tier_b_token');
     await checkPushPermission({
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       host: 'github.com',
       detectGh: ghUnavailable(),
@@ -272,7 +272,7 @@ describe('checkPushPermission — token resolution', () => {
     const { fetch, calls } = mockFetch(() => jsonResponse(200, {}));
     const { store } = fakeStore(null);
     const result = await checkPushPermission({
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       detectGh: ghUnavailable(),
       tokenStore: store,
@@ -285,7 +285,7 @@ describe('checkPushPermission — token resolution', () => {
   test('anonymous: omitting both detectGh and tokenStore short-circuits without a request', async () => {
     const { fetch, calls } = mockFetch(() => jsonResponse(200, {}));
     const result = await checkPushPermission({
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       _fetchFn: fetch,
     });
@@ -338,7 +338,7 @@ describe('checkPushPermission — token resolution', () => {
   test('anonymous + github.com over SSH is lenient too (deliberate)', async () => {
     const { fetch, calls } = mockFetch(() => jsonResponse(200, {}));
     const result = await checkPushPermission({
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       host: 'github.com',
       transport: 'ssh',
@@ -351,7 +351,7 @@ describe('checkPushPermission — token resolution', () => {
   test('transport ssh with a resolved credential still probes normally', async () => {
     const { fetch, calls } = mockFetch(() => jsonResponse(200, { permissions: { push: true } }));
     const result = await checkPushPermission({
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       transport: 'ssh',
       detectGh: ghAvailable(),
@@ -369,7 +369,7 @@ describe('checkPushPermission — token resolution', () => {
     };
     const { fetch } = mockFetch(() => jsonResponse(200, {}));
     await checkPushPermission({
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       host: 'github.example.com',
       detectGh,
@@ -590,7 +590,7 @@ describe('checkPushPermission — request shape', () => {
   test('hits api.github.com/repos/OWNER/REPO with the GitHub user-agent + accept', async () => {
     const { fetch, calls } = mockFetch(() => jsonResponse(200, { permissions: { push: true } }));
     await checkPushPermission({
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       detectGh: ghAvailable(),
       _fetchFn: fetch,
@@ -598,7 +598,7 @@ describe('checkPushPermission — request shape', () => {
     expect(calls).toHaveLength(1);
     expect(calls[0]?.url).toBe('https://api.github.com/repos/fractalmandala/palimpsest');
     const headers = calls[0]?.init?.headers as Record<string, string> | undefined;
-    expect(headers?.['User-Agent']).toBe('open-knowledge-server');
+    expect(headers?.['User-Agent']).toBe('palimpsest-server');
     expect(headers?.Accept).toBe('application/vnd.github+json');
   });
 
@@ -628,7 +628,7 @@ describe('checkPushPermission — request shape', () => {
   test('passes an AbortSignal so the timeout stays wired up', async () => {
     const { fetch, calls } = mockFetch(() => jsonResponse(200, { permissions: { push: true } }));
     await checkPushPermission({
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       detectGh: ghAvailable(),
       _fetchFn: fetch,
@@ -639,7 +639,7 @@ describe('checkPushPermission — request shape', () => {
   test('makes exactly one HTTP call per probe', async () => {
     const { fetch, calls } = mockFetch(() => jsonResponse(200, { permissions: { push: true } }));
     await checkPushPermission({
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       detectGh: ghAvailable(),
       _fetchFn: fetch,
@@ -700,7 +700,7 @@ describe('checkPushPermission — telemetry', () => {
   test('records outcome counter + duration histogram for an allowed probe', async () => {
     const { fetch } = mockFetch(() => jsonResponse(200, { permissions: { push: true } }));
     await checkPushPermission({
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       detectGh: ghAvailable(),
       _fetchFn: fetch,
@@ -724,7 +724,7 @@ describe('checkPushPermission — telemetry', () => {
   test('denied probe records its reason; error_class stays none', async () => {
     const { fetch } = mockFetch(() => jsonResponse(200, { permissions: { push: false } }));
     await checkPushPermission({
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       detectGh: ghAvailable(),
       _fetchFn: fetch,
@@ -742,7 +742,7 @@ describe('checkPushPermission — telemetry', () => {
   test('unknown probe records its error_class; denied_reason stays none', async () => {
     const { fetch } = mockFetch(() => jsonResponse(401));
     await checkPushPermission({
-      owner: 'inkeep',
+      owner: 'example',
       repo: 'palimpsest',
       detectGh: ghAvailable(),
       _fetchFn: fetch,

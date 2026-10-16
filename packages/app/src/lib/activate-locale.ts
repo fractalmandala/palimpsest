@@ -1,6 +1,6 @@
+import type { Messages } from '@lingui/core';
 import type { SupportedLocale } from '@palimpsest/core/i18n/locales';
 import { FALLBACK_LOCALE } from '@palimpsest/core/i18n/resolve-locale';
-import type { Messages } from '@lingui/core';
 import { i18n } from './i18n';
 
 type CatalogLoader = () => Promise<{ readonly default: { readonly messages: unknown } }>;

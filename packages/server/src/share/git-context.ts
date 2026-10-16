@@ -4,10 +4,7 @@ import {
   isGitHubHost,
   normalizeGitHostname,
 } from '@palimpsest/core';
-import {
-  type GitRepository,
-  inspectGitRepository,
-} from '@palimpsest/core/git-repository';
+import { type GitRepository, inspectGitRepository } from '@palimpsest/core/git-repository';
 import { readConfigSafely, resolveConfigPath } from '@palimpsest/core/server';
 import { buildSyncCredentialConfig } from '../git-handle.ts';
 import { getLogger } from '../logger.ts';

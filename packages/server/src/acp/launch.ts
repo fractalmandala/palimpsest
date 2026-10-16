@@ -5,11 +5,7 @@ import { access, chmod, readFile, stat } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { basename, delimiter, dirname, isAbsolute, join, resolve } from 'node:path';
 import { stripVTControlCharacters } from 'node:util';
-import {
-  augmentAgentSpawnPath,
-  envWithoutDevChannel,
-  PS_HOSTED_AGENT_ENV,
-} from '@palimpsest/core';
+import { augmentAgentSpawnPath, envWithoutDevChannel, PS_HOSTED_AGENT_ENV } from '@palimpsest/core';
 import { psUserHomeDir } from '@palimpsest/core/server';
 import { z } from 'zod';
 import {
@@ -1288,7 +1284,7 @@ function acpNpxIsolatedCwd(): string {
   if (!existsSync(marker)) {
     tracedWriteFileSync(
       marker,
-      `${JSON.stringify({ name: 'openknowledge-acp-npx-isolated', version: '0.0.0', private: true }, null, 2)}\n`,
+      `${JSON.stringify({ name: 'palimpsest-acp-npx-isolated', version: '0.0.0', private: true }, null, 2)}\n`,
     );
   }
   return dir;

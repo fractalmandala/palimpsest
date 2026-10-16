@@ -86,7 +86,7 @@ export function composeSkillPrompt(
   autoOpen: boolean,
 ): string {
   const safe = sanitizePathForPrompt(skillName);
-  const base = `Use your open-knowledge-write-skill skill to author the ${scope} Palimpsest skill \`${safe}\`. Edit it with the Palimpsest tools.`;
+  const base = `Use your palimpsest-write-skill skill to author the ${scope} Palimpsest skill \`${safe}\`. Edit it with the Palimpsest tools.`;
   return autoOpen ? `${base} Open the OK editor in web view.` : base;
 }
 
@@ -150,14 +150,12 @@ export function composeCreatePrompt(
 
     if (scenario === 'skill') {
       const writeSkill =
-        'Use your open-knowledge-write-skill skill to author it with the Palimpsest tools.';
+        'Use your palimpsest-write-skill skill to author it with the Palimpsest tools.';
       const base =
         trimmed === ''
           ? mentionBlock === ''
             ? `Let's create a new Palimpsest skill. ${writeSkill}`
-            : [`Let's create a new Palimpsest skill. ${writeSkill}`, '', mentionBlock].join(
-                '\n',
-              )
+            : [`Let's create a new Palimpsest skill. ${writeSkill}`, '', mentionBlock].join('\n')
           : [
               "I want to create a new Palimpsest skill. Here's what it should do:",
               '',

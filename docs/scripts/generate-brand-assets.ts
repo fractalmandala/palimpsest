@@ -22,7 +22,7 @@ function extractPaths(src: string): SvgPath[] {
 }
 
 const read = (rel: string) => readFileSync(path.join(root, rel), 'utf8');
-const iconPaths = extractPaths(read('src/components/ok-icon.tsx'));
+const iconPaths = extractPaths(read('src/components/ps-icon.tsx'));
 const wordmarkPath = extractPaths(read('src/components/ps-wordmark.tsx')).find(
   (p) => p.fill === 'currentColor',
 );
@@ -72,9 +72,9 @@ const iconSvg = svgDoc('0 0 227 252', 227, 252, iconGroup(iconPaths));
 
 type Asset = { file: string; svg: string; pngWidth: number };
 const assets: Asset[] = [
-  { file: 'openknowledge-logo', svg: logoSvg(INK_LIGHT), pngWidth: 2400 },
-  { file: 'openknowledge-logo-white', svg: logoSvg(INK_DARK), pngWidth: 2400 },
-  { file: 'openknowledge-icon', svg: iconSvg, pngWidth: 1024 },
+  { file: 'palimpsest-logo', svg: logoSvg(INK_LIGHT), pngWidth: 2400 },
+  { file: 'palimpsest-logo-white', svg: logoSvg(INK_DARK), pngWidth: 2400 },
+  { file: 'palimpsest-icon', svg: iconSvg, pngWidth: 1024 },
 ];
 
 mkdirSync(outDir, { recursive: true });
@@ -98,8 +98,8 @@ async function main() {
   }
 
   const zip = zipSync(zipEntries, { level: 6 });
-  writeFileSync(path.join(outDir, 'openknowledge-brand.zip'), zip);
-  console.log(`wrote openknowledge-brand.zip (${zip.length} bytes)`);
+  writeFileSync(path.join(outDir, 'palimpsest-brand.zip'), zip);
+  console.log(`wrote palimpsest-brand.zip (${zip.length} bytes)`);
 }
 
 main().catch((err) => {

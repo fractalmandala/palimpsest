@@ -174,8 +174,8 @@ describe.skipIf(process.platform === 'win32')(
       const scanOnly = await startLiveProcess(join(root, 'other'));
       installHost({
         processes: [
-          { pid: live, command: 'open-knowledge-server notes' },
-          { pid: scanOnly, command: 'open-knowledge-server notes' },
+          { pid: live, command: 'palimpsest-server notes' },
+          { pid: scanOnly, command: 'palimpsest-server notes' },
         ],
         cwdQueries: [
           {
@@ -222,7 +222,7 @@ describe.skipIf(process.platform === 'win32')(
       const defunct = await startDefunctProcess(root, children);
       expect(defunct.state).toMatch(/^Z/);
       expect(isProcessAlive(defunct.pid)).toBe(true);
-      installHost({ processes: [{ pid: defunct.pid, command: 'open-knowledge-server notes' }] });
+      installHost({ processes: [{ pid: defunct.pid, command: 'palimpsest-server notes' }] });
 
       const outcome = await runRemoval(buildDeinitPlan(project, home));
 
@@ -242,9 +242,7 @@ describe.skipIf(process.platform === 'win32')(
       expect(isProcessAlive(defunct.pid)).toBe(true);
       const marker = Buffer.from(join(project, '.ps', 'local')).toString('base64url');
       installHost({
-        processes: [
-          { pid: defunct.pid, command: `open-knowledge-server --ok-lock-dir-b64=${marker}` },
-        ],
+        processes: [{ pid: defunct.pid, command: `palimpsest-server --ps-lock-dir-b64=${marker}` }],
       });
 
       const outcome = await runRemoval(buildDeinitPlan(project, home));
@@ -283,7 +281,7 @@ describe.skipIf(process.platform === 'win32')(
       ctx.skip(!hasLsof, 'the product inspects processes with lsof');
       const server = await startLiveProcess(project);
       expect(isProcessAlive(server)).toBe(true);
-      installHost({ processes: [{ pid: server, command: 'open-knowledge-server notes' }] });
+      installHost({ processes: [{ pid: server, command: 'palimpsest-server notes' }] });
 
       const outcome = await runRemoval(buildDeinitPlan(project, home));
 
@@ -297,7 +295,7 @@ describe.skipIf(process.platform === 'win32')(
     test('reports an unreadable process state once per run, not once per probing caller', async (ctx) => {
       ctx.skip(!hasLsof, 'the product inspects processes with lsof');
       const server = await startLiveProcess(project);
-      installHost({ processes: [{ pid: server, command: 'open-knowledge-server notes' }] });
+      installHost({ processes: [{ pid: server, command: 'palimpsest-server notes' }] });
       const binDir = installFailingPsProbe();
       const diagnostics: string[] = [];
       vi.spyOn(process.stderr, 'write').mockImplementation((chunk: string | Uint8Array) => {
@@ -328,7 +326,7 @@ describe.skipIf(process.platform === 'win32')(
       const opaque = await startLiveProcess(join(root, 'opaque-project'));
       expect(isProcessAlive(opaque)).toBe(true);
       installHost({
-        processes: [{ pid: opaque, command: 'open-knowledge-server notes' }],
+        processes: [{ pid: opaque, command: 'palimpsest-server notes' }],
         cwdQueries: [{ pids: String(opaque), result: spawnResult({ stdout: '' }) }],
       });
 

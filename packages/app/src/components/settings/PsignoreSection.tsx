@@ -1,6 +1,6 @@
-// oxlint-disable ok/no-raw-html-interactive-element -- pre-rule backlog — file uses raw <button>/<input>/<textarea> awaiting shadcn migration; tracked at https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-raw-html-interactive-element
+// oxlint-disable ps/no-raw-html-interactive-element -- pre-rule backlog — file uses raw <button>/<input>/<textarea> awaiting shadcn migration; tracked at https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-raw-html-interactive-element
 
-// oxlint-disable ok/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
+// oxlint-disable ps/no-physical-direction-utility -- pre-rule backlog — physical margin/padding/inset utilities predate the rule; drain by swapping ml/mr → ms/me, pl/pr → ps/pe, left/right → start/end, then deleting this line. See https://github.com/fractalmandala/palimpsest/blob/main/lint-plugins/ps-rules/README.md#no-physical-direction-utility
 
 import {
   closestCenter,
@@ -18,6 +18,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import type { PsignoreBinding } from '@palimpsest/core/config/bind-psignore-doc';
 import {
   type ConfigValidationError,
@@ -25,7 +26,6 @@ import {
   isKnownConfigError,
 } from '@palimpsest/core/config/errors';
 import { CONFIG_DOC_NAME_OKIGNORE } from '@palimpsest/core/constants/cc1';
-import { Plural, Trans, useLingui } from '@lingui/react/macro';
 import { AlertTriangle, Check, GripVertical, X } from 'lucide-react';
 import { type CSSProperties, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -57,7 +57,8 @@ interface PsignoreSectionProps {
   synced: boolean;
 }
 
-const PRIMER_HREF = 'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/features/ignore-patterns.mdx';
+const PRIMER_HREF =
+  'https://github.com/fractalmandala/palimpsest/blob/main/docs/content/features/ignore-patterns.mdx';
 const SAVED_FLASH_MS = 1200;
 const HEURISTIC_DEBOUNCE_MS = 150;
 const PREVIEW_DEBOUNCE_MS = 150;

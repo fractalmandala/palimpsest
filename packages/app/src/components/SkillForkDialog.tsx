@@ -1,5 +1,5 @@
-import { SKILL_NAME_REGEX, type SkillsListEntry } from '@palimpsest/core/schemas/api';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { SKILL_NAME_REGEX, type SkillsListEntry } from '@palimpsest/core/schemas/api';
 import { MultiFileDiff } from '@pierre/diffs/react';
 import { useEffect, useId, useState } from 'react';
 import { toast } from 'sonner';

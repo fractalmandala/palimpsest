@@ -111,7 +111,7 @@ export function Negative3() {
 //     hatch the diagnostic names.
 export function Negative4() {
   return (
-    // oxlint-disable-next-line ok/no-demoted-dialog-confirm -- tertiary control beside a correctly-weighted confirm
+    // oxlint-disable-next-line ps/no-demoted-dialog-confirm -- tertiary control beside a correctly-weighted confirm
     <DialogFooter>
       <Button variant="secondary" onClick={close}>
         Remind me later

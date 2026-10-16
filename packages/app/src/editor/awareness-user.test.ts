@@ -1,9 +1,4 @@
-import {
-  colorFromSeed,
-  HUMAN_COLORS,
-  type Identity,
-  type Principal,
-} from '@palimpsest/core';
+import { colorFromSeed, HUMAN_COLORS, type Identity, type Principal } from '@palimpsest/core';
 import { describe, expect, test } from 'vitest';
 import { buildAwarenessUser } from './awareness-user';
 

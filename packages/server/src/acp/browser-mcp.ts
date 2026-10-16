@@ -313,7 +313,7 @@ export async function prepareAgentBrowserFolders(
   await tracedMkdir(folders.npm, { mode: 0o700 });
   await tracedWriteFile(
     join(folders.npm, 'package.json'),
-    `${JSON.stringify({ name: 'openknowledge-agent-browser', version: '0.0.0', private: true }, null, 2)}\n`,
+    `${JSON.stringify({ name: 'palimpsest-agent-browser', version: '0.0.0', private: true }, null, 2)}\n`,
   );
   await tracedMkdir(folders.files, { recursive: true, mode: 0o700 });
   return folders;

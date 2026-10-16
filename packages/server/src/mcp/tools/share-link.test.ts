@@ -367,7 +367,9 @@ describe('share_link — happy path', () => {
       branch: 'main',
       resolvedKind: 'doc',
     });
-    expect(result.content[0]?.text).toContain('https://github.com/fractalmandala/palimpsest/d/encoded');
+    expect(result.content[0]?.text).toContain(
+      'https://github.com/fractalmandala/palimpsest/d/encoded',
+    );
     expect(result.content[0]?.text).toContain('main');
     expect(result.content[0]?.text).toContain('doc');
     expect(result.content[0]?.text).toContain('meeting');

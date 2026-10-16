@@ -419,13 +419,13 @@ describe('version derivation', () => {
 
   test('isSelfRepoPr is repo-identity plus a not-the-origin guard', () => {
     const pr = (owner, repo) => ({ kind: 'pr', owner, repo, number: 1 });
-    expect(isSelfRepoPr(pr('inkeep', 'palimpsest'), 'fractalmandala/palimpsest')).toBe(true);
-    expect(isSelfRepoPr(pr('inkeep', 'Palimpsest'), 'fractalmandala/palimpsest')).toBe(true);
-    expect(isSelfRepoPr(pr('inkeep', 'agents-private'), 'fractalmandala/palimpsest')).toBe(false);
+    expect(isSelfRepoPr(pr('example', 'palimpsest'), 'fractalmandala/palimpsest')).toBe(true);
+    expect(isSelfRepoPr(pr('example', 'Palimpsest'), 'fractalmandala/palimpsest')).toBe(true);
+    expect(isSelfRepoPr(pr('example', 'agents-private'), 'fractalmandala/palimpsest')).toBe(false);
     expect(isSelfRepoPr({ kind: 'sha', sha: 'a'.repeat(40) }, 'fractalmandala/palimpsest')).toBe(false);
-    expect(isSelfRepoPr(pr('inkeep', 'palimpsest'), undefined)).toBe(false);
-    expect(isSelfRepoPr(pr('inkeep', 'agents-private'), 'inkeep/agents-private')).toBe(false);
-    expect(isSelfRepoPr(pr('inkeep', 'some-fork'), 'inkeep/some-fork', 'inkeep/some-fork')).toBe(
+    expect(isSelfRepoPr(pr('example', 'palimpsest'), undefined)).toBe(false);
+    expect(isSelfRepoPr(pr('example', 'agents-private'), 'inkeep/agents-private')).toBe(false);
+    expect(isSelfRepoPr(pr('example', 'some-fork'), 'inkeep/some-fork', 'inkeep/some-fork')).toBe(
       false,
     );
   });
@@ -462,7 +462,7 @@ describe('version derivation', () => {
   });
 
   test('the merge-sha reply distinguishes "never merged" from "cannot be accounted for"', () => {
-    const at = { owner: 'inkeep', repo: 'agents-private', number: 2844 };
+    const at = { owner: 'example', repo: 'agents-private', number: 2844 };
     const sha = 'da71f0c698ccaac11da915169ca6c7d585d5eb97';
 
     expect(parseMergeShaOutput('null\n', at)).toBeNull();
@@ -516,18 +516,18 @@ describe('version derivation', () => {
 
   test('remit is decided by repo identity, and a bare commit SHA needs no repo at all', () => {
     const at = { defaultRepo: 'inkeep/agents-private', selfRepo: 'fractalmandala/palimpsest' };
-    expect(isFixRepoInRemit({ kind: 'pr', owner: 'inkeep', repo: 'agents-private' }, at)).toBe(
+    expect(isFixRepoInRemit({ kind: 'pr', owner: 'example', repo: 'agents-private' }, at)).toBe(
       true,
     );
     expect(isFixRepoInRemit({ kind: 'pr', owner: 'InKeep', repo: 'Agents-Private' }, at)).toBe(
       true,
     );
-    expect(isFixRepoInRemit({ kind: 'pr', owner: 'inkeep', repo: 'palimpsest' }, at)).toBe(
+    expect(isFixRepoInRemit({ kind: 'pr', owner: 'example', repo: 'palimpsest' }, at)).toBe(
       true,
     );
-    expect(isFixRepoInRemit({ kind: 'pr', owner: 'inkeep', repo: 'management' }, at)).toBe(false);
+    expect(isFixRepoInRemit({ kind: 'pr', owner: 'example', repo: 'management' }, at)).toBe(false);
     expect(
-      isFixRepoInRemit({ kind: 'pr', owner: 'inkeep', repo: 'open-knowledge-legacy' }, at),
+      isFixRepoInRemit({ kind: 'pr', owner: 'example', repo: 'example-legacy' }, at),
     ).toBe(false);
     expect(isFixRepoInRemit({ kind: 'sha', sha: PRIVATE_SHA }, at)).toBe(true);
   });
@@ -922,20 +922,20 @@ describe('cross-repo token selection', () => {
   const env = { CROSS_REPO_TOKEN: 'bridge-token', GITHUB_REPOSITORY: 'fractalmandala/palimpsest' };
 
   test('a read against the private monorepo uses the bridge token', () => {
-    expect(selectGhToken({ owner: 'inkeep', repo: 'agents-private', env })).toBe('bridge-token');
+    expect(selectGhToken({ owner: 'example', repo: 'agents-private', env })).toBe('bridge-token');
   });
 
   test('a read against this repo keeps the ambient token, which the bridge token cannot replace', () => {
-    expect(selectGhToken({ owner: 'inkeep', repo: 'palimpsest', env })).toBeNull();
+    expect(selectGhToken({ owner: 'example', repo: 'palimpsest', env })).toBeNull();
     expect(selectGhToken({ owner: 'InKeep', repo: 'Palimpsest', env })).toBeNull();
   });
 
   test('with no bridge token configured every call falls back to the ambient one', () => {
     const bare = { GITHUB_REPOSITORY: 'fractalmandala/palimpsest' };
-    expect(selectGhToken({ owner: 'inkeep', repo: 'agents-private', env: bare })).toBeNull();
+    expect(selectGhToken({ owner: 'example', repo: 'agents-private', env: bare })).toBeNull();
     expect(
       selectGhToken({
-        owner: 'inkeep',
+        owner: 'example',
         repo: 'agents-private',
         env: { ...bare, CROSS_REPO_TOKEN: '  ' },
       }),
@@ -2013,7 +2013,7 @@ describe('reading whether an answered issue may close', () => {
   const origin = {
     channel: 'github-issue',
     url: GH_ISSUE,
-    owner: 'inkeep',
+    owner: 'example',
     repo: 'palimpsest',
     number: 769,
   };

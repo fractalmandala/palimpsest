@@ -10,7 +10,7 @@ import { FORBIDDEN_SPECS } from '../rules/no-blind-agent-host-fanout.mjs';
 
 const REPO_ROOT = fileURLToPath(new URL('../../..', import.meta.url));
 const RULE = 'no-blind-agent-host-fanout';
-const CODE = `ok(${RULE})`;
+const CODE = `ps(${RULE})`;
 const FIXTURE = `lint-plugins/ps-rules/__fixtures__/${RULE}.fixture.tsx`;
 const DOCS = `lint-plugins/ps-rules/README.md#${RULE}`;
 

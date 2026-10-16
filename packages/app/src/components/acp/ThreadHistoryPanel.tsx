@@ -1,5 +1,5 @@
-import type { ThreadInfo } from '@palimpsest/core/acp/thread-protocol';
 import { useLingui } from '@lingui/react/macro';
+import type { ThreadInfo } from '@palimpsest/core/acp/thread-protocol';
 import { ChevronLeft, History, Pencil, Search, Trash2, X } from 'lucide-react';
 import {
   createContext,

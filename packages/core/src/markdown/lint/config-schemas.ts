@@ -5,8 +5,8 @@ import {
   LocalTargetDiagnosticEvidenceSchema,
 } from '../../schemas/api/agent-write.ts';
 import { DEFAULT_MARKDOWNLINT_CONFIG } from './default-config.ts';
-import type { PsfRuleId } from './psf-rule-meta.ts';
 import { LINT_PLUGINS, type LinterConfig } from './plugins.ts';
+import type { PsfRuleId } from './psf-rule-meta.ts';
 import type { FrontmatterSchemaMapping, MarkdownlintRuleSetting } from './types.ts';
 import { FRONTMATTER_SCOPES } from './types.ts';
 

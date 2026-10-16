@@ -1,10 +1,10 @@
+import { useLingui } from '@lingui/react/macro';
 import {
   type AgentId,
   agentIdForHandoffTarget,
   KNOWN_HANDOFF_TARGETS,
 } from '@palimpsest/core/agent-registry';
 import type { HandoffOutcome, HandoffTarget } from '@palimpsest/core/handoff';
-import { useLingui } from '@lingui/react/macro';
 import { createContext, type ReactNode, use, useEffect, useRef, useState } from 'react';
 import {
   type AgentConnection,
