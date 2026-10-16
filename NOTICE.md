@@ -28,6 +28,6 @@ remove or alter upstream copyright ownership of the forked code.
 
 ## Trademarks & brand
 
-"Palimpsest" and Inkeep's logos/wordmarks remain the property of their
+Inkeep's logos/wordmarks remain the property of their
 respective owners and are **not** reused in this fork. Palimpsest branding
 (name, logo, wordmarks) is separate — see [`assets/brand/`](./assets/brand/).

@@ -30,6 +30,7 @@ blob-report/
 .palimpsest/
 .mirror-output/
 /test-doc.md
+skills
 
 # Env files (keep .env.example committed)
 .env

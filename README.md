@@ -10,6 +10,22 @@
 
 </p>
 
+## typo
+
+Markdown / source view (your 2nd screenshot)
+CodeMirror 6, styled in JS, not CSS:
+packages/app/src/editor/extensions/cm-theme.ts — the whole theme. psSyntaxHighlight sets token colors/weights (headings → purple var(--syntax-func) bold, code spans green, links, etc.), and createPsCmTheme() sets the EditorView.theme block: foreground, caret, gutters, active line, selection, search matches. Font itself is inherited (mono comes from the container).
+Used by editor/SourceEditor.tsx.
+Rich text view (your 1st screenshot)
+TipTap/ProseMirror, styled in CSS:
+packages/app/src/globals.css (~7,000 lines) — all of it:
+Layout: .tiptap-editor (~line 1118) — 3-column grid, content column max 1024px, 4rem side margins
+Base: .ProseMirror (~line 1313) — line-height: 1.7, no outline, trailing click zone
+Type: .ProseMirror p (margin-bottom: 0.5em, ~1414), .ProseMirror h1/h2/h3 (600 weight, 1.5em/1.25em/1.1em, tight tracking, ~1687), plus lists, pre (mono, 1.6), tables, blockquotes further down that section
+Rendered by editor/TiptapEditor.tsx (structure/behavior only — no styles in the component).
+Colors/fonts resolve through CSS vars (--foreground, --font-mono, --syntax-*); the font itself inherits from the app shell, so there's no single font-family on the editor.
+So: tweaking source-view colors → cm-theme.ts; tweaking rich-text type/margins/width → globals.css around lines 1117–1900.
+
 <div >
   <a href="https://github.com/fractalmandala/palimpsest">repository</a>
   <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>

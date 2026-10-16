@@ -115,29 +115,29 @@
   --color-tree-muted: light-dark(var(--color-gray-400), var(--color-gray-500));
 
   /* brand colors */
-  --color-azure-blue: #3784ff;
-  --color-sky-blue: #69a3ff;
-  --color-crystal-blue: #d5e5ff;
-  --color-morning-mist: #fbf9f4;
-  --color-night-sky: #231f20;
-  --color-blue-dark: #29325c;
+  --color-azure-blue: #20A75B;
+  --color-sky-blue: #4DDA8B;
+  --color-crystal-blue: #A9FACC;
+  --color-morning-mist: #FBF9F4;
+  --color-night-sky: #21231F;
+  --color-blue-dark: #107A3E;
   --color-cream: #f7f4ed;
   --color-white-cream: #fff5e1;
   --color-orange-light: #fbe1bc;
   --color-gray-light: #5f5c62;
 
   /* based on azure blue (#3784ff) */
-  --color-azure-50: oklch(0.9697 0.0148 251.16);
-  --color-azure-100: oklch(0.9308 0.0339 253.71);
-  --color-azure-200: oklch(0.8807 0.0599 252.33);
-  --color-azure-300: oklch(0.8092 0.0999 249.58);
-  --color-azure-400: oklch(0.7135 0.1524 254.03);
-  --color-azure-500: oklch(0.6321 0.1983 259.59);
-  --color-azure-600: oklch(0.5468 0.2329 262.71);
-  --color-azure-700: oklch(0.4895 0.233 263.93);
-  --color-azure-800: oklch(0.4234 0.195 264.97);
-  --color-azure-900: oklch(0.3773 0.1488 264.94);
-  --color-azure-950: oklch(0.2785 0.0961 267.56);
+  --color-azure-50: oklch(0.9712 0.0185 152.46);
+  --color-azure-100: oklch(0.9320 0.0450 152.46);
+  --color-azure-200: oklch(0.8710 0.0810 152.46);
+  --color-azure-300: oklch(0.7920 0.1200 152.46);
+  --color-azure-400: oklch(0.7100 0.1450 152.46);
+  --color-azure-500: oklch(0.6420 0.1576 152.46);
+  --color-azure-600: oklch(0.5410 0.1480 152.46);
+  --color-azure-700: oklch(0.4520 0.1290 152.46);
+  --color-azure-800: oklch(0.3810 0.1050 152.46);
+  --color-azure-900: oklch(0.3220 0.0820 152.46);
+  --color-azure-950: oklch(0.2410 0.0550 152.46);
 
   /* Agent flash keyframes — refined version with accent slide + subtle background pulse.
      Combines three effects in a single animation:
@@ -158,12 +158,12 @@
     }
     8% {
       box-shadow: inset 3px 0 0 var(--color-agent);
-      background: rgba(217, 119, 87, 0.09);
+      background: rgba(0, 180, 106, 0.09);
       transform: translateX(1px);
     }
     35% {
       box-shadow: inset 3px 0 0 var(--color-agent);
-      background: rgba(217, 119, 87, 0.06);
+      background: rgba(0, 180, 106, 0.03);
       transform: translateX(0);
     }
     100% {
@@ -3438,7 +3438,7 @@ button:active:not(:disabled) {
      0.5621 is the first step that clears it on both (4.56:1 and 4.76:1) while
      holding chroma and hue, so the blue is the same blue, just deeper. Do not
      lighten without re-measuring both pairs. */
-  --primary: oklch(0.5621 0.1983 259.59);
+  --primary: oklch(0.6420 0.1576 152.46);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -3470,7 +3470,7 @@ button:active:not(:disabled) {
      floor at both ends — blue-600 does it on white, and washes out to 2.4:1 on
      the dark canvas. Dark takes blue-400. Gated by comment-hue-contrast.test.ts;
      the Tailwind mirrors on the rail marker and thread card are hand-kept. */
-  --ok-comment-hue: rgb(37 99 235);
+  --ok-comment-hue: rgb(32, 167, 91);
   /* Categorical chart palette for `html preview` embeds — five
      perceptually-distinct hues aligned with the callout color system
      (--chart-1 anchors to the brand azure, the rest track the
@@ -3479,7 +3479,7 @@ button:active:not(:disabled) {
      injected into every preview iframe via the generated PREVIEW_THEME_TOKENS
      constant; the .dark block below MUST stay in sync — drift between these
      blocks and the constant is caught by preview-theme-tokens.uncached.test.ts. */
-  --chart-1: oklch(0.62 0.19 259);
+  --chart-1: oklch(0.6420 0.1576 152.46);
   --chart-2: oklch(0.58 0.14 145);
   --chart-3: oklch(0.62 0.15 70);
   --chart-4: oklch(0.55 0.18 290);
@@ -3509,9 +3509,9 @@ button:active:not(:disabled) {
 
   --syntax-keyword: var(--color-purple-700, #6f42c1);
   --syntax-tag: var(--color-red-700, #b31d28);
-  --syntax-attr: var(--color-blue-700, #005cc5);
+  --syntax-attr: var(--color-blue-700, #00692f);
   --syntax-string: var(--color-green-900, oklch(0.393 0.095 152.535));
-  --syntax-number: var(--color-blue-800, #005cc5);
+  --syntax-number: var(--color-blue-800, #00692f);
   --syntax-atom: var(--color-orange-800, oklch(0.47 0.157 37.304));
   /*
     The remaining syntax roles. A selected color theme overrides all of these
@@ -3593,7 +3593,7 @@ button:active:not(:disabled) {
   --selection-soft: oklch(0.72 0.16 259 / 0.32);
   /* Dark-canvas comment hue — blue-400. See the :root declaration for why this
      is the one token in the mark that has to move with the theme. */
-  --ok-comment-hue: rgb(96 165 250);
+  --ok-comment-hue: rgb(124, 210, 149);
   /* Dark-mode chart palette — same hue family as the :root block above,
      lightness lifted for legibility on the dark --background. Keep in sync
      with :root --chart-* and PREVIEW_THEME_TOKENS (preview-theme-tokens.uncached.test.ts). */
@@ -3604,7 +3604,7 @@ button:active:not(:disabled) {
   --chart-5: oklch(0.72 0.2 25);
   --sidebar: oklch(0.21 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary: oklch(0.6420 0.1576 152.46);
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.274 0.006 286.033);
   --sidebar-accent-foreground: var(--color-sky-blue);
