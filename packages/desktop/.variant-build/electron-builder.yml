@@ -1,0 +1,268 @@
+appId: com.fractalmandala.palimpsest
+productName: Palimpsest
+copyright: Copyright © 2026 Fractal Mandala
+electronVersion: 44.5.1
+directories:
+  output: dist-desktop
+  buildResources: build
+files:
+  - out/**/*
+  - "!out/renderer/**"
+  - "!**/*.map"
+  - "!**/node_modules/@palimpsest/*/src/**"
+  - "!**/node_modules/**/*.{ts,mts,cts,tsx}"
+  - "!**/node_modules/@palimpsest/cli/dist/public/**"
+  - "!**/node_modules/@palimpsest/native-config/**"
+  - "!**/node_modules/mermaid/dist/mermaid{.js,.min.js,.esm.mjs,.esm.min.mjs}"
+  - "!**/node_modules/mermaid/dist/chunks/mermaid.esm{,.min}/**"
+  - "!**/node_modules/@mermaid-js/parser/dist/mermaid-parser.esm{,.min}.mjs"
+  - "!**/node_modules/@mermaid-js/parser/dist/chunks/mermaid-parser.esm{,.min}/**"
+  - "!**/node_modules/cytoscape-fcose/demo/**"
+  - "!**/node_modules/sql.js/dist/*-debug*"
+  - "!**/node_modules/sql.js/dist/*-asm*"
+  - "!**/node_modules/sql.js/dist/*-browser*"
+  - "!**/node_modules/sql.js/dist/worker.*"
+  - "!**/node_modules/just-bash/vendor/cpython-emscripten/**"
+  - "!**/node_modules/just-bash/dist/bin/**"
+  - "!**/node_modules/just-bash/dist/bundle/browser.js"
+  - "!**/node_modules/quickjs-emscripten/**"
+  - "!**/node_modules/quickjs-emscripten-core/**"
+  - "!**/node_modules/@jitl/**"
+extraResources:
+  - from: ../cli/dist/public
+    to: app
+    filter:
+      - "**/*"
+  - from: ../app/src/locales
+    to: locales
+    filter:
+      - "**/messages.json"
+  - from: ../cli/dist
+    to: cli/dist
+    filter:
+      - "**/*"
+      - "!public/**"
+      - "!**/*.map"
+      - "!**/*.d.mts"
+      - "!**/*.d.mts.map"
+      - "!**/*.d.ts"
+      - "!**/*.d.ts.map"
+  - from: ../cli/package.json
+    to: cli/package.json
+  - from: ../cli/dist/THIRD_PARTY_NOTICES.md
+    to: THIRD_PARTY_NOTICES.md
+  - from: ../../LICENSE
+    to: LICENSE
+  - from: ../../node_modules/@napi-rs/keyring
+    to: cli/node_modules/@napi-rs/keyring
+    filter:
+      - "**/*"
+  - from: ../native-config
+    to: cli/node_modules/@palimpsest/native-config
+    filter:
+      - index.js
+      - index.d.ts
+      - package.json
+      - "*.node"
+  - from: build/parcel-watcher-staging/node_modules
+    to: cli/node_modules
+    filter:
+      - "**/*"
+asarUnpack:
+  - "**/*.node"
+  - "**/@palimpsest/cli/dist/native/**"
+  - "**/@parcel/watcher/**"
+  - "**/@parcel/watcher-*/**"
+  - "**/picomatch/**"
+  - "**/is-glob/**"
+  - "**/is-extglob/**"
+  - "**/detect-libc/**"
+  - "**/@napi-rs/keyring/**"
+  - "**/@napi-rs/keyring-*/**"
+  - "**/simple-git/**"
+  - "**/node-pty/prebuilds/**"
+  - "**/node-pty/lib/**"
+  - "**/node-pty/package.json"
+mac:
+  category: public.app-category.productivity
+  extraResources:
+    - from: resources/cli/bin/ps.sh
+      to: cli/bin/ps.sh
+    - from: ../../node_modules/@napi-rs/keyring-darwin-arm64
+      to: cli/node_modules/@napi-rs/keyring-darwin-arm64
+      filter:
+        - "**/*"
+  icon: build/psglass.icon
+  target:
+    - target: dmg
+      arch:
+        - arm64
+    - target: zip
+      arch:
+        - arm64
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.inherit.plist
+  provisioningProfile: build/embedded.provisionprofile
+  extendInfo:
+    NSUserActivityTypes:
+      - NSUserActivityTypeBrowsingWeb
+    NSMicrophoneUsageDescription: A program running in Palimpsest's terminal wants to use the microphone.
+  notarize: false
+  extraFiles:
+    - from: .variant-build/helper-Info.plist
+      to: Frameworks/Palimpsest Server.app/Contents/Info.plist
+  artifactName: Palimpsest-${version}-${arch}-mac.${ext}
+dmg:
+  sign: true
+  artifactName: Palimpsest-${arch}.${ext}
+  title: ${productName}
+  background: build/dmg-background.png
+  window:
+    width: 540
+    height: 380
+  contents:
+    - x: 140
+      y: 130
+      type: file
+    - x: 400
+      y: 130
+      type: link
+      path: /Applications
+  iconSize: 100
+win:
+  icon: build/icon.ico
+  target:
+    - target: nsis
+      arch:
+        - x64
+        - arm64
+  files:
+    - out/**/*
+    - "!out/renderer/**"
+    - "!**/*.map"
+    - "!**/node_modules/node-pty/prebuilds/**/*.pdb"
+    - "!**/node_modules/node-pty/prebuilds/darwin-*/**"
+    - "!**/node_modules/node-pty/prebuilds/linux-*/**"
+    - "!**/node_modules/node-pty/build/**"
+    - "!**/node_modules/node-pty/third_party/**"
+  signExts:
+    - "!OpenConsole.exe"
+  extraResources:
+    - from: resources/cli/bin/ps.cmd
+      to: cli/bin/ps.cmd
+    - from: resources/cli/bin/ps.ps1
+      to: cli/bin/ps.ps1
+    - from: ../../node_modules/@napi-rs/keyring-win32-x64-msvc
+      to: cli/node_modules/@napi-rs/keyring-win32-x64-msvc
+      filter:
+        - "**/*"
+    - from: ../../node_modules/@napi-rs/keyring-win32-arm64-msvc
+      to: cli/node_modules/@napi-rs/keyring-win32-arm64-msvc
+      filter:
+        - "**/*"
+nsis:
+  oneClick: true
+  perMachine: false
+  useZip: true
+  differentialPackage: false
+  buildUniversalInstaller: false
+  artifactName: Palimpsest-Setup-${arch}.${ext}
+  include: .variant-build/installer.nsh
+linux:
+  icon: build/icon.png
+  executableName: palimpsest
+  category: Office
+  synopsis: Collaborative markdown knowledge base
+  target:
+    - target: deb
+      arch:
+        - x64
+        - arm64
+    - target: rpm
+      arch:
+        - x64
+        - arm64
+  artifactName: Palimpsest-${arch}.${ext}
+  files:
+    - out/**/*
+    - "!out/renderer/**"
+    - "!**/*.map"
+    - "!**/node_modules/node-pty/prebuilds/**/*.pdb"
+    - "!**/node_modules/node-pty/prebuilds/darwin-*/**"
+    - "!**/node_modules/node-pty/prebuilds/win32-*/**"
+  extraResources:
+    - from: resources/cli/bin/ps-linux.sh
+      to: cli/bin/ps.sh
+    - from: ../../node_modules/@napi-rs/keyring-linux-x64-gnu
+      to: cli/node_modules/@napi-rs/keyring-linux-x64-gnu
+      filter:
+        - "**/*"
+    - from: ../../node_modules/@napi-rs/keyring-linux-arm64-gnu
+      to: cli/node_modules/@napi-rs/keyring-linux-arm64-gnu
+      filter:
+        - "**/*"
+deb:
+  afterInstall: .variant-build/deb-postinst.sh
+  afterRemove: .variant-build/deb-postrm.sh
+  depends:
+    - libgtk-3-0
+    - libnotify4
+    - libnss3
+    - libxss1
+    - libxtst6
+    - xdg-utils
+    - libatspi2.0-0
+    - libuuid1
+    - libsecret-1-0
+    - libasound2
+    - libcups2
+    - libgbm1
+  packageName: palimpsest
+  fpm: []
+rpm:
+  afterInstall: .variant-build/deb-postinst.sh
+  afterRemove: .variant-build/deb-postrm.sh
+  depends:
+    - gtk3
+    - libnotify
+    - nss
+    - libXtst
+    - xdg-utils
+    - at-spi2-core
+    - libuuid
+    - libsecret
+    - alsa-lib
+    - cups-libs
+    - mesa-libgbm
+  packageName: palimpsest
+  fpm:
+    - --replaces
+    - Palimpsest
+    - --provides
+    - Palimpsest
+    - --rpm-posttrans
+    - .variant-build/rpm-posttrans.sh
+afterPack: scripts/afterPack.mjs
+afterSign: scripts/afterSign.mjs
+protocols:
+  - name: Palimpsest URL
+    schemes:
+      - palimpsest
+    role: Editor
+fileAssociations:
+  - ext:
+      - md
+      - mdx
+    name: Markdown Document
+    role: Editor
+    rank: Alternate
+publish:
+  - provider: github
+    owner: fractalmandala
+    repo: palimpsest
+    channel: latest
+extraMetadata:
+  psDesktopVariant: stable
+  productName: Palimpsest

@@ -17,15 +17,16 @@ export const FORBIDDEN_BUNDLE_PATHS = [
   },
   {
     pattern:
-      /^(cli\/dist|app\.asar(\.unpacked)?\/node_modules\/@inkeep\/palimpsest\/dist)\/public\//,
+      /^(cli\/dist|app\.asar(\.unpacked)?\/node_modules\/@palimpsest\/cli\/dist)\/public\//,
     reason: 'a second copy of the web app; Resources/app is the only one',
   },
   {
-    pattern: /^app\.asar(\.unpacked)?\/node_modules\/@inkeep\/palimpsest-native-config\//,
-    reason: 'a native-config package in the asar; the CLI loads its own dist/native copy',
+    pattern: /^app\.asar(\.unpacked)?\/node_modules\/@palimpsest\/native-config\//,
+    reason:
+      'a native-config package in the asar; the main process loads the unpacked @palimpsest/cli copy and the CLI loads its own dist/native copy',
   },
   {
-    pattern: /^app\.asar(\.unpacked)?\/node_modules\/@inkeep\/[^/]+\/src\//,
+    pattern: /^app\.asar(\.unpacked)?\/node_modules\/@palimpsest\/[^/]+\/src\//,
     reason: 'workspace TypeScript sources, which no packaged process loads',
   },
 ];
@@ -36,11 +37,12 @@ export const REQUIRED_BUNDLE_PATHS = [
     reason: 'app.asar with its package.json',
   },
   {
-    pattern: /^app\.asar\.unpacked\/node_modules\/@inkeep\/palimpsest\/dist\/native\/index\.js$/,
+    pattern: /^app\.asar\.unpacked\/node_modules\/@palimpsest\/cli\/dist\/native\/index\.js$/,
     reason: "the main process's native-config loader, unpacked",
   },
   {
-    pattern: /^app\.asar\.unpacked\/node_modules\/@inkeep\/palimpsest\/dist\/native\/[^/]+\.node$/,
+    pattern:
+      /^app\.asar\.unpacked\/node_modules\/@palimpsest\/cli\/dist\/native\/[^/]+\.node$/,
     reason: "the main process's native-config addon, unpacked",
   },
   {

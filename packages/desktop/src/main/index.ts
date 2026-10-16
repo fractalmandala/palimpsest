@@ -1334,8 +1334,8 @@ function ensureWindowManager() {
         process.resourcesPath,
         'app.asar.unpacked',
         'node_modules',
-        '@example',
-        'palimpsest',
+        '@palimpsest',
+        'cli',
         'dist',
         'cli.mjs',
       )

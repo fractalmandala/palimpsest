@@ -180,6 +180,12 @@ extraResources:
 
 asarUnpack:
   - "**/*.node"
+  # The main process spawns the unpacked @palimpsest/cli copy
+  # (app.asar.unpacked/…/cli.mjs) and loads native-config through its
+  # dist/native/ loader. `**/*.node` unpacks the addon but leaves the
+  # loader inside app.asar, so unpack the whole dir — guarded by
+  # scripts/assert-packaged-bundle.mjs.
+  - "**/@palimpsest/cli/dist/native/**"
   - "**/@parcel/watcher/**"
   - "**/@parcel/watcher-*/**"
   # @parcel/watcher/wrapper.js lands in app.asar.unpacked/ via the rule above,
