@@ -237,19 +237,15 @@ mac:
     - from: "../../node_modules/@napi-rs/keyring-darwin-arm64"
       to: "cli/node_modules/@napi-rs/keyring-darwin-arm64"
       filter: ["**/*"]
-  # Icon Composer bundle — packages the appearance variants (Default, Dark,
-  # Clear/Tinted light+dark) into a single source. electron-builder compiles
-  # this via `actool` into an `Assets.car` asset catalog at package time and
-  # wires it through `CFBundleIconName`, so macOS 26+ users get system-driven
-  # Liquid Glass appearance switching automatically.
-  #
-  # Build-host requirements: macOS 26+ with Xcode 26+ installed (actool is
-  # part of the Xcode command-line tools).
+  # Flat .icns generated from the brand icon (assets/1024x1024.png) via
+  # iconutil. The previous Icon Composer bundle (build/psglass.icon, with
+  # Liquid Glass appearance variants) still carried the old upstream art;
+  # it can come back once layered sources for the new brand exist.
   #
   # Dev-mode `app.dock.setIcon()` still needs a flat PNG fallback
   # (`build/icon.png`) because Electron's runtime nativeImage API can't
   # consume `.icon` bundles yet — tracked in electron/electron#48476.
-  icon: build/psglass.icon
+  icon: build/icon.icns
   # Apple-Silicon-only target (TEMPORARY). The previous Universal config
   # (`arch: [universal]`) tripped @electron/universal's lipo merger on
   # @napi-rs/keyring's per-arch native binary — the arm64 prebuild

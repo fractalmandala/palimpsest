@@ -161,7 +161,7 @@ publish:
     repo: palimpsest
     channel: latest
 mac:
-  icon: build/psglass.icon
+  icon: build/icon.icns
   entitlements: build/entitlements.mac.plist
   provisioningProfile: build/embedded.provisionprofile
   extraResources: []
@@ -247,7 +247,7 @@ describe('desktop variant builder config', () => {
       protocols: [{ schemes: ['palimpsest'] }],
       publish: [{ channel: 'latest' }],
       mac: {
-        icon: 'build/psglass.icon',
+        icon: 'build/icon.icns',
         artifactName: macArtifact('Palimpsest'),
         provisioningProfile: 'build/embedded.provisionprofile',
       },

@@ -92,7 +92,7 @@ mac:
       to: cli/node_modules/@napi-rs/keyring-darwin-arm64
       filter:
         - "**/*"
-  icon: build/psglass.icon
+  icon: build/icon.icns
   target:
     - target: dmg
       arch:

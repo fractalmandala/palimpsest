@@ -101,6 +101,8 @@ pnpm exec turbo run build --filter='!@palimpsest/docs'   # full workspace build 
 cd packages/desktop && pnpm run build:mac:unsigned        # → dist-desktop/Palimpsest-arm64.dmg
 ```
 
+> Packaging **requires pnpm 12** (the repo's `packageManager` pin). Building with pnpm 11 silently drops `@palimpsest/core` from the app bundle and the installed app crashes on launch with `ERR_MODULE_NOT_FOUND`.
+
 The unsigned .dmg is not notarized — on first launch, right-click → Open to run it. Signed builds need an Apple Developer identity (see `packages/desktop/electron-builder.yml`).
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full development setup, toolchain pins, and checks (`pnpm run check`).
